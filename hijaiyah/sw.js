@@ -20,7 +20,8 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== FONTS).map((k) => caches.delete(k))))
+      // Only this app's old caches: other apps on the same origin keep theirs.
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('hijaiyah-') && k !== CACHE && k !== FONTS).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });

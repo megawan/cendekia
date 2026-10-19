@@ -8,6 +8,7 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 | Folder | App |
 | --- | --- |
 | [`hijaiyah/`](hijaiyah) | Learn the 28 hijaiyah letters, their harakat and sounds. Moved here from `megawan.github.io/games/hijaiyah/`. |
+| [`baca/`](baca) | Ayo Membaca: early reading in Indonesian, from letters and syllables to words and sentences, with stars, stickers and an adventure map. |
 
 Each app keeps its own README with details.
 
