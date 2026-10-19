@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cendekia</title>
+<meta name="description" content="Kumpulan aplikasi belajar sederhana untuk anak.">
+<meta name="theme-color" content="#1f9d6b">
+<link rel="icon" type="image/png" sizes="192x192" href="hijaiyah/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff7e6; --ink: #35260f; --card: #ffffff; --line: #ecd9b0;
+    --c-green: #1f9d6b; --c-orange: #f2891f; --c-blue: #2e90fa; --radius: 20px;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body { margin: 0; color: var(--ink); font-family: "Baloo 2", system-ui, sans-serif; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 12% 8%, #ffe6a8 0, transparent 38%),
+                radial-gradient(circle at 92% 22%, #d4f2e3 0, transparent 36%); }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 2.4rem; margin: 0; text-align: center; }
+  .sub { text-align: center; margin: 4px 0 28px; opacity: .8; font-size: 1.15rem; }
+  .apps { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); list-style: none; padding: 0; margin: 0; }
+  .app { --c: var(--c-green); display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;
+    background: var(--card); border: 2px solid var(--line); border-bottom: 6px solid var(--c);
+    border-radius: var(--radius); padding: 16px; transition: transform .1s; }
+  .app:active { transform: translateY(3px); }
+  .app:focus-visible { outline: 3px solid var(--c-blue); outline-offset: 2px; }
+  .badge { flex: none; width: 64px; height: 64px; border-radius: 50%; background: var(--c); color: #fff;
+    display: grid; place-items: center; font-size: 2rem; font-weight: 700; }
+  .badge .ar { font-family: "Amiri", "Noto Naskh Arabic", "Geeza Pro", serif; line-height: 1; }
+  .app b { display: block; font-size: 1.3rem; line-height: 1.2; }
+  .app small { display: block; font-size: .95rem; opacity: .75; line-height: 1.3; }
+  @media (prefers-reduced-motion: reduce) { .app { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cendekia</h1>
+  <p class="sub">Belajar sambil bermain</p>
+  <ul class="apps">
+    <li>
+      <a class="app" href="hijaiyah/">
+        <span class="badge" aria-hidden="true"><span class="ar" lang="ar">ب</span></span>
+        <span><b>Huruf Hijaiyah</b><small>28 huruf hijaiyah lengkap dengan harakat dan suaranya.</small></span>
+      </a>
+    </li>
+  </ul>
+</main>
+<script data-goatcounter="https://megawan.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
