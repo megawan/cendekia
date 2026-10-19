@@ -19,6 +19,9 @@ jobs:
     uses: megawan/gha-shared-workflows/.github/workflows/site-link-check.yml@v1
     with:
       paths: "**/*.html **/*.md"
+      # The site's own address: its pages are already checked as local files.
+      exclude: |
+        ^https://megawan\.github\.io/cendekia/
       # External sites can be down for a while: the weekly run only reports,
       # while pull requests and pushes fail on broken links.
       fail: ${{ github.event_name != 'schedule' }}

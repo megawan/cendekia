@@ -19,7 +19,7 @@ Any static file server works, for example:
 python3 -m http.server 8000
 ```
 
-Then open http://localhost:8000/.
+Then open `http://localhost:8000/`.
 
 ## Contributing
 
