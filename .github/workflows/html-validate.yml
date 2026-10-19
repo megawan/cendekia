@@ -1,0 +1,21 @@
+name: HTML
+
+on:
+  pull_request:
+    paths: ["**/*.html", ".github/workflows/html-validate.yml"]
+  push:
+    branches: [main]
+    paths: ["**/*.html", ".github/workflows/html-validate.yml"]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  validate:
+    permissions:
+      contents: read
+    uses: megawan/gha-shared-workflows/.github/workflows/site-html-validate.yml@v1
+    with:
+      paths: "**/*.html"
+      # Stylistic rules are relaxed; structure and accessibility rules stay on.
+      rules: no-inline-style:off,doctype-style:off

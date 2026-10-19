@@ -1,0 +1,15 @@
+name: PR Title
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  lint:
+    permissions:
+      pull-requests: read
+    uses: megawan/gha-shared-workflows/.github/workflows/automation-pr-title-lint.yml@v1
+    with:
+      require-scope: false
