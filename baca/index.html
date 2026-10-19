@@ -422,6 +422,7 @@
     { "text": "budi naik sepeda", "pic": "👦🚲" },
     { "text": "lala makan nasi", "pic": "👧🍚" }
   ],
+  "cheers": ["Hebat!", "Pintar!", "Benar!", "Bagus sekali!", "Keren!", "Luar biasa!"],
   "phrases": {
     "pickLetter": "Dengarkan, lalu pilih hurufnya.",
     "pickSyl": "Dengarkan, lalu pilih suku katanya.",
@@ -431,7 +432,6 @@
     "sentence": "Baca kalimatnya, lalu pilih gambarnya.",
     "done": "Selamat! Kamu hebat!",
     "sticker": "Hore, ada stiker baru!",
-    "praise": ["Hebat!", "Pintar!", "Benar!", "Bagus sekali!", "Keren!", "Luar biasa!"],
     "retry": ["Ayo coba lagi.", "Hampir benar!", "Dengarkan sekali lagi."]
   }
 }
@@ -809,7 +809,7 @@
       q.opts.forEach((o) => {
         const label = q.type === 'pickLetter' ? o.ch : q.type === 'pickSyl' ? o : o.text;
         grid.appendChild(optButton('', label, o === q.target, (b) => answer(b, o === q.target, grid, play, (go) => {
-          speak(sample(P.praise), () => setTimeout(go, 300));
+          setTimeout(go, 900);
         })));
       });
       ans.appendChild(grid);
@@ -903,7 +903,7 @@
     sfx.good();
     if (!wrongThis) combo++;
     $('combo').textContent = combo >= 3 ? '🔥 ' + combo : '';
-    const p = sample(P.praise);
+    const p = sample(C.cheers); // shown in the bubble only, a right answer is not read aloud
     mood('cheer', combo >= 3 ? p + ' ' + combo + ' kali benar!' : p);
     if (combo >= 3) confetti(14);
     $('prog').children[qi].classList.add('done');

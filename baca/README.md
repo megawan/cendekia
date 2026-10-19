@@ -25,7 +25,7 @@ An early reading game in Indonesian. Children go from vowels to letters, syllabl
 - Stars: three for at most one question missed on the first try, two for at most three, one otherwise. Stars add up across rounds.
 - Combo: three or more first-try answers in a row show a flame counter and confetti.
 - Learning days: the home screen counts consecutive days with at least one finished round.
-- Kiki the owl cheers, or encourages another try. After two misses the right answer blinks.
+- Kiki the owl coaches. A right answer gets a cheer in the speech bubble and a short chime, with no spoken praise (the `cheers` list). A wrong answer gets a spoken encouragement to try again. After two misses the right answer blinks.
 
 Progress is kept in `localStorage` under `baca.v1`. "Mulai ulang petualangan" on the map clears the stage stars but keeps the total and the stickers.
 
