@@ -36,7 +36,7 @@ A word's third value is its picture:
 
 ## Rewards
 
-Same as the other apps: one to three stars per round, a combo counter with confetti for three or more first-try answers in a row, and a count of learning days in a row. A right answer gets a chime and a cheer in Kiki's speech bubble, with no spoken praise. A wrong answer gets a spoken "Ayo coba lagi" and, after two misses, the right answer blinks.
+Same as the other apps: one to three stars per round, a combo counter with confetti for three or more first-try answers in a row, and a count of learning days in a row. A right answer gets a chime and a cheer in Kiki's speech bubble, with no spoken praise. A wrong answer gets a spoken "Ayo coba lagi" and, after two misses, the right answer blinks. At the end of a round, and when a sticker is won, only a short fanfare and confetti play: nobody speaks.
 
 Progress is kept in `localStorage` under `kosakata.v1`.
 

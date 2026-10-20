@@ -1,5 +1,5 @@
 // Offline support for Kosakata. Bump CACHE when the precached files change.
-const CACHE = 'kosakata-v2';
+const CACHE = 'kosakata-v3';
 const FONTS = 'kosakata-fonts-v1';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 

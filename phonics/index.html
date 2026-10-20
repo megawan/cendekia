@@ -433,8 +433,6 @@
     "hearWord": "Listen, then pick the word.",
     "build": "Spell the word.",
     "sentence": "Read the sentence, then pick the picture.",
-    "done": "Well done! You finished!",
-    "sticker": "Yay, a new sticker!",
     "retry": ["Try again.", "Almost!", "Listen again."]
   }
 }
@@ -955,7 +953,6 @@
     if (gained.length) g.innerHTML = '<b>New sticker!</b><div class="stk">' + gained.map(face).join('') + '</div><small>' + gained.map((k) => k.name).join(', ') + '</small>';
     $('rNext').hidden = stageIdx + 1 >= STAGES.length;
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
-    speak(gained.length ? P.sticker : P.done);
   }
   $('rNext').addEventListener('click', () => startStage(stageIdx + 1));
   $('rAgain').addEventListener('click', () => startStage(stageIdx));

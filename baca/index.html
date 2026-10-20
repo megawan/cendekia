@@ -92,23 +92,27 @@
     background: #fff8e1; border-left: 2px solid #f1dfb2; border-bottom: 2px solid #f1dfb2; transform: rotate(45deg); }
 
   /* Adventure map */
-  .map { position: relative; padding: 8px 0 16px; }
-  .map::before { content: ""; position: absolute; left: 50%; top: 40px; bottom: 50px; width: 0;
-    border-left: 6px dashed var(--line); transform: translateX(-3px); }
-  .node { position: relative; display: flex; flex-direction: column; align-items: center; width: 150px;
-    margin: 0 auto 10px; transform: translateX(var(--x, 0)); }
-  .node button { width: 92px; height: 92px; border-radius: 50%; border: 4px solid #fff; cursor: pointer;
-    background: var(--c, var(--c-blue)); color: #fff; font: inherit; font-weight: 800; font-size: 2rem; line-height: 1;
-    box-shadow: 0 6px 0 rgba(0,0,0,.18); transition: transform .1s; }
-  .node button:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
-  .node.locked button { background: #c9d3e1; color: #fff; cursor: default; }
-  .node.next button { animation: bounce 1.2s ease-in-out infinite; box-shadow: 0 6px 0 rgba(0,0,0,.18), 0 0 0 8px rgba(242,163,58,.35); }
-  .node b { margin-top: 6px; background: #fff; border: 2px solid var(--line); border-radius: 12px; padding: 0 10px;
-    font-size: 1rem; text-align: center; line-height: 1.4; }
-  .node .st { display: flex; gap: 2px; height: 22px; margin-top: 2px; }
-  .node .st svg { width: 22px; height: 22px; fill: var(--line); }
-  .node .st svg.on { fill: var(--warm); }
-  .goal { text-align: center; font-size: 3rem; line-height: 1; position: relative; }
+  /* Levels and their stages */
+  .go { display: block; width: 100%; margin: 4px 0 6px; }
+  .level { margin: 10px 0; }
+  .level summary { cursor: pointer; list-style: none; padding: 8px 4px; }
+  .level summary::-webkit-details-marker { display: none; }
+  .level summary b { display: block; font-size: 1.25rem; line-height: 1.2; }
+  .level summary b::before { content: "▸ "; }
+  .level[open] summary b::before { content: "▾ "; }
+  .level summary small { opacity: .75; }
+  .level .themes { margin-bottom: 8px; }
+  .themes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 560px) { .themes { grid-template-columns: repeat(3, 1fr); } }
+  .theme { --c: var(--c-blue); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: inherit; color: inherit; cursor: pointer;
+    background: var(--card); border: 2px solid var(--line); border-bottom: 6px solid var(--c); border-radius: var(--radius); padding: 10px 6px 8px; }
+  .theme:active { transform: translateY(3px); }
+  .theme .ico { font-size: 2.2rem; line-height: 1.2; font-weight: 800; }
+  .theme b { font-size: 1.02rem; line-height: 1.2; text-align: center; }
+  .theme .st { display: flex; gap: 2px; }
+  .theme .st svg { width: 20px; height: 20px; fill: var(--line); }
+  .theme .st svg.on { fill: var(--warm); }
+  .theme.next { animation: bounce 1.4s ease-in-out infinite; box-shadow: 0 0 0 4px rgba(242,163,58,.4); }
 
   /* Explore: alphabet, syllables, words */
   .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
@@ -174,13 +178,15 @@
   .opt.ok { border-color: var(--good); background: #e8f8f0; animation: pop .35s; }
   .opt.no { border-color: var(--bad); background: #fdeceb; animation: shake .3s; }
   .opt.hint { border-color: var(--warm); animation: blink .8s ease-in-out infinite; }
-  .slots { display: flex; justify-content: center; gap: 8px; margin: 6px 0 2px; }
+  .slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 6px 0 2px; }
+  .slots.words .slot { min-width: 58px; height: 52px; padding: 0 8px; font-size: 1.15rem; }
   .slot { min-width: 76px; height: 76px; border-radius: 16px; border: 3px dashed var(--line); display: grid; place-items: center;
     font-size: 2.2rem; font-weight: 800; background: rgba(255,255,255,.6); }
   .slot.full { border-style: solid; border-color: var(--good); background: #e8f8f0; animation: pop .3s; }
   .tiles { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
   .tiles .opt { min-height: 76px; min-width: 96px; font-size: 2.2rem; }
   .tiles .opt.used { visibility: hidden; }
+  .opt.wd { font-size: 1.45rem; min-height: 56px; min-width: 0; padding: 8px 14px; }
 
   /* Result and stickers */
   .stars { display: flex; justify-content: center; gap: 6px; margin: 12px 0; }
@@ -247,7 +253,7 @@
     <div class="menu">
       <button type="button" class="card hero-card" data-go="map" style="--c: var(--c-orange)">
         <span class="badge" aria-hidden="true">🗺️</span>
-        <span><b>Petualangan</b><br><small id="homeNext">Mulai dari huruf vokal</small></span>
+        <span><b>Petualangan</b><br><small id="homeNext">Pilih tahap yang kamu suka</small></span>
       </button>
       <button type="button" class="card" data-go="abjad" style="--c: var(--c-pink)">
         <span class="badge" aria-hidden="true">Aa</span><b>Huruf A–Z</b><small>Ketuk untuk mendengar</small></button>
@@ -266,10 +272,10 @@
   <section id="map" hidden>
     <div class="bar">
       <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Petualangan</h2>
+      <h2>Pilih Tahap</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="mapStars">0</span></span>
     </div>
-    <div class="map" id="mapNodes"></div>
+    <div id="mapNodes"></div>
     <p class="note"><button type="button" class="btn ghost" id="resetMap">Mulai ulang petualangan</button></p>
   </section>
 
@@ -525,7 +531,25 @@
     {"id": "hujan", "title": "Hari Hujan", "icon": "🌧️", "pages": [{"text": "Hari ini hujan turun deras.", "pic": "🌧️☔"}, {"text": "Adik tidak bisa bermain di luar.", "pic": "👶🏠"}, {"text": "Kakak mengajak adik membaca buku.", "pic": "👧📖"}, {"text": "Mereka minum teh hangat bersama.", "pic": "🍵👧👶"}, {"text": "Setelah hujan reda, ada pelangi di langit.", "pic": "🌈☀️"}], "questions": [{"q": "Mengapa adik tidak bisa bermain di luar?", "opts": ["karena hujan", "karena sakit", "karena malam"]}, {"q": "Apa yang mereka baca?", "opts": ["buku", "koran", "surat"]}, {"q": "Apa yang muncul setelah hujan reda?", "opts": ["pelangi", "bintang", "bulan"]}]},
     {"id": "semut", "title": "Semut dan Merpati", "icon": "🐜", "pages": [{"text": "Seekor semut jatuh ke dalam sungai.", "pic": "🐜🌊"}, {"text": "Merpati melihat semut itu.", "pic": "🕊️👀"}, {"text": "Merpati menjatuhkan sehelai daun.", "pic": "🕊️🍃"}, {"text": "Semut naik ke atas daun dan selamat.", "pic": "🐜🍃"}, {"text": "Semut berkata, terima kasih, Merpati.", "pic": "🐜❤️"}], "questions": [{"q": "Ke mana semut jatuh?", "opts": ["ke dalam sungai", "ke dalam sumur", "ke dalam kolam"]}, {"q": "Apa yang dijatuhkan merpati?", "opts": ["daun", "batu", "bunga"]}, {"q": "Siapa yang menolong semut?", "opts": ["merpati", "kucing", "ikan"]}]},
     {"id": "pasar", "title": "Pergi ke Pasar", "icon": "🛒", "pages": [{"text": "Hari Minggu Ibu pergi ke pasar.", "pic": "👩🛒"}, {"text": "Ani ikut Ibu naik sepeda.", "pic": "👧🚲"}, {"text": "Ibu membeli wortel dan tomat.", "pic": "🥕🍅"}, {"text": "Ani membeli tiga buah jeruk.", "pic": "👧🍊🍊🍊"}, {"text": "Mereka pulang dengan keranjang penuh.", "pic": "🧺🏠"}], "questions": [{"q": "Siapa yang pergi ke pasar bersama Ibu?", "opts": ["Ani", "Budi", "Nenek"]}, {"q": "Apa yang dibeli Ani?", "opts": ["jeruk", "apel", "pisang"]}, {"q": "Bagaimana keranjang mereka saat pulang?", "opts": ["penuh", "kosong", "rusak"]}]},
-    {"id": "kancil", "title": "Kancil dan Buaya", "icon": "🦌", "pages": [{"text": "Kancil ingin menyeberangi sungai.", "pic": "🦌🌊"}, {"text": "Di sungai ada banyak buaya.", "pic": "🐊🐊🐊"}, {"text": "Kancil berkata, aku akan menghitung kalian semua.", "pic": "🦌🔢"}, {"text": "Buaya berbaris, dan kancil melompat di atas punggung mereka.", "pic": "🐊🦌"}, {"text": "Kancil sampai di seberang dengan selamat.", "pic": "🦌🎉"}], "questions": [{"q": "Apa yang ingin dilakukan kancil?", "opts": ["menyeberangi sungai", "memanjat pohon", "mencari kucing"]}, {"q": "Apa yang dilakukan buaya?", "opts": ["berbaris", "tidur", "lari"]}, {"q": "Bagaimana kancil sampai di seberang?", "opts": ["melompat di atas punggung buaya", "naik perahu", "berenang"]}]}
+    {"id": "kancil", "title": "Kancil dan Buaya", "icon": "🦌", "pages": [{"text": "Kancil ingin menyeberangi sungai.", "pic": "🦌🌊"}, {"text": "Di sungai ada banyak buaya.", "pic": "🐊🐊🐊"}, {"text": "Kancil berkata, aku akan menghitung kalian semua.", "pic": "🦌🔢"}, {"text": "Buaya berbaris, dan kancil melompat di atas punggung mereka.", "pic": "🐊🦌"}, {"text": "Kancil sampai di seberang dengan selamat.", "pic": "🦌🎉"}], "questions": [{"q": "Apa yang ingin dilakukan kancil?", "opts": ["menyeberangi sungai", "memanjat pohon", "mencari kucing"]}, {"q": "Apa yang dilakukan buaya?", "opts": ["berbaris", "tidur", "lari"]}, {"q": "Bagaimana kancil sampai di seberang?", "opts": ["melompat di atas punggung buaya", "naik perahu", "berenang"]}]},
+    {"id": "kura", "title": "Kura-kura dan Kelinci", "icon": "🐢", "pages": [{"text": "Kelinci suka berlari sangat cepat.", "pic": "🐰💨"}, {"text": "Suatu hari, kelinci menantang kura-kura berlomba.", "pic": "🐰🐢"}, {"text": "Kura-kura berjalan pelan tetapi tidak pernah berhenti.", "pic": "🐢👣"}, {"text": "Kelinci merasa lelah, lalu tidur di bawah pohon.", "pic": "🐰😴🌳"}, {"text": "Kura-kura terus berjalan dan sampai di garis akhir lebih dulu.", "pic": "🐢🏁"}, {"text": "Kelinci terbangun dan sadar bahwa ia sudah kalah.", "pic": "🐰😮"}], "questions": [{"q": "Siapa yang menantang berlomba?", "opts": ["kelinci", "kura-kura", "burung"]}, {"q": "Mengapa kelinci kalah?", "opts": ["karena ia tidur", "karena ia sakit", "karena ia jatuh"]}, {"q": "Bagaimana kura-kura berjalan?", "opts": ["pelan tetapi tidak berhenti", "cepat sekali", "sambil tidur"]}, {"q": "Siapa yang sampai lebih dulu?", "opts": ["kura-kura", "kelinci", "burung"]}]},
+    {"id": "sekolah", "title": "Hari Pertama di Sekolah", "icon": "🏫", "pages": [{"text": "Hari ini Rina masuk sekolah untuk pertama kali.", "pic": "👧🏫"}, {"text": "Ibu mengantar Rina sampai ke depan pintu kelas.", "pic": "👩🚪"}, {"text": "Awalnya Rina merasa malu dan takut.", "pic": "😟"}, {"text": "Bu guru menyapa Rina dengan senyum ramah.", "pic": "🧑‍🏫😊"}, {"text": "Rina berkenalan dengan dua teman baru, Dewi dan Anto.", "pic": "👧👧👦"}, {"text": "Pulang sekolah, Rina bercerita dengan gembira kepada Ibu.", "pic": "👧👩🎉"}], "questions": [{"q": "Siapa yang mengantar Rina ke sekolah?", "opts": ["Ibu", "Ayah", "Kakak"]}, {"q": "Bagaimana perasaan Rina di awal?", "opts": ["malu dan takut", "marah", "lapar"]}, {"q": "Siapa nama teman baru Rina?", "opts": ["Dewi dan Anto", "Budi dan Ani", "Siti dan Joko"]}, {"q": "Bagaimana perasaan Rina saat pulang?", "opts": ["gembira", "sedih", "takut"]}]},
+    {"id": "kacang", "title": "Menanam Biji Kacang", "icon": "🌱", "pages": [{"text": "Adi mendapat sebutir biji kacang dari nenek.", "pic": "👦🌰👵"}, {"text": "Ia menanam biji itu di dalam pot kecil.", "pic": "🪴"}, {"text": "Setiap pagi Adi menyiram tanah dengan air.", "pic": "💧🪴"}, {"text": "Beberapa hari kemudian, tunas hijau mulai muncul.", "pic": "🌱"}, {"text": "Adi sangat senang melihat tanamannya tumbuh.", "pic": "😄🌱"}, {"text": "Kini daun kacang itu sudah tinggi.", "pic": "🌿"}], "questions": [{"q": "Dari siapa Adi mendapat biji kacang?", "opts": ["nenek", "ibu", "guru"]}, {"q": "Apa yang Adi lakukan setiap pagi?", "opts": ["menyiram tanah", "memetik daun", "menjual kacang"]}, {"q": "Apa yang muncul beberapa hari kemudian?", "opts": ["tunas hijau", "bunga merah", "buah kacang"]}, {"q": "Di mana Adi menanam biji itu?", "opts": ["di dalam pot kecil", "di dalam kolam", "di atas meja"]}]},
+    {"id": "ulangtahun", "title": "Pesta Ulang Tahun", "icon": "🎂", "pages": [{"text": "Hari ini Dita berulang tahun yang kelima.", "pic": "👧🎂"}, {"text": "Ibu membuat kue cokelat yang besar.", "pic": "👩🍫🎂"}, {"text": "Teman-teman datang membawa hadiah.", "pic": "👧👦🎁"}, {"text": "Mereka menyanyi bersama dan Dita meniup lilin.", "pic": "🎶🕯️"}, {"text": "Kue dipotong dan semua orang mendapat satu potong.", "pic": "🍰"}, {"text": "Dita berterima kasih kepada semua temannya.", "pic": "👧❤️"}], "questions": [{"q": "Yang keberapa ulang tahun Dita?", "opts": ["kelima", "ketiga", "ketujuh"]}, {"q": "Kue apa yang dibuat Ibu?", "opts": ["kue cokelat", "kue keju", "kue pisang"]}, {"q": "Apa yang dibawa teman-teman?", "opts": ["hadiah", "bunga", "bola"]}, {"q": "Siapa yang meniup lilin?", "opts": ["Dita", "Ibu", "Ayah"]}]}
+  ],
+  "sentences3": [
+    {"text": "ibu membeli sayur dan buah di pasar", "pic": "👩🛒🥕🍎", "gap": "pasar"},
+    {"text": "adik suka makan nasi dengan telur goreng", "pic": "👶🍚🍳", "gap": "telur"},
+    {"text": "kakak dan adik bermain bola di lapangan", "pic": "👧👶⚽", "gap": "lapangan"},
+    {"text": "ayah mengantar kami ke sekolah naik mobil", "pic": "👨🚗🏫", "gap": "mobil"},
+    {"text": "nenek duduk di teras sambil minum teh hangat", "pic": "👵🍵", "gap": "teh"},
+    {"text": "burung kecil membuat sarang di atas pohon tinggi", "pic": "🐦🪺🌳", "gap": "sarang"},
+    {"text": "kami melihat gajah dan jerapah di kebun binatang", "pic": "🐘🦒", "gap": "gajah"},
+    {"text": "kucing hitam itu melompat ke atas meja makan", "pic": "🐈‍⬛🍽️", "gap": "melompat"},
+    {"text": "setelah hujan reda kami bermain di halaman", "pic": "🌈⚽", "gap": "hujan"},
+    {"text": "pak guru membacakan cerita untuk semua murid", "pic": "🧑‍🏫📖", "gap": "cerita"},
+    {"text": "dokter memeriksa adik yang sedang sakit", "pic": "🧑‍⚕️🤒", "gap": "dokter"},
+    {"text": "kupu-kupu terbang dari bunga ke bunga", "pic": "🦋🌸", "gap": "terbang"}
   ],
   "cheers": ["Hebat!", "Pintar!", "Benar!", "Bagus sekali!", "Keren!", "Luar biasa!"],
   "phrases": {
@@ -536,9 +560,8 @@
     "build": "Susun suku katanya.",
     "sentence": "Baca kalimatnya, lalu pilih gambarnya.",
     "fill": "Lengkapi kalimatnya.",
+    "order": "Susun kalimatnya.",
     "story": "Dengarkan pertanyaannya, lalu pilih jawabannya.",
-    "done": "Selamat! Kamu hebat!",
-    "sticker": "Hore, ada stiker baru!",
     "retry": ["Ayo coba lagi.", "Hampir benar!", "Dengarkan sekali lagi."]
   }
 }
@@ -672,28 +695,40 @@
   // Advanced words, in three sets: ng and ny, closed syllables (kan, pen ...) and three or four syllables.
   const WORDS_ALL = C.words.concat(C.words2);
   const W_NG = C.words2.filter((w) => w.set === 'ng'), W_CLOSED = C.words2.filter((w) => w.set === 'closed'), W_LONG = C.words2.filter((w) => w.set === 'long');
+  // Four levels. Every stage is open from the start: a child who already reads can go straight to sentences and stories,
+  // and the first two levels stay there for revision.
+  const LEVELS = [
+    { n: 1, title: 'Dasar', sub: 'Huruf dan suku kata' },
+    { n: 2, title: 'Kata', sub: 'Membaca dan menyusun kata' },
+    { n: 3, title: 'Kalimat', sub: 'Membaca, melengkapi dan menyusun kalimat' },
+    { n: 4, title: 'Cerita', sub: 'Membaca cerita dan menjawab pertanyaan' }
+  ];
+  const SENT = C.sentences2.concat(C.sentences3);
   const STAGES = [
-    { id: 'vokal', title: 'Huruf Vokal', icon: 'a', c: 'var(--c-pink)', kind: 'letter', pool: L(C.vowels) },
-    { id: 'abjad1', title: 'Huruf b–m', icon: 'b', c: 'var(--c-orange)', kind: 'letter', pool: L('bcdfghjklm') },
-    { id: 'abjad2', title: 'Huruf n–z', icon: 'n', c: 'var(--c-purple)', kind: 'letter', pool: L('npqrstvwxyz') },
-    { id: 'suku1', title: 'Suku Kata b d k m', icon: 'ba', c: 'var(--c-blue)', kind: 'syl', cons: ['b', 'd', 'k', 'm'] },
-    { id: 'suku2', title: 'Suku Kata l n p r s t', icon: 'la', c: 'var(--c-teal)', kind: 'syl', cons: ['l', 'n', 'p', 'r', 's', 't'] },
-    { id: 'suku3', title: 'Suku Kata c g h j w y', icon: 'ca', c: 'var(--c-green)', kind: 'syl', cons: ['c', 'g', 'h', 'j', 'w', 'y'] },
-    { id: 'kata1', title: 'Kata Pertama', icon: '⚽', c: 'var(--c-orange)', kind: 'word', pool: W2, types: ['readPic', 'pickWord'] },
-    { id: 'susun', title: 'Susun Kata', icon: '🧩', c: 'var(--c-pink)', kind: 'word', pool: W2, types: ['build'] },
-    { id: 'kata2', title: 'Kata Panjang', icon: '🚲', c: 'var(--c-purple)', kind: 'word', pool: W3, types: ['readPic', 'build'] },
-    { id: 'kalimat', title: 'Kalimat', icon: '📝', c: 'var(--c-blue)', kind: 'sentence', pool: C.sentences },
-    // Advanced stages
-    { id: 'ngny', title: 'Huruf ng ny sy kh', icon: 'nga', c: 'var(--c-pink)', kind: 'syl', cons: C.digraphs },
-    { id: 'kata-ng', title: 'Kata dengan ng dan ny', icon: '🦁', c: 'var(--c-orange)', kind: 'word', pool: W_NG, types: ['readPic', 'build'] },
-    { id: 'tertutup', title: 'Suku Kata Tertutup', icon: '🌙', c: 'var(--c-purple)', kind: 'word', pool: W_CLOSED, types: ['readPic', 'build'] },
-    { id: 'kata4', title: 'Kata Lebih Panjang', icon: '🚁', c: 'var(--c-blue)', kind: 'word', pool: W_LONG, types: ['readPic', 'build'] },
-    { id: 'kalimat2', title: 'Kalimat Panjang', icon: '📖', c: 'var(--c-teal)', kind: 'sentence', near: true, pool: C.sentences2 },
-    { id: 'lengkapi', title: 'Lengkapi Kalimat', icon: '✍️', c: 'var(--c-green)', kind: 'fill', pool: C.sentences2 }
-  ].concat(C.stories.map((st, i) => ({ id: 'cerita-' + st.id, title: 'Cerita: ' + st.title, icon: st.icon, c: ['var(--c-pink)', 'var(--c-orange)', 'var(--c-purple)'][i % 3], kind: 'story', story: st })));
-  // A stage opens once the one before it has at least one star.
-  const isOpen = (i) => i === 0 || (S.best[STAGES[i - 1].id] || 0) > 0;
-  const nextStage = () => { const i = STAGES.findIndex((s) => !S.best[s.id]); return i < 0 ? -1 : i; };
+    { lv: 1, id: 'vokal', title: 'Huruf Vokal', icon: 'a', c: 'var(--c-pink)', kind: 'letter', pool: L(C.vowels) },
+    { lv: 1, id: 'abjad1', title: 'Huruf b–m', icon: 'b', c: 'var(--c-orange)', kind: 'letter', pool: L('bcdfghjklm') },
+    { lv: 1, id: 'abjad2', title: 'Huruf n–z', icon: 'n', c: 'var(--c-purple)', kind: 'letter', pool: L('npqrstvwxyz') },
+    { lv: 1, id: 'suku1', title: 'Suku Kata b d k m', icon: 'ba', c: 'var(--c-blue)', kind: 'syl', cons: ['b', 'd', 'k', 'm'] },
+    { lv: 1, id: 'suku2', title: 'Suku Kata l n p r s t', icon: 'la', c: 'var(--c-teal)', kind: 'syl', cons: ['l', 'n', 'p', 'r', 's', 't'] },
+    { lv: 1, id: 'suku3', title: 'Suku Kata c g h j w y', icon: 'ca', c: 'var(--c-green)', kind: 'syl', cons: ['c', 'g', 'h', 'j', 'w', 'y'] },
+    { lv: 2, id: 'kata1', title: 'Kata Pertama', icon: '⚽', c: 'var(--c-orange)', kind: 'word', pool: W2, types: ['readPic', 'pickWord'] },
+    { lv: 2, id: 'susun', title: 'Susun Kata', icon: '🧩', c: 'var(--c-pink)', kind: 'word', pool: W2, types: ['build'] },
+    { lv: 2, id: 'kata2', title: 'Kata Panjang', icon: '🚲', c: 'var(--c-purple)', kind: 'word', pool: W3, types: ['readPic', 'build'] },
+    { lv: 2, id: 'ngny', title: 'Huruf ng ny sy kh', icon: 'nga', c: 'var(--c-pink)', kind: 'syl', cons: C.digraphs },
+    { lv: 2, id: 'kata-ng', title: 'Kata dengan ng dan ny', icon: '🦁', c: 'var(--c-orange)', kind: 'word', pool: W_NG, types: ['readPic', 'build'] },
+    { lv: 2, id: 'tertutup', title: 'Suku Kata Tertutup', icon: '🌙', c: 'var(--c-purple)', kind: 'word', pool: W_CLOSED, types: ['readPic', 'build'] },
+    { lv: 2, id: 'kata4', title: 'Kata Lebih Panjang', icon: '🚁', c: 'var(--c-blue)', kind: 'word', pool: W_LONG, types: ['readPic', 'build'] },
+    { lv: 3, id: 'kalimat', title: 'Kalimat', icon: '📝', c: 'var(--c-blue)', kind: 'sentence', pool: C.sentences },
+    { lv: 3, id: 'kalimat2', title: 'Kalimat Panjang', icon: '📖', c: 'var(--c-teal)', kind: 'sentence', near: true, pool: C.sentences2 },
+    { lv: 3, id: 'kalimat3', title: 'Kalimat Sangat Panjang', icon: '📚', c: 'var(--c-purple)', kind: 'sentence', near: true, pool: C.sentences3 },
+    { lv: 3, id: 'lengkapi', title: 'Lengkapi Kalimat', icon: '✍️', c: 'var(--c-green)', kind: 'fill', pool: SENT },
+    { lv: 3, id: 'urutkan', title: 'Susun Kalimat', icon: '🔀', c: 'var(--c-orange)', kind: 'order', pool: SENT }
+  ].concat(C.stories.map((st, i) => ({ lv: 4, id: 'cerita-' + st.id, title: st.title, icon: st.icon, c: ['var(--c-pink)', 'var(--c-orange)', 'var(--c-purple)'][i % 3], kind: 'story', story: st })));
+  // The stage to try next: sentences and stories first, then words, then the basics.
+  const nextStage = () => {
+    for (const lv of [3, 4, 2, 1]) { const i = STAGES.findIndex((s) => s.lv === lv && !S.best[s.id]); if (i >= 0) return i; }
+    return -1;
+  };
   const starSvg = (on, cls) => '<svg class="' + (cls || '') + (on ? ' on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
   function renderHome() {
@@ -701,37 +736,45 @@
     $('homeDays').textContent = streakNow();
     $('homeStk').textContent = unlocked() + '/' + STICKERS.length;
     const n = nextStage();
-    $('homeNext').textContent = n < 0 ? 'Semua tahap selesai! Kumpulkan 3 bintang' : 'Berikutnya: ' + STAGES[n].title;
+    $('homeNext').textContent = n < 0 ? 'Semua tahap selesai! Kumpulkan 3 bintang' : 'Coba: ' + STAGES[n].title;
   }
 
+  // Levels 1 and 2 are folded away so the map opens on sentences and stories; a child who needs them opens them.
+  const foldedLevels = new Set([1, 2]);
   function renderMap() {
     $('mapStars').textContent = S.stars;
     const box = $('mapNodes'); box.innerHTML = '';
     const nx = nextStage();
-    const xs = ['0px', '-70px', '-90px', '-40px', '40px', '90px', '70px'];
-    STAGES.forEach((s, i) => {
-      const open = isOpen(i), best = S.best[s.id] || 0;
-      const d = document.createElement('div');
-      d.className = 'node' + (open ? '' : ' locked') + (i === nx ? ' next' : '');
-      d.style.setProperty('--x', xs[i % xs.length]);
-      d.style.setProperty('--c', s.c);
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = open ? s.icon : '🔒';
-      b.setAttribute('aria-label', s.title + (open ? ', ' + best + ' bintang' : ', terkunci'));
-      b.addEventListener('click', () => {
-        if (open) { startStage(i); return; }
-        sfx.bad(); b.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], 300);
+    if (nx >= 0) {
+      const go = document.createElement('button');
+      go.type = 'button'; go.className = 'btn alt go';
+      go.textContent = '▶ Mulai: ' + STAGES[nx].title;
+      go.addEventListener('click', () => startStage(nx));
+      box.appendChild(go);
+    }
+    LEVELS.forEach((lv) => {
+      const det = document.createElement('details'); det.className = 'level';
+      det.open = !foldedLevels.has(lv.n) || (nx >= 0 && STAGES[nx].lv === lv.n);
+      const sum = document.createElement('summary');
+      sum.innerHTML = '<b></b><small></small>';
+      sum.firstChild.textContent = 'Level ' + lv.n + ': ' + lv.title; sum.lastChild.textContent = lv.sub + (foldedLevels.has(lv.n) ? ' · ketuk untuk membuka' : '');
+      const grid = document.createElement('div'); grid.className = 'themes';
+      STAGES.forEach((s, i) => {
+        if (s.lv !== lv.n) return;
+        const best = S.best[s.id] || 0;
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'theme' + (i === nx ? ' next' : '');
+        b.style.setProperty('--c', s.c);
+        b.innerHTML = '<span class="ico" aria-hidden="true"></span><b></b><span class="st"></span>';
+        b.firstChild.textContent = s.icon; b.children[1].textContent = s.title;
+        b.lastChild.innerHTML = [1, 2, 3].map((k) => starSvg(k <= best)).join('');
+        b.setAttribute('aria-label', s.title + ', ' + best + ' bintang');
+        b.addEventListener('click', () => startStage(i));
+        grid.appendChild(b);
       });
-      const t = document.createElement('b'); t.textContent = s.title;
-      const st = document.createElement('div'); st.className = 'st';
-      st.innerHTML = [1, 2, 3].map((k) => starSvg(k <= best)).join('');
-      d.append(b, t, st);
-      box.appendChild(d);
+      det.append(sum, grid);
+      box.appendChild(det);
     });
-    const g = document.createElement('div'); g.className = 'goal'; g.textContent = '🏆';
-    g.setAttribute('aria-hidden', 'true');
-    box.appendChild(g);
   }
   $('resetMap').addEventListener('click', () => {
     if (!confirm('Mulai ulang petualangan? Bintang dan stiker tetap tersimpan.')) return;
@@ -873,6 +916,14 @@
         return { type: 'fill', target: t, opts: shuffle([t.gap, ...take(others, 2)]) };
       });
     }
+    if (s.kind === 'order') {
+      // The words of the sentence plus one from another sentence that does not belong.
+      return spread(s.pool, ROUNDS).map((t) => {
+        const words = t.text.split(' ');
+        const extra = take([...new Set(s.pool.flatMap((x) => x.text.split(' ')))], 1, words);
+        return { type: 'order', target: t, tiles: shuffle(words.concat(extra)) };
+      });
+    }
     if (s.near) {
       // Wrong pictures belong to the sentences that share the most words with the right one, so the child has to read all of it.
       return spread(s.pool, ROUNDS).map((t) => {
@@ -972,7 +1023,7 @@
     const ask = $('ask'), ans = $('answers');
     ask.innerHTML = ''; ans.innerHTML = '';
     if (!first) mood('happy', q.type === 'build' ? 'Susun suku katanya' : q.type === 'readPic' || q.type === 'sentence' ? 'Baca, lalu pilih gambarnya' :
-      q.type === 'fill' ? 'Lengkapi kalimatnya' : q.type === 'story' ? 'Dengarkan, lalu pilih jawabannya' : 'Dengarkan, lalu pilih');
+      q.type === 'fill' ? 'Lengkapi kalimatnya' : q.type === 'order' ? 'Susun kalimatnya' : q.type === 'story' ? 'Dengarkan, lalu pilih jawabannya' : 'Dengarkan, lalu pilih');
     const lead = (sound) => { if (first) speakSeq([intro, sound], null, 250); else speak(sound); };
     const grid = document.createElement('div'); grid.className = 'opts';
 
@@ -999,6 +1050,41 @@
       q.opts.forEach((o) => grid.appendChild(optButton('txt', o, o === q.target, (b) => answer(b, o === q.target, grid, play, (go) => setTimeout(go, 900)))));
       ans.appendChild(grid);
       lead(q.q);
+      return;
+    }
+
+    if (q.type === 'order') {
+      const t = q.target, words = t.text.split(' ');
+      const pic = document.createElement('div'); pic.className = 'pic'; pic.textContent = t.pic;
+      pic.setAttribute('aria-hidden', 'true');
+      const play = () => speak(t.text);
+      const slots = document.createElement('div'); slots.className = 'slots words';
+      words.forEach(() => { const sl = document.createElement('span'); sl.className = 'slot'; slots.appendChild(sl); });
+      ask.append(pic, slots, speakerBtn(play));
+      const tiles = document.createElement('div'); tiles.className = 'tiles';
+      let pos = 0;
+      q.tiles.forEach((wd) => tiles.appendChild(optButton('wd', wd, false, (b) => {
+        if (locked) return;
+        if (wd !== words[pos]) {
+          miss(b, play);
+          // From the second miss on, a right tile blinks.
+          if (wrongTries >= 2) {
+            const right = [...tiles.children].find((x) => x.textContent === words[pos] && !x.classList.contains('used'));
+            if (right) right.classList.add('hint');
+          }
+          return;
+        }
+        [...tiles.children].forEach((x) => x.classList.remove('hint'));
+        slots.children[pos].textContent = wd; slots.children[pos].classList.add('full');
+        b.classList.add('used'); pos++;
+        if (pos < words.length) { sfx.tap(); speak(wd); return; }
+        locked = true;
+        solved();
+        const go = advance();
+        setTimeout(() => speak(t.text, go), 300);
+      })));
+      ans.appendChild(tiles);
+      lead(t.text);
       return;
     }
 
@@ -1147,7 +1233,6 @@
     if (gained.length) g.innerHTML = '<b>Stiker baru!</b><div class="stk">' + gained.map(face).join('') + '</div><small>' + gained.map((k) => k.name).join(', ') + '</small>';
     $('rNext').hidden = stageIdx + 1 >= STAGES.length;
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
-    speak(gained.length ? P.sticker : P.done);
   }
   $('rNext').addEventListener('click', () => startStage(stageIdx + 1));
   $('rAgain').addEventListener('click', () => startStage(stageIdx));

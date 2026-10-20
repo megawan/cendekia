@@ -1,5 +1,5 @@
 // Offline support for Phonics Fun. Bump CACHE when the precached files change.
-const CACHE = 'phonics-v1';
+const CACHE = 'phonics-v2';
 const FONTS = 'phonics-fonts-v1';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 

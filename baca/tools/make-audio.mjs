@@ -41,6 +41,7 @@ const bare = (w) => w.replace(/[.,!?]/g, '');
 C.digraphs.forEach((d) => C.vowels.forEach((v) => phrases.add(d + v)));
 C.words2.forEach((w) => { phrases.add(w.text); w.syl.forEach((s) => phrases.add(s)); });
 C.sentences2.forEach((s) => { phrases.add(s.text); s.text.split(' ').forEach((w) => phrases.add(w)); });
+C.sentences3.forEach((s) => { phrases.add(s.text); s.text.split(' ').forEach((w) => phrases.add(w)); });
 C.stories.forEach((st) => {
   st.pages.forEach((pg) => { phrases.add(pg.text); pg.text.split(' ').forEach((w) => phrases.add(bare(w))); });
   st.questions.forEach((q) => { phrases.add(q.q); q.opts.forEach((o) => phrases.add(o)); });
