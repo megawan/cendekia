@@ -1,14 +1,19 @@
 # Kosakata
 
-An Indonesian–English vocabulary game. Children learn about a hundred everyday English words in ten themes, hearing every word in both languages. The UI and spoken prompts are in Indonesian, the words being learned are in English.
+An Indonesian–English vocabulary game. Children learn about 300 English words in 24 themes, hearing every word in both languages. The UI and spoken prompts are in Indonesian, the words being learned are in English.
+
+## Themes
+
+Hewan Ternak, Hewan Liar, Hewan Laut, Serangga & Reptil, Burung, Buah, Sayuran, Makanan & Minuman, **Wajah** (12 parts, from hair to chin), **Anggota Badan** (19 parts, from head to toe), **Organ Dalam** (brain, heart, lungs, liver, stomach, kidneys, intestines ...), Rumah, Dapur, Sekolah, Pakaian, Kendaraan, **Di Jalan Raya** (zebra crossing, bollard, traffic cone, speed bump, sidewalk, crossroads, manhole, traffic light, bus stop ...), Cuaca, Alam, Warna, Keluarga, Pekerjaan, Tempat Umum, Mainan & Musik.
 
 ## Modes
 
-- Petualangan (adventure map): thirteen stages in order. Each stage is a round of eight questions and gives one to three stars. A stage opens once the stage before it has at least one star.
+- Petualangan: pick a theme from the grid (all open, so a child can start with what interests them). Each theme is a round of eight questions and gives one to three stars. Three more stages mix every theme.
 
   | Stage | Question |
   | --- | --- |
-  | Hewan, Buah, Makanan, Tubuh, Rumah, Pakaian, Kendaraan, Alam, Warna, Keluarga | Hear an English word and pick its picture, or see a picture with its Indonesian word and pick the English word |
+  | Each theme | Hear an English word and pick its picture, or see a picture with its Indonesian word and pick the English word. Wrong options come from the same theme first |
+  | Wajah, Anggota Badan, Organ Dalam | The picture is a figure with the part marked. Word options only, since marked pictures look too alike to choose between |
   | Tebak Arti | See an Indonesian word and pick the English word, or hear and read an English word and pick the Indonesian one. Words from every theme |
   | Eja Kata | See a picture and tap the letters of the English word in order. Words of three to five letters |
   | Juara Kosakata | All the question types, words from every theme |
@@ -18,6 +23,16 @@ An Indonesian–English vocabulary game. Children learn about a hundred everyday
 - Stiker-ku: twelve birds that unlock as the total star count grows (`STICKERS` in `index.html`).
 
 Wrong options never repeat the English text, the Indonesian text or the picture of the answer, so "orange" the fruit and "orange" the colour are never offered together.
+
+## Pictures
+
+A word's third value is its picture:
+
+| Value | Picture |
+| --- | --- |
+| an emoji, for example `🐱` | the emoji |
+| `art:<name>`, for example `art:bollard` | a small drawing from `ART` in `index.html`, for things that have no emoji (zebra crossing, bollard, traffic cone, speed bump, sidewalk, crossroads, manhole) |
+| `fig:<figure>:<part>`, for example `fig:face:eye` | a figure (`face`, `body` or `back`) with the part marked. The marks are ellipses in `HL`, as `[cx, cy, rx, ry, rotation]` in the figure's own units, so a new part is one line |
 
 ## Rewards
 

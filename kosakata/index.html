@@ -91,24 +91,6 @@
   .bubble::before { content: ""; position: absolute; left: -9px; top: 50%; margin-top: -8px; width: 14px; height: 14px;
     background: #fff8e1; border-left: 2px solid #f1dfb2; border-bottom: 2px solid #f1dfb2; transform: rotate(45deg); }
 
-  /* Adventure map */
-  .map { position: relative; padding: 8px 0 16px; }
-  .map::before { content: ""; position: absolute; left: 50%; top: 40px; bottom: 50px; width: 0;
-    border-left: 6px dashed var(--line); transform: translateX(-3px); }
-  .node { position: relative; display: flex; flex-direction: column; align-items: center; width: 150px;
-    margin: 0 auto 10px; transform: translateX(var(--x, 0)); }
-  .node button { width: 92px; height: 92px; border-radius: 50%; border: 4px solid #fff; cursor: pointer;
-    background: var(--c, var(--c-blue)); color: #fff; font: inherit; font-weight: 800; font-size: 2rem; line-height: 1;
-    box-shadow: 0 6px 0 rgba(0,0,0,.18); transition: transform .1s; }
-  .node button:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
-  .node.locked button { background: #c9d3e1; color: #fff; cursor: default; }
-  .node.next button { animation: bounce 1.2s ease-in-out infinite; box-shadow: 0 6px 0 rgba(0,0,0,.18), 0 0 0 8px rgba(242,163,58,.35); }
-  .node b { margin-top: 6px; background: #fff; border: 2px solid var(--line); border-radius: 12px; padding: 0 10px;
-    font-size: 1rem; text-align: center; line-height: 1.4; }
-  .node .st { display: flex; gap: 2px; height: 22px; margin-top: 2px; }
-  .node .st svg { width: 22px; height: 22px; fill: var(--line); }
-  .node .st svg.on { fill: var(--warm); }
-  .goal { text-align: center; font-size: 3rem; line-height: 1; position: relative; }
 
   /* Explore: cards */
   .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
@@ -152,6 +134,23 @@
   .opt.pic { font-size: 3.4rem; }
   /* Word options: long English words (watermelon, helicopter) must fit two to a row on a phone. */
   .opt.txt { font-size: clamp(1.15rem, 5.4vw, 1.7rem); min-height: 84px; overflow-wrap: anywhere; }
+  .themes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 560px) { .themes { grid-template-columns: repeat(3, 1fr); } }
+  .theme { --c: var(--c-blue); display: flex; flex-direction: column; align-items: center; gap: 2px; font: inherit; color: inherit; cursor: pointer;
+    background: var(--card); border: 2px solid var(--line); border-bottom: 6px solid var(--c); border-radius: var(--radius); padding: 10px 6px 8px; }
+  .theme:active { transform: translateY(3px); }
+  .theme .ico { font-size: 2.4rem; line-height: 1.2; }
+  .theme b { font-size: 1.05rem; line-height: 1.2; text-align: center; }
+  .theme .st { display: flex; gap: 2px; }
+  .theme .st svg { width: 20px; height: 20px; fill: var(--line); }
+  .theme .st svg.on { fill: var(--warm); }
+  .theme.next { animation: bounce 1.4s ease-in-out infinite; box-shadow: 0 0 0 4px rgba(242,163,58,.4); }
+  /* Drawings and figures that stand in for an emoji. */
+  svg.art { width: 1em; height: 1em; vertical-align: -.12em; }
+  svg.fig { height: 8.5rem; width: auto; vertical-align: top; }
+  svg.fig.tall { height: 11.5rem; }
+  .wcard .pic svg.fig { height: 4.6rem; }
+  .wcard .pic svg.fig.tall { height: 6rem; }
   .word-line { font-size: 1.7rem; font-weight: 800; line-height: 1.2; }
   .word-line.id { color: var(--c-pink); }
   .word-line.big { font-size: 2.8rem; }
@@ -242,7 +241,7 @@
     <div class="menu">
       <button type="button" class="card hero-card" data-go="map" style="--c: var(--c-orange)">
         <span class="badge" aria-hidden="true">🗺️</span>
-        <span><b>Petualangan</b><br><small id="homeNext">Mulai dari hewan</small></span>
+        <span><b>Petualangan</b><br><small id="homeNext">Pilih tema favoritmu</small></span>
       </button>
       <button type="button" class="card" data-go="cards" style="--c: var(--c-pink)">
         <span class="badge" aria-hidden="true">🐱</span><b>Kartu Kata</b><small>Ketuk, dengar dua bahasa</small></button>
@@ -257,10 +256,10 @@
   <section id="map" hidden>
     <div class="bar">
       <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Petualangan</h2>
+      <h2>Pilih Tema</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="mapStars">0</span></span>
     </div>
-    <div class="map" id="mapNodes"></div>
+    <div class="themes" id="mapNodes"></div>
     <p class="note"><button type="button" class="btn ghost" id="resetMap">Mulai ulang petualangan</button></p>
   </section>
 
@@ -329,36 +328,361 @@
 <script type="application/json" id="content">
 {
   "cats": [
-    { "id": "hewan", "title": "Hewan", "icon": "🐱", "words": [
-      ["kucing", "cat", "🐱"], ["anjing", "dog", "🐶"], ["ikan", "fish", "🐟"], ["burung", "bird", "🐦"], ["sapi", "cow", "🐄"],
-      ["kuda", "horse", "🐴"], ["bebek", "duck", "🦆"], ["ayam", "chicken", "🐔"], ["kelinci", "rabbit", "🐰"], ["gajah", "elephant", "🐘"] ] },
+    { "id": "hewan", "title": "Hewan Ternak", "icon": "🐄", "words": [
+      ["kucing", "cat", "🐱"],
+      ["anjing", "dog", "🐶"],
+      ["sapi", "cow", "🐄"],
+      ["kuda", "horse", "🐴"],
+      ["bebek", "duck", "🦆"],
+      ["ayam", "chicken", "🐔"],
+      ["ayam jantan", "rooster", "🐓"],
+      ["kelinci", "rabbit", "🐰"],
+      ["domba", "sheep", "🐑"],
+      ["kambing", "goat", "🐐"],
+      ["kerbau", "buffalo", "🐃"]
+    ] },
+    { "id": "liar", "title": "Hewan Liar", "icon": "🦁", "words": [
+      ["gajah", "elephant", "🐘"],
+      ["singa", "lion", "🦁"],
+      ["harimau", "tiger", "🐯"],
+      ["jerapah", "giraffe", "🦒"],
+      ["zebra", "zebra", "🦓"],
+      ["monyet", "monkey", "🐒"],
+      ["beruang", "bear", "🐻"],
+      ["badak", "rhinoceros", "🦏"],
+      ["kuda nil", "hippopotamus", "🦛"],
+      ["buaya", "crocodile", "🐊"],
+      ["kanguru", "kangaroo", "🦘"],
+      ["serigala", "wolf", "🐺"]
+    ] },
+    { "id": "laut", "title": "Hewan Laut", "icon": "🐬", "words": [
+      ["ikan", "fish", "🐟"],
+      ["hiu", "shark", "🦈"],
+      ["paus", "whale", "🐋"],
+      ["lumba-lumba", "dolphin", "🐬"],
+      ["gurita", "octopus", "🐙"],
+      ["kepiting", "crab", "🦀"],
+      ["penyu", "turtle", "🐢"],
+      ["udang", "shrimp", "🦐"],
+      ["ubur-ubur", "jellyfish", "🪼"],
+      ["anjing laut", "seal", "🦭"],
+      ["cumi-cumi", "squid", "🦑"],
+      ["lobster", "lobster", "🦞"]
+    ] },
+    { "id": "serangga", "title": "Serangga & Reptil", "icon": "🦋", "words": [
+      ["kupu-kupu", "butterfly", "🦋"],
+      ["lebah", "bee", "🐝"],
+      ["semut", "ant", "🐜"],
+      ["laba-laba", "spider", "🕷️"],
+      ["kepik", "ladybug", "🐞"],
+      ["siput", "snail", "🐌"],
+      ["ulat", "caterpillar", "🐛"],
+      ["nyamuk", "mosquito", "🦟"],
+      ["ular", "snake", "🐍"],
+      ["katak", "frog", "🐸"],
+      ["kadal", "lizard", "🦎"]
+    ] },
+    { "id": "burung", "title": "Burung", "icon": "🦜", "words": [
+      ["burung", "bird", "🐦"],
+      ["burung hantu", "owl", "🦉"],
+      ["elang", "eagle", "🦅"],
+      ["kakatua", "parrot", "🦜"],
+      ["pinguin", "penguin", "🐧"],
+      ["merak", "peacock", "🦚"],
+      ["flamingo", "flamingo", "🦩"],
+      ["angsa", "swan", "🦢"],
+      ["anak ayam", "chick", "🐤"],
+      ["merpati", "dove", "🕊️"]
+    ] },
     { "id": "buah", "title": "Buah", "icon": "🍎", "words": [
-      ["apel", "apple", "🍎"], ["pisang", "banana", "🍌"], ["jeruk", "orange", "🍊"], ["anggur", "grapes", "🍇"], ["semangka", "watermelon", "🍉"],
-      ["stroberi", "strawberry", "🍓"], ["nanas", "pineapple", "🍍"], ["mangga", "mango", "🥭"], ["pir", "pear", "🍐"], ["kelapa", "coconut", "🥥"] ] },
-    { "id": "makanan", "title": "Makanan", "icon": "🍞", "words": [
-      ["wortel", "carrot", "🥕"], ["tomat", "tomato", "🍅"], ["jagung", "corn", "🌽"], ["kentang", "potato", "🥔"], ["roti", "bread", "🍞"],
-      ["nasi", "rice", "🍚"], ["telur", "egg", "🥚"], ["susu", "milk", "🥛"], ["keju", "cheese", "🧀"], ["es krim", "ice cream", "🍦"] ] },
-    { "id": "tubuh", "title": "Tubuh", "icon": "👃", "words": [
-      ["mata", "eye", "👁️"], ["hidung", "nose", "👃"], ["mulut", "mouth", "👄"], ["telinga", "ear", "👂"], ["tangan", "hand", "✋"],
-      ["kaki", "foot", "🦶"], ["gigi", "tooth", "🦷"], ["lidah", "tongue", "👅"], ["lengan", "arm", "💪"] ] },
+      ["apel", "apple", "🍎"],
+      ["pisang", "banana", "🍌"],
+      ["jeruk", "orange", "🍊"],
+      ["anggur", "grapes", "🍇"],
+      ["semangka", "watermelon", "🍉"],
+      ["stroberi", "strawberry", "🍓"],
+      ["nanas", "pineapple", "🍍"],
+      ["mangga", "mango", "🥭"],
+      ["pir", "pear", "🍐"],
+      ["kelapa", "coconut", "🥥"],
+      ["lemon", "lemon", "🍋"],
+      ["persik", "peach", "🍑"],
+      ["ceri", "cherries", "🍒"],
+      ["kiwi", "kiwi", "🥝"],
+      ["melon", "melon", "🍈"]
+    ] },
+    { "id": "sayur", "title": "Sayuran", "icon": "🥕", "words": [
+      ["wortel", "carrot", "🥕"],
+      ["tomat", "tomato", "🍅"],
+      ["jagung", "corn", "🌽"],
+      ["kentang", "potato", "🥔"],
+      ["brokoli", "broccoli", "🥦"],
+      ["mentimun", "cucumber", "🥒"],
+      ["terong", "eggplant", "🍆"],
+      ["cabai", "chili", "🌶️"],
+      ["bawang merah", "onion", "🧅"],
+      ["bawang putih", "garlic", "🧄"],
+      ["jamur", "mushroom", "🍄"],
+      ["kacang tanah", "peanut", "🥜"]
+    ] },
+    { "id": "makanan", "title": "Makanan & Minuman", "icon": "🍞", "words": [
+      ["roti", "bread", "🍞"],
+      ["nasi", "rice", "🍚"],
+      ["telur", "egg", "🥚"],
+      ["susu", "milk", "🥛"],
+      ["keju", "cheese", "🧀"],
+      ["es krim", "ice cream", "🍦"],
+      ["mi", "noodles", "🍜"],
+      ["pizza", "pizza", "🍕"],
+      ["burger", "burger", "🍔"],
+      ["kue", "cake", "🍰"],
+      ["biskuit", "cookie", "🍪"],
+      ["permen", "candy", "🍬"],
+      ["madu", "honey", "🍯"],
+      ["jus", "juice", "🧃"],
+      ["teh", "tea", "🍵"],
+      ["air", "water", "💧"]
+    ] },
+    { "id": "wajah", "title": "Wajah", "icon": "🙂", "types": ["picEn", "enId", "idEn", "spell"], "words": [
+      ["rambut", "hair", "fig:face:hair"],
+      ["dahi", "forehead", "fig:face:forehead"],
+      ["alis", "eyebrow", "fig:face:eyebrow"],
+      ["bulu mata", "eyelash", "fig:face:eyelash"],
+      ["mata", "eye", "fig:face:eye"],
+      ["telinga", "ear", "fig:face:ear"],
+      ["hidung", "nose", "fig:face:nose"],
+      ["pipi", "cheek", "fig:face:cheek"],
+      ["mulut", "mouth", "fig:face:mouth"],
+      ["gigi", "tooth", "fig:face:tooth"],
+      ["lidah", "tongue", "fig:face:tongue"],
+      ["dagu", "chin", "fig:face:chin"]
+    ] },
+    { "id": "badan", "title": "Anggota Badan", "icon": "🧍", "types": ["picEn", "enId", "idEn", "spell"], "words": [
+      ["kepala", "head", "fig:body:head"],
+      ["leher", "neck", "fig:body:neck"],
+      ["bahu", "shoulder", "fig:body:shoulder"],
+      ["lengan", "arm", "fig:body:arm"],
+      ["siku", "elbow", "fig:body:elbow"],
+      ["pergelangan tangan", "wrist", "fig:body:wrist"],
+      ["tangan", "hand", "fig:body:hand"],
+      ["jari tangan", "finger", "fig:body:finger"],
+      ["dada", "chest", "fig:body:chest"],
+      ["punggung", "back", "fig:back:back"],
+      ["perut", "belly", "fig:body:belly"],
+      ["pinggang", "waist", "fig:body:waist"],
+      ["pinggul", "hip", "fig:body:hip"],
+      ["paha", "thigh", "fig:body:thigh"],
+      ["lutut", "knee", "fig:body:knee"],
+      ["kaki", "leg", "fig:body:leg"],
+      ["pergelangan kaki", "ankle", "fig:body:ankle"],
+      ["telapak kaki", "foot", "fig:body:foot"],
+      ["jari kaki", "toe", "fig:body:toe"]
+    ] },
+    { "id": "organ", "title": "Organ Dalam", "icon": "🫀", "types": ["picEn", "enId", "idEn", "spell"], "words": [
+      ["otak", "brain", "fig:body:brain"],
+      ["tenggorokan", "throat", "fig:body:throat"],
+      ["jantung", "heart", "fig:body:heart"],
+      ["paru-paru", "lungs", "fig:body:lungs"],
+      ["hati", "liver", "fig:body:liver"],
+      ["lambung", "stomach", "fig:body:stomach"],
+      ["ginjal", "kidneys", "fig:body:kidneys"],
+      ["usus", "intestines", "fig:body:intestines"],
+      ["kandung kemih", "bladder", "fig:body:bladder"],
+      ["tulang rusuk", "ribs", "fig:body:ribs"],
+      ["tengkorak", "skull", "fig:body:skull"],
+      ["tulang belakang", "spine", "fig:back:spine"]
+    ] },
     { "id": "rumah", "title": "Rumah", "icon": "🏠", "words": [
-      ["rumah", "house", "🏠"], ["pintu", "door", "🚪"], ["tempat tidur", "bed", "🛏️"], ["kursi", "chair", "🪑"], ["jam", "clock", "⏰"],
-      ["buku", "book", "📖"], ["kunci", "key", "🔑"], ["lampu", "lamp", "💡"], ["telepon", "phone", "📞"], ["payung", "umbrella", "☂️"] ] },
+      ["rumah", "house", "🏠"],
+      ["pintu", "door", "🚪"],
+      ["jendela", "window", "🪟"],
+      ["tempat tidur", "bed", "🛏️"],
+      ["kursi", "chair", "🪑"],
+      ["sofa", "sofa", "🛋️"],
+      ["jam", "clock", "⏰"],
+      ["buku", "book", "📖"],
+      ["kunci", "key", "🔑"],
+      ["lampu", "lamp", "💡"],
+      ["telepon", "phone", "📞"],
+      ["payung", "umbrella", "☂️"],
+      ["cermin", "mirror", "🪞"],
+      ["televisi", "television", "📺"],
+      ["toilet", "toilet", "🚽"],
+      ["pancuran", "shower", "🚿"],
+      ["bak mandi", "bathtub", "🛁"],
+      ["sapu", "broom", "🧹"],
+      ["ember", "bucket", "🪣"],
+      ["sikat gigi", "toothbrush", "🪥"]
+    ] },
+    { "id": "dapur", "title": "Dapur", "icon": "🍳", "words": [
+      ["sendok", "spoon", "🥄"],
+      ["garpu", "fork", "🍴"],
+      ["pisau", "knife", "🔪"],
+      ["piring", "plate", "🍽️"],
+      ["mangkuk", "bowl", "🥣"],
+      ["cangkir", "cup", "☕"],
+      ["gelas", "glass", "🥤"],
+      ["wajan", "frying pan", "🍳"],
+      ["panci", "pot", "🍲"],
+      ["sumpit", "chopsticks", "🥢"]
+    ] },
+    { "id": "sekolah", "title": "Sekolah", "icon": "✏️", "words": [
+      ["pensil", "pencil", "✏️"],
+      ["pulpen", "pen", "🖊️"],
+      ["penggaris", "ruler", "📏"],
+      ["gunting", "scissors", "✂️"],
+      ["buku tulis", "notebook", "📓"],
+      ["penjepit kertas", "paper clip", "📎"],
+      ["krayon", "crayon", "🖍️"],
+      ["kuas", "paintbrush", "🖌️"],
+      ["tas sekolah", "school bag", "🎒"],
+      ["bola dunia", "globe", "🌐"],
+      ["mikroskop", "microscope", "🔬"],
+      ["sempoa", "abacus", "🧮"]
+    ] },
     { "id": "pakaian", "title": "Pakaian", "icon": "👕", "words": [
-      ["topi", "hat", "🧢"], ["sepatu", "shoe", "👟"], ["kaus kaki", "sock", "🧦"], ["baju", "shirt", "👕"], ["celana", "pants", "👖"],
-      ["kacamata", "glasses", "👓"], ["tas", "bag", "🎒"], ["gaun", "dress", "👗"], ["sarung tangan", "glove", "🧤"], ["syal", "scarf", "🧣"] ] },
+      ["topi", "hat", "🧢"],
+      ["sepatu", "shoe", "👟"],
+      ["kaus kaki", "sock", "🧦"],
+      ["baju", "shirt", "👕"],
+      ["celana", "pants", "👖"],
+      ["kacamata", "glasses", "👓"],
+      ["tas", "bag", "👜"],
+      ["gaun", "dress", "👗"],
+      ["sarung tangan", "glove", "🧤"],
+      ["syal", "scarf", "🧣"],
+      ["jaket", "jacket", "🧥"],
+      ["sandal", "sandals", "🩴"],
+      ["sepatu bot", "boot", "🥾"],
+      ["dasi", "necktie", "👔"],
+      ["jilbab", "hijab", "🧕"]
+    ] },
     { "id": "kendaraan", "title": "Kendaraan", "icon": "🚗", "words": [
-      ["mobil", "car", "🚗"], ["bus", "bus", "🚌"], ["sepeda", "bicycle", "🚲"], ["kereta", "train", "🚆"], ["pesawat", "airplane", "✈️"],
-      ["kapal", "ship", "🚢"], ["truk", "truck", "🚚"], ["helikopter", "helicopter", "🚁"], ["sepeda motor", "motorcycle", "🏍️"], ["perahu", "boat", "⛵"] ] },
+      ["mobil", "car", "🚗"],
+      ["bus", "bus", "🚌"],
+      ["sepeda", "bicycle", "🚲"],
+      ["kereta", "train", "🚆"],
+      ["pesawat", "airplane", "✈️"],
+      ["kapal", "ship", "🚢"],
+      ["truk", "truck", "🚚"],
+      ["helikopter", "helicopter", "🚁"],
+      ["sepeda motor", "motorcycle", "🏍️"],
+      ["perahu", "boat", "⛵"],
+      ["ambulans", "ambulance", "🚑"],
+      ["mobil pemadam kebakaran", "fire truck", "🚒"],
+      ["mobil polisi", "police car", "🚓"],
+      ["taksi", "taxi", "🚕"],
+      ["traktor", "tractor", "🚜"],
+      ["skuter", "scooter", "🛵"],
+      ["roket", "rocket", "🚀"]
+    ] },
+    { "id": "jalan", "title": "Di Jalan Raya", "icon": "🚦", "words": [
+      ["zebra cross", "zebra crossing", "art:zebra"],
+      ["lampu lalu lintas", "traffic light", "🚦"],
+      ["tiang pembatas", "bollard", "art:bollard"],
+      ["kerucut lalu lintas", "traffic cone", "art:cone"],
+      ["polisi tidur", "speed bump", "art:bump"],
+      ["trotoar", "sidewalk", "art:sidewalk"],
+      ["jalan", "road", "🛣️"],
+      ["perempatan", "crossroads", "art:crossroads"],
+      ["rambu stop", "stop sign", "🛑"],
+      ["halte bus", "bus stop", "🚏"],
+      ["tempat parkir", "parking lot", "🅿️"],
+      ["pom bensin", "gas station", "⛽"],
+      ["jembatan", "bridge", "🌉"],
+      ["polisi lalu lintas", "traffic police", "👮"],
+      ["jalan sedang diperbaiki", "road works", "🚧"],
+      ["dilarang masuk", "no entry", "⛔"],
+      ["tutup selokan", "manhole", "art:manhole"],
+      ["pejalan kaki", "pedestrian", "🚶"]
+    ] },
+    { "id": "cuaca", "title": "Cuaca", "icon": "⛅", "words": [
+      ["matahari", "sun", "☀️"],
+      ["awan", "cloud", "☁️"],
+      ["hujan", "rain", "🌧️"],
+      ["petir", "lightning", "⚡"],
+      ["pelangi", "rainbow", "🌈"],
+      ["salju", "snow", "❄️"],
+      ["angin", "wind", "💨"],
+      ["kabut", "fog", "🌫️"]
+    ] },
     { "id": "alam", "title": "Alam", "icon": "🌳", "words": [
-      ["matahari", "sun", "☀️"], ["bulan", "moon", "🌙"], ["bintang", "star", "⭐"], ["awan", "cloud", "☁️"], ["hujan", "rain", "🌧️"],
-      ["pohon", "tree", "🌳"], ["bunga", "flower", "🌸"], ["gunung", "mountain", "⛰️"], ["api", "fire", "🔥"], ["laut", "sea", "🌊"] ] },
+      ["bulan", "moon", "🌙"],
+      ["bintang", "star", "⭐"],
+      ["bumi", "earth", "🌍"],
+      ["pohon", "tree", "🌳"],
+      ["bunga", "flower", "🌸"],
+      ["daun", "leaf", "🍃"],
+      ["gunung", "mountain", "⛰️"],
+      ["gunung berapi", "volcano", "🌋"],
+      ["pulau", "island", "🏝️"],
+      ["gurun", "desert", "🏜️"],
+      ["laut", "sea", "🌊"],
+      ["api", "fire", "🔥"]
+    ] },
     { "id": "warna", "title": "Warna", "icon": "🌈", "words": [
-      ["merah", "red", "🔴"], ["biru", "blue", "🔵"], ["hijau", "green", "🟢"], ["kuning", "yellow", "🟡"], ["oranye", "orange", "🟠"],
-      ["ungu", "purple", "🟣"], ["cokelat", "brown", "🟤"], ["hitam", "black", "⚫"], ["putih", "white", "⚪"] ] },
-    { "id": "orang", "title": "Keluarga", "icon": "👨‍👩‍👧", "words": [
-      ["ibu", "mother", "👩"], ["ayah", "father", "👨"], ["nenek", "grandmother", "👵"], ["kakek", "grandfather", "👴"], ["bayi", "baby", "👶"],
-      ["anak laki-laki", "boy", "👦"], ["anak perempuan", "girl", "👧"], ["guru", "teacher", "🧑‍🏫"], ["dokter", "doctor", "🧑‍⚕️"], ["polisi", "police officer", "👮"] ] }
+      ["merah", "red", "🔴"],
+      ["biru", "blue", "🔵"],
+      ["hijau", "green", "🟢"],
+      ["kuning", "yellow", "🟡"],
+      ["oranye", "orange", "🟠"],
+      ["ungu", "purple", "🟣"],
+      ["cokelat", "brown", "🟤"],
+      ["hitam", "black", "⚫"],
+      ["putih", "white", "⚪"]
+    ] },
+    { "id": "keluarga", "title": "Keluarga", "icon": "👨‍👩‍👧", "words": [
+      ["ibu", "mother", "👩"],
+      ["ayah", "father", "👨"],
+      ["nenek", "grandmother", "👵"],
+      ["kakek", "grandfather", "👴"],
+      ["bayi", "baby", "👶"],
+      ["anak laki-laki", "boy", "👦"],
+      ["anak perempuan", "girl", "👧"],
+      ["keluarga", "family", "👨‍👩‍👧"]
+    ] },
+    { "id": "profesi", "title": "Pekerjaan", "icon": "🧑‍⚕️", "words": [
+      ["guru", "teacher", "🧑‍🏫"],
+      ["dokter", "doctor", "🧑‍⚕️"],
+      ["polisi", "police officer", "👮"],
+      ["pemadam kebakaran", "firefighter", "🧑‍🚒"],
+      ["petani", "farmer", "🧑‍🌾"],
+      ["koki", "cook", "🧑‍🍳"],
+      ["pilot", "pilot", "🧑‍✈️"],
+      ["astronot", "astronaut", "🧑‍🚀"],
+      ["pelukis", "artist", "🧑‍🎨"],
+      ["ilmuwan", "scientist", "🧑‍🔬"],
+      ["montir", "mechanic", "🧑‍🔧"],
+      ["penyanyi", "singer", "🧑‍🎤"]
+    ] },
+    { "id": "tempat", "title": "Tempat Umum", "icon": "🏥", "words": [
+      ["rumah sakit", "hospital", "🏥"],
+      ["sekolah", "school", "🏫"],
+      ["masjid", "mosque", "🕌"],
+      ["toko", "shop", "🏪"],
+      ["bank", "bank", "🏦"],
+      ["stasiun", "station", "🚉"],
+      ["taman", "park", "🏞️"],
+      ["kantor pos", "post office", "🏤"],
+      ["pabrik", "factory", "🏭"],
+      ["pantai", "beach", "🏖️"],
+      ["hotel", "hotel", "🏨"]
+    ] },
+    { "id": "mainan", "title": "Mainan & Musik", "icon": "🧸", "words": [
+      ["bola", "ball", "⚽"],
+      ["layang-layang", "kite", "🪁"],
+      ["boneka", "teddy bear", "🧸"],
+      ["balon", "balloon", "🎈"],
+      ["gendang", "drum", "🥁"],
+      ["gitar", "guitar", "🎸"],
+      ["piano", "piano", "🎹"],
+      ["biola", "violin", "🎻"],
+      ["terompet", "trumpet", "🎺"],
+      ["robot", "robot", "🤖"],
+      ["puzel", "puzzle", "🧩"],
+      ["dadu", "dice", "🎲"],
+      ["yoyo", "yo-yo", "🪀"]
+    ] }
   ],
   "cheers": ["Hebat!", "Pintar!", "Benar!", "Bagus sekali!", "Keren!", "Luar biasa!"],
   "phrases": {
@@ -395,6 +719,69 @@
   const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const sample = (a) => a[Math.floor(Math.random() * a.length)];
 
+  // ---- Pictures ----
+  // A word's `pic` is an emoji, "art:<name>" for a small drawing of something that has no emoji (zebra crossing, bollard ...),
+  // or "fig:<figure>:<part>" for a figure with one part highlighted (face, body, back view).
+  const SIL = '#ffe08a', LINE = '#d9a93a', HI = '#e0283c';
+  const limb = (d, w) => '<path d="' + d + '" fill="none" stroke="' + LINE + '" stroke-width="' + (w + 3) + '" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="' + d + '" fill="none" stroke="' + SIL + '" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  const shape = (el) => '<' + el + ' fill="' + SIL + '" stroke="' + LINE + '" stroke-width="1.6"/>';
+  const FIGURES = {
+    // Front view of a person, drawn in the same yellow as emoji faces.
+    body: '<svg class="fig tall" viewBox="0 0 100 200" aria-hidden="true">' +
+      limb('M32 48 L19 76 L12 100', 9) + limb('M68 48 L81 76 L88 100', 9) + limb('M42 100 L40 146 L40 184', 12) + limb('M58 100 L60 146 L60 184', 12) +
+      shape('rect x="31" y="40" width="38" height="64" rx="13"') + shape('rect x="45" y="31" width="10" height="12" rx="3"') + shape('circle cx="50" cy="20" r="14"') +
+      shape('circle cx="11" cy="106" r="5.5"') + shape('circle cx="89" cy="106" r="5.5"') + shape('ellipse cx="36" cy="191" rx="10" ry="5"') + shape('ellipse cx="64" cy="191" rx="10" ry="5"') + '@@',
+    // The same figure from behind, with the spine and shoulder blades drawn in.
+    back: '<svg class="fig tall" viewBox="0 0 100 200" aria-hidden="true">' +
+      limb('M32 48 L19 76 L12 100', 9) + limb('M68 48 L81 76 L88 100', 9) + limb('M42 100 L40 146 L40 184', 12) + limb('M58 100 L60 146 L60 184', 12) +
+      shape('rect x="31" y="40" width="38" height="64" rx="13"') + shape('rect x="45" y="31" width="10" height="12" rx="3"') + shape('circle cx="50" cy="20" r="14"') +
+      shape('circle cx="11" cy="106" r="5.5"') + shape('circle cx="89" cy="106" r="5.5"') + shape('ellipse cx="36" cy="191" rx="10" ry="5"') + shape('ellipse cx="64" cy="191" rx="10" ry="5"') +
+      '<path d="M50 42 V100" stroke="' + LINE + '" stroke-width="2.5" stroke-dasharray="3 3"/><path d="M38 54 Q42 66 49 62 M62 54 Q58 66 51 62" fill="none" stroke="' + LINE + '" stroke-width="2"/>@@',
+    face: '<svg class="fig" viewBox="0 0 100 100" aria-hidden="true">' +
+      shape('ellipse cx="13" cy="56" rx="5" ry="9"') + shape('ellipse cx="87" cy="56" rx="5" ry="9"') + shape('circle cx="50" cy="54" r="36"') +
+      '<path d="M15 48 Q12 14 50 14 Q88 14 85 48 Q70 30 50 30 Q30 30 15 48Z" fill="#7a5230"/>' +
+      '<path d="M28 41 Q36 36 44 41 M56 41 Q64 36 72 41" fill="none" stroke="#7a5230" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M30 45 L27 42 M36 44 L35.5 40.5 M42 45 L44 42 M58 45 L56 42 M64 44 L64.5 40.5 M70 45 L73 42" stroke="#3b2a1a" stroke-width="1.6" stroke-linecap="round"/>' +
+      '<ellipse cx="36" cy="51" rx="6" ry="6.5" fill="#fff"/><ellipse cx="64" cy="51" rx="6" ry="6.5" fill="#fff"/><circle cx="37" cy="52" r="3" fill="#3b2a1a"/><circle cx="63" cy="52" r="3" fill="#3b2a1a"/>' +
+      '<path d="M50 56 Q46 64 50 66 Q54 66 52 58" fill="none" stroke="' + LINE + '" stroke-width="2" stroke-linecap="round"/>' +
+      '<circle cx="27" cy="66" r="6" fill="#ff9aa2" opacity=".5"/><circle cx="73" cy="66" r="6" fill="#ff9aa2" opacity=".5"/>' +
+      '<path d="M36 74 Q50 92 64 74Z" fill="#8a2d3b"/><rect x="42" y="74" width="16" height="4.5" rx="1" fill="#fff"/><ellipse cx="50" cy="84" rx="6" ry="3.5" fill="#ff7a8a"/>@@'
+  };
+  // Highlighted parts as [cx, cy, rx, ry, rotation] in the figure's own units. A part with two sides is a list of them.
+  const HL = {
+    face: { hair: [50, 21, 32, 9], forehead: [50, 34, 17, 5], eyebrow: [36, 38.5, 9, 3.5], eyelash: [36, 43.5, 9, 3], eye: [36, 51, 8, 8], ear: [13, 56, 7, 11],
+      nose: [50, 61, 6, 8], cheek: [27, 66, 8, 8], mouth: [50, 80, 15, 11], tooth: [50, 76.2, 9.5, 3.4], tongue: [50, 84, 7, 4.5], chin: [50, 92, 10, 5] },
+    body: { head: [50, 20, 17, 17], neck: [50, 37, 8, 8], shoulder: [31, 47, 9, 8], arm: [25, 63, 6, 20, 25], elbow: [18, 76, 7.5, 7.5], wrist: [13, 98, 7, 7],
+      hand: [11, 107, 8, 8], finger: [11, 114, 6, 7], chest: [50, 55, 16, 11], belly: [50, 82, 13, 11], waist: [50, 95, 19, 5], hip: [38, 106, 9, 8],
+      thigh: [42, 122, 9, 17], knee: [40, 146, 7.5, 7.5], leg: [41, 144, 9, 40], ankle: [40, 176, 7.5, 7.5], foot: [36, 191, 11, 6.5], toe: [29, 192, 6, 5],
+      brain: [50, 17, 10, 8], throat: [50, 38, 5.5, 7], heart: [54, 56, 6.5, 6.5], lungs: [[43, 55, 7, 12], [59, 55, 7, 12]], liver: [58, 72, 10, 5.5],
+      stomach: [44, 74, 7.5, 6.5], kidneys: [[41, 86, 5, 6.5], [59, 86, 5, 6.5]], intestines: [50, 93, 12, 9], bladder: [50, 103, 6.5, 5.5],
+      ribs: [50, 57, 17, 14], skull: [50, 19, 15, 14] },
+    back: { back: [50, 58, 17, 17], spine: [50, 72, 3.5, 30] }
+  };
+  const ART = {
+    zebra: '<rect x="4" y="22" width="92" height="56" rx="8" fill="#4b5563"/><g fill="#fff"><rect x="12" y="28" width="10" height="44" rx="2"/><rect x="28" y="28" width="10" height="44" rx="2"/><rect x="44" y="28" width="10" height="44" rx="2"/><rect x="60" y="28" width="10" height="44" rx="2"/><rect x="76" y="28" width="10" height="44" rx="2"/></g>',
+    bollard: '<rect x="8" y="80" width="84" height="6" rx="3" fill="#9ca3af"/><rect x="38" y="24" width="24" height="58" rx="8" fill="#6b7280"/><ellipse cx="50" cy="26" rx="12" ry="6" fill="#9ca3af"/><rect x="38" y="42" width="24" height="10" fill="#fbbf24"/><rect x="38" y="60" width="24" height="6" fill="#fbbf24"/>',
+    cone: '<path d="M50 12 L74 76 L26 76Z" fill="#f97316"/><path d="M41 38 L59 38 L63 50 L37 50Z" fill="#fff"/><rect x="20" y="76" width="60" height="10" rx="3" fill="#374151"/>',
+    bump: '<rect x="4" y="66" width="92" height="18" rx="4" fill="#4b5563"/><path d="M14 66 Q50 26 86 66Z" fill="#facc15"/><clipPath id="ck-bump"><path d="M14 66 Q50 26 86 66Z"/></clipPath><g clip-path="url(#ck-bump)" fill="#1f2937"><rect x="24" y="30" width="8" height="38"/><rect x="40" y="30" width="8" height="38"/><rect x="56" y="30" width="8" height="38"/><rect x="72" y="30" width="8" height="38"/></g>',
+    sidewalk: '<rect x="0" y="72" width="46" height="18" fill="#4b5563"/><rect x="46" y="54" width="54" height="36" fill="#d1d5db"/><rect x="46" y="54" width="54" height="8" fill="#e5e7eb"/><path d="M64 62 V90 M82 62 V90 M46 76 H100" stroke="#9ca3af" stroke-width="2"/>',
+    crossroads: '<rect x="38" y="4" width="24" height="92" fill="#4b5563"/><rect x="4" y="38" width="92" height="24" fill="#4b5563"/><path d="M50 8 V34 M50 66 V92 M8 50 H34 M66 50 H92" stroke="#fff" stroke-width="3" stroke-dasharray="6 5"/>',
+    manhole: '<rect x="4" y="20" width="92" height="60" rx="8" fill="#6b7280"/><ellipse cx="50" cy="52" rx="30" ry="18" fill="#374151"/><ellipse cx="50" cy="52" rx="24" ry="13" fill="none" stroke="#9ca3af" stroke-width="2"/><path d="M30 52 H70 M38 42 V62 M50 40 V64 M62 42 V62" stroke="#9ca3af" stroke-width="2"/>'
+  };
+  const isFig = (w) => w.pic.startsWith('fig:');
+  function highlight(parts) {
+    const list = Array.isArray(parts[0]) ? parts : [parts];
+    return list.map(([cx, cy, rx, ry, rot]) => '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '"' + (rot ? ' transform="rotate(' + rot + ' ' + cx + ' ' + cy + ')"' : '') +
+      ' fill="' + HI + '" fill-opacity=".38" stroke="' + HI + '" stroke-width="2"/>').join('');
+  }
+  // The picture of a word as HTML: an emoji, a drawing, or a figure with the part marked.
+  function picHtml(w) {
+    if (w.pic.startsWith('art:')) return '<svg class="art" viewBox="0 0 100 100" aria-hidden="true">' + ART[w.pic.slice(4)] + '</svg>';
+    if (isFig(w)) { const [, fig, part] = w.pic.split(':'); return FIGURES[fig].replace('@@', highlight(HL[fig][part]) + '</svg>'); }
+    return w.pic;
+  }
+
   // ---- Content ----
   // A word is {id, en, pic, cat}. The same English word can sit in two categories (orange the fruit and the colour),
   // so a wrong option never repeats the English or the Indonesian text of the answer.
@@ -405,7 +792,9 @@
   // Picks wrong options from `pool` that never clash with the answer or with each other.
   function wrong(pool, answer, n) {
     const out = [];
-    shuffle(pool.slice()).forEach((w) => { if (out.length < n && ![answer, ...out].some((o) => clash(o, w))) out.push(w); });
+    // Words from the answer's own theme come first, so the wrong options are believable.
+    const near = shuffle(pool.filter((w) => w.cat === answer.cat)), far = shuffle(pool.filter((w) => w.cat !== answer.cat));
+    [...near, ...far].forEach((w) => { if (out.length < n && ![answer, ...out].some((o) => clash(o, w))) out.push(w); });
     return out;
   }
 
@@ -515,20 +904,15 @@
   const face = (k) => '<span class="face" style="--c:' + k.c + '" aria-hidden="true">' + k.pic + '</span>';
 
   // ---- Adventure stages ----
-  // Each category gets a stage; three more stages mix every category.
-  const catStage = (cid, c) => { const k = C.cats.find((x) => x.id === cid); return { id: cid, title: k.title, icon: k.icon, c, pool: k.list, types: ['hearEn', 'picEn'] }; };
+  // Each theme gets a stage; three more stages mix every theme. All stages are open: with this many themes,
+  // a child should be able to start with the one that interests them (the street, the body ...).
+  const COLORS = ['var(--c-orange)', 'var(--c-pink)', 'var(--c-purple)', 'var(--c-blue)', 'var(--c-teal)', 'var(--c-green)'];
   const SHORT = ALL.filter((w) => /^[a-z]{3,5}$/.test(w.en));
-  const STAGES = [
-    catStage('hewan', 'var(--c-orange)'), catStage('buah', 'var(--c-pink)'), catStage('makanan', 'var(--c-purple)'),
-    catStage('tubuh', 'var(--c-blue)'), catStage('rumah', 'var(--c-teal)'), catStage('pakaian', 'var(--c-green)'),
-    catStage('kendaraan', 'var(--c-orange)'), catStage('alam', 'var(--c-pink)'), catStage('warna', 'var(--c-purple)'),
-    catStage('orang', 'var(--c-blue)'),
+  const STAGES = C.cats.map((k, i) => ({ id: k.id, title: k.title, icon: k.icon, c: COLORS[i % COLORS.length], pool: k.list, types: k.types || ['hearEn', 'picEn'] })).concat([
     { id: 'arti', title: 'Tebak Arti', icon: 'A↔B', c: 'var(--c-teal)', pool: ALL, types: ['idEn', 'enId'] },
     { id: 'eja', title: 'Eja Kata', icon: '🧩', c: 'var(--c-green)', pool: SHORT, types: ['spell'] },
     { id: 'juara', title: 'Juara Kosakata', icon: '🏆', c: 'var(--c-orange)', pool: ALL, types: ['hearEn', 'picEn', 'idEn', 'enId', 'spell'] }
-  ];
-  // A stage opens once the one before it has at least one star.
-  const isOpen = (i) => i === 0 || (S.best[STAGES[i - 1].id] || 0) > 0;
+  ]);
   const nextStage = () => { const i = STAGES.findIndex((s) => !S.best[s.id]); return i < 0 ? -1 : i; };
   const starSvg = (on, cls) => '<svg class="' + (cls || '') + (on ? ' on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
@@ -544,30 +928,18 @@
     $('mapStars').textContent = S.stars;
     const box = $('mapNodes'); box.innerHTML = '';
     const nx = nextStage();
-    const xs = ['0px', '-70px', '-90px', '-40px', '40px', '90px', '70px'];
     STAGES.forEach((s, i) => {
-      const open = isOpen(i), best = S.best[s.id] || 0;
-      const d = document.createElement('div');
-      d.className = 'node' + (open ? '' : ' locked') + (i === nx ? ' next' : '');
-      d.style.setProperty('--x', xs[i % xs.length]);
-      d.style.setProperty('--c', s.c);
+      const best = S.best[s.id] || 0;
       const b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = open ? s.icon : '🔒';
-      b.setAttribute('aria-label', s.title + (open ? ', ' + best + ' bintang' : ', terkunci'));
-      b.addEventListener('click', () => {
-        if (open) { startStage(i); return; }
-        sfx.bad(); b.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], 300);
-      });
-      const t = document.createElement('b'); t.textContent = s.title;
-      const st = document.createElement('div'); st.className = 'st';
-      st.innerHTML = [1, 2, 3].map((k) => starSvg(k <= best)).join('');
-      d.append(b, t, st);
-      box.appendChild(d);
+      b.type = 'button'; b.className = 'theme' + (i === nx ? ' next' : '');
+      b.style.setProperty('--c', s.c);
+      b.innerHTML = '<span class="ico" aria-hidden="true"></span><b></b><span class="st"></span>';
+      b.firstChild.textContent = s.icon; b.children[1].textContent = s.title;
+      b.lastChild.innerHTML = [1, 2, 3].map((k) => starSvg(k <= best)).join('');
+      b.setAttribute('aria-label', s.title + ', ' + best + ' bintang');
+      b.addEventListener('click', () => startStage(i));
+      box.appendChild(b);
     });
-    const g = document.createElement('div'); g.className = 'goal'; g.textContent = '🏆';
-    g.setAttribute('aria-hidden', 'true');
-    box.appendChild(g);
   }
   $('resetMap').addEventListener('click', () => {
     if (!confirm('Mulai ulang petualangan? Bintang dan stiker tetap tersimpan.')) return;
@@ -578,14 +950,14 @@
   let cCat = C.cats[0], cWord = cCat.list[0];
   function renderCards() {
     [...$('cCats').children].forEach((b) => b.classList.toggle('on', b.dataset.cat === cCat.id));
-    $('cPic').textContent = cWord.pic;
+    $('cPic').innerHTML = picHtml(cWord);
     $('cId').lastChild.textContent = cWord.id; $('cEn').lastChild.textContent = cWord.en;
     $('cGrid').innerHTML = '';
     cCat.list.forEach((w) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'wcard' + (w === cWord ? ' on' : '');
       b.innerHTML = '<span class="pic" aria-hidden="true"></span><span class="w"></span>';
-      b.firstChild.textContent = w.pic; b.lastChild.textContent = w.en;
+      b.firstChild.innerHTML = picHtml(w); b.lastChild.textContent = w.en;
       b.setAttribute('aria-label', w.en + ', ' + w.id);
       b.addEventListener('click', () => { cWord = w; renderCards(); speakSeq([en(w), id(w)], null, 250); });
       $('cGrid').appendChild(b);
@@ -643,8 +1015,11 @@
         const extra = shuffle('abcdefghilmnoprstu'.split('').filter((l) => !w.en.includes(l))).slice(0, 2);
         return { type, target: w, tiles: shuffle(w.en.split('').concat(extra)) };
       }
-      // Wrong options come from the same pool, so a colour is never mixed with an animal in a category stage.
-      return { type, target: w, opts: shuffle([w, ...wrong(s.pool, w, 3)]) };
+      // Pictures of a marked body part are too alike to pick from, so those words are asked with word options.
+      if (type === 'hearEn' && isFig(w)) type = 'picEn';
+      // Wrong options come from the same pool, and from the answer's own theme first.
+      const pool = type === 'hearEn' ? s.pool.filter((x) => !isFig(x)) : s.pool;
+      return { type, target: w, opts: shuffle([w, ...wrong(pool, w, 3)]) };
     });
   }
 
@@ -658,10 +1033,10 @@
     renderQ(true);
   }
 
-  function optButton(cls, text, isOk, onPick) {
+  function optButton(cls, text, isOk, onPick, html) {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'opt' + (cls ? ' ' + cls : '');
-    b.textContent = text;
+    if (html) b.innerHTML = text; else b.textContent = text;
     if (isOk) b.dataset.ok = '1'; // lets the hint find the right option
     b.addEventListener('click', () => onPick(b));
     return b;
@@ -702,13 +1077,13 @@
     // After a right answer: the English word, then the Indonesian one, so both sounds are tied to the same picture.
     const close = (go) => setTimeout(() => speakSeq([en(w), id(w)], null, 250, go), 300);
     const lead = (sound) => { if (first) speakSeq([idp(P[q.type]), sound], null, 250); else speak(sound); };
-    const pic = () => { const p = document.createElement('div'); p.className = 'pic'; p.textContent = w.pic; p.setAttribute('aria-hidden', 'true'); return p; };
+    const pic = () => { const p = document.createElement('div'); p.className = 'pic'; p.innerHTML = picHtml(w); p.setAttribute('aria-hidden', 'true'); return p; };
     const label = (t, cls) => { const d = document.createElement('div'); d.className = 'word-line ' + (cls || ''); d.textContent = t; return d; };
 
     if (q.type === 'hearEn') {
       const play = () => speak(en(w));
       ask.append(speakerBtn(play));
-      q.opts.forEach((o) => grid.appendChild(optButton('pic', o.pic, o === w, (b) => answer(b, o === w, grid, play, close))));
+      q.opts.forEach((o) => grid.appendChild(optButton('pic', picHtml(o), o === w, (b) => answer(b, o === w, grid, play, close), true)));
       ans.appendChild(grid);
       lead(en(w));
       return;
