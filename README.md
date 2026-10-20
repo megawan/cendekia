@@ -10,6 +10,7 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 | [`hijaiyah/`](hijaiyah) | Learn the 28 hijaiyah letters, their harakat and sounds. Moved here from `megawan.github.io/games/hijaiyah/`. |
 | [`baca/`](baca) | Ayo Membaca: early reading in Indonesian, from letters and syllables to words and sentences, with stars, stickers and an adventure map. |
 | [`phonics/`](phonics) | Phonics Fun: English letter sounds, blending, spelling and first sentences, with the same adventure map and rewards. |
+| [`kosakata/`](kosakata) | Kosakata: English vocabulary for Indonesian speakers, in ten themes, with sound in both languages and the same adventure map and rewards. |
 
 Each app keeps its own README with details.
 
