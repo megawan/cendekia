@@ -1,5 +1,5 @@
 // Offline support for Ayo Membaca. Bump CACHE when the precached files change.
-const CACHE = 'baca-v2';
+const CACHE = 'baca-v3';
 const FONTS = 'baca-fonts-v1';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 

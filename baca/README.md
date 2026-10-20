@@ -53,6 +53,8 @@ node tools/make-audio.mjs
 
 It records only the missing files (`--force` records all of them again) and rewrites `audio/index.json`, the list the service worker precaches. It needs macOS `say` and `ffmpeg`. To improve pronunciation, replace any file with your own recording using the same name.
 
+The voice reads some written syllables with the wrong vowel: "be", "me", "he", "ze" and "we" came out as "bi", "mi" and so on, and "nye" began with an a. The e of every Ce syllable was measured and the script now fixes these by writing them differently for the voice (`SAY_AS`, for example "bé") or, for "me" and "he" where no spelling worked, by joining the consonant of "ma" / "ha" to the vowel of "te" (`SPLICE`). After the fix every Ce syllable has a mid e, clearly apart from the i of the same consonant.
+
 After adding content, run the script, then bump `CACHE` in `sw.js` so installed copies refresh.
 
 ## Offline and install
