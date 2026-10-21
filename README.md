@@ -9,9 +9,10 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 | --- | --- |
 | [`hijaiyah/`](hijaiyah) | Learn the 28 hijaiyah letters, their harakat and sounds. Moved here from `megawan.github.io/games/hijaiyah/`. |
 | [`baca/`](baca) | Ayo Membaca: early reading in Indonesian, from letters and syllables to words, sentences and short stories with questions, in four levels, with stars and stickers. |
-| [`phonics/`](phonics) | Phonics Fun: English letter sounds, blending, spelling and first sentences, with the same adventure map and rewards. |
 | [`kosakata/`](kosakata) | Kosakata: English vocabulary for Indonesian speakers, in 24 themes (including body parts, organs and street furniture), with sound in both languages and the same stars, stickers and streaks. |
 | [`logika/`](logika) | Robo Logic: logical and computational thinking games in English, with Gbot the robot. Program a robot (with loops), find patterns, work out a machine's rule, read balances, fix a buggy program and pick items with AND, OR and NOT. With animations, stars and stickers. |
+
+`phonics/` (Phonics Fun) is paused: it is no longer linked from the home page or the parent page, but its files stay and it still opens at its own address.
 
 Each app keeps its own README with details.
 
