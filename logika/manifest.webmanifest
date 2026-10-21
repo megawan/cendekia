@@ -1,0 +1,17 @@
+{
+  "name": "Robo Logic",
+  "short_name": "Robo Logic",
+  "description": "Logical and computational thinking games for children: program a robot, find patterns, crack the magic machine, read balances, fix buggy code and sort with AND, OR and NOT.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff6ec",
+  "theme_color": "#f2891f",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
