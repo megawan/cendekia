@@ -452,6 +452,59 @@
   @keyframes din { 0% { transform: translateX(0); opacity: 1; } 40%, 100% { transform: translateX(30px) scale(.2); opacity: 0; } }
   @keyframes dout { 0%, 50% { transform: translateX(-30px) scale(.2); opacity: 0; } 80%, 100% { transform: translateX(0); opacity: 1; } }
 
+  /* For parents */
+  .parentLink { font: inherit; font-weight: 700; color: inherit; background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 4px 8px; }
+  .gate { max-width: 360px; margin: 24px auto; text-align: center; background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .gate p { margin: 0 0 10px; font-weight: 700; }
+  .gate .q { font-size: 2rem; font-weight: 800; margin-bottom: 10px; }
+  .gate input { font: inherit; font-size: 1.6rem; font-weight: 800; width: 120px; text-align: center; padding: 6px; border: 2px solid var(--line); border-radius: 14px; }
+  .gate .btn { display: block; width: 100%; margin-top: 12px; }
+  .gate .err { color: var(--bad); min-height: 1.4em; margin: 6px 0 0; }
+  .rep { display: grid; gap: 14px; }
+  .box { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .box h3 { margin: 0 0 10px; font-size: 1.15rem; }
+  .box .muted { opacity: .7; font-size: .9rem; margin: 0; }
+  .pchips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pchips button { font: inherit; font-weight: 700; border: 2px solid var(--line); background: #fff; border-radius: 999px; padding: 2px 12px 2px 6px;
+    cursor: pointer; color: inherit; }
+  .pchips button[aria-pressed="true"] { border-color: var(--good); background: #e8f8f0; }
+  .phead { display: flex; align-items: center; gap: 12px; }
+  .phead .av { font-size: 2.6rem; line-height: 1; }
+  .phead b { font-size: 1.3rem; display: block; }
+  .phead .btn { margin-left: auto; min-height: 44px; padding: 6px 12px; font-size: .95rem; box-shadow: none; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (min-width: 560px) { .tiles { grid-template-columns: repeat(4, 1fr); } }
+  .tile { background: #fbf7f1; border-radius: 16px; padding: 10px 12px; }
+  .tile b { display: block; font-size: 1.7rem; line-height: 1.1; }
+  .tile span { font-size: .85rem; opacity: .75; }
+  .chart { position: relative; display: flex; align-items: flex-end; gap: 2px; height: 120px; border-bottom: 1px solid #e5e1da; padding-top: 18px; }
+  .chart .col { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+  .chart .bar { width: 100%; max-width: 24px; background: #c96a0c; border-radius: 4px 4px 0 0; min-height: 0; }
+  .chart .col.zero .bar { height: 0 !important; }
+  .chart .val { position: absolute; font-size: .75rem; font-weight: 800; margin-bottom: 2px; line-height: 1; }
+  .chart .tip { position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-size: .75rem;
+    font-weight: 700; border-radius: 8px; padding: 2px 8px; white-space: nowrap; display: none; z-index: 2; }
+  .chart .col:hover .tip, .chart .col:focus .tip { display: block; }
+  .chart .col:hover .bar, .chart .col:focus .bar { background: #a8570a; }
+  .chart .col:focus { outline: none; }
+  .chart .col:focus-visible { outline: 2px solid var(--c-purple); outline-offset: 2px; }
+  .days { display: flex; gap: 2px; font-size: .7rem; opacity: .7; margin-top: 4px; }
+  .days span { flex: 1; text-align: center; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .skills { display: grid; gap: 10px; }
+  .skill { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 4px 10px; }
+  .skill .ic { font-size: 1.6rem; grid-row: span 2; text-align: center; }
+  .skill b { line-height: 1.2; }
+  .skill small { opacity: .75; }
+  .skill .meter { grid-column: 2 / 4; height: 8px; border-radius: 4px; background: #eee6da; overflow: hidden; }
+  .skill .meter i { display: block; height: 100%; background: var(--warm); border-radius: 4px; }
+  .stat { font-size: .8rem; font-weight: 800; border-radius: 999px; padding: 1px 10px; white-space: nowrap; border: 2px solid; background: #fff; }
+  .stat.good { border-color: #1f9d6b; } .stat.grow { border-color: #f2a33a; } .stat.low { border-color: #d9534f; } .stat.none { border-color: #c9d3e1; }
+  .plist2 { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  .tips { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+  .about2 summary { font-weight: 800; cursor: pointer; }
+  .about2 dl { margin: 10px 0 0; } .about2 dt { font-weight: 800; margin-top: 8px; } .about2 dd { margin: 0; }
+
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -480,7 +533,24 @@
       <span class="pill" title="Stickers"><span class="ic" aria-hidden="true">🚀</span><span id="homeStk">0/12</span> stickers</span>
     </div>
     <div class="worlds" id="worlds"></div>
-    <p class="note"><a href="../">← More apps in Cendekia</a></p>
+    <p class="note"><button type="button" class="parentLink" id="toParents">👪 For parents</button> · <a href="../">← More apps in Cendekia</a></p>
+  </section>
+
+  <!-- For parents: a summary of each player's progress -->
+  <section id="parents" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>For parents</h2><span class="spacer"></span>
+    </div>
+    <form class="gate" id="gate">
+      <p>For grown-ups. Please answer:</p>
+      <div class="q" id="gateQ"></div>
+      <label class="sr" for="gateA">Answer</label>
+      <input type="number" id="gateA" inputmode="numeric" autocomplete="off">
+      <p class="err" id="gateErr" aria-live="polite"></p>
+      <button type="submit" class="btn go">Open the summary</button>
+    </form>
+    <div class="rep" id="rep" hidden></div>
   </section>
 
   <!-- Players -->
@@ -713,7 +783,7 @@
   'use strict';
   const C = JSON.parse(document.getElementById('content').textContent);
   const $ = (id) => document.getElementById(id);
-  const SECTIONS = ['home', 'players', 'pform', 'world', 'robot', 'quiz', 'result', 'stickers'];
+  const SECTIONS = ['home', 'players', 'pform', 'world', 'robot', 'quiz', 'result', 'stickers', 'parents'];
   let runToken = 0; // bumped whenever a screen changes, so running animations stop
   function show(id) {
     SECTIONS.forEach((s) => { $(s).hidden = s !== id; });
@@ -852,6 +922,20 @@
     const y = new Date(); y.setDate(y.getDate() - 1);
     S.streak = S.day === dayStr(y) ? S.streak + 1 : 1;
     S.day = today;
+  }
+  // What a player did in each level, for the parents' summary: q questions with ok right on the first try,
+  // runs of a robot program with wins reaching the flag and fails not, and hints. days counts puzzles solved per day.
+  function logOf(w, i) {
+    S.log = S.log || {};
+    const k = S.diff + '/' + w + '/' + i;
+    return S.log[k] || (S.log[k] = { q: 0, ok: 0, runs: 0, wins: 0, fails: 0, hints: 0 });
+  }
+  function solvedOne() {
+    S.days = S.days || {};
+    const today = dayStr(new Date());
+    S.days[today] = (S.days[today] || 0) + 1;
+    const keys = Object.keys(S.days).sort();
+    keys.slice(0, Math.max(0, keys.length - 60)).forEach((k) => { delete S.days[k]; });
   }
   const bestOf = (diff) => S.best[diff] || (S.best[diff] = {});
   const best = (w, i) => (bestOf(S.diff)[w] || [])[i] || 0;
@@ -1023,6 +1107,129 @@
       ex.appendChild(b);
     }
     if (!S.seen[w.id]) tutorial(w);
+  }
+
+  // =====================================================================
+  // For parents: what each player has done, per skill, with the levels to practice
+  // =====================================================================
+  const SKILL_INFO = {
+    robot: 'Planning steps in the right order. Later: repeating steps, reusing a group of steps (a function) and making a choice (if).',
+    pola: 'Spotting a rule that repeats and using it to predict.',
+    mesin: 'Finding the general rule behind a few examples, and applying it to something new.',
+    timbang: 'Combining facts to reach a conclusion: if red is heavier than blue and blue is heavier than green, red is the heaviest.',
+    debug: 'Finding where a plan goes wrong and fixing just that part, calmly.',
+    saring: 'Combining conditions with AND, OR and NOT, as in searches and programming.'
+  };
+  let viewed = null, gateAns = 0;
+  $('toParents').addEventListener('click', () => {
+    const a = rnd(4, 9), b = rnd(4, 9);
+    gateAns = a * b;
+    $('gateQ').textContent = a + ' × ' + b + ' = ?';
+    $('gateA').value = ''; $('gateErr').textContent = '';
+    $('gate').hidden = false; $('rep').hidden = true;
+    show('parents');
+    $('gateA').focus();
+  });
+  $('gate').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (+$('gateA').value !== gateAns) { $('gateErr').textContent = 'Not quite. Please try again.'; return; }
+    $('gate').hidden = true; $('rep').hidden = false;
+    viewed = S; renderReport();
+  });
+
+  // Accuracy: questions right on the first try, or robot runs that reached the flag.
+  const tries = (L) => L.q + L.runs;
+  const goodOnes = (L) => L.ok + L.wins;
+  function statusOf(n, rate, got) {
+    if (n < 3) return { cls: 'none', text: n || got ? '🌱 Just started' : '○ Not started' };
+    if (rate >= 0.8) return { cls: 'good', text: '💪 Strong' };
+    if (rate >= 0.5) return { cls: 'grow', text: '📈 Growing' };
+    return { cls: 'low', text: '🎯 Needs practice' };
+  }
+  function renderReport() {
+    const p = viewed, log = p.log || {}, days = p.days || {};
+    const pct = (x) => Math.round(x * 100) + '%';
+    const levelName = (w, diff, i) => (w.kind === 'robot' ? C[w.id][diff][i].name : w.levels[i]);
+    // Totals over every level the player has tried.
+    const all = Object.values(log).reduce((a, L) => ({ n: a.n + tries(L), g: a.g + goodOnes(L), h: a.h + L.hints }), { n: 0, g: 0, h: 0 });
+    const stars = Object.values(p.best).reduce((a, byW) => a + Object.values(byW).reduce((b, l) => b + sum(l), 0), 0);
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    const streak = p.day === dayStr(new Date()) || p.day === dayStr(y) ? p.streak : 0;
+    const last14 = Array.from({ length: 14 }, (_, k) => { const d = new Date(); d.setDate(d.getDate() - 13 + k); return { d, n: days[dayStr(d)] || 0 }; });
+    const week = last14.slice(7).reduce((a, x) => a + x.n, 0);
+
+    let h = '';
+    if (DB.players.length > 1) {
+      h += '<div class="pchips" role="group" aria-label="Player">' + DB.players.map((q, k) => '<button type="button" data-k="' + k + '" aria-pressed="' + (q === p) + '">'
+        + q.av + ' ' + esc(q.name) + '</button>').join('') + '</div>';
+    }
+    h += '<div class="box phead"><span class="av" aria-hidden="true">' + p.av + '</span><span><b>' + esc(p.name) + '</b><span class="muted">'
+      + DIFFS[p.diff].icon + ' ' + DIFFS[p.diff].name + ' · ' + DIFFS[p.diff].age + '</span></span>'
+      + '<button type="button" class="btn ghost" id="repEdit">Change difficulty</button></div>';
+    h += '<div class="tiles">'
+      + '<div class="tile"><b>' + stars + '</b><span>stars in all</span></div>'
+      + '<div class="tile"><b>' + streak + '</b><span>' + (streak === 1 ? 'day' : 'days') + ' in a row</span></div>'
+      + '<div class="tile"><b>' + week + '</b><span>puzzles solved this week</span></div>'
+      + '<div class="tile"><b>' + (all.n ? pct(all.g / all.n) : '–') + '</b><span>right on the first try</span></div></div>';
+
+    // Puzzles solved per day, last 14 days.
+    const max = Math.max(1, ...last14.map((x) => x.n));
+    const peak = last14.reduce((a, x, k) => (x.n > last14[a].n ? k : a), 0);
+    const dname = (d) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    h += '<div class="box"><h3>Puzzles solved, last 14 days</h3><div class="chart" aria-hidden="true">'
+      + last14.map((x, k) => '<span class="col' + (x.n ? '' : ' zero') + '" tabindex="0"><span class="tip">' + dname(x.d) + ': ' + x.n + '</span>'
+        + (k === peak && x.n ? '<span class="val" style="bottom:' + (100 * x.n / max) + '%">' + x.n + '</span>' : '')
+        + '<span class="bar" style="height:' + (100 * x.n / max) + '%"></span></span>').join('')
+      + '</div><div class="days" aria-hidden="true">' + last14.map((x) => '<span>' + x.d.toLocaleDateString('en-GB', { weekday: 'narrow' }) + '</span>').join('') + '</div>'
+      + '<table class="sr"><caption>Puzzles solved per day</caption><tr><th>Day</th><th>Puzzles</th></tr>'
+      + last14.map((x) => '<tr><td>' + dname(x.d) + '</td><td>' + x.n + '</td></tr>').join('') + '</table></div>';
+
+    // Skills: stars at the current difficulty and accuracy over all difficulties.
+    const perWorld = WORLDS.map((w) => {
+      const Ls = Object.entries(log).filter(([k]) => k.split('/')[1] === w.id).map(([, L]) => L);
+      const n = Ls.reduce((a, L) => a + tries(L), 0), g = Ls.reduce((a, L) => a + goodOnes(L), 0), hints = Ls.reduce((a, L) => a + L.hints, 0);
+      const names = w.kind === 'robot' ? C[w.id][p.diff] : w.levels, got = sum((p.best[p.diff] || {})[w.id]);
+      return { w, n, g, hints, rate: n ? g / n : 0, got, max: names.length * 3, st: statusOf(n, n ? g / n : 0, got) };
+    });
+    h += '<div class="box"><h3>Skills</h3><div class="skills">' + perWorld.map((x) => '<div class="skill"><span class="ic" aria-hidden="true">' + x.w.icon + '</span>'
+      + '<span><b>' + x.w.skill + '</b><br><small>' + x.w.name + ' · ⭐ ' + x.got + '/' + x.max + (x.n ? ' · ' + pct(x.rate) + ' first try of ' + x.n : '') + (x.hints ? ' · ' + x.hints + ' hints' : '') + '</small></span>'
+      + '<span class="stat ' + x.st.cls + '">' + x.st.text + '</span>'
+      + '<span class="meter" aria-hidden="true"><i style="width:' + Math.round(100 * x.got / x.max) + '%"></i></span></div>').join('') + '</div>'
+      + '<p class="muted" style="margin-top:10px">Stars are for the ' + DIFFS[p.diff].name.toLowerCase() + ' levels. The first-try rate counts every difficulty.</p></div>';
+
+    // The levels with the most mistakes.
+    const hard = Object.entries(log).map(([k, L]) => { const [diff, wid, i] = k.split('/'); return { diff, w: WORLDS.find((w) => w.id === wid), i: +i, n: tries(L), rate: tries(L) ? goodOnes(L) / tries(L) : 1 }; })
+      .filter((x) => x.w && x.n >= 3 && x.rate < 0.7).sort((a, b) => a.rate - b.rate).slice(0, 4);
+    h += '<div class="box"><h3>Worth practicing</h3>' + (hard.length
+      ? '<ul class="plist2">' + hard.map((x) => '<li><b>' + x.w.name + ', level ' + (x.i + 1) + '</b> (' + levelName(x.w, x.diff, x.i) + ', ' + DIFFS[x.diff].name + '): '
+        + pct(x.rate) + ' right on the first try in ' + x.n + ' tries</li>').join('') + '</ul>'
+      : '<p class="muted">Nothing stands out yet. Levels show up here after a few tries with many mistakes.</p>') + '</div>';
+
+    // Suggestions.
+    const tips = [];
+    const curGot = perWorld.reduce((a, x) => a + x.got, 0), curMax = perWorld.reduce((a, x) => a + x.max, 0);
+    const up = p.diff === 'easy' ? 'Medium' : p.diff === 'medium' ? 'Hard' : '';
+    if (up && all.n >= 20 && all.g / all.n >= 0.85 && curGot >= curMax * 0.6) tips.push('Most answers are right the first time and many stars are collected. ' + up + ' may be a good next step.');
+    if (p.diff !== 'easy' && all.n >= 15 && all.g / all.n < 0.5) tips.push('Many puzzles need several tries. A lower difficulty can keep it fun while the ideas settle.');
+    const notYet = perWorld.filter((x) => !x.n && !x.got).map((x) => x.w.name);
+    if (notYet.length && notYet.length < WORLDS.length) tips.push('Not tried yet: ' + notYet.join(', ') + '. Each world trains a different thinking skill.');
+    const weak = perWorld.filter((x) => x.st.cls === 'low');
+    weak.forEach((x) => tips.push(x.w.kind === 'robot'
+      ? x.w.name + ': plan the path together before pressing Run. Tracing it with a finger on the screen helps.'
+      : x.w.name + ': play it together and ask "what do you notice?" before choosing.'));
+    if (all.h >= 5 && all.h > all.n * 0.2) tips.push('Hints are used often. Encourage one more try before tapping 💡.');
+    if (!week && all.n) tips.push('No puzzles this week. Five to ten minutes a day works better than one long session.');
+    if (!all.n) tips.push('No games played since this summary was added. Details appear here as ' + esc(p.name) + ' plays.');
+    h += '<div class="box"><h3>Tips</h3>' + (tips.length ? '<ul class="tips">' + tips.map((t) => '<li>' + t + '</li>').join('') + '</ul>' : '<p class="muted">All good! Keep playing a little every day.</p>') + '</div>';
+
+    h += '<div class="box about2"><details><summary>What each world trains</summary><dl>'
+      + WORLDS.map((w) => '<dt>' + w.icon + ' ' + w.name + ' · ' + w.skill + '</dt><dd>' + SKILL_INFO[w.id] + '</dd>').join('') + '</dl></details></div>';
+    h += '<p class="muted">Everything stays on this device. Details are counted from the first game after this summary was added; earlier stars are included.</p>';
+
+    const rep = $('rep');
+    rep.innerHTML = h;
+    rep.querySelectorAll('.pchips button').forEach((b) => b.addEventListener('click', () => { viewed = DB.players[+b.dataset.k]; renderReport(); }));
+    $('repEdit').addEventListener('click', () => openForm(viewed));
   }
 
   function play(w, i) {
@@ -1491,6 +1698,7 @@
   $('rHint').addEventListener('click', () => {
     if (R.running) return;
     R.hints++; sfx.tap();
+    if (R.i >= 0) { logOf(R.w.id, R.i).hints++; save(); }
     if (R.debug) { R.showBug = true; renderTray(); rSay(P.hintBug, 'happy'); return; }
     if (R.hints === 1) {
       const res = execute(R.lv, R.sol.prog, R.sol.fn);
@@ -1552,6 +1760,11 @@
     R.running = false;
     ctl.forEach((id) => { $(id).disabled = false; });
     $('palette').querySelectorAll('button').forEach((b) => { b.disabled = false; });
+    // In fixing mode the first run, before any change, is to see the bug, so it does not count.
+    const counts = !R.debug || R.edits > 0;
+    if (R.i >= 0 && counts) { const L = logOf(R.w.id, R.i); L.runs++; if (res.end === 'win') L.wins++; else L.fails++; }
+    if (res.end === 'win') solvedOne();
+    save();
     if (res.end === 'win') {
       botEl.classList.add('dance'); mood(botEl.firstChild, 'cheer'); mood($('rCoach'), 'cheer');
       rSay('Hooray, Gbot made it!'); sfx.win(); confetti(40);
@@ -1563,8 +1776,7 @@
         : (blocks() > R.par ? 'Can it be shorter? Try ' + R.par + ' blocks.' : 'A perfect program: ' + blocks() + ' blocks!');
       setTimeout(() => { if (my === runToken) finish(R.w, R.i, Math.max(1, stars), text); }, 1700);
     } else {
-      // In fixing mode the first run, before any change, is to see the bug, so it does not count.
-      if (!R.debug || R.edits > 0) R.fails++;
+      if (counts) R.fails++;
       $('rHint').hidden = R.debug ? false : R.fails < 1;
       mood(botEl.firstChild, 'oops');
       rSay(res.end === 'bump' ? P.bump : res.end === 'gems' ? P.gems : P.short, 'oops');
@@ -1599,6 +1811,9 @@
   }
   const CHEERS = ['Great!', 'Clever!', 'Right!', 'Cool!', 'Super!', 'Amazing!'];
   function solved(delay) {
+    const L = logOf(Q.w.id, Q.i);
+    L.q++; if (!Q.missed) L.ok++;
+    solvedOne(); save();
     const pips = $('prog').children;
     pips[Q.n].classList.add('done');
     if (!Q.missed) { Q.combo++; } else { Q.combo = 0; Q.missedQ++; }
