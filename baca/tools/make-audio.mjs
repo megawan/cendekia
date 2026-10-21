@@ -46,7 +46,7 @@ C.stories.forEach((st) => {
   st.pages.forEach((pg) => { phrases.add(pg.text); pg.text.split(' ').forEach((w) => phrases.add(bare(w))); });
   st.questions.forEach((q) => { phrases.add(q.q); q.opts.forEach((o) => phrases.add(o)); });
 });
-Object.values(C.phrases).flat().forEach((p) => phrases.add(p));
+Object.entries(C.phrases).filter(([k]) => k !== 'retry').flatMap(([, v]) => v).forEach((p) => phrases.add(p));
 
 const force = process.argv.includes('--force');
 const outDir = join(root, 'audio');

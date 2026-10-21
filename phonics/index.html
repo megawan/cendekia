@@ -22,6 +22,7 @@
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { background: var(--bg); }
+  .who { display: flex; justify-content: flex-end; }
   html, body { margin: 0; min-height: 100%; color: var(--ink);
     font-family: "Baloo 2", system-ui, sans-serif; touch-action: manipulation; }
   /* The glow sits on a fixed layer instead of a fixed background, which repaints with visible bands on overscroll. */
@@ -216,6 +217,7 @@
 <main>
   <!-- Home -->
   <section id="home">
+    <div class="who" id="who"></div>
     <div class="hero">
       <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg>
       <div>
@@ -243,7 +245,7 @@
       </button>
     </div>
     <p class="note" id="voiceNote" hidden>This device has no English voice. Recorded sounds still play where available.</p>
-    <p class="note"><a href="../">← More apps in Cendekia</a></p>
+    <p class="note"><a href="../">← More apps in Cendekia</a> · <a href="../orangtua/">👪 Parents</a></p>
   </section>
 
   <!-- Adventure map -->
@@ -438,6 +440,7 @@
 }
 </script>
 
+<script src="../shared/profile.js"></script>
 <script>
 (() => {
   'use strict';
@@ -490,8 +493,8 @@
       o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + dur);
     });
   }
-  const sfx = { good() { tone([660, 880], 0.12); }, bad() { tone([220], 0.25, 'triangle'); },
-                tap() { tone([520], 0.06); }, win() { tone([523, 659, 784, 1047], 0.14); } };
+  const sfx = { good() { /* a right answer is shown, not sounded: the chime did not sound natural */ }, bad() { tone([220], 0.25, 'triangle'); },
+                tap() { tone([520], 0.06); }, win() { /* so is a finished round */ } };
 
   function pickVoice() {
     if (!('speechSynthesis' in window)) return;
@@ -542,7 +545,7 @@
   }
 
   // ---- Saved state ----
-  const KEY = 'phonics.v1';
+  const KEY = Cendekia.key('phonics.v1'); // one save per child
   let S = { stars: 0, best: {}, day: '', streak: 0 };
   try { Object.assign(S, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { /* keep defaults */ }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* private mode */ } }
@@ -745,7 +748,11 @@
     return spread(s.pool, ROUNDS).map((t) => ({ type: 'sentence', target: t, opts: shuffle([t, ...take(s.pool, 2, [t])]) }));
   }
 
+  let roundStart = 0; // when the current round began, for the parent page
+  const weakLabel = (q) => q.type === 'pickSound' || q.type === 'firstSound' ? q.target.g : q.target.text;
   function startStage(i) {
+    if (!Cendekia.gate()) return; // the parent's daily time limit
+    roundStart = Date.now();
     stageIdx = i; stage = STAGES[i];
     qs = makeQuestions(stage, i); qi = 0; mistakes = 0; combo = 0;
     $('prog').innerHTML = '<i></i>'.repeat(ROUNDS);
@@ -904,7 +911,7 @@
   function miss(b, replay) {
     b.classList.remove('no'); void b.offsetWidth; b.classList.add('no');
     sfx.bad();
-    if (!wrongThis) { wrongThis = true; mistakes++; }
+    if (!wrongThis) { wrongThis = true; mistakes++; Cendekia.weak('phonics', weakLabel(qs[qi])); }
     wrongTries++; combo = 0; $('combo').textContent = '';
     mood('oops', sample(P.retry));
     clearTimeout(replayTimer);
@@ -937,6 +944,7 @@
 
   function finish() {
     const stars = mistakes <= 1 ? 3 : mistakes <= 3 ? 2 : 1;
+    Cendekia.round({ app: 'phonics', stage: stage.title, stars, right: ROUNDS - mistakes, total: ROUNDS, ms: Date.now() - roundStart });
     const before = unlocked();
     S.stars += stars;
     S.best[stage.id] = Math.max(S.best[stage.id] || 0, stars);
@@ -974,6 +982,7 @@
     });
   }
 
+  Cendekia.chip($('who'));
   renderHome();
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });

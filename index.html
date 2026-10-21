@@ -35,6 +35,9 @@
   .badge .ar { font-family: "Amiri", "Noto Naskh Arabic", "Geeza Pro", serif; line-height: 1; }
   .app b { display: block; font-size: 1.3rem; line-height: 1.2; }
   .app small { display: block; font-size: .95rem; opacity: .75; line-height: 1.3; }
+  .who { display: flex; justify-content: center; margin: -12px 0 22px; }
+  .foot { text-align: center; margin: 28px 0 0; }
+  .foot a { color: inherit; opacity: .75; }
   @media (prefers-reduced-motion: reduce) { .app { transition: none; } }
 </style>
 </head>
@@ -42,6 +45,7 @@
 <main>
   <h1>Cendekia</h1>
   <p class="sub">Belajar sambil bermain</p>
+  <div class="who" id="who"></div>
   <ul class="apps">
     <li>
       <a class="app" href="hijaiyah/">
@@ -68,7 +72,10 @@
       </a>
     </li>
   </ul>
+  <p class="foot"><a href="orangtua/">👪 Untuk orang tua</a></p>
 </main>
+<script src="shared/profile.js"></script>
+<script>Cendekia.chip(document.getElementById('who'));</script>
 <script data-goatcounter="https://megawan.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>

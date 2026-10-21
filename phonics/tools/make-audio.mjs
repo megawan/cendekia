@@ -112,7 +112,7 @@ const phrase = (t, rate) => { if (!files.has(slug(t) + '.mp3')) files.set(slug(t
 C.sounds.forEach((s) => phrase(s.key, 120));
 C.words.forEach((w) => phrase(w.g.join(''), 120));
 C.sentences.forEach((s) => { phrase(s.text, 140); s.text.split(' ').forEach((w) => phrase(w, 120)); });
-Object.values(C.phrases).flat().forEach((p) => phrase(p, 150));
+Object.entries(C.phrases).filter(([k]) => k !== 'retry').flatMap(([, v]) => v).forEach((p) => phrase(p, 150));
 
 let made = 0;
 for (const [file, job] of files) {

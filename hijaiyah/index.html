@@ -22,6 +22,7 @@
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { background: var(--bg); }
+  .who { display: flex; justify-content: flex-end; }
   html, body { margin: 0; min-height: 100%; color: var(--ink);
     font-family: "Baloo 2", system-ui, sans-serif; touch-action: manipulation; }
   /* The glow sits on a fixed layer instead of a fixed background, which repaints with visible bands on overscroll. */
@@ -215,6 +216,7 @@
 <body>
 <main>
   <section id="home">
+    <div class="who" id="who"></div>
     <div class="hero">
       <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true">
         <ellipse class="body" cx="50" cy="56" rx="38" ry="36"/>
@@ -256,6 +258,7 @@
     <div class="center"><button class="btn ghost" id="install" type="button" hidden>Install this game</button></div>
     <p class="note" id="homeSummary"></p>
     <p class="note" id="voiceNote" hidden>Sound cannot play on this device. Check the volume and silent mode.</p>
+    <p class="note"><a href="../">← More apps in Cendekia</a> · <a href="../orangtua/">👪 Parents</a></p>
   </section>
 
   <section id="learn" hidden>
@@ -374,6 +377,7 @@
 </main>
 <div id="fx" aria-hidden="true"></div>
 
+<script src="../shared/profile.js"></script>
 <script>
 (function () {
   'use strict';
@@ -430,8 +434,8 @@
       o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + dur);
     });
   }
-  const sfx = { good() { tone([660, 880], 0.12); }, bad() { tone([220], 0.25, 'triangle'); },
-                win() { tone([523, 659, 784, 1047], 0.14); } };
+  const sfx = { good() { /* a right answer is shown, not sounded: the chime did not sound natural */ }, bad() { tone([220], 0.25, 'triangle'); },
+                win() { /* so is a finished round */ } };
 
   function pickVoice() {
     if (!('speechSynthesis' in window)) return;
@@ -549,7 +553,7 @@
   function stickerSvg(k) {
     return '<svg viewBox="0 0 100 100" aria-hidden="true">' + k.art + '</svg>';
   }
-  const STAR_KEY = 'hijaiyah.stars.v1';
+  const STAR_KEY = Cendekia.key('hijaiyah.stars.v1'); // one save per child
   let totalStars = 0;
   try { totalStars = Number(localStorage.getItem(STAR_KEY)) || 0; } catch (e) { totalStars = 0; }
   // Adds stars and returns the stickers unlocked by them.
@@ -611,7 +615,7 @@
   // ---- Progress ----
   // Each entry has a level 0..4: +1 for a first-try answer, -1 for a mistake.
   // Keys: "i" for a letter, "i:h" for a letter with harakat h (1..3).
-  const STORE_KEY = 'hijaiyah.progress.v1', MAX_LV = 4;
+  const STORE_KEY = Cendekia.key('hijaiyah.progress.v1'), MAX_LV = 4;
   let store = {};
   try { store = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { store = {}; }
   function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) { /* private mode */ } }
@@ -619,7 +623,12 @@
   function record(key, ok) {
     const e = store[key] || (store[key] = { lv: 0, wrong: 0 });
     e.lv = Math.max(0, Math.min(MAX_LV, e.lv + (ok ? 1 : -1)));
-    if (!ok) e.wrong++;
+    if (!ok) {
+      e.wrong++;
+      // For the parent page: the letter that was answered wrong. Keys are "i", "i:h" (with a vowel mark) or "fi" (shapes).
+      const m = String(key).match(/^f?(\d+)/);
+      if (m && LETTERS[+m[1]]) Cendekia.weak('hijaiyah', LETTERS[+m[1]].ch + ' ' + LETTERS[+m[1]].name);
+    }
     save();
   }
   function letterLevel(i, h) {
@@ -646,7 +655,10 @@
     return mode === 'harakat' ? order[qi].i + ':' + order[qi].h : String(LETTERS.indexOf(answer));
   }
 
+  let roundStart = 0; // when the current round began, for the parent page
   function startQuiz(m) {
+    if (!Cendekia.gate()) return; // the parent's daily time limit
+    roundStart = Date.now();
     mode = m; qi = 0; score = 0; streak = 0; roundLen = ROUNDS;
     $('streak').textContent = '';
     if (m === 'similar') {
@@ -789,7 +801,9 @@
     showResult(n, n === 3 ? 'Amazing!' : n === 2 ? 'Great job!' : 'Good try, play again!',
       'Right on the first try: ' + score + ' of ' + order.length);
   }
+  const MODE_NAMES = { hear: 'Tebak suara', see: 'Tebak nama', harakat: 'Tebak harakat', similar: 'Huruf mirip', forms: 'Bentuk huruf', syll: 'Baca suku kata', memory: 'Pasangan kartu' };
   function showResult(n, title, text) {
+    Cendekia.round({ app: 'hijaiyah', stage: MODE_NAMES[mode] || mode, stars: n, right: mode === 'memory' ? mem.pairs : score, total: mode === 'memory' ? mem.pairs : order.length, ms: Date.now() - roundStart });
     const fresh = addStars(n);
     const box = $('newSticker');
     box.hidden = !fresh.length;
@@ -945,6 +959,8 @@
     $('mStat').textContent = 'Moves: ' + mem.moves + '  Pairs: ' + mem.matched + '/' + mem.pairs;
   }
   function startMemory(pairs) {
+    if (!Cendekia.gate()) return;
+    roundStart = Date.now();
     mode = 'memory'; mem.pairs = pairs; mem.open = []; mem.moves = 0; mem.matched = 0; mem.lock = false; mem.missed = new Set();
     // Letters the child knows least are likelier to appear.
     const picks = weightedPick(LETTERS.map((_, i) => i), (i) => weightFor(level(String(i))), pairs);
@@ -1026,6 +1042,7 @@
   }
 
   // ---- Offline support and install ----
+  Cendekia.chip($('who'));
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
   }

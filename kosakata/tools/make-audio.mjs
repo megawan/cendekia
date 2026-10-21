@@ -22,7 +22,7 @@ const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g
 const files = new Map(); // file name -> { lang, text, rate }
 const add = (lang, text, rate) => { const f = lang + '-' + slug(text) + '.mp3'; if (!files.has(f)) files.set(f, { lang, text, rate }); };
 C.cats.forEach((c) => c.words.forEach(([id, en]) => { add('id', id, 115); add('en', en, 120); }));
-Object.values(C.phrases).flat().forEach((p) => add('id', p, 140));
+Object.entries(C.phrases).filter(([k]) => k !== 'retry').flatMap(([, v]) => v).forEach((p) => add('id', p, 140));
 
 const force = process.argv.includes('--force');
 const outDir = join(root, 'audio');

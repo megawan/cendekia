@@ -1,7 +1,7 @@
 // Offline support for Ayo Membaca. Bump CACHE when the precached files change.
-const CACHE = 'baca-v4';
+const CACHE = 'baca-v5';
 const FONTS = 'baca-fonts-v1';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js'];
 
 // The audio list comes from audio/index.json, which tools/make-audio.mjs writes.
 self.addEventListener('install', (event) => {
