@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Robo Logika</title>
+<title>Robo Logic</title>
 <meta name="theme-color" content="#f2891f">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="description" content="Permainan berpikir logis dan komputasional untuk anak: menyusun program robot, pola, mesin ajaib, timbangan, mencari kesalahan kode dan logika DAN, ATAU, BUKAN.">
+<meta name="description" content="Logical and computational thinking games for children: program a robot, find patterns, crack the magic machine, read balances, fix buggy code and sort with AND, OR and NOT.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
@@ -54,16 +54,16 @@
     border-radius: 999px; padding: 4px 14px 4px 10px; font-weight: 700; white-space: nowrap; }
   .pill .ic { font-size: 1.2rem; line-height: 1; }
 
-  /* Robi the robot. Built from parts so its eyes, antenna and mouth can move. */
-  .robi { display: block; overflow: visible; }
-  .robi .ant { fill: var(--accent); animation: glow 1.6s ease-in-out infinite; }
-  .robi .eye { fill: var(--glow); transform-box: fill-box; transform-origin: center; animation: blinkEye 4s infinite; }
-  .robi .mouth { fill: none; stroke: var(--glow); stroke-width: 3.5; stroke-linecap: round; display: none; }
-  .robi[data-mood="happy"] .m-happy, .robi[data-mood="cheer"] .m-cheer, .robi[data-mood="oops"] .m-oops,
-  .robi:not([data-mood]) .m-happy { display: block; }
-  .robi[data-mood="cheer"] { animation: hop .5s ease-out; }
-  .robi[data-mood="oops"] { animation: shake .35s; }
-  .robi[data-mood="oops"] .eye { fill: #ffb4a8; }
+  /* Gbot the robot. Built from parts so its eyes, antenna and mouth can move. */
+  .gbot { display: block; overflow: visible; }
+  .gbot .ant { fill: var(--accent); animation: glow 1.6s ease-in-out infinite; }
+  .gbot .eye { fill: var(--glow); transform-box: fill-box; transform-origin: center; animation: blinkEye 4s infinite; }
+  .gbot .mouth { fill: none; stroke: var(--glow); stroke-width: 3.5; stroke-linecap: round; display: none; }
+  .gbot[data-mood="happy"] .m-happy, .gbot[data-mood="cheer"] .m-cheer, .gbot[data-mood="oops"] .m-oops,
+  .gbot:not([data-mood]) .m-happy { display: block; }
+  .gbot[data-mood="cheer"] { animation: hop .5s ease-out; }
+  .gbot[data-mood="oops"] { animation: shake .35s; }
+  .gbot[data-mood="oops"] .eye { fill: #ffb4a8; }
   @keyframes glow { 50% { fill: #ffd27a; } }
   @keyframes blinkEye { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
   @keyframes hop { 30% { transform: translateY(-14px) scale(1.08); } }
@@ -80,7 +80,7 @@
 
   /* Home */
   .hero { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 4px 0 10px; }
-  .hero .robi { width: 110px; height: 110px; animation: bob 3s ease-in-out infinite; }
+  .hero .gbot { width: 110px; height: 110px; animation: bob 3s ease-in-out infinite; }
   .pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
   .floaters { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
   .floaters svg { position: absolute; width: 46px; height: 46px; opacity: .22; animation: floaty 7s ease-in-out infinite; }
@@ -123,9 +123,9 @@
   .st svg { width: 20px; height: 20px; fill: var(--line); }
   .st svg.on { fill: var(--warm); }
 
-  /* Coach: Robi with a speech bubble */
+  /* Coach: Gbot with a speech bubble */
   .coach { display: flex; align-items: center; gap: 10px; text-align: left; margin-bottom: 10px; min-height: 64px; }
-  .coach .robi { width: 60px; height: 60px; flex: none; }
+  .coach .gbot { width: 60px; height: 60px; flex: none; }
   .bubble { position: relative; flex: 1; background: #fff8e1; border: 2px solid #f1dfb2; border-radius: 16px;
     padding: 6px 12px; font-weight: 700; font-size: 1.05rem; line-height: 1.3; }
   .bubble::before { content: ""; position: absolute; left: -9px; top: 50%; margin-top: -8px; width: 14px; height: 14px;
@@ -154,11 +154,11 @@
     background: rgba(255,255,255,.7); animation: popIn .3s both; }
   .bot { position: absolute; left: 0; top: 0; width: calc(100% / var(--w)); aspect-ratio: 1; z-index: 2; pointer-events: none;
     transform: translate(calc(var(--x) * 100%), calc(var(--y) * 100%)); transition: transform .34s cubic-bezier(.45,.05,.4,1.3); }
-  .bot .robi { width: 92%; height: 92%; margin: 4%; transition: transform .2s; }
-  .bot.walk .robi { animation: wobble .34s; }
-  .bot.bump .robi { animation: bonk .45s; }
-  .bot.dance .robi { animation: dance .9s ease-in-out 2; }
-  .bot.face-L .robi { transform: scaleX(-1); }
+  .bot .gbot { width: 92%; height: 92%; margin: 4%; transition: transform .2s; }
+  .bot.walk .gbot { animation: wobble .34s; }
+  .bot.bump .gbot { animation: bonk .45s; }
+  .bot.dance .gbot { animation: dance .9s ease-in-out 2; }
+  .bot.face-L .gbot { transform: scaleX(-1); }
   @keyframes wobble { 30% { transform: rotate(-8deg) translateY(-6%); } 70% { transform: rotate(6deg); } }
   @keyframes bonk { 30% { transform: translate(var(--bx), var(--by)) rotate(10deg); } 60% { transform: translate(0,0) rotate(-6deg); } }
   @keyframes dance { 25% { transform: translateY(-22%) rotate(-12deg); } 50% { transform: translateY(0) rotate(0); }
@@ -308,7 +308,7 @@
   .gift { text-align: center; background: #fff8e1; border: 2px solid #f1dfb2; border-radius: var(--radius); padding: 10px; margin: 8px 0; }
   .gift .stk { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .gift .face { width: 96px; height: 96px; font-size: 3.4rem; animation: pop .6s both; }
-  .result .hero .robi { animation: hop .6s ease-out 3; }
+  .result .hero .gbot { animation: hop .6s ease-out 3; }
   .sgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   @media (min-width: 560px) { .sgrid { grid-template-columns: repeat(4, 1fr); } }
   .sticker { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 10px 6px; text-align: center; }
@@ -351,25 +351,25 @@
   <!-- Home -->
   <section id="home">
     <div class="hero">
-      <svg class="robi" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <svg class="gbot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div>
-        <h1>Robo Logika</h1>
-        <p class="sub">Berpikir pintar bersama Robi</p>
+        <h1>Robo Logic</h1>
+        <p class="sub">Think smart with Gbot</p>
       </div>
     </div>
     <div class="pills">
-      <span class="pill" title="Bintang"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0</span> bintang</span>
-      <span class="pill" title="Hari berturut-turut"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0</span> hari</span>
-      <span class="pill" title="Stiker"><span class="ic" aria-hidden="true">🚀</span><span id="homeStk">0/12</span> stiker</span>
+      <span class="pill" title="Stars"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
+      <span class="pill" title="Days in a row"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
+      <span class="pill" title="Stickers"><span class="ic" aria-hidden="true">🚀</span><span id="homeStk">0/12</span> stickers</span>
     </div>
     <div class="worlds" id="worlds"></div>
-    <p class="note"><a href="../">← Aplikasi lain di Cendekia</a></p>
+    <p class="note"><a href="../">← More apps in Cendekia</a></p>
   </section>
 
   <!-- World: pick a level -->
   <section id="world" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
       <h2 id="wTitle">Level</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="wStars">0</span></span>
     </div>
@@ -380,38 +380,36 @@
   <!-- Robot: write or fix a program -->
   <section id="robot" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" id="rBack">← Level</button>
-      <h2 id="rTitle">Jalan Robot</h2>
+      <button type="button" class="btn ghost" id="rBack">← Levels</button>
+      <h2 id="rTitle">Robot Path</h2>
       <span class="pill" id="rLevel"></span>
     </div>
     <div class="coach">
-      <svg class="robi" id="rCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <svg class="gbot" id="rCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div class="bubble" id="rSay" aria-live="polite"></div>
-      <button type="button" class="btn round blue" id="rHear" aria-label="Dengarkan lagi">🔊</button>
     </div>
     <div class="board" id="board"></div>
     <div class="tray" id="tray" role="group" aria-label="Program"></div>
     <div class="fixbar" id="fixbar" hidden></div>
     <div class="palette" id="palette"></div>
     <div class="tools">
-      <button type="button" class="btn ghost" id="rUndo" aria-label="Hapus blok terakhir">⌫</button>
-      <button type="button" class="btn ghost" id="rClear" aria-label="Hapus semua blok">🗑️</button>
-      <button type="button" class="btn ghost" id="rReset" aria-label="Kembalikan program awal" hidden>↺</button>
-      <button type="button" class="btn go run" id="rRun">▶ Jalankan</button>
+      <button type="button" class="btn ghost" id="rUndo" aria-label="Remove the last block">⌫</button>
+      <button type="button" class="btn ghost" id="rClear" aria-label="Remove all blocks">🗑️</button>
+      <button type="button" class="btn ghost" id="rReset" aria-label="Start again from the first program" hidden>↺</button>
+      <button type="button" class="btn go run" id="rRun">▶ Run</button>
     </div>
   </section>
 
   <!-- Quiz: pattern, machine, balance and filter -->
   <section id="quiz" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" id="qBack">← Level</button>
+      <button type="button" class="btn ghost" id="qBack">← Levels</button>
       <div class="prog" id="prog"></div>
       <div class="combo" id="combo" aria-live="polite"></div>
     </div>
     <div class="coach">
-      <svg class="robi" id="qCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <svg class="gbot" id="qCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div class="bubble" id="qSay" aria-live="polite"></div>
-      <button type="button" class="btn round blue" id="qHear" aria-label="Dengarkan lagi">🔊</button>
     </div>
     <div class="stage" id="ask"></div>
     <div id="answers"></div>
@@ -420,22 +418,22 @@
   <!-- Result -->
   <section id="result" class="result" hidden>
     <div class="stack">
-      <div class="hero"><svg class="robi" data-mood="cheer" viewBox="0 0 100 100" aria-hidden="true"></svg></div>
-      <h2 id="resTitle">Hebat!</h2>
+      <div class="hero"><svg class="gbot" data-mood="cheer" viewBox="0 0 100 100" aria-hidden="true"></svg></div>
+      <h2 id="resTitle">Great!</h2>
       <div class="stars" id="resStars"></div>
       <p class="summary" id="resText"></p>
       <div class="gift" id="resGift" hidden></div>
-      <button type="button" class="btn go" id="resNext">Level berikutnya</button>
-      <button type="button" class="btn" id="resAgain">Main lagi</button>
-      <button type="button" class="btn ghost" id="resWorld">Pilih level</button>
+      <button type="button" class="btn go" id="resNext">Next level</button>
+      <button type="button" class="btn" id="resAgain">Play again</button>
+      <button type="button" class="btn ghost" id="resWorld">Choose a level</button>
     </div>
   </section>
 
   <!-- Stickers -->
   <section id="stickers" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Stiker Luar Angkasa</h2>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Space Stickers</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="stkStars">0</span></span>
     </div>
     <p class="note" id="stkNext"></p>
@@ -444,57 +442,55 @@
 </main>
 <div id="fx" aria-hidden="true"></div>
 
-<!-- Content. tools/make-audio.mjs records every phrase and word in this block.
-     Maps: . grass, # rock, ~ water, * gem, R Robi's start, F flag.
+<!-- Content.
+     Maps: . grass, # rock, ~ water, * gem, R Gbot's start, F flag.
      Programs: U D L R are up, down, left, right; 4(RD) repeats R D four times. -->
 <script type="application/json" id="content">
 {
   "robot": [
-    { "name": "Maju", "map": [".....", "R...F"], "sol": "RRRR" },
-    { "name": "Belok", "map": ["R....", ".....", "....F"], "sol": "RRRRDD" },
-    { "name": "Ada batu", "map": [".....", "R.#.F", "....."], "sol": "RURRDR" },
-    { "name": "Permata", "map": ["..*..", "R...F", "..*.."], "sol": "RURDDRUR" },
-    { "name": "Labirin", "map": ["R.#...", ".##.#.", "....#F"], "sol": "DDRRRUURRDD" },
-    { "name": "Danau kecil", "map": ["*..~..", ".#.~.*", "R....F"], "sol": "UUDDRRRRRUD" },
-    { "name": "Ulangi", "map": ["~~~~~~", "R....F", "~~~~~~"], "sol": "5(R)", "max": 2 },
-    { "name": "Tangga", "map": ["R.#..", "#..#.", ".#..#", "..#..", "...#F"], "sol": "4(RD)", "max": 4 },
-    { "name": "Bukit", "map": [".*.*.*.", "R#.#.#F"], "sol": "3(URRD)", "max": 5 },
-    { "name": "Keliling danau", "map": ["R.....", "~~~~~.", "~~~~~.", "~~~~~.", "F....."], "sol": "5(R)4(D)5(L)", "max": 6 },
-    { "name": "Ular", "map": ["R....", "####.", ".....", ".####", "....F"], "sol": "4(R)2(D)4(L)2(D)4(R)", "max": 10 },
-    { "name": "Tangga permata", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)", "max": 5 }
+    { "name": "Forward", "map": [".....", "R...F"], "sol": "RRRR" },
+    { "name": "Turn", "map": ["R....", ".....", "....F"], "sol": "RRRRDD" },
+    { "name": "A rock", "map": [".....", "R.#.F", "....."], "sol": "RURRDR" },
+    { "name": "Gems", "map": ["..*..", "R...F", "..*.."], "sol": "RURDDRUR" },
+    { "name": "Maze", "map": ["R.#...", ".##.#.", "....#F"], "sol": "DDRRRUURRDD" },
+    { "name": "Little lake", "map": ["*..~..", ".#.~.*", "R....F"], "sol": "UUDDRRRRRUD" },
+    { "name": "Repeat", "map": ["~~~~~~", "R....F", "~~~~~~"], "sol": "5(R)", "max": 2 },
+    { "name": "Stairs", "map": ["R.#..", "#..#.", ".#..#", "..#..", "...#F"], "sol": "4(RD)", "max": 4 },
+    { "name": "Hills", "map": [".*.*.*.", "R#.#.#F"], "sol": "3(URRD)", "max": 5 },
+    { "name": "Around the lake", "map": ["R.....", "~~~~~.", "~~~~~.", "~~~~~.", "F....."], "sol": "5(R)4(D)5(L)", "max": 6 },
+    { "name": "Snake", "map": ["R....", "####.", ".....", ".####", "....F"], "sol": "4(R)2(D)4(L)2(D)4(R)", "max": 10 },
+    { "name": "Gem stairs", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)", "max": 5 }
   ],
   "debug": [
-    { "name": "Belok", "map": ["R....", ".....", "....F"], "sol": "RRRRDD" },
-    { "name": "Ada batu", "map": [".....", "R.#.F", "....."], "sol": "RURRDR" },
-    { "name": "Permata", "map": ["..*..", "R...F", "..*.."], "sol": "RURDDRUR" },
-    { "name": "Labirin", "map": ["R.#...", ".##.#.", "....#F"], "sol": "DDRRRUURRDD" },
-    { "name": "Tangga", "map": ["R.#..", "#..#.", ".#..#", "..#..", "...#F"], "sol": "4(RD)" },
-    { "name": "Bukit", "map": [".*.*.*.", "R#.#.#F"], "sol": "3(URRD)" },
-    { "name": "Keliling danau", "map": ["R.....", "~~~~~.", "~~~~~.", "~~~~~.", "F....."], "sol": "5(R)4(D)5(L)" },
-    { "name": "Tangga permata", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)" }
+    { "name": "Turn", "map": ["R....", ".....", "....F"], "sol": "RRRRDD" },
+    { "name": "A rock", "map": [".....", "R.#.F", "....."], "sol": "RURRDR" },
+    { "name": "Gems", "map": ["..*..", "R...F", "..*.."], "sol": "RURDDRUR" },
+    { "name": "Maze", "map": ["R.#...", ".##.#.", "....#F"], "sol": "DDRRRUURRDD" },
+    { "name": "Stairs", "map": ["R.#..", "#..#.", ".#..#", "..#..", "...#F"], "sol": "4(RD)" },
+    { "name": "Hills", "map": [".*.*.*.", "R#.#.#F"], "sol": "3(URRD)" },
+    { "name": "Around the lake", "map": ["R.....", "~~~~~.", "~~~~~.", "~~~~~.", "F....."], "sol": "5(R)4(D)5(L)" },
+    { "name": "Gem stairs", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)" }
   ],
   "phrases": {
-    "robot": "Susun perintahnya, lalu tekan jalankan. Bawa Robi ke bendera.",
-    "robotGem": "Ambil semua permata, lalu bawa Robi ke bendera.",
-    "robotLoop": "Pakai blok ulangi, supaya programnya pendek.",
-    "bump": "Aduh, Robi menabrak!",
-    "short": "Robi belum sampai di bendera.",
-    "gems": "Masih ada permata yang belum diambil.",
-    "full": "Bloknya sudah penuh. Coba pakai blok ulangi.",
-    "debug": "Ada satu perintah yang salah. Jalankan dulu, lalu ketuk perintah yang salah.",
-    "fix": "Mau diganti dengan apa?",
-    "next": "Apa yang berikutnya?",
-    "missing": "Apa yang hilang?",
-    "machine": "Perhatikan mesinnya. Apa yang akan keluar?",
-    "heavier": "Mana yang lebih berat?",
-    "lighter": "Mana yang lebih ringan?",
-    "heaviest": "Mana yang paling berat?",
-    "lightest": "Mana yang paling ringan?",
-    "count": "Berapa banyak supaya timbangannya seimbang?",
-    "again": "Ayo coba lagi."
-  },
-  "words": ["Pilih semua yang", "merah", "biru", "kuning", "hijau", "ungu", "lingkaran", "kotak", "segitiga", "bintang",
-            "hati", "besar", "kecil", "dan", "atau", "bukan", "tapi bukan"]
+    "robot": "Line up the commands, then press Run. Take Gbot to the flag.",
+    "robotGem": "Collect every gem, then take Gbot to the flag.",
+    "robotLoop": "Use the repeat block to keep the program short.",
+    "bump": "Oops, Gbot bumped into something!",
+    "short": "Gbot has not reached the flag yet.",
+    "gems": "Some gems are still left.",
+    "full": "No more room for blocks. Try a repeat block.",
+    "debug": "One command is wrong. Run it first, then tap the wrong command.",
+    "fix": "What should it be?",
+    "next": "What comes next?",
+    "missing": "What is missing?",
+    "machine": "Watch the machine. What will come out?",
+    "heavier": "Which one is heavier?",
+    "lighter": "Which one is lighter?",
+    "heaviest": "Which one is the heaviest?",
+    "lightest": "Which one is the lightest?",
+    "count": "How many make the scale balance?",
+    "again": "Try again."
+  }
 }
 </script>
 
@@ -507,7 +503,7 @@
   let runToken = 0; // bumped whenever a screen changes, so running animations stop
   function show(id) {
     SECTIONS.forEach((s) => { $(s).hidden = s !== id; });
-    stopSound(); runToken++; window.scrollTo(0, 0);
+    runToken++; window.scrollTo(0, 0);
     if (id === 'home') renderHome();
     if (id === 'world') renderWorld();
     if (id === 'stickers') renderStickers();
@@ -523,8 +519,8 @@
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const clone = (x) => JSON.parse(JSON.stringify(x));
 
-  // ---- Robi ----
-  const ROBI = '<rect x="47" y="6" width="6" height="14" rx="3" fill="#8a94a8"/><circle class="ant" cx="50" cy="7" r="6"/>'
+  // ---- Gbot ----
+  const GBOT = '<rect x="47" y="6" width="6" height="14" rx="3" fill="#8a94a8"/><circle class="ant" cx="50" cy="7" r="6"/>'
     + '<rect x="11" y="32" width="10" height="20" rx="5" fill="#8a94a8"/><rect x="79" y="32" width="10" height="20" rx="5" fill="#8a94a8"/>'
     + '<rect x="17" y="17" width="66" height="50" rx="16" fill="#e6ecf6" stroke="#c3cde0" stroke-width="3"/>'
     + '<rect x="25" y="25" width="50" height="34" rx="11" fill="#1f2a44"/>'
@@ -532,21 +528,21 @@
     + '<path class="mouth m-happy" d="M43 50 Q50 55 57 50"/><path class="mouth m-cheer" d="M41 48 Q50 58 59 48"/><path class="mouth m-oops" d="M43 53 Q46.5 49 50 53 T57 53"/>'
     + '<rect x="30" y="68" width="40" height="20" rx="8" fill="#f2891f"/><circle cx="50" cy="78" r="4" fill="#ffd27a"/>'
     + '<circle cx="36" cy="92" r="6" fill="#1f2a44"/><circle cx="64" cy="92" r="6" fill="#1f2a44"/>';
-  const robiSvg = (mood) => '<svg class="robi" data-mood="' + (mood || 'happy') + '" viewBox="0 0 100 100" aria-hidden="true">' + ROBI + '</svg>';
-  function fillRobis(root) { root.querySelectorAll('svg.robi:empty').forEach((s) => { s.innerHTML = ROBI; }); }
-  fillRobis(document);
+  const gbotSvg = (mood) => '<svg class="gbot" data-mood="' + (mood || 'happy') + '" viewBox="0 0 100 100" aria-hidden="true">' + GBOT + '</svg>';
+  function fillGbots(root) { root.querySelectorAll('svg.gbot:empty').forEach((s) => { s.innerHTML = GBOT; }); }
+  fillGbots(document);
 
   // ---- Shapes, drawn as small SVGs ----
-  const COLORS = { merah: '#ef4444', biru: '#3b82f6', kuning: '#facc15', hijau: '#22c55e', ungu: '#a855f7', abu: '#94a3b8' };
-  const CK = ['merah', 'biru', 'kuning', 'hijau', 'ungu'];
-  const SK = ['lingkaran', 'kotak', 'segitiga', 'bintang', 'hati'];
+  const COLORS = { red: '#ef4444', blue: '#3b82f6', yellow: '#facc15', green: '#22c55e', purple: '#a855f7', gray: '#94a3b8' };
+  const CK = ['red', 'blue', 'yellow', 'green', 'purple'];
+  const SK = ['circle', 'square', 'triangle', 'star', 'heart'];
   const PATH = {
-    lingkaran: '<circle cx="50" cy="50" r="40"/>',
-    kotak: '<rect x="12" y="12" width="76" height="76" rx="12"/>',
-    segitiga: '<path d="M50 10 L92 86 L8 86 Z" stroke-linejoin="round"/>',
-    bintang: '<path d="M50 6 L62 36 L94 38 L69 59 L77 91 L50 73 L23 91 L31 59 L6 38 L38 36 Z" stroke-linejoin="round"/>',
-    hati: '<path d="M50 90 C18 66 6 48 12 30 C18 12 42 10 50 28 C58 10 82 12 88 30 C94 48 82 66 50 90 Z"/>',
-    panah: '<path d="M50 6 L88 46 L64 46 L64 92 L36 92 L36 46 L12 46 Z" stroke-linejoin="round"/>'
+    circle: '<circle cx="50" cy="50" r="40"/>',
+    square: '<rect x="12" y="12" width="76" height="76" rx="12"/>',
+    triangle: '<path d="M50 10 L92 86 L8 86 Z" stroke-linejoin="round"/>',
+    star: '<path d="M50 6 L62 36 L94 38 L69 59 L77 91 L50 73 L23 91 L31 59 L6 38 L38 36 Z" stroke-linejoin="round"/>',
+    heart: '<path d="M50 90 C18 66 6 48 12 30 C18 12 42 10 50 28 C58 10 82 12 88 30 C94 48 82 66 50 90 Z"/>',
+    arrow: '<path d="M50 6 L88 46 L64 46 L64 92 L36 92 L36 46 L12 46 Z" stroke-linejoin="round"/>'
   };
   // Dot layouts for 1 to 10, like dice.
   const DOTS = [[], [[50, 50]], [[30, 30], [70, 70]], [[26, 26], [50, 50], [74, 74]], [[30, 30], [70, 30], [30, 70], [70, 70]],
@@ -560,29 +556,25 @@
   function itemSvg(x) {
     const fill = COLORS[x.c] || x.c;
     let body;
-    if (x.s === 'titik') {
+    if (x.s === 'dots') {
       const r = x.n > 6 ? 8 : 10;
       body = '<rect x="6" y="6" width="88" height="88" rx="16" fill="#fff" stroke="' + fill + '" stroke-width="6"/>'
         + DOTS[x.n].map(([cx, cy]) => '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fill + '"/>').join('');
-    } else if (x.s === 'angka') {
+    } else if (x.s === 'number') {
       body = '<rect x="6" y="6" width="88" height="88" rx="18" fill="' + fill + '"/>'
         + '<text x="50" y="52" text-anchor="middle" dominant-baseline="central" font-family="Baloo 2, system-ui, sans-serif" font-weight="800" font-size="' + (x.v > 9 ? 46 : 58) + '" fill="#fff">' + x.v + '</text>';
     } else {
       const z = x.z || 1, r = x.r || 0;
       body = '<g transform="translate(50 50) scale(' + z + ') rotate(' + r + ') translate(-50 -50)">'
         + '<g fill="' + fill + '" stroke="rgba(0,0,0,.18)" stroke-width="4">' + PATH[x.s] + '</g>'
-        + (x.s === 'panah' ? '' : '<ellipse cx="36" cy="32" rx="10" ry="6" fill="#fff" opacity=".35" transform="rotate(-30 36 32)"/>') + '</g>';
+        + (x.s === 'arrow' ? '' : '<ellipse cx="36" cy="32" rx="10" ry="6" fill="#fff" opacity=".35" transform="rotate(-30 36 32)"/>') + '</g>';
     }
     return '<svg class="it" viewBox="0 0 100 100" aria-hidden="true">' + body + '</svg>';
   }
   const arrowSvg = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#arrowPath"/></svg>';
 
-  // ---- Sound ----
-  // Each phrase plays audio/<slug>.mp3, recorded by tools/make-audio.mjs. Without a recording,
-  // the device's Indonesian voice reads it.
-  const AUDIO_BASE = 'audio/';
-  const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  let ac = null, idVoice = null, current = null, token = 0;
+  // ---- Sound effects, made with the Web Audio API ----
+  let ac = null;
   function audioCtx() {
     if (!ac) { const A = window.AudioContext || window.webkitAudioContext; if (A) ac = new A(); }
     if (ac && ac.state === 'suspended') ac.resume();
@@ -603,46 +595,6 @@
     bump() { tone([140, 90], 0.12, 'sawtooth', 0.12); }, gem() { tone([988, 1319, 1568], 0.07, 'triangle', 0.14); },
     whir() { tone([200, 260, 320, 260, 200], 0.09, 'sawtooth', 0.04); }, drop() { tone([700, 500], 0.08, 'sine', 0.1); }
   };
-  function pickVoice() {
-    if ('speechSynthesis' in window) idVoice = speechSynthesis.getVoices().find((v) => /^id/i.test(v.lang)) || null;
-  }
-  if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.addEventListener('voiceschanged', pickVoice); }
-  function stopSound() {
-    token++;
-    if (current) { current.pause(); current = null; }
-    if ('speechSynthesis' in window) speechSynthesis.cancel();
-  }
-  function speak(text, then) {
-    stopSound();
-    const my = token;
-    const done = () => { if (my === token && then) then(); };
-    const fallback = () => {
-      if (my !== token) return;
-      if (!('speechSynthesis' in window)) { setTimeout(done, 400); return; }
-      // A short delay after cancel() avoids dropped utterances in some browsers.
-      setTimeout(() => {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'id-ID'; if (idVoice) u.voice = idVoice; u.rate = 0.9;
-        u.onend = done;
-        speechSynthesis.speak(u);
-      }, 60);
-    };
-    const a = new Audio(AUDIO_BASE + slug(text) + '.mp3');
-    current = a;
-    a.addEventListener('error', fallback, { once: true });
-    a.addEventListener('ended', done);
-    const p = a.play();
-    if (p && p.catch) p.catch((e) => { if (!a.error && e && e.name === 'NotAllowedError') return; fallback(); });
-  }
-  // Plays phrases one after another.
-  function speakSeq(list) {
-    const run = (k) => {
-      if (k >= list.length) return;
-      const my = token + 1; // speak() bumps the token once
-      speak(list[k], () => setTimeout(() => { if (my === token) run(k + 1); }, 80));
-    };
-    run(0);
-  }
   const P = C.phrases;
 
   // ---- Saved state ----
@@ -669,24 +621,24 @@
 
   // ---- Worlds ----
   const WORLDS = [
-    { id: 'robot', name: 'Jalan Robot', skill: 'Algoritma', icon: '🤖', c: 'var(--c-orange)', kind: 'robot',
-      desc: 'Susun perintah langkah demi langkah agar Robi sampai ke bendera. Nanti ada blok ulangi.',
+    { id: 'robot', name: 'Robot Path', skill: 'Algorithms', icon: '🤖', c: 'var(--c-orange)', kind: 'robot',
+      desc: 'Line up commands step by step to get Gbot to the flag. Later you get a repeat block.',
       levels: C.robot.map((l) => l.name) },
-    { id: 'pola', name: 'Tebak Pola', skill: 'Pengenalan pola', icon: '🔷', c: 'var(--c-blue)', kind: 'quiz', total: 5,
-      desc: 'Temukan aturan yang berulang, lalu tebak yang berikutnya atau yang hilang.',
-      levels: ['Warna', 'Bentuk', 'Ulang-ulang', 'Warna dan bentuk', 'Bertambah', 'Berputar', 'Dua aturan', 'Campur'] },
-    { id: 'mesin', name: 'Mesin Ajaib', skill: 'Abstraksi', icon: '⚙️', c: 'var(--c-purple)', kind: 'quiz', total: 4,
-      desc: 'Lihat apa yang masuk dan keluar dari mesin. Temukan aturannya!',
-      levels: ['Ganti warna', 'Ganti bentuk', 'Tambah satu', 'Putar', 'Jadi dua kali', 'Dua perubahan', 'Tambah dua', 'Mesin angka'] },
-    { id: 'timbang', name: 'Timbangan', skill: 'Penalaran logis', icon: '⚖️', c: 'var(--c-teal)', kind: 'quiz', total: 5,
-      desc: 'Baca timbangannya, lalu cari bola yang paling berat atau paling ringan.',
-      levels: ['Lebih berat', 'Lebih ringan', 'Paling berat', 'Paling ringan', 'Empat bola', 'Seimbang'] },
-    { id: 'debug', name: 'Perbaiki Kode', skill: 'Debugging', icon: '🐞', c: 'var(--c-pink)', kind: 'robot',
-      desc: 'Program Robi punya satu kesalahan. Jalankan, cari perintah yang salah, lalu perbaiki.',
+    { id: 'pola', name: 'Patterns', skill: 'Pattern recognition', icon: '🔷', c: 'var(--c-blue)', kind: 'quiz', total: 5,
+      desc: 'Spot the rule that repeats, then find what comes next or what is missing.',
+      levels: ['Colors', 'Shapes', 'Repeats', 'Colors and shapes', 'Growing', 'Turning', 'Two rules', 'Mixed'] },
+    { id: 'mesin', name: 'Magic Machine', skill: 'Abstraction', icon: '⚙️', c: 'var(--c-purple)', kind: 'quiz', total: 4,
+      desc: 'Watch what goes in and what comes out of the machine. Find its rule!',
+      levels: ['New color', 'New shape', 'Add one', 'Turn', 'Double', 'Two changes', 'Add two', 'Number machine'] },
+    { id: 'timbang', name: 'Balance', skill: 'Logical reasoning', icon: '⚖️', c: 'var(--c-teal)', kind: 'quiz', total: 5,
+      desc: 'Read the scales, then find the heaviest or the lightest ball.',
+      levels: ['Heavier', 'Lighter', 'Heaviest', 'Lightest', 'Four balls', 'Balanced'] },
+    { id: 'debug', name: 'Fix the Code', skill: 'Debugging', icon: '🐞', c: 'var(--c-pink)', kind: 'robot',
+      desc: 'Gbot\'s program has one mistake. Run it, find the wrong command and fix it.',
       levels: C.debug.map((l) => l.name) },
-    { id: 'saring', name: 'Saringan Logika', skill: 'Logika DAN, ATAU, BUKAN', icon: '🔍', c: 'var(--c-green)', kind: 'quiz', total: 4,
-      desc: 'Pilih semua benda yang cocok dengan aturan. Hati-hati dengan DAN, ATAU dan BUKAN.',
-      levels: ['Warna', 'Bentuk', 'DAN', 'BUKAN', 'ATAU', 'Tapi bukan', 'Campur'] }
+    { id: 'saring', name: 'Logic Filter', skill: 'AND, OR, NOT logic', icon: '🔍', c: 'var(--c-green)', kind: 'quiz', total: 4,
+      desc: 'Pick every item that fits the rule. Watch out for AND, OR and NOT.',
+      levels: ['Colors', 'Shapes', 'AND', 'NOT', 'OR', 'But not', 'Mixed'] }
   ];
   const W = {}; WORLDS.forEach((w) => { W[w.id] = w; });
   const maxStars = (w) => w.levels.length * 3;
@@ -695,12 +647,12 @@
 
   // ---- Stickers: space friends, unlocked by the total star count ----
   const STICKERS = [
-    { at: 3, name: 'Roket', pic: '🚀', c: '#ffe3c2' }, { at: 8, name: 'Satelit', pic: '🛰️', c: '#d6ebff' },
+    { at: 3, name: 'Rocket', pic: '🚀', c: '#ffe3c2' }, { at: 8, name: 'Satellite', pic: '🛰️', c: '#d6ebff' },
     { at: 14, name: 'Alien', pic: '👽', c: '#d9f5e8' }, { at: 21, name: 'Planet', pic: '🪐', c: '#ece6ff' },
-    { at: 29, name: 'Bulan', pic: '🌙', c: '#fff1c2' }, { at: 38, name: 'UFO', pic: '🛸', c: '#e6ecf5' },
-    { at: 48, name: 'Astronaut', pic: '🧑‍🚀', c: '#d6ebff' }, { at: 59, name: 'Teleskop', pic: '🔭', c: '#ffe0ec' },
-    { at: 71, name: 'Komet', pic: '☄️', c: '#ffe3c2' }, { at: 85, name: 'Bumi', pic: '🌍', c: '#d9f5e8' },
-    { at: 100, name: 'Bintang jatuh', pic: '🌠', c: '#ece6ff' }, { at: 120, name: 'Robot super', pic: '🦾', c: '#fff1c2' }
+    { at: 29, name: 'Moon', pic: '🌙', c: '#fff1c2' }, { at: 38, name: 'UFO', pic: '🛸', c: '#e6ecf5' },
+    { at: 48, name: 'Astronaut', pic: '🧑‍🚀', c: '#d6ebff' }, { at: 59, name: 'Telescope', pic: '🔭', c: '#ffe0ec' },
+    { at: 71, name: 'Comet', pic: '☄️', c: '#ffe3c2' }, { at: 85, name: 'Earth', pic: '🌍', c: '#d9f5e8' },
+    { at: 100, name: 'Shooting star', pic: '🌠', c: '#ece6ff' }, { at: 120, name: 'Super robot', pic: '🦾', c: '#fff1c2' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
   const face = (k) => '<span class="face" style="--c:' + k.c + '" aria-hidden="true">' + k.pic + '</span>';
@@ -715,8 +667,9 @@
 
   function renderHome() {
     const stars = totalStars();
-    $('homeStars').textContent = stars;
-    $('homeDays').textContent = streakNow();
+    const days = streakNow();
+    $('homeStars').textContent = stars + (stars === 1 ? ' star' : ' stars');
+    $('homeDays').textContent = days + (days === 1 ? ' day' : ' days');
     $('homeStk').textContent = unlocked(stars) + '/' + STICKERS.length;
     const box = $('worlds');
     box.innerHTML = '';
@@ -733,7 +686,7 @@
     const s = document.createElement('button');
     s.type = 'button'; s.className = 'card wide'; s.style.setProperty('--c', 'var(--c-purple)');
     s.style.animationDelay = '.3s';
-    s.innerHTML = '<span class="badge" aria-hidden="true">🛸</span><span><b>Stiker Luar Angkasa</b><br><small>Kumpulkan bintang untuk membuka stiker</small></span>';
+    s.innerHTML = '<span class="badge" aria-hidden="true">🛸</span><span><b>Space Stickers</b><br><small>Collect stars to unlock stickers</small></span>';
     s.addEventListener('click', () => show('stickers'));
     box.appendChild(s);
   }
@@ -754,7 +707,7 @@
       const d = document.createElement('div');
       d.className = 'lv' + (open ? '' : ' locked') + (i === next && open ? ' next' : '');
       d.style.setProperty('--c', w.c);
-      d.innerHTML = '<button type="button" aria-label="Level ' + (i + 1) + ': ' + name + (open ? '' : ' (terkunci)') + '" style="animation-delay:' + i * 0.04 + 's">'
+      d.innerHTML = '<button type="button" aria-label="Level ' + (i + 1) + ': ' + name + (open ? '' : ' (locked)') + '" style="animation-delay:' + i * 0.04 + 's">'
         + (open ? i + 1 : '🔒') + '</button><span class="st">' + [0, 1, 2].map((k) => starSvg(k < st)).join('') + '</span><small>' + name + '</small>';
       d.querySelector('button').addEventListener('click', () => {
         if (!open) { sfx.bad(); return; }
@@ -863,19 +816,16 @@
     show('robot');
     buildBoard(); renderTray(); renderPalette();
     mood($('rCoach'), 'happy');
-    robotIntro(true);
+    robotIntro();
   }
-  function robotIntro(speakIt) {
+  function robotIntro() {
     const p = R.debug ? P.debug : R.loops ? P.robotLoop : R.lv.gems.length ? P.robotGem : P.robot;
-    $('rSay').textContent = p + (R.max ? ' (paling banyak ' + R.max + ' blok)' : '');
-    if (speakIt) speak(p);
+    $('rSay').textContent = p + (R.max ? ' (' + R.max + ' blocks at most)' : '');
   }
-  function rSay(text, m, voice) {
+  function rSay(text, m) {
     $('rSay').textContent = text;
     if (m) mood($('rCoach'), m);
-    if (voice) speak(text);
   }
-  $('rHear').addEventListener('click', () => { const t = $('rSay').textContent.replace(/ \(paling banyak.*\)$/, ''); speak(t); });
   $('rBack').addEventListener('click', () => show('world'));
 
   const TILE = {
@@ -899,7 +849,7 @@
     }
     botEl = document.createElement('div');
     botEl.className = 'bot';
-    botEl.innerHTML = robiSvg('happy');
+    botEl.innerHTML = gbotSvg('happy');
     b.appendChild(botEl);
     resetBot();
   }
@@ -921,7 +871,7 @@
       const n = blocks(R.prog);
       t.insertAdjacentHTML('beforeend', '<span class="count' + (n >= R.max ? ' full' : '') + '">' + n + ' / ' + R.max + '</span>');
     }
-    if (!R.prog.length) t.insertAdjacentHTML('beforeend', '<span class="empty">Program kosong. Ketuk tanda panah di bawah.</span>');
+    if (!R.prog.length) t.insertAdjacentHTML('beforeend', '<span class="empty">The program is empty. Tap the arrows below.</span>');
     R.prog.forEach((b, i) => {
       if (b.t === 'loop') {
         const L = document.createElement('div');
@@ -931,7 +881,7 @@
         const times = document.createElement('button');
         times.type = 'button'; times.className = 'times' + (R.sel && R.sel.loop === b ? ' pick' : '');
         times.textContent = '×' + b.n;
-        times.setAttribute('aria-label', 'Ulangi ' + b.n + ' kali');
+        times.setAttribute('aria-label', 'Repeat ' + b.n + ' times');
         times.addEventListener('click', (e) => {
           e.stopPropagation(); if (R.running) return;
           if (R.debug) { selectFix({ loop: b }); return; }
@@ -946,7 +896,7 @@
         if (!b.body.length) body.insertAdjacentHTML('beforeend', '<span class="hole"></span>');
         if (!R.debug) {
           const del = document.createElement('button');
-          del.type = 'button'; del.className = 'del'; del.textContent = '✕'; del.setAttribute('aria-label', 'Hapus blok ulangi');
+          del.type = 'button'; del.className = 'del'; del.textContent = '✕'; del.setAttribute('aria-label', 'Remove the repeat block');
           del.addEventListener('click', (e) => { e.stopPropagation(); if (R.running) return; R.prog.splice(i, 1); if (R.target === b) R.target = null; afterEdit(); });
           L.appendChild(del);
         }
@@ -963,13 +913,13 @@
       }
     });
   }
-  const NAMES = { U: 'atas', D: 'bawah', L: 'kiri', R: 'kanan' };
+  const NAMES = { U: 'Up', D: 'Down', L: 'Left', R: 'Right' };
   function blockBtn(c, onTap, i, j) {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'blk ' + c.t + (R.sel && R.sel.cmd === c ? ' pick' : '') + (c.fixed ? ' fixed' : '');
     b.dataset.i = i; b.dataset.j = j;
     b.innerHTML = arrowSvg;
-    b.setAttribute('aria-label', 'Ke ' + NAMES[c.t]);
+    b.setAttribute('aria-label', NAMES[c.t]);
     b.addEventListener('click', (e) => { e.stopPropagation(); if (R.running) return; sfx.tap(); onTap(); });
     return b;
   }
@@ -988,13 +938,13 @@
     if (R.debug) return;
     ['U', 'L', 'R', 'D'].forEach((d) => {
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'blk ' + d; b.innerHTML = arrowSvg; b.setAttribute('aria-label', 'Tambah: ke ' + NAMES[d]);
+      b.type = 'button'; b.className = 'blk ' + d; b.innerHTML = arrowSvg; b.setAttribute('aria-label', 'Add: ' + NAMES[d]);
       b.addEventListener('click', () => addBlock({ t: d }));
       p.appendChild(b);
     });
     if (R.loops) {
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'blk loopBtn'; b.innerHTML = '🔁'; b.setAttribute('aria-label', 'Tambah blok ulangi');
+      b.type = 'button'; b.className = 'blk loopBtn'; b.innerHTML = '🔁'; b.setAttribute('aria-label', 'Add a repeat block');
       b.addEventListener('click', () => addBlock({ t: 'loop', n: 2, body: [] }));
       p.appendChild(b);
     }
@@ -1002,7 +952,7 @@
   }
   function addBlock(b) {
     if (R.running) return;
-    if (R.max && blocks(R.prog) >= R.max) { sfx.bad(); rSay(P.full, 'oops', true); return; }
+    if (R.max && blocks(R.prog) >= R.max) { sfx.bad(); rSay(P.full, 'oops'); return; }
     if (blocks(R.prog) >= 30) { sfx.bad(); return; }
     sfx.tap();
     // Loops are not nested: a new loop goes in the main program and takes the next blocks.
@@ -1022,7 +972,7 @@
   $('rClear').addEventListener('click', () => { if (R.running) return; R.prog = []; R.target = null; sfx.tap(); afterEdit(); });
   $('rReset').addEventListener('click', () => {
     if (R.running) return;
-    R.prog = clone(R.orig); R.sel = null; $('fixbar').hidden = true; sfx.tap(); afterEdit(); robotIntro(false);
+    R.prog = clone(R.orig); R.sel = null; $('fixbar').hidden = true; sfx.tap(); afterEdit(); robotIntro();
   });
 
   // Fixing: pick a block, then choose what it should be.
@@ -1034,8 +984,8 @@
     choices.forEach((v) => {
       const b = document.createElement('button');
       b.type = 'button';
-      if (sel.loop) { b.className = 'blk num'; b.textContent = '×' + v; b.setAttribute('aria-label', 'Ulangi ' + v + ' kali'); }
-      else { b.className = 'blk ' + v; b.innerHTML = arrowSvg; b.setAttribute('aria-label', 'Ke ' + NAMES[v]); }
+      if (sel.loop) { b.className = 'blk num'; b.textContent = '×' + v; b.setAttribute('aria-label', 'Repeat ' + v + ' times'); }
+      else { b.className = 'blk ' + v; b.innerHTML = arrowSvg; b.setAttribute('aria-label', NAMES[v]); }
       b.addEventListener('click', () => {
         const before = sel.loop ? sel.loop.n : sel.cmd.t;
         if (sel.loop) sel.loop.n = v; else sel.cmd.t = v;
@@ -1044,21 +994,19 @@
       });
       f.appendChild(b);
     });
-    speak(P.fix);
   }
 
   const STEP = 420;
   async function runProgram() {
     if (R.running) return;
-    if (!blocks(R.prog)) { sfx.bad(); rSay('Tambahkan perintah dulu, ya.', 'oops'); return; }
-    stopSound();
+    if (!blocks(R.prog)) { sfx.bad(); rSay('Add some commands first.', 'oops'); return; }
     R.sel = null; $('fixbar').hidden = true;
     resetBot(); renderTray();
     const my = ++runToken;
     R.running = true;
     ['rRun', 'rUndo', 'rClear', 'rReset'].forEach((id) => { $(id).disabled = true; });
     $('palette').querySelectorAll('button').forEach((b) => { b.disabled = true; });
-    rSay('Robi berjalan…', 'happy');
+    rSay('Gbot is on the move…', 'happy');
     await sleep(250);
     const res = simulate(R.lv, R.prog);
     const tray = $('tray');
@@ -1091,18 +1039,18 @@
     $('palette').querySelectorAll('button').forEach((b) => { b.disabled = false; });
     if (res.end === 'win') {
       botEl.classList.add('dance'); mood(botEl.firstChild, 'cheer'); mood($('rCoach'), 'cheer');
-      rSay('Yeay, Robi sampai!'); sfx.win(); confetti(40);
+      rSay('Hooray, Gbot made it!'); sfx.win(); confetti(40);
       let stars;
       if (R.debug) stars = 3 - (R.edits > 1 ? 1 : 0) - (R.fails >= 2 ? 1 : 0);
       else stars = 3 - (blocks(R.prog) > R.par ? 1 : 0) - (R.fails >= 2 ? 1 : 0);
-      const textBits = R.debug ? (R.edits <= 1 ? 'Diperbaiki dengan satu kali ganti!' : 'Programnya sudah benar!')
-        : (blocks(R.prog) > R.par ? 'Bisa lebih pendek? Coba pakai ' + R.par + ' blok.' : 'Programnya pas, ' + blocks(R.prog) + ' blok!');
+      const textBits = R.debug ? (R.edits <= 1 ? 'Fixed with a single change!' : 'The program works now!')
+        : (blocks(R.prog) > R.par ? 'Can it be shorter? Try ' + R.par + ' blocks.' : 'A perfect program: ' + blocks(R.prog) + ' blocks!');
       setTimeout(() => { if (my === runToken) finish(R.w, R.i, Math.max(1, stars), textBits); }, 1700);
     } else {
       // In fixing mode the first run, before any change, is to see the bug, so it does not count.
       if (!R.debug || R.edits > 0) R.fails++;
       mood(botEl.firstChild, 'oops');
-      rSay(res.end === 'bump' ? P.bump : res.end === 'gems' ? P.gems : P.short, 'oops', true);
+      rSay(res.end === 'bump' ? P.bump : res.end === 'gems' ? P.gems : P.short, 'oops');
       sfx.bad();
     }
   }
@@ -1120,12 +1068,11 @@
     nextQ();
   }
   $('qBack').addEventListener('click', () => show('world'));
-  $('qHear').addEventListener('click', () => { if (Q && Q.voice) Q.voice(); });
   function qSay(text, m) { $('qSay').textContent = text; if (m) mood($('qCoach'), m); }
   function nextQ() {
     if (Q.n >= Q.total) {
       const stars = Q.missedQ === 0 ? 3 : Q.missedQ <= 2 ? 2 : 1;
-      finish(Q.w, Q.i, stars, (Q.total - Q.missedQ) + ' dari ' + Q.total + ' benar pada percobaan pertama.');
+      finish(Q.w, Q.i, stars, (Q.total - Q.missedQ) + ' of ' + Q.total + ' right on the first try.');
       return;
     }
     Q.missed = false; Q.tries = 0;
@@ -1133,9 +1080,8 @@
     $('ask').innerHTML = ''; $('answers').innerHTML = '';
     GEN[Q.w.id](Q.i);
   }
-  const CHEERS = ['Hebat!', 'Pintar!', 'Betul!', 'Keren!', 'Mantap!', 'Luar biasa!'];
+  const CHEERS = ['Great!', 'Clever!', 'Right!', 'Cool!', 'Super!', 'Amazing!'];
   function solved(delay) {
-    stopSound();
     const pips = $('prog').children;
     pips[Q.n].classList.add('done');
     if (!Q.missed) { Q.combo++; } else { Q.combo = 0; Q.missedQ++; }
@@ -1149,7 +1095,7 @@
   // A wrong answer. After two, onHint shows the right one.
   function wrong(onHint) {
     Q.missed = true; Q.tries++; Q.combo = 0; $('combo').textContent = '';
-    sfx.bad(); qSay(P.again, 'oops'); speak(P.again);
+    sfx.bad(); qSay(P.again, 'oops');
     if (Q.tries >= 2 && onHint) onHint();
   }
   // Option buttons. Each option is {html, ok, label}.
@@ -1160,7 +1106,7 @@
     list.forEach((o) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'opt'; b.innerHTML = o.html;
-      b.setAttribute('aria-label', o.label || 'Pilihan');
+      b.setAttribute('aria-label', o.label || 'Choice');
       b.addEventListener('click', () => {
         if (b.disabled || box.classList.contains('done') || b.classList.contains('wait')) return;
         if (o.ok) {
@@ -1193,9 +1139,9 @@
   }
   // Wrong choices near an item: other colors, shapes, counts or turns.
   function variantsOf(x) {
-    if (x.s === 'titik') return [x.n + 1, x.n - 1, x.n + 2, x.n - 2].filter((n) => n >= 1 && n <= 10).map((n) => it('titik', x.c, { n }));
-    if (x.s === 'angka') return [x.v + 1, x.v - 1, x.v + 2, x.v - 2, x.v * 2, x.v + 10].filter((v) => v >= 0 && v !== x.v).map((v) => it('angka', x.c, { v }));
-    if (x.s === 'panah') return [0, 90, 180, 270].filter((r) => r !== x.r).map((r) => it('panah', x.c, { r }));
+    if (x.s === 'dots') return [x.n + 1, x.n - 1, x.n + 2, x.n - 2].filter((n) => n >= 1 && n <= 10).map((n) => it('dots', x.c, { n }));
+    if (x.s === 'number') return [x.v + 1, x.v - 1, x.v + 2, x.v - 2, x.v * 2, x.v + 10].filter((v) => v >= 0 && v !== x.v).map((v) => it('number', x.c, { v }));
+    if (x.s === 'arrow') return [0, 90, 180, 270].filter((r) => r !== x.r).map((r) => it('arrow', x.c, { r }));
     return shuffle([...CK.filter((c) => c !== x.c).map((c) => it(x.s, c, { z: x.z })), ...SK.filter((s) => s !== x.s).map((s) => it(s, x.c, { z: x.z }))]);
   }
   // The answer plus distinct wrong items: first from `prefer`, then near variants.
@@ -1214,8 +1160,8 @@
     if (fam === 1) unit = [0, 1, 2].map((k) => it(ss[k], cs[0]));
     if (fam === 2) { const A = it(ss[0], cs[0]), B = it(ss[1], cs[1]), D = it(ss[2], cs[2]); unit = pick([[A, A, B], [A, B, B], [A, A, B, B], [A, B, A, D]]); }
     if (fam === 3) unit = [0, 1, 2].map((k) => it(ss[k], cs[k]));
-    if (fam === 4) { const step = lvl === 7 ? pick([1, 2]) : 1, n0 = step === 2 ? 1 : rnd(1, 2); seq = [0, 1, 2, 3, 4].map((k) => it('titik', cs[0], { n: n0 + step * k })); }
-    if (fam === 5) { const r0 = pick([0, 90, 180, 270]), dir = pick([90, 270]); seq = [0, 1, 2, 3, 4, 5].map((k) => it('panah', cs[0], { r: (r0 + dir * k) % 360 })); }
+    if (fam === 4) { const step = lvl === 7 ? pick([1, 2]) : 1, n0 = step === 2 ? 1 : rnd(1, 2); seq = [0, 1, 2, 3, 4].map((k) => it('dots', cs[0], { n: n0 + step * k })); }
+    if (fam === 5) { const r0 = pick([0, 90, 180, 270]), dir = pick([90, 270]); seq = [0, 1, 2, 3, 4, 5].map((k) => it('arrow', cs[0], { r: (r0 + dir * k) % 360 })); }
     if (fam === 6) { seq = [0, 1, 2, 3, 4, 5, 6].map((k) => it(ss[k % 2], cs[k % 3])); }
     if (!seq) { const len = unit.length * 2 + (unit.length <= 2 ? 2 : unit.length === 3 ? 1 : 0); seq = Array.from({ length: len }, (_, k) => unit[k % unit.length]); }
     let miss = seq.length - 1;
@@ -1223,8 +1169,7 @@
     const ans = seq[miss];
     const opts = choices(ans, seq, lvl < 3 ? 3 : 4);
     const phrase = miss === seq.length - 1 ? P.next : P.missing;
-    Q.voice = () => speak(phrase);
-    qSay(phrase); Q.voice();
+    qSay(phrase);
 
     const row = document.createElement('div');
     row.className = 'seq';
@@ -1263,27 +1208,26 @@
     let rule, input, nEx = lvl < 4 ? 2 : 3, prefer = (x) => [x];
     if (lvl === 0) { rule = (x) => it(x.s, T); input = () => it(pick(SK), pick(CK.filter((c) => c !== T))); }
     if (lvl === 1) { rule = (x) => it(Sh, x.c); input = () => it(pick(SK.filter((s) => s !== Sh)), pick(CK)); }
-    if (lvl === 2) { rule = (x) => it('titik', x.c, { n: x.n + 1 }); input = () => it('titik', pick(CK), { n: rnd(1, 6) }); }
-    if (lvl === 3) { rule = (x) => it('panah', x.c, { r: (x.r + 90) % 360 }); input = () => it('panah', pick(CK), { r: pick([0, 90, 180, 270]) }); }
-    if (lvl === 4) { rule = (x) => it('titik', x.c, { n: x.n * 2 }); input = () => it('titik', pick(CK), { n: rnd(1, 5) }); }
+    if (lvl === 2) { rule = (x) => it('dots', x.c, { n: x.n + 1 }); input = () => it('dots', pick(CK), { n: rnd(1, 6) }); }
+    if (lvl === 3) { rule = (x) => it('arrow', x.c, { r: (x.r + 90) % 360 }); input = () => it('arrow', pick(CK), { r: pick([0, 90, 180, 270]) }); }
+    if (lvl === 4) { rule = (x) => it('dots', x.c, { n: x.n * 2 }); input = () => it('dots', pick(CK), { n: rnd(1, 5) }); }
     if (lvl === 5) {
       rule = (x) => it(Sh, T); input = () => it(pick(SK.filter((s) => s !== Sh)), pick(CK.filter((c) => c !== T)));
       prefer = (x) => [x, it(Sh, x.c), it(x.s, T)];
     }
-    if (lvl === 6) { rule = (x) => it('titik', x.c, { n: x.n + 2 }); input = () => it('titik', pick(CK), { n: rnd(1, 7) }); prefer = (x) => [x, it('titik', x.c, { n: x.n + 1 })]; }
+    if (lvl === 6) { rule = (x) => it('dots', x.c, { n: x.n + 2 }); input = () => it('dots', pick(CK), { n: rnd(1, 7) }); prefer = (x) => [x, it('dots', x.c, { n: x.n + 1 })]; }
     if (lvl === 7) {
       const [op, k] = pick([['+', 2], ['+', 3], ['×', 2], ['−', 1], ['+', 10]]);
       const f = (v) => op === '+' ? v + k : op === '×' ? v * k : v - k;
-      rule = (x) => it('angka', 'ungu', { v: f(x.v) }); input = () => it('angka', 'biru', { v: rnd(op === '−' ? 2 : 1, 9) });
-      prefer = (x) => [it('angka', 'ungu', { v: x.v })];
+      rule = (x) => it('number', 'purple', { v: f(x.v) }); input = () => it('number', 'blue', { v: rnd(op === '−' ? 2 : 1, 9) });
+      prefer = (x) => [it('number', 'purple', { v: x.v })];
     }
     // Different inputs for the examples and the question.
     const seen = new Set(), ins = [];
     while (ins.length < nEx + 1) { const x = input(); if (!seen.has(key(x))) { seen.add(key(x)); ins.push(x); } }
     const test = ins.pop(), ans = rule(test);
     const opts = choices(ans, prefer(test), lvl < 2 ? 3 : 4);
-    Q.voice = () => speak(P.machine);
-    qSay(P.machine); Q.voice();
+    qSay(P.machine);
 
     $('ask').innerHTML = '<div class="lab"><div class="tray2" id="mIn"></div>' + MACHINE + '<div class="tray2" id="mOut"></div></div><div class="history" id="mHist"></div>';
     const box = options(opts.map((x) => ({ html: itemSvg(x), ok: key(x) === key(ans) })), async (b) => {
@@ -1359,13 +1303,13 @@
     if (lvl === 5) {
       // How many light balls weigh the same as some heavy ones?
       const [cx, cy] = shuffle(CK.slice()), k = pick([2, 3]), m = k === 3 ? 2 : pick([2, 3]);
-      const X = it('lingkaran', cx), Y = it('lingkaran', cy, { z: 0.8 });
+      const X = it('circle', cx), Y = it('circle', cy, { z: 0.8 });
       box.classList.add('one');
       box.innerHTML = scaleSvg([X], Array(k).fill(Y)) + scaleSvg(Array(m).fill(X), ['?']);
       const ans = m * k;
       const nums = new Set([ans]);
       shuffle([ans + 1, ans - 1, k, m + k, ans + 2].filter((v) => v > 0)).forEach((v) => { if (nums.size < 4) nums.add(v); });
-      Q.voice = () => speak(P.count); qSay(P.count); Q.voice();
+      qSay(P.count);
       setTimeout(() => { if (my === runToken) box.firstChild.classList.add('wob'); }, 300);
       options(shuffle([...nums]).map((v) => ({ html: '<span class="numopt">' + v + ' ' + itemSvg(Y) + '</span>', ok: v === ans, label: String(v) })), () => {
         const s = box.children[1];
@@ -1381,14 +1325,14 @@
     const ans = /heav/.test(ask) ? order[n - 1] : order[0];
     const pairs = shuffle(order.slice(1).map((c, k) => (Math.random() < 0.5 ? [order[k], c, 1] : [c, order[k], -1])));
     if (n === 2) box.classList.add('one');
-    box.innerHTML = pairs.map(([a, b]) => scaleSvg([it('lingkaran', a)], [it('lingkaran', b)])).join('');
+    box.innerHTML = pairs.map(([a, b]) => scaleSvg([it('circle', a)], [it('circle', b)])).join('');
     pairs.forEach((p, k) => setTimeout(() => { if (my === runToken) { tilt(box.children[k], p[2]); sfx.drop(); } }, 400 + k * 500));
-    Q.voice = () => speak(P[ask]); qSay(P[ask]); Q.voice();
-    options(shuffle(order.slice()).map((c) => ({ html: itemSvg(it('lingkaran', c)), ok: c === ans, label: c })), () => solved());
+    qSay(P[ask]);
+    options(shuffle(order.slice()).map((c) => ({ html: itemSvg(it('circle', c)), ok: c === ans, label: c })), () => solved());
   }
 
   // ---- Logic filter ----
-  const WORD = (a) => a.k === 'z' ? (a.v === 1 ? 'besar' : 'kecil') : a.v;
+  const WORD = (a) => a.k === 'z' ? (a.v === 1 ? 'big' : 'small') : a.v;
   const test = (a, x) => (a.k === 'c' ? x.c : a.k === 's' ? x.s : x.z) === a.v;
   function passes(r, x) {
     if (r.op === 'is') return test(r.a, x);
@@ -1400,23 +1344,25 @@
   function chip(a, not) {
     let ic;
     if (a.k === 'c') ic = '<i class="sw" style="background:' + COLORS[a.v] + '"></i>';
-    else if (a.k === 's') ic = itemSvg(it(a.v, 'abu'));
-    else ic = itemSvg(it('lingkaran', 'abu', { z: a.v }));
+    else if (a.k === 's') ic = itemSvg(it(a.v, 'gray'));
+    else ic = itemSvg(it('circle', 'gray', { z: a.v }));
     return '<span class="chip' + (not ? ' not' : '') + '">' + ic + WORD(a) + '</span>';
   }
   function ruleHtml(r) {
     if (r.op === 'is') return chip(r.a);
-    if (r.op === 'and') return chip(r.a) + '<span class="op">dan</span>' + chip(r.b);
-    if (r.op === 'or') return chip(r.a) + '<span class="op or">atau</span>' + chip(r.b);
-    if (r.op === 'not') return '<span class="op no">bukan</span>' + chip(r.a, true);
-    return chip(r.a) + '<span class="op no">tapi bukan</span>' + chip(r.b, true);
+    if (r.op === 'and') return chip(r.a) + '<span class="op">and</span>' + chip(r.b);
+    if (r.op === 'or') return chip(r.a) + '<span class="op or">or</span>' + chip(r.b);
+    if (r.op === 'not') return '<span class="op no">not</span>' + chip(r.a, true);
+    return chip(r.a) + '<span class="op no">but not</span>' + chip(r.b, true);
   }
+  // Words for the rule sentence: shapes get an article ("red and a circle").
   function ruleWords(r) {
-    if (r.op === 'is') return [WORD(r.a)];
-    if (r.op === 'and') return [WORD(r.a), 'dan', WORD(r.b)];
-    if (r.op === 'or') return [WORD(r.a), 'atau', WORD(r.b)];
-    if (r.op === 'not') return ['bukan', WORD(r.a)];
-    return [WORD(r.a), 'tapi bukan', WORD(r.b)];
+    const word = (a) => a.k === 's' ? 'a ' + a.v : WORD(a);
+    if (r.op === 'is') return [word(r.a)];
+    if (r.op === 'and') return [word(r.a), 'and', word(r.b)];
+    if (r.op === 'or') return [word(r.a), 'or', word(r.b)];
+    if (r.op === 'not') return ['not', word(r.a)];
+    return [word(r.a), 'but not', word(r.b)];
   }
   function genSaring(lvl) {
     let rule, items;
@@ -1429,15 +1375,13 @@
         { op: 'and', a: z, b: c(0) }, { op: 'or', a: c(0), b: s(0) }, { op: 'andnot', a: z, b: s(0) }][fam];
       const all = [];
       cs.forEach((cc) => ss.forEach((sh) => [1, 0.6].forEach((zz) => all.push(it(sh, cc, { z: zz })))));
-      // Sizes only vary when the rule is about size, so they never confuse the other rules.
-      const pool = rule.a.k === 'z' ? all : all.filter((x) => x.z === 1);
+      // Sizes vary only when the rule is about size, or for AND, where one color and one shape fit just one item of each size.
+      const pool = rule.a.k === 'z' || rule.op === 'and' ? all : all.filter((x) => x.z === 1);
       items = shuffle(pool).slice(0, 8);
       const n = items.filter((x) => passes(rule, x)).length;
       if (n >= 2 && n <= 5) break;
     }
-    const words = ['Pilih semua yang', ...ruleWords(rule)];
-    Q.voice = () => speakSeq(words);
-    qSay(words.join(' ') + '.'); Q.voice();
+    qSay('Pick everything that is ' + ruleWords(rule).join(' ') + '.');
     $('ask').innerHTML = '<div class="rule">' + ruleHtml(rule) + '</div><div class="pool" id="pool"></div>';
     const pool = $('pool');
     items.forEach((x, k) => {
@@ -1445,7 +1389,7 @@
       b.type = 'button'; b.className = 'thing'; b.innerHTML = itemSvg(x);
       b.style.animationDelay = k * 0.04 + 's';
       b.setAttribute('aria-pressed', 'false');
-      b.setAttribute('aria-label', (x.z === 1 ? '' : 'kecil ') + x.s + ' ' + x.c);
+      b.setAttribute('aria-label', (x.z === 1 ? '' : 'small ') + x.c + ' ' + x.s);
       b.addEventListener('click', () => {
         if (pool.classList.contains('done')) return;
         b.classList.remove('no', 'hint');
@@ -1457,7 +1401,7 @@
     const wrap = document.createElement('div');
     wrap.className = 'check';
     const go = document.createElement('button');
-    go.type = 'button'; go.className = 'btn go'; go.textContent = '✓ Cek';
+    go.type = 'button'; go.className = 'btn go'; go.textContent = '✓ Check';
     go.addEventListener('click', () => {
       if (pool.classList.contains('done')) return;
       const els = [...pool.children];
@@ -1497,12 +1441,12 @@
     const after = totalStars();
     const gained = STICKERS.slice(unlocked(before), unlocked(after));
     last = { w, i };
-    $('resTitle').textContent = stars === 3 ? 'Luar biasa!' : stars === 2 ? 'Hebat!' : 'Bagus, terus berlatih!';
+    $('resTitle').textContent = stars === 3 ? 'Amazing!' : stars === 2 ? 'Great!' : 'Good, keep practicing!';
     $('resStars').innerHTML = [0, 1, 2].map((k) => starSvg(k < stars, 'star')).join('');
     $('resText').textContent = text;
     const g = $('resGift');
     g.hidden = !gained.length;
-    if (gained.length) g.innerHTML = '<b>Stiker baru!</b><div class="stk">' + gained.map(face).join('') + '</div>' + gained.map((k) => k.name).join(', ');
+    if (gained.length) g.innerHTML = '<b>New sticker!</b><div class="stk">' + gained.map(face).join('') + '</div>' + gained.map((k) => k.name).join(', ');
     const hasNext = i + 1 < w.levels.length;
     $('resNext').hidden = !hasNext;
     show('result');
@@ -1516,7 +1460,7 @@
     const stars = totalStars();
     $('stkStars').textContent = stars;
     const nx = STICKERS.find((k) => k.at > stars);
-    $('stkNext').textContent = nx ? 'Stiker berikutnya di ' + nx.at + ' bintang.' : 'Semua stiker sudah terkumpul!';
+    $('stkNext').textContent = nx ? 'Next sticker at ' + nx.at + ' stars.' : 'You have every sticker!';
     $('sgrid').innerHTML = STICKERS.map((k) => '<div class="sticker' + (k.at <= stars ? '' : ' locked') + '">' + face(k)
       + '<b>' + (k.at <= stars ? k.name : '???') + '</b><small>⭐ ' + k.at + '</small></div>').join('');
   }

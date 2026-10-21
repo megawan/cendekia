@@ -1,8 +1,8 @@
 {
-  "name": "Robo Logika",
-  "short_name": "Logika",
-  "description": "Permainan berpikir logis dan komputasional untuk anak: program robot, pola, mesin ajaib, timbangan, mencari kesalahan kode dan logika DAN, ATAU, BUKAN.",
-  "lang": "id",
+  "name": "Robo Logic",
+  "short_name": "Robo Logic",
+  "description": "Logical and computational thinking games for children: program a robot, find patterns, crack the magic machine, read balances, fix buggy code and sort with AND, OR and NOT.",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
