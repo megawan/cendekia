@@ -25,7 +25,7 @@ Several children can share one device. `shared/profile.js` is loaded by every ap
 
 [`orangtua/`](orangtua) is the page for parents, opened from "👪 Orang tua" and protected by a small sum so a young child does not open it by accident. For each child it shows the days in a row, stars, minutes this week, a seven-day chart, progress per app, the letters and words that most often went wrong, and the last rounds. It also sets a daily time limit (a new round cannot start once it is used up), renames, changes the picture of, adds and deletes children.
 
-Everything stays in the browser of the device: nothing is sent anywhere, and clearing the browser's site data clears it. To add an app, add its storage key to `APP_KEYS` in `shared/profile.js` and a row to `APPS` in `orangtua/index.html`, and add `../shared/profile.js` to the app's service worker `CORE` list.
+Everything stays in the browser of the device: nothing is sent anywhere, and clearing the browser's site data clears it. To add an app, add its storage key to `APP_KEYS` in `shared/profile.js` (or move the app's old saves itself, as Robo Logic does) and to the list of app keys removed with a child in `remove()`, add a row to `APPS` in `orangtua/index.html`, and add `../shared/profile.js` to the app's service worker `CORE` list.
 
 ## Running locally
 
