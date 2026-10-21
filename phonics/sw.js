@@ -1,7 +1,7 @@
 // Offline support for Phonics Fun. Bump CACHE when the precached files change.
-const CACHE = 'phonics-v2';
+const CACHE = 'phonics-v3';
 const FONTS = 'phonics-fonts-v1';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js'];
 
 // The audio list comes from audio/index.json, which tools/make-audio.mjs writes.
 self.addEventListener('install', (event) => {
