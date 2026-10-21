@@ -11,8 +11,8 @@ Each child picks a difficulty, stored per child: the badge at the top right (�
 | Difficulty | Ages | What changes |
 | --- | --- | --- |
 | Easy | 4–5 | 10 small robot maps, a repeat block only at the end, three choices, one question fewer per round, six items in the filter, simple number machines |
-| Medium | 6–7 | 14 robot maps with repeat blocks, a first function and a first if block; the original questions |
-| Hard | 8–10 | 10 bigger robot maps with repeat, function and if blocks; four choices, gaps in the middle of patterns, arrows turning by 45 degrees, two machine examples, up to five balls and chained balances, ten items from four colors and shapes in the filter |
+| Medium | 6–7 | 16 robot maps with repeat blocks, a first function, if blocks for yellow and blue, and a first "repeat until 🚩"; the original questions |
+| Hard | 8–10 | 12 bigger robot maps with repeat, function, if and "repeat until 🚩" blocks, up to two tile colors; four choices, gaps in the middle of patterns, arrows turning by 45 degrees, two machine examples, up to five balls and chained balances, ten items from four colors and shapes in the filter |
 
 ## Worlds
 
@@ -20,7 +20,7 @@ Every world has its own levels. A level opens once the level before it has at le
 
 | World | Skill | What the child does |
 | --- | --- | --- |
-| Robot Path | Algorithms | Builds a program from arrow blocks, then runs it and watches Gbot follow it step by step on a grid with rocks, water, gems, yellow tiles and a flag. Later levels add a repeat block (🔁 ×2 to ×9), a function (★, built once in its own tray and used again) and an if block (on a yellow tile Gbot takes the first arrow, anywhere else the second). A block limit makes the new block necessary. 🎲 Random map makes a new map every time, for practice without stars. |
+| Robot Path | Algorithms | Builds a program from arrow blocks, then runs it and watches Gbot follow it step by step on a grid with rocks, water, gems, yellow tiles and a flag. Later levels add a repeat block (🔁 ×2 to ×9), a function (★, built once in its own tray and used again) an if block (on a yellow tile Gbot takes the first arrow, anywhere else the second; blue tiles have their own if block, so two colors can mean two different turns) and "repeat until 🚩" (🔁🚩, repeats until Gbot reaches the flag, so no counting is needed). A block limit makes the new block necessary. 🎲 Random map makes a new map every time, for practice without stars. 🛠️ Make a map lets the child draw a map (4×4 to 7×7, with rocks, water, gems, yellow and blue tiles), test it, keep up to twelve, and share one as a link; the map is written in the link itself, and a link opens straight into the map. |
 | Patterns (8 levels) | Pattern recognition | Finds what comes next or what is missing: colors, shapes, repeating units, growing dot counts, turning arrows, and two rules at once. |
 | Magic Machine (8 levels) | Abstraction | Watches items go in and out of a machine, works out the rule (change color, change shape, add one, turn, double, two changes, add two, number rules) and picks what comes out next. |
 | Balance (6 levels) | Logical reasoning | Reads one to four balances and picks the heaviest or lightest ball, then finds how many small balls balance some big ones. |
@@ -33,7 +33,7 @@ Hints: after a failed run, 💡 appears in Robot Path. The first hint shows numb
 
 Robot stars: three for a program with no more blocks than the solution and fewer than two failed runs, one less for each of those missed. Fixing stars: one less for more than one change, and one less for two or more failed runs after the first change. Quiz stars: three with every question right on the first try, two with up to two misses.
 
-Stickers: twelve space stickers unlock as the player's total star count, over all difficulties, grows (`STICKERS` in `index.html`). Days in a row are counted as in the other apps. Each child's progress is kept in `localStorage` under `logika.v3.<child id>`. Robo Logic's own players from before (`logika.v2`, or `logika.v1`) moved once to the shared children: a player with the same name as a child becomes that child, the player who was playing becomes the current child, and the others become new children.
+Stickers: twelve space stickers unlock as the player's total star count, over all difficulties, grows (`STICKERS` in `index.html`). Days in a row are counted as in the other apps. Each child's progress, and their saved maps, are kept in `localStorage` under `logika.v3.<child id>`. Robo Logic's own players from before (`logika.v2`, or `logika.v1`) moved once to the shared children: a player with the same name as a child becomes that child, the player who was playing becomes the current child, and the others become new children.
 
 ## For parents
 
@@ -56,7 +56,7 @@ Gbot walks, wobbles, bumps into rocks and dances at the flag, gems fly up when c
 
 ## Content
 
-Robot and fixing levels, for each difficulty, and Gbot's messages live in the `<script type="application/json" id="content">` block in `index.html`. Maps use `.` grass, `#` rock, `~` water, `*` gem, `y` yellow tile, `R` Gbot and `F` the flag. A program is written with `U D L R`; `4(RD)` repeats `R D` four times, `?DR` goes down on a yellow tile and right anywhere else, and `F` calls the function, which is written after `|` (`FFF|RRU`). `tools` lists the blocks a level offers besides the arrows (`loop`, `if`, `fn`) and `max` is the most blocks a program may use. Pattern, machine, balance and filter questions are generated each time.
+Robot and fixing levels, for each difficulty, and Gbot's messages live in the `<script type="application/json" id="content">` block in `index.html`. Maps use `.` grass, `#` rock, `~` water, `*` gem, `y` yellow tile, `b` blue tile, `R` Gbot and `F` the flag. A program is written with `U D L R`; `4(RD)` repeats `R D` four times and `w(RD)` repeats until the flag, `?DR` goes down on a yellow tile and right anywhere else (`?bUR` the same for blue), and `F` calls the function, which is written after `|` (`FFF|RRU`). `tools` lists the blocks a level offers besides the arrows (`loop`, `if`, `fn`, `until`) and `max` is the most blocks a program may use. Pattern, machine, balance and filter questions are generated each time.
 
 After changing a level, check that every map can be solved:
 
