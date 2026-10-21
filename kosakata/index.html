@@ -691,8 +691,6 @@
     "idEn": "Apa bahasa Inggrisnya?",
     "enId": "Apa artinya?",
     "spell": "Susun hurufnya.",
-    "done": "Selamat! Kamu hebat!",
-    "sticker": "Hore, ada stiker baru!",
     "retry": ["Ayo coba lagi.", "Hampir benar!", "Dengarkan sekali lagi."]
   }
 }
@@ -1192,7 +1190,6 @@
     if (gained.length) g.innerHTML = '<b>Stiker baru!</b><div class="stk">' + gained.map(face).join('') + '</div><small>' + gained.map((k) => k.name).join(', ') + '</small>';
     $('rNext').hidden = stageIdx + 1 >= STAGES.length;
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
-    speak(idp(gained.length ? P.sticker : P.done));
   }
   $('rNext').addEventListener('click', () => startStage(stageIdx + 1));
   $('rAgain').addEventListener('click', () => startStage(stageIdx));
