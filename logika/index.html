@@ -48,6 +48,7 @@
   .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
   .bar .btn { padding: 8px 14px; min-height: 46px; font-size: 1rem; box-shadow: none; }
   .stack { display: grid; gap: 14px; max-width: 420px; margin: 20px auto; }
+  .spacer { width: 46px; }
   .note { font-size: .9rem; text-align: center; opacity: .75; margin-top: 12px; }
   .note a { color: inherit; }
   .pill { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 2px solid var(--line);
@@ -336,6 +337,121 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
     #fx, .floaters { display: none; }
   }
+  /* Players */
+  .who { position: absolute; right: 0; top: 0; display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 800;
+    background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 2px 12px 2px 4px; cursor: pointer; color: inherit; }
+  .who .av { font-size: 1.6rem; line-height: 1; }
+  .who .lvl { font-size: .75rem; color: #fff; background: var(--c-teal); border-radius: 999px; padding: 0 8px; }
+  .homeTop { position: relative; min-height: 40px; }
+  .plist { display: grid; gap: 12px; margin-bottom: 16px; }
+  .pcard { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-bottom-width: 5px;
+    border-radius: var(--radius); padding: 10px 12px; }
+  .pcard.cur { border-color: var(--good); }
+  .pcard .pick { flex: 1; display: flex; align-items: center; gap: 12px; font: inherit; color: inherit; background: none; border: 0;
+    cursor: pointer; text-align: left; padding: 0; }
+  .pcard .av { font-size: 2.6rem; line-height: 1; }
+  .pcard b { display: block; font-size: 1.2rem; }
+  .pcard small { opacity: .75; }
+  .pcard .edit { font: inherit; border: 2px solid var(--line); background: #fff; border-radius: 12px; min-width: 46px; min-height: 46px; cursor: pointer; font-size: 1.2rem; }
+  .field { display: block; border: 0; padding: 0; margin: 0 0 16px; font-weight: 800; }
+  .field legend { padding: 0; margin-bottom: 6px; }
+  .field input { display: block; width: 100%; margin-top: 6px; font: inherit; font-size: 1.2rem; font-weight: 700; padding: 10px 14px;
+    border: 2px solid var(--line); border-radius: 14px; background: #fff; color: inherit; }
+  .avs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .avs button { font-size: 2rem; aspect-ratio: 1; border-radius: 16px; border: 3px solid var(--line); background: #fff; cursor: pointer; }
+  .avs button[aria-pressed="true"], .diffs button[aria-pressed="true"] { border-color: var(--good); background: #e8f8f0; }
+  .diffs { display: grid; gap: 8px; }
+  .diffs button { display: flex; align-items: center; gap: 12px; font: inherit; color: inherit; text-align: left; border: 3px solid var(--line);
+    background: #fff; border-radius: 16px; padding: 8px 12px; cursor: pointer; }
+  .diffs .ic { font-size: 1.8rem; }
+  .diffs small { display: block; font-weight: 500; opacity: .75; }
+  .btn.danger { color: var(--bad); }
+
+  /* Random map and help buttons on the world screen */
+  .extra { display: grid; gap: 10px; margin-top: 18px; }
+  .about .help { margin-left: auto; flex: none; font: inherit; font-weight: 800; border: 2px solid var(--line); background: #fff;
+    border-radius: 999px; min-height: 40px; padding: 0 12px; cursor: pointer; color: inherit; }
+
+  /* New blocks: function and if */
+  .blk.F { --c: var(--c-purple); font-size: 1.6rem; color: #fff; }
+  .palette .blk.F { font-size: 2rem; }
+  .ytile { display: inline-block; width: 22px; height: 22px; border-radius: 6px; background: #fde68a; border: 3px solid #f59e0b; vertical-align: middle; }
+  .ifb { display: inline-flex; align-items: center; gap: 5px; padding: 5px 6px; border-radius: 16px; background: #fff8db;
+    border: 3px solid #f59e0b; animation: popIn .25s both; min-height: 60px; }
+  .ifb .cond { font-weight: 800; display: inline-flex; align-items: center; gap: 2px; }
+  .ifb .els { font-size: .8rem; font-weight: 800; opacity: .7; }
+  .ifb .slot { width: 44px; height: 44px; border-radius: 12px; border: 3px dashed #f59e0b; background: #fff; display: grid;
+    place-items: center; padding: 0; cursor: pointer; }
+  .ifb .slot.full { border: 0; background: none; }
+  .ifb .slot .blk { width: 44px; height: 44px; animation: none; }
+  .ifb .slot.target { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--c-blue); }
+  .ifb .slot.run .blk, .ifb.run { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--warm); }
+  .ifb .del, .loop .del { font: inherit; border: 0; background: none; color: var(--bad); font-size: 1.3rem; cursor: pointer; padding: 0 2px; line-height: 1; }
+  .palette .blk.ifBtn { --c: #f59e0b; display: inline-flex; align-items: center; justify-content: center; gap: 2px; font-weight: 800; font-size: 1.2rem; }
+  .palette .blk.ifBtn .ytile { width: 26px; height: 26px; }
+  .fnwrap { margin-top: 12px; }
+  .fnwrap .lbl { font-weight: 800; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .fnwrap .lbl .blk { width: 30px; height: 30px; font-size: 1rem; border-radius: 9px; box-shadow: none; animation: none; cursor: default; }
+  #fnTray { border-color: #c9bdfc; background: #f6f3ff; min-height: 66px; }
+  #fnTray.target { border-color: var(--c-purple); }
+  .cell.yellow { background: #fde68a; box-shadow: inset 0 0 0 3px #f59e0b; }
+  .cell .foot { position: absolute; width: 34%; height: 34%; border-radius: 50%; background: rgba(242,137,31,.85); color: #fff;
+    font-size: .75rem; font-weight: 800; display: grid; place-items: center; z-index: 1; animation: popIn .3s both; animation-delay: calc(var(--k) * .12s); }
+  .ghost { margin-top: 12px; border: 3px dashed var(--c-purple); border-radius: var(--radius); padding: 10px; background: #f6f3ff; }
+  .ghost .lbl { font-weight: 800; margin-bottom: 6px; }
+  .ghost .prog-ro { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .ghost .fnline { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-weight: 800; }
+  .hintme { animation: pulse .8s ease-in-out infinite !important; box-shadow: 0 0 0 4px #fff, 0 0 0 8px var(--warm) !important; }
+
+  /* How to play */
+  .tutor { position: fixed; inset: 0; z-index: 40; background: rgba(31,42,68,.55); display: grid; place-items: center; padding: 16px; }
+  .tcard { background: var(--bg); border-radius: 24px; padding: 18px 16px; width: min(100%, 460px); max-height: 92vh; overflow: auto;
+    animation: popIn .35s both; }
+  .tcard h2 { margin-bottom: 10px; }
+  .tsteps { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 12px; }
+  .tsteps li { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-radius: 18px;
+    padding: 10px; animation: popIn .4s both; }
+  .tsteps li:nth-child(2) { animation-delay: .15s; } .tsteps li:nth-child(3) { animation-delay: .3s; } .tsteps li:nth-child(4) { animation-delay: .45s; }
+  .tsteps .n { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: grid; place-items: center; }
+  .tsteps p { margin: 0; font-weight: 700; line-height: 1.3; }
+  .tcard .btn { width: 100%; }
+  .demo { flex: none; width: 112px; height: 74px; position: relative; display: flex; align-items: center; justify-content: center; gap: 4px;
+    background: #fbf7f1; border-radius: 14px; overflow: hidden; }
+  .demo .blk { width: 30px; height: 30px; border-radius: 9px; animation: none; box-shadow: none; cursor: default; }
+  .demo .blk svg { width: 20px; height: 20px; }
+  .demo svg.it { width: 26px; height: 26px; }
+  .demo .gbot { width: 34px; height: 34px; }
+  .demo .seqd { display: flex; gap: 3px; }
+  .demo .q { width: 26px; height: 26px; border: 2px dashed var(--accent); border-radius: 7px; color: var(--accent); font-weight: 800; display: grid; place-items: center; }
+  .d-pop > * { animation: dpop 2.4s infinite both; }
+  .d-pop > *:nth-child(2) { animation-delay: .4s; } .d-pop > *:nth-child(3) { animation-delay: .8s; } .d-pop > *:nth-child(4) { animation-delay: 1.2s; }
+  @keyframes dpop { 0% { transform: scale(0); } 15%, 85% { transform: scale(1); } 100% { transform: scale(0); } }
+  .d-walk .track { position: absolute; left: 6px; right: 6px; top: 50%; height: 4px; margin-top: 14px; background: var(--line); border-radius: 2px; }
+  .d-walk .gbot { position: absolute; left: 4px; top: 12px; animation: dwalk 3s ease-in-out infinite; }
+  .d-walk .flagd { position: absolute; right: 8px; top: 14px; font-size: 1.6rem; }
+  @keyframes dwalk { 0%, 10% { transform: translateX(0); } 80%, 100% { transform: translateX(72px); } }
+  .d-tap .btn { min-height: 34px; padding: 4px 12px; font-size: .9rem; box-shadow: 0 3px 0 #13714c; animation: dpress 1.6s infinite; }
+  .d-tap .hand { position: absolute; right: 16px; bottom: 2px; font-size: 1.4rem; animation: dhand 1.6s infinite; }
+  @keyframes dpress { 40%, 55% { transform: translateY(3px); box-shadow: 0 0 0 #13714c; } }
+  @keyframes dhand { 0%, 100% { transform: translate(8px, 8px); } 45% { transform: translate(0, 0); } }
+  .d-fly .flyme { animation: dfly 2.4s ease-in-out infinite; }
+  @keyframes dfly { 0%, 20% { transform: translate(0, 26px); opacity: .4; } 60%, 100% { transform: translate(0, 0); opacity: 1; } }
+  .demo .blk.bad { animation: shake .4s 4, dfix 2.4s infinite; }
+  @keyframes dfix { 0%, 60% { --c: var(--bad); background: var(--bad); } 61%, 100% { background: var(--d-R); } }
+  .d-tilt .beam2 { width: 90px; height: 6px; background: #475569; border-radius: 3px; animation: dtilt 2.4s ease-in-out infinite; position: relative; }
+  .d-tilt .beam2 .l, .d-tilt .beam2 .r { position: absolute; top: -22px; }
+  .d-tilt .beam2 .l { left: -6px; } .d-tilt .beam2 .r { right: -6px; }
+  .d-tilt.level .beam2 { animation: dlevel 2.4s ease-in-out infinite; }
+  @keyframes dtilt { 0%, 15% { transform: rotate(0); } 50%, 100% { transform: rotate(-14deg); } }
+  @keyframes dlevel { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-6deg); } 60% { transform: rotate(4deg); } }
+  .d-sel .thingd { width: 34px; height: 34px; border-radius: 9px; border: 2px solid var(--line); display: grid; place-items: center; background: #fff; }
+  .d-sel .thingd.on { animation: dsel 2.4s infinite; }
+  @keyframes dsel { 0%, 30% { box-shadow: none; } 45%, 100% { box-shadow: 0 0 0 3px var(--c-blue); background: #e3f0ff; } }
+  .d-machine .machine { width: 54px; height: 54px; }
+  .d-machine .in { animation: din 2.4s infinite; } .d-machine .out { animation: dout 2.4s infinite; }
+  @keyframes din { 0% { transform: translateX(0); opacity: 1; } 40%, 100% { transform: translateX(30px) scale(.2); opacity: 0; } }
+  @keyframes dout { 0%, 50% { transform: translateX(-30px) scale(.2); opacity: 0; } 80%, 100% { transform: translateX(0); opacity: 1; } }
+
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -350,6 +466,7 @@
 <main>
   <!-- Home -->
   <section id="home">
+    <div class="homeTop"><button type="button" class="who" id="who" aria-label="Change player"></button></div>
     <div class="hero">
       <svg class="gbot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div>
@@ -366,6 +483,31 @@
     <p class="note"><a href="../">← More apps in Cendekia</a></p>
   </section>
 
+  <!-- Players -->
+  <section id="players" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" id="plBack">← Back</button>
+      <h2>Who is playing?</h2><span class="spacer"></span>
+    </div>
+    <div class="plist" id="plist"></div>
+    <div class="stack"><button type="button" class="btn" id="plAdd">+ Add a player</button></div>
+  </section>
+
+  <!-- Add or change a player -->
+  <section id="pform" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" id="pfBack">← Back</button>
+      <h2 id="pfTitle">New player</h2><span class="spacer"></span>
+    </div>
+    <div class="stack">
+      <label class="field">Name <input type="text" id="pfName" maxlength="14" autocomplete="off" placeholder="Your name"></label>
+      <fieldset class="field"><legend>Pick a picture</legend><div class="avs" id="pfAvs"></div></fieldset>
+      <fieldset class="field"><legend>How hard?</legend><div class="diffs" id="pfDiffs"></div></fieldset>
+      <button type="button" class="btn go" id="pfSave">Save</button>
+      <button type="button" class="btn ghost danger" id="pfDel" hidden>Remove this player</button>
+    </div>
+  </section>
+
   <!-- World: pick a level -->
   <section id="world" hidden>
     <div class="bar">
@@ -375,6 +517,7 @@
     </div>
     <div class="about" id="wAbout"></div>
     <div class="levels" id="wLevels"></div>
+    <div class="extra" id="wExtra"></div>
   </section>
 
   <!-- Robot: write or fix a program -->
@@ -390,12 +533,18 @@
     </div>
     <div class="board" id="board"></div>
     <div class="tray" id="tray" role="group" aria-label="Program"></div>
+    <div class="fnwrap" id="fnWrap" hidden>
+      <div class="lbl"><span class="blk F" aria-hidden="true">★</span> Function</div>
+      <div class="tray" id="fnTray" role="group" aria-label="Function"></div>
+    </div>
     <div class="fixbar" id="fixbar" hidden></div>
+    <div class="ghost" id="ghost" hidden></div>
     <div class="palette" id="palette"></div>
     <div class="tools">
       <button type="button" class="btn ghost" id="rUndo" aria-label="Remove the last block">⌫</button>
       <button type="button" class="btn ghost" id="rClear" aria-label="Remove all blocks">🗑️</button>
       <button type="button" class="btn ghost" id="rReset" aria-label="Start again from the first program" hidden>↺</button>
+      <button type="button" class="btn ghost" id="rHint" aria-label="Get a hint" hidden>💡</button>
       <button type="button" class="btn go run" id="rRun">▶ Run</button>
     </div>
   </section>
@@ -441,36 +590,93 @@
   </section>
 </main>
 <div id="fx" aria-hidden="true"></div>
+<div class="tutor" id="tutor" role="dialog" aria-modal="true" aria-labelledby="tuTitle" hidden>
+  <div class="tcard">
+    <h2 id="tuTitle">How to play</h2>
+    <ol class="tsteps" id="tuSteps"></ol>
+    <button type="button" class="btn go" id="tuGo">Let's play!</button>
+  </div>
+</div>
 
 <!-- Content.
-     Maps: . grass, # rock, ~ water, * gem, R Gbot's start, F flag.
-     Programs: U D L R are up, down, left, right; 4(RD) repeats R D four times. -->
+     Levels are listed for each difficulty. Maps: . grass, # rock, ~ water, * gem, y yellow tile, R Gbot's start, F flag.
+     Programs: U D L R are up, down, left, right; 4(RD) repeats R D four times; ?DR goes down on a yellow tile and
+     right anywhere else; F calls the function, written after | (FFF|RRU). `tools` lists the blocks a level offers
+     besides the arrows (loop, if, fn), and `max` is the most blocks a program may use. -->
 <script type="application/json" id="content">
 {
-  "robot": [
-    { "name": "Forward", "map": [".....", "R...F"], "sol": "RRRR" },
-    { "name": "Turn", "map": ["R....", ".....", "....F"], "sol": "RRRRDD" },
-    { "name": "A rock", "map": [".....", "R.#.F", "....."], "sol": "RURRDR" },
-    { "name": "Gems", "map": ["..*..", "R...F", "..*.."], "sol": "RURDDRUR" },
-    { "name": "Maze", "map": ["R.#...", ".##.#.", "....#F"], "sol": "DDRRRUURRDD" },
-    { "name": "Little lake", "map": ["*..~..", ".#.~.*", "R....F"], "sol": "UUDDRRRRRUD" },
-    { "name": "Repeat", "map": ["~~~~~~", "R....F", "~~~~~~"], "sol": "5(R)", "max": 2 },
-    { "name": "Stairs", "map": ["R.#..", "#..#.", ".#..#", "..#..", "...#F"], "sol": "4(RD)", "max": 4 },
-    { "name": "Hills", "map": [".*.*.*.", "R#.#.#F"], "sol": "3(URRD)", "max": 5 },
-    { "name": "Around the lake", "map": ["R.....", "~~~~~.", "~~~~~.", "~~~~~.", "F....."], "sol": "5(R)4(D)5(L)", "max": 6 },
-    { "name": "Snake", "map": ["R....", "####.", ".....", ".####", "....F"], "sol": "4(R)2(D)4(L)2(D)4(R)", "max": 10 },
-    { "name": "Gem stairs", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)", "max": 5 }
-  ],
-  "debug": [
-    { "name": "Turn", "map": ["R....", ".....", "....F"], "sol": "RRRRDD" },
-    { "name": "A rock", "map": [".....", "R.#.F", "....."], "sol": "RURRDR" },
-    { "name": "Gems", "map": ["..*..", "R...F", "..*.."], "sol": "RURDDRUR" },
-    { "name": "Maze", "map": ["R.#...", ".##.#.", "....#F"], "sol": "DDRRRUURRDD" },
-    { "name": "Stairs", "map": ["R.#..", "#..#.", ".#..#", "..#..", "...#F"], "sol": "4(RD)" },
-    { "name": "Hills", "map": [".*.*.*.", "R#.#.#F"], "sol": "3(URRD)" },
-    { "name": "Around the lake", "map": ["R.....", "~~~~~.", "~~~~~.", "~~~~~.", "F....."], "sol": "5(R)4(D)5(L)" },
-    { "name": "Gem stairs", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)" }
-  ],
+  "robot": {
+    "easy": [
+      {"name": "Forward", "map": ["R..F"], "sol": "RRR"},
+      {"name": "Down the hill", "map": ["R...", "...F"], "sol": "RRRD"},
+      {"name": "Up", "map": ["...F", "R..."], "sol": "RRRU"},
+      {"name": "A rock", "map": ["R#F", "..."], "sol": "DRRU"},
+      {"name": "A gem", "map": ["R*.F"], "sol": "RRR"},
+      {"name": "Go left", "map": ["F..R"], "sol": "LLL"},
+      {"name": "Corner", "map": ["R.*", "##.", "F.."], "sol": "RRDDLL"},
+      {"name": "Two gems", "map": ["*..*", "R..F"], "sol": "URRRD"},
+      {"name": "Repeat", "map": ["~~~~~~", "R....F", "~~~~~~"], "sol": "5(R)", "max": 2, "tools": "loop"},
+      {"name": "Repeat twice", "map": ["R~~~", ".~~~", ".~~~", "...F"], "sol": "3(D)3(R)", "max": 4, "tools": "loop"}
+    ],
+    "medium": [
+      {"name": "Forward", "map": [".....", "R...F"], "sol": "RRRR"},
+      {"name": "Turn", "map": ["R....", ".....", "....F"], "sol": "RRRRDD"},
+      {"name": "A rock", "map": [".....", "R.#.F", "....."], "sol": "RURRDR"},
+      {"name": "Gems", "map": ["..*..", "R...F", "..*.."], "sol": "RURDDRUR"},
+      {"name": "Maze", "map": ["R.#...", ".##.#.", "....#F"], "sol": "DDRRRUURRDD"},
+      {"name": "Little lake", "map": ["*..~..", ".#.~.*", "R....F"], "sol": "UUDDRRRRRUD"},
+      {"name": "Repeat", "map": ["~~~~~~", "R....F", "~~~~~~"], "sol": "5(R)", "max": 2, "tools": "loop"},
+      {"name": "Stairs", "map": ["R.#..", "#..#.", ".#..#", "..#..", "...#F"], "sol": "4(RD)", "max": 4, "tools": "loop"},
+      {"name": "Hills", "map": [".*.*.*.", "R#.#.#F"], "sol": "3(URRD)", "max": 5, "tools": "loop"},
+      {"name": "Around the lake", "map": ["R.....", "~~~~~.", "~~~~~.", "~~~~~.", "F....."], "sol": "5(R)4(D)5(L)", "max": 6, "tools": "loop"},
+      {"name": "Snake", "map": ["R....", "####.", ".....", ".####", "....F"], "sol": "4(R)2(D)4(L)2(D)4(R)", "max": 10, "tools": "loop"},
+      {"name": "Gem stairs", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)", "max": 5, "tools": "loop"},
+      {"name": "My function", "map": ["~~~~~~F", "~~~~...", "~~...~~", "R..~~~~"], "sol": "FFF|RRU", "max": 6, "tools": "fn"},
+      {"name": "Yellow tiles", "map": ["R.y~~~~", "~~..y~~", "~~~~..F"], "sol": "8(?DR)", "max": 3, "tools": "loop,if"}
+    ],
+    "hard": [
+      {"name": "Long road", "map": ["R..#...", "##.#.#.", "...#.#.", ".###.#.", ".....#F"], "sol": "RRDDLLDDRRRRUUUURRDDDD"},
+      {"name": "Gem hunt", "map": ["*...*.", ".##.#.", "R....F", ".##.#.", "*...*."], "sol": "UUDDDDRRRRLUUUURRDD"},
+      {"name": "Mountain", "map": ["~~...~~", "~..~..~", "..~~~..", "R~~~~~F"], "sol": "3(UR)3(RD)", "max": 6, "tools": "loop"},
+      {"name": "Gem snake", "map": ["R..*...", "######.", "..*....", ".######", "....*.F"], "sol": "6(R)2(D)6(L)2(D)6(R)", "max": 10, "tools": "loop"},
+      {"name": "Function stairs", "map": ["R~~~", ".~~~", "..~~", "~.~~", "~..~", "~~.~", "~~.F"], "sol": "FFF|DDR", "max": 6, "tools": "fn"},
+      {"name": "Yellow column", "map": ["R...y~", "~~~~y~", "~~~~y~", "~~~~.F"], "sol": "8(?DR)", "max": 3, "tools": "loop,if"},
+      {"name": "Function gems", "map": ["R.~~~~~", "~.*.~~~", "~~~.*.~", "~~~~~.F"], "sol": "FFF|RDR", "max": 6, "tools": "fn"},
+      {"name": "Yellow maze", "map": ["R.y~~~~", "~~y~~~~", "~~..y~~", "~~~~..F"], "sol": "9(?DR)", "max": 3, "tools": "loop,if"},
+      {"name": "Big steps", "map": ["R...~~~", "~~~.~~~", "~~~.~~~", "~~~....", "~~~~~~.", "~~~~~~.", "~~~~~~F"], "sol": "2(F)|3(R)3(D)", "max": 6, "tools": "loop,fn"},
+      {"name": "Long snake", "map": ["R..*...", "######.", "..*....", ".######", "....*.F"], "sol": "6(R)2(D)6(L)2(D)6(R)", "max": 10, "tools": "loop"}
+    ]
+  },
+  "debug": {
+    "easy": [
+      {"name": "Down the hill", "map": ["R...", "...F"], "sol": "RRRD"},
+      {"name": "A rock", "map": ["R#F", "..."], "sol": "DRRU"},
+      {"name": "Corner", "map": ["R.*", "##.", "F.."], "sol": "RRDDLL"},
+      {"name": "Two gems", "map": ["*..*", "R..F"], "sol": "URRRD"},
+      {"name": "Repeat", "map": ["~~~~~~", "R....F", "~~~~~~"], "sol": "5(R)", "tools": "loop"},
+      {"name": "Repeat twice", "map": ["R~~~", ".~~~", ".~~~", "...F"], "sol": "3(D)3(R)", "tools": "loop"}
+    ],
+    "medium": [
+      {"name": "Turn", "map": ["R....", ".....", "....F"], "sol": "RRRRDD"},
+      {"name": "A rock", "map": [".....", "R.#.F", "....."], "sol": "RURRDR"},
+      {"name": "Gems", "map": ["..*..", "R...F", "..*.."], "sol": "RURDDRUR"},
+      {"name": "Maze", "map": ["R.#...", ".##.#.", "....#F"], "sol": "DDRRRUURRDD"},
+      {"name": "Stairs", "map": ["R.#..", "#..#.", ".#..#", "..#..", "...#F"], "sol": "4(RD)", "tools": "loop"},
+      {"name": "Hills", "map": [".*.*.*.", "R#.#.#F"], "sol": "3(URRD)", "tools": "loop"},
+      {"name": "Around the lake", "map": ["R.....", "~~~~~.", "~~~~~.", "~~~~~.", "F....."], "sol": "5(R)4(D)5(L)", "tools": "loop"},
+      {"name": "Gem stairs", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)", "tools": "loop"}
+    ],
+    "hard": [
+      {"name": "Long road", "map": ["R..#...", "##.#.#.", "...#.#.", ".###.#.", ".....#F"], "sol": "RRDDLLDDRRRRUUUURRDDDD"},
+      {"name": "Mountain", "map": ["~~...~~", "~..~..~", "..~~~..", "R~~~~~F"], "sol": "3(UR)3(RD)", "tools": "loop"},
+      {"name": "Gem snake", "map": ["R..*...", "######.", "..*....", ".######", "....*.F"], "sol": "6(R)2(D)6(L)2(D)6(R)", "tools": "loop"},
+      {"name": "Function stairs", "map": ["R~~~", ".~~~", "..~~", "~.~~", "~..~", "~~.~", "~~.F"], "sol": "FFF|DDR", "tools": "fn"},
+      {"name": "Yellow column", "map": ["R...y~", "~~~~y~", "~~~~y~", "~~~~.F"], "sol": "8(?DR)", "tools": "loop,if"},
+      {"name": "Function gems", "map": ["R.~~~~~", "~.*.~~~", "~~~.*.~", "~~~~~.F"], "sol": "FFF|RDR", "tools": "fn"},
+      {"name": "Yellow maze", "map": ["R.y~~~~", "~~y~~~~", "~~..y~~", "~~~~..F"], "sol": "9(?DR)", "tools": "loop,if"},
+      {"name": "Big steps", "map": ["R...~~~", "~~~.~~~", "~~~.~~~", "~~~....", "~~~~~~.", "~~~~~~.", "~~~~~~F"], "sol": "2(F)|3(R)3(D)", "tools": "loop,fn"}
+    ]
+  },
   "phrases": {
     "robot": "Line up the commands, then press Run. Take Gbot to the flag.",
     "robotGem": "Collect every gem, then take Gbot to the flag.",
@@ -489,7 +695,15 @@
     "heaviest": "Which one is the heaviest?",
     "lightest": "Which one is the lightest?",
     "count": "How many make the scale balance?",
-    "again": "Try again."
+    "again": "Try again.",
+    "robotFn": "Build the ★ function once, then use ★ as many times as you like.",
+    "robotIf": "The if block looks at the tile: on yellow Gbot takes the first arrow, anywhere else the second.",
+    "noFnInFn": "The function cannot use ★ inside itself.",
+    "noLoopInLoop": "A repeat block cannot go inside another one.",
+    "hintFoot": "Follow the footprints!",
+    "hintProg": "Here is a program that works. Try it!",
+    "hintBug": "Look closely at the glowing block.",
+    "random": "A brand new map! Take Gbot to the flag."
   }
 }
 </script>
@@ -499,12 +713,13 @@
   'use strict';
   const C = JSON.parse(document.getElementById('content').textContent);
   const $ = (id) => document.getElementById(id);
-  const SECTIONS = ['home', 'world', 'robot', 'quiz', 'result', 'stickers'];
+  const SECTIONS = ['home', 'players', 'pform', 'world', 'robot', 'quiz', 'result', 'stickers'];
   let runToken = 0; // bumped whenever a screen changes, so running animations stop
   function show(id) {
     SECTIONS.forEach((s) => { $(s).hidden = s !== id; });
     runToken++; window.scrollTo(0, 0);
     if (id === 'home') renderHome();
+    if (id === 'players') renderPlayers();
     if (id === 'world') renderWorld();
     if (id === 'stickers') renderStickers();
   }
@@ -597,11 +812,34 @@
   };
   const P = C.phrases;
 
-  // ---- Saved state ----
-  const KEY = 'logika.v1';
-  let S = { best: {}, day: '', streak: 0 };
-  try { Object.assign(S, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { /* keep defaults */ }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* private mode */ } }
+  // ---- Players and saved state ----
+  // Every player picks a difficulty and keeps their own stars for each difficulty.
+  const KEY = 'logika.v2', OLD = 'logika.v1';
+  const DIFFS = {
+    easy: { name: 'Easy', age: 'Ages 4–5', icon: '🌱', note: 'Small maps, fewer choices' },
+    medium: { name: 'Medium', age: 'Ages 6–7', icon: '🌿', note: 'Repeat blocks, longer patterns' },
+    hard: { name: 'Hard', age: 'Ages 8–10', icon: '🌳', note: 'Functions, if blocks, bigger puzzles' }
+  };
+  const AVATARS = ['🦊', '🐼', '🐯', '🐸', '🐵', '🦁', '🐰', '🐧', '🐨', '🦄'];
+  function newPlayer(name, av, diff) {
+    return { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, av, diff,
+             best: { easy: {}, medium: {}, hard: {} }, day: '', streak: 0, seen: {} };
+  }
+  let DB = { players: [], cur: '' };
+  try { Object.assign(DB, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { /* keep defaults */ }
+  // Progress from the first version, which had one player at medium difficulty.
+  if (!DB.players.length) {
+    try {
+      const old = JSON.parse(localStorage.getItem(OLD));
+      if (old && old.best) {
+        const p = newPlayer('Player 1', AVATARS[0], 'medium');
+        p.best.medium = old.best; p.day = old.day || ''; p.streak = old.streak || 0;
+        DB.players.push(p); DB.cur = p.id;
+      }
+    } catch (e) { /* nothing to move */ }
+  }
+  let S = DB.players.find((p) => p.id === DB.cur) || DB.players[0] || null;
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) { /* private mode */ } }
   const dayStr = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   function streakNow() {
     const y = new Date(); y.setDate(y.getDate() - 1);
@@ -615,15 +853,17 @@
     S.streak = S.day === dayStr(y) ? S.streak + 1 : 1;
     S.day = today;
   }
-  const best = (w, i) => (S.best[w] || [])[i] || 0;
-  const worldStars = (w) => (S.best[w.id] || []).reduce((a, b) => a + (b || 0), 0);
-  const totalStars = () => WORLDS.reduce((a, w) => a + worldStars(w), 0);
+  const bestOf = (diff) => S.best[diff] || (S.best[diff] = {});
+  const best = (w, i) => (bestOf(S.diff)[w] || [])[i] || 0;
+  const sum = (a) => (a || []).reduce((x, y) => x + (y || 0), 0);
+  const worldStars = (w) => sum(bestOf(S.diff)[w.id]);
+  // Stickers count the stars from every difficulty.
+  const totalStars = () => Object.keys(DIFFS).reduce((a, d) => a + WORLDS.reduce((b, w) => b + sum(bestOf(d)[w.id]), 0), 0);
 
   // ---- Worlds ----
   const WORLDS = [
     { id: 'robot', name: 'Robot Path', skill: 'Algorithms', icon: '🤖', c: 'var(--c-orange)', kind: 'robot',
-      desc: 'Line up commands step by step to get Gbot to the flag. Later you get a repeat block.',
-      levels: C.robot.map((l) => l.name) },
+      desc: 'Line up commands step by step to get Gbot to the flag. Later come repeat, function and if blocks.' },
     { id: 'pola', name: 'Patterns', skill: 'Pattern recognition', icon: '🔷', c: 'var(--c-blue)', kind: 'quiz', total: 5,
       desc: 'Spot the rule that repeats, then find what comes next or what is missing.',
       levels: ['Colors', 'Shapes', 'Repeats', 'Colors and shapes', 'Growing', 'Turning', 'Two rules', 'Mixed'] },
@@ -632,16 +872,16 @@
       levels: ['New color', 'New shape', 'Add one', 'Turn', 'Double', 'Two changes', 'Add two', 'Number machine'] },
     { id: 'timbang', name: 'Balance', skill: 'Logical reasoning', icon: '⚖️', c: 'var(--c-teal)', kind: 'quiz', total: 5,
       desc: 'Read the scales, then find the heaviest or the lightest ball.',
-      levels: ['Heavier', 'Lighter', 'Heaviest', 'Lightest', 'Four balls', 'Balanced'] },
+      levels: ['Heavier', 'Lighter', 'Heaviest', 'Lightest', 'Many balls', 'Balanced'] },
     { id: 'debug', name: 'Fix the Code', skill: 'Debugging', icon: '🐞', c: 'var(--c-pink)', kind: 'robot',
-      desc: 'Gbot\'s program has one mistake. Run it, find the wrong command and fix it.',
-      levels: C.debug.map((l) => l.name) },
+      desc: 'Gbot\'s program has one mistake. Run it, find the wrong block and fix it.' },
     { id: 'saring', name: 'Logic Filter', skill: 'AND, OR, NOT logic', icon: '🔍', c: 'var(--c-green)', kind: 'quiz', total: 4,
       desc: 'Pick every item that fits the rule. Watch out for AND, OR and NOT.',
       levels: ['Colors', 'Shapes', 'AND', 'NOT', 'OR', 'But not', 'Mixed'] }
   ];
-  const W = {}; WORLDS.forEach((w) => { W[w.id] = w; });
-  const maxStars = (w) => w.levels.length * 3;
+  // Robot and fixing levels are different for each difficulty; quiz levels are the same, with harder questions.
+  const levelsOf = (w) => (w.kind === 'robot' ? C[w.id][S.diff].map((l) => l.name) : w.levels);
+  const maxStars = (w) => levelsOf(w).length * 3;
   const isOpen = (w, i) => i === 0 || best(w.id, i - 1) > 0;
   const starSvg = (on, cls) => '<svg class="' + (cls || '') + (on ? ' on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
@@ -668,6 +908,7 @@
   function renderHome() {
     const stars = totalStars();
     const days = streakNow();
+    $('who').innerHTML = '<span class="av" aria-hidden="true">' + S.av + '</span>' + esc(S.name) + ' <span class="lvl">' + DIFFS[S.diff].name + '</span>';
     $('homeStars').textContent = stars + (stars === 1 ? ' star' : ' stars');
     $('homeDays').textContent = days + (days === 1 ? ' day' : ' days');
     $('homeStk').textContent = unlocked(stars) + '/' + STICKERS.length;
@@ -690,19 +931,76 @@
     s.addEventListener('click', () => show('stickers'));
     box.appendChild(s);
   }
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  $('who').addEventListener('click', () => show('players'));
+
+  // ---- Choosing and editing players ----
+  function renderPlayers() {
+    $('plBack').hidden = !S;
+    const box = $('plist');
+    box.innerHTML = '';
+    DB.players.forEach((p) => {
+      const d = document.createElement('div');
+      d.className = 'pcard' + (S && p.id === S.id ? ' cur' : '');
+      const stars = Object.values(p.best).reduce((a, byW) => a + Object.values(byW).reduce((b, l) => b + sum(l), 0), 0);
+      d.innerHTML = '<button type="button" class="pick"><span class="av" aria-hidden="true">' + p.av + '</span><span><b>' + esc(p.name) + '</b>'
+        + '<small>' + DIFFS[p.diff].icon + ' ' + DIFFS[p.diff].name + ' · ⭐ ' + stars + '</small></span></button>'
+        + '<button type="button" class="edit" aria-label="Change ' + esc(p.name) + '">✎</button>';
+      d.querySelector('.pick').addEventListener('click', () => { sfx.tap(); S = p; DB.cur = p.id; save(); show('home'); });
+      d.querySelector('.edit').addEventListener('click', () => openForm(p));
+      box.appendChild(d);
+    });
+  }
+  $('plBack').addEventListener('click', () => show('home'));
+  $('plAdd').addEventListener('click', () => openForm(null));
+  let editing = null, formAv = AVATARS[0], formDiff = 'medium';
+  function openForm(p) {
+    editing = p;
+    formAv = p ? p.av : pick(AVATARS); formDiff = p ? p.diff : 'medium';
+    $('pfTitle').textContent = p ? 'Change player' : DB.players.length ? 'New player' : 'Hi! Who is playing?';
+    $('pfName').value = p ? p.name : '';
+    $('pfBack').hidden = !DB.players.length;
+    $('pfDel').hidden = !p;
+    renderForm();
+    show('pform');
+  }
+  function renderForm() {
+    $('pfAvs').innerHTML = AVATARS.map((a) => '<button type="button" aria-pressed="' + (a === formAv) + '" data-av="' + a + '">' + a + '</button>').join('');
+    $('pfDiffs').innerHTML = Object.entries(DIFFS).map(([k, d]) => '<button type="button" aria-pressed="' + (k === formDiff) + '" data-diff="' + k + '">'
+      + '<span class="ic" aria-hidden="true">' + d.icon + '</span><span><b>' + d.name + '</b> · ' + d.age + '<small>' + d.note + '</small></span></button>').join('');
+  }
+  $('pfAvs').addEventListener('click', (e) => { const b = e.target.closest('[data-av]'); if (b) { formAv = b.dataset.av; sfx.tap(); renderForm(); } });
+  $('pfDiffs').addEventListener('click', (e) => { const b = e.target.closest('[data-diff]'); if (b) { formDiff = b.dataset.diff; sfx.tap(); renderForm(); } });
+  $('pfBack').addEventListener('click', () => show('players'));
+  $('pfSave').addEventListener('click', () => {
+    const name = $('pfName').value.trim() || 'Player ' + (DB.players.length + (editing ? 0 : 1));
+    if (editing) Object.assign(editing, { name, av: formAv, diff: formDiff });
+    else { const p = newPlayer(name, formAv, formDiff); DB.players.push(p); editing = p; }
+    S = editing; DB.cur = S.id; save(); sfx.good();
+    show('home');
+  });
+  $('pfDel').addEventListener('click', () => {
+    if (!editing || !window.confirm('Remove ' + editing.name + ' and all their stars?')) return;
+    DB.players = DB.players.filter((p) => p !== editing);
+    if (S === editing) { S = DB.players[0] || null; DB.cur = S ? S.id : ''; }
+    save();
+    if (S) show('players'); else openForm(null);
+  });
 
   let curWorld = WORLDS[0];
   function renderWorld() {
-    const w = curWorld;
+    const w = curWorld, names = levelsOf(w);
     $('wTitle').textContent = w.name;
     $('wStars').textContent = worldStars(w) + '/' + maxStars(w);
     const ab = $('wAbout');
     ab.style.setProperty('--c', w.c);
-    ab.innerHTML = '<span class="badge" aria-hidden="true">' + w.icon + '</span><p><small>' + w.skill + '</small><br>' + w.desc + '</p>';
+    ab.innerHTML = '<span class="badge" aria-hidden="true">' + w.icon + '</span><p><small>' + w.skill + ' · ' + DIFFS[S.diff].name + '</small><br>' + w.desc + '</p>'
+      + '<button type="button" class="help" id="wHelp">❓ How</button>';
+    $('wHelp').addEventListener('click', () => tutorial(w));
     const box = $('wLevels');
     box.innerHTML = '';
-    const next = w.levels.findIndex((_, i) => !best(w.id, i));
-    w.levels.forEach((name, i) => {
+    const next = names.findIndex((_, i) => !best(w.id, i));
+    names.forEach((name, i) => {
       const open = isOpen(w, i), st = best(w.id, i);
       const d = document.createElement('div');
       d.className = 'lv' + (open ? '' : ' locked') + (i === next && open ? ' next' : '');
@@ -715,12 +1013,68 @@
       });
       box.appendChild(d);
     });
+    const ex = $('wExtra');
+    ex.innerHTML = '';
+    if (w.id === 'robot') {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'card wide'; b.style.setProperty('--c', w.c);
+      b.innerHTML = '<span class="badge" aria-hidden="true">🎲</span><span><b>Random map</b><br><small>A new map every time, just for practice</small></span>';
+      b.addEventListener('click', () => { sfx.tap(); markDay(); save(); startRobot(w, -1, randomLevel(S.diff)); });
+      ex.appendChild(b);
+    }
+    if (!S.seen[w.id]) tutorial(w);
   }
 
   function play(w, i) {
     curWorld = w; markDay(); save();
     if (w.kind === 'robot') startRobot(w, i); else startQuiz(w, i);
   }
+
+  // ---- How to play: three short animated steps for each world ----
+  const blkD = (d) => '<span class="blk ' + d + '">' + arrowSvg + '</span>';
+  const TUTOR = () => ({
+    robot: [
+      ['<div class="demo d-pop">' + blkD('R') + blkD('R') + blkD('D') + '</div>', 'Tap the arrows to build a program.'],
+      ['<div class="demo d-tap"><span class="btn go">▶ Run</span><span class="hand">👆</span></div>', 'Press ▶ Run.'],
+      ['<div class="demo d-walk"><span class="track"></span>' + gbotSvg('happy') + '<span class="flagd">🚩</span></div>', 'Gbot follows your program. Reach the flag!'],
+      ['<div class="demo d-pop"><span class="blk loopBtn" style="--c:var(--loop)">🔁</span><span class="blk F">★</span><span class="blk ifBtn" style="--c:#f59e0b"><span class="ytile"></span></span></div>',
+        'Later: 🔁 repeats blocks, ★ is a function you build once and use again, and the yellow block checks the tile.']
+    ],
+    pola: [
+      ['<div class="demo"><span class="seqd">' + [0, 1, 0].map((k) => itemSvg(it('circle', k ? 'blue' : 'red'))).join('') + '<span class="q">?</span></span></div>', 'Look at the row. What repeats?'],
+      ['<div class="demo d-fly"><span class="flyme">' + itemSvg(it('circle', 'blue')) + '</span></div>', 'Tap the one that comes next or fills the gap.']
+    ],
+    mesin: [
+      ['<div class="demo d-machine"><span class="in">' + itemSvg(it('star', 'red')) + '</span>' + MACHINE.replace('class="machine"', 'class="machine on"') + '<span class="out">' + itemSvg(it('star', 'blue')) + '</span></div>',
+        'Watch what the machine does to each thing.'],
+      ['<div class="demo"><span class="seqd">' + itemSvg(it('heart', 'red')) + '<b>→</b><span class="q">?</span></span></div>', 'Use the same rule: what comes out next?']
+    ],
+    timbang: [
+      ['<div class="demo d-tilt"><span class="beam2"><span class="l">' + itemSvg(it('circle', 'red')) + '</span><span class="r">' + itemSvg(it('circle', 'blue')) + '</span></span></div>', 'The side that goes down is heavier.'],
+      ['<div class="demo d-tilt level"><span class="beam2"><span class="l">' + itemSvg(it('circle', 'green')) + '</span><span class="r">' + itemSvg(it('circle', 'yellow')) + '</span></span></div>', 'A level scale means the same weight.'],
+      ['<div class="demo">⚖️⚖️⚖️</div>', 'Put all the scales together to find the heaviest or lightest.']
+    ],
+    debug: [
+      ['<div class="demo">' + blkD('R') + '<span class="blk R bad">' + arrowSvg + '</span>' + blkD('D') + '</div>', 'One block in the program is wrong.'],
+      ['<div class="demo d-tap"><span class="btn go">▶ Run</span><span class="hand">👆</span></div>', 'Run it and see where Gbot goes wrong.'],
+      ['<div class="demo d-pop">' + blkD('U') + blkD('L') + blkD('R') + blkD('D') + '</div>', 'Tap the wrong block, then pick the right one.']
+    ],
+    saring: [
+      ['<div class="demo"><span class="chip"><i class="sw" style="background:#ef4444"></i>red</span></div>', 'Read the rule.'],
+      ['<div class="demo d-sel"><span class="thingd on">' + itemSvg(it('circle', 'red')) + '</span><span class="thingd">' + itemSvg(it('star', 'blue')) + '</span><span class="thingd on">' + itemSvg(it('heart', 'red')) + '</span></div>',
+        'Tap every item that fits.'],
+      ['<div class="demo"><span class="btn go">✓ Check</span></div>', 'Then press ✓ Check.']
+    ]
+  });
+  function tutorial(w) {
+    S.seen[w.id] = true; save();
+    $('tuTitle').textContent = 'How to play: ' + w.name;
+    const steps = TUTOR()[w.id].filter((st, k) => !(w.id === 'robot' && k === 3 && S.diff === 'easy'));
+    $('tuSteps').innerHTML = steps.map(([demo, text], k) => '<li><span class="n">' + (k + 1) + '</span>' + demo + '<p>' + text + '</p></li>').join('');
+    $('tutor').hidden = false;
+    $('tuGo').focus();
+  }
+  $('tuGo').addEventListener('click', () => { $('tutor').hidden = true; sfx.tap(); });
 
   function mood(svg, m) {
     svg.dataset.mood = '';
@@ -746,7 +1100,11 @@
   // =====================================================================
   // Robot: programs on a grid
   // =====================================================================
+  // A program is a list of blocks: an arrow {t: 'U'}, a repeat {t: 'loop', n, body}, an if {t: 'if', a, b}
+  // (Gbot goes a on a yellow tile and b anywhere else) or a call of the function {t: 'F'}. The function is a
+  // second list. A repeat cannot hold another repeat, and the function cannot call itself.
   const DIR = { U: [0, -1], D: [0, 1], L: [-1, 0], R: [1, 0] };
+  const ARROWS = ['U', 'L', 'R', 'D'], COUNTS = [2, 3, 4, 5, 6, 7, 8, 9];
   function parseMap(rows) {
     const lv = { w: rows[0].length, h: rows.length, cells: rows.map((r) => [...r]), gems: [] };
     rows.forEach((r, y) => [...r].forEach((ch, x) => {
@@ -756,70 +1114,139 @@
     }));
     return lv;
   }
-  function parseProg(s) {
+  function parseList(s) {
     const out = [];
     for (let i = 0; i < s.length;) {
-      const m = /^(\d)\(([UDLR]+)\)/.exec(s.slice(i));
-      if (m) { out.push({ t: 'loop', n: +m[1], body: [...m[2]].map((t) => ({ t })) }); i += m[0].length; }
-      else { out.push({ t: s[i] }); i++; }
+      const ch = s[i];
+      if (/\d/.test(ch)) {
+        const end = s.indexOf(')', i);
+        out.push({ t: 'loop', n: +ch, body: parseList(s.slice(i + 2, end)) });
+        i = end + 1;
+      } else if (ch === '?') { out.push({ t: 'if', a: s[i + 1], b: s[i + 2] }); i += 3; }
+      else { out.push({ t: ch }); i++; }
     }
     return out;
   }
-  const blocks = (prog) => prog.reduce((n, b) => n + (b.t === 'loop' ? 1 + b.body.length : 1), 0);
+  const parseProg = (s) => { const [main, fn] = s.split('|'); return { prog: parseList(main), fn: parseList(fn || '') }; };
+  const count = (list) => list.reduce((n, b) => n + (b.t === 'loop' ? 1 + count(b.body) : 1), 0);
+  const blocks = () => count(R.prog) + count(R.fn);
   const blocked = (lv, x, y) => x < 0 || y < 0 || x >= lv.w || y >= lv.h || lv.cells[y][x] === '#' || lv.cells[y][x] === '~';
-  // Runs a program without drawing it. Each step keeps the block it came from (i, and j inside a loop).
-  function simulate(lv, prog) {
-    let x = lv.start.x, y = lv.start.y;
+  // Runs a program without drawing it. Each step lists the ids of the blocks to light up:
+  // m3 is the fourth block of the program, m3.1 the second block inside it, f0 the first block of the function,
+  // and m2a / m2b the arrow an if block took.
+  function execute(lv, prog, fn) {
+    let x = lv.start.x, y = lv.start.y, end = null;
     const got = new Set(), trace = [];
-    const steps = [];
-    prog.forEach((b, i) => {
-      if (b.t === 'loop') { for (let r = 0; r < b.n; r++) b.body.forEach((c, j) => steps.push({ d: c.t, i, j })); }
-      else steps.push({ d: b.t, i, j: -1 });
-    });
-    const atGoal = () => x === lv.goal.x && y === lv.goal.y;
-    for (const s of steps) {
-      const nx = x + DIR[s.d][0], ny = y + DIR[s.d][1];
-      if (blocked(lv, nx, ny)) { trace.push(Object.assign({ x, y, bump: true }, s)); return { trace, end: 'bump' }; }
+    const move = (d, hl) => {
+      if (!d) return false;
+      if (trace.length >= 300) { end = 'short'; return true; }
+      const nx = x + DIR[d][0], ny = y + DIR[d][1];
+      if (blocked(lv, nx, ny)) { trace.push({ d, x, y, bump: true, hl }); end = 'bump'; return true; }
       x = nx; y = ny;
       const k = x + ',' + y, gem = lv.gems.includes(k) && !got.has(k);
       if (gem) got.add(k);
-      trace.push(Object.assign({ x, y, gem }, s));
-      if (atGoal() && got.size === lv.gems.length) return { trace, end: 'win' };
-    }
-    return { trace, end: atGoal() ? 'gems' : 'short' };
+      trace.push({ d, x, y, gem, hl });
+      if (x === lv.goal.x && y === lv.goal.y && got.size === lv.gems.length) { end = 'win'; return true; }
+      return false;
+    };
+    const run = (list, pre, hl) => {
+      for (let i = 0; i < list.length; i++) {
+        const b = list[i], id = pre + i, h = hl.concat(id);
+        if (b.t === 'loop') { for (let r = 0; r < b.n; r++) if (run(b.body, id + '.', h)) return true; }
+        else if (b.t === 'F') { if (run(fn, 'f', h)) return true; }
+        else if (b.t === 'if') { const yes = lv.cells[y][x] === 'y'; if (move(yes ? b.a : b.b, h.concat(id + (yes ? 'a' : 'b')))) return true; }
+        else if (move(b.t, h)) return true;
+      }
+      return false;
+    };
+    run(prog, 'm', []);
+    if (!end) end = x === lv.goal.x && y === lv.goal.y ? 'gems' : 'short';
+    return { trace, end };
   }
-  // Changes one block of a working program so that it fails.
-  function makeBug(lv, prog) {
-    for (let tries = 0; tries < 80; tries++) {
-      const p = clone(prog), slots = [];
-      p.forEach((b) => { if (b.t === 'loop') { slots.push({ loop: b }); b.body.forEach((c) => slots.push({ cmd: c })); } else slots.push({ cmd: b }); });
-      const s = pick(slots);
-      if (s.loop) s.loop.n = pick([2, 3, 4, 5].filter((n) => n !== s.loop.n));
-      else s.cmd.t = pick(['U', 'D', 'L', 'R'].filter((d) => d !== s.cmd.t));
-      if (simulate(lv, p).end !== 'win') return p;
+  // Fewest moves to collect every gem and reach the flag, as a string of arrows (breadth-first search).
+  function shortestPath(lv) {
+    const all = (1 << lv.gems.length) - 1, seen = new Set([lv.start.x + ',' + lv.start.y + ',0']);
+    let frontier = [[lv.start.x, lv.start.y, 0, '']];
+    while (frontier.length) {
+      const next = [];
+      for (const [x, y, m, path] of frontier) {
+        if (x === lv.goal.x && y === lv.goal.y && m === all) return path;
+        for (const d of ARROWS) {
+          const nx = x + DIR[d][0], ny = y + DIR[d][1];
+          if (blocked(lv, nx, ny)) continue;
+          const g = lv.gems.indexOf(nx + ',' + ny), nm = g < 0 ? m : m | (1 << g), k = nx + ',' + ny + ',' + nm;
+          if (!seen.has(k)) { seen.add(k); next.push([nx, ny, nm, path + d]); }
+        }
+      }
+      frontier = next;
     }
-    return clone(prog);
+    return null;
+  }
+  // A random walk becomes the road; the cells around it turn into rocks and water.
+  function randomLevel(diff) {
+    const [w, h, lmin, lmax, ngems] = { easy: [4, 3, 3, 5, 0], medium: [5, 4, 5, 8, 1], hard: [6, 5, 8, 12, 2] }[diff];
+    for (;;) {
+      let x = rnd(0, w - 1), y = rnd(0, h - 1);
+      const L = rnd(lmin, lmax), road = [[x, y]], seen = new Set([x + ',' + y]);
+      while (road.length <= L) {
+        const opts = Object.values(DIR).map(([dx, dy]) => [x + dx, y + dy])
+          .filter(([a, b]) => a >= 0 && b >= 0 && a < w && b < h && !seen.has(a + ',' + b));
+        if (!opts.length) break;
+        [x, y] = pick(opts); seen.add(x + ',' + y); road.push([x, y]);
+      }
+      if (road.length <= L) continue;
+      const cells = Array.from({ length: h }, () => Array(w).fill('.'));
+      for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) if (!seen.has(xx + ',' + yy) && Math.random() < 0.5) cells[yy][xx] = pick(['#', '~']);
+      shuffle(road.slice(1, -1)).slice(0, ngems).forEach(([a, b]) => { cells[b][a] = '*'; });
+      cells[road[0][1]][road[0][0]] = 'R';
+      cells[y][x] = 'F';
+      const map = cells.map((r) => r.join('')), sol = shortestPath(parseMap(map));
+      if (sol && sol.length >= lmin) return { name: 'Random map', map, sol, tools: diff === 'easy' ? '' : 'loop' };
+    }
+  }
+  // Changes one block of a working program so that it fails, and marks it for the hint.
+  function makeBug(lv, prog, fn) {
+    for (let tries = 0; tries < 100; tries++) {
+      const p = clone(prog), f = clone(fn), slots = [];
+      const collect = (list) => list.forEach((b) => {
+        if (b.t === 'loop') { slots.push({ loop: b }); collect(b.body); }
+        else if (b.t === 'if') slots.push({ iff: b, slot: 'a' }, { iff: b, slot: 'b' });
+        else if (b.t !== 'F') slots.push({ cmd: b });
+      });
+      collect(p); collect(f);
+      const s = pick(slots);
+      if (s.loop) { s.loop.n = pick(COUNTS.filter((n) => n !== s.loop.n)); s.loop.bug = 'n'; }
+      else if (s.iff) { s.iff[s.slot] = pick(ARROWS.filter((d) => d !== s.iff[s.slot])); s.iff.bug = s.slot; }
+      else { s.cmd.t = pick(ARROWS.filter((d) => d !== s.cmd.t)); s.cmd.bug = true; }
+      if (execute(lv, p, f).end !== 'win') return { prog: p, fn: f };
+    }
+    return { prog: clone(prog), fn: clone(fn) };
   }
 
   let R = null;
-  function startRobot(w, i) {
-    const def = (w.id === 'debug' ? C.debug : C.robot)[i];
-    const sol = parseProg(def.sol);
-    R = { w, i, def, lv: parseMap(def.map), debug: w.id === 'debug', prog: [], target: null, fails: 0, edits: 0,
-          running: false, max: def.max || 0, par: blocks(sol), loops: sol.some((b) => b.t === 'loop'), sel: null };
-    if (R.debug) { R.prog = makeBug(R.lv, sol); R.orig = clone(R.prog); }
+  // i is the level number, or -1 for a random map, which comes as `def`.
+  function startRobot(w, i, def) {
+    def = def || C[w.id][S.diff][i];
+    const sol = parseProg(def.sol), tools = def.tools || '';
+    R = { w, i, def, lv: parseMap(def.map), debug: w.id === 'debug', prog: [], fn: [], target: null, fails: 0, edits: 0,
+          runs: 0, hints: 0, running: false, max: def.max || 0, sol, tools, sel: null, showBug: false };
+    R.par = count(sol.prog) + count(sol.fn);
+    if (R.debug) { const b = makeBug(R.lv, sol.prog, sol.fn); R.prog = b.prog; R.fn = b.fn; R.orig = clone(b); }
     $('rTitle').textContent = w.name;
-    $('rLevel').textContent = 'Level ' + (i + 1);
+    $('rLevel').textContent = i < 0 ? '🎲' : 'Level ' + (i + 1);
     $('rUndo').hidden = $('rClear').hidden = R.debug;
     $('rReset').hidden = !R.debug;
-    $('fixbar').hidden = true;
+    $('rHint').hidden = true;
+    $('fixbar').hidden = true; $('ghost').hidden = true;
     show('robot');
     buildBoard(); renderTray(); renderPalette();
     mood($('rCoach'), 'happy');
     robotIntro();
   }
   function robotIntro() {
-    const p = R.debug ? P.debug : R.loops ? P.robotLoop : R.lv.gems.length ? P.robotGem : P.robot;
+    const t = R.tools;
+    const p = R.debug ? P.debug : R.i < 0 ? P.random : t.includes('if') ? P.robotIf : t.includes('fn') ? P.robotFn
+      : t.includes('loop') && R.max ? P.robotLoop : R.lv.gems.length ? P.robotGem : P.robot;
     $('rSay').textContent = p + (R.max ? ' (' + R.max + ' blocks at most)' : '');
   }
   function rSay(text, m) {
@@ -840,7 +1267,7 @@
     b.innerHTML = ''; gemEls = {};
     for (let y = 0; y < lv.h; y++) for (let x = 0; x < lv.w; x++) {
       const ch = lv.cells[y][x], c = document.createElement('div');
-      c.className = 'cell' + ((x + y) % 2 ? ' alt' : '') + (ch === '~' ? ' water' : '');
+      c.className = 'cell' + ((x + y) % 2 ? ' alt' : '') + (ch === '~' ? ' water' : '') + (ch === 'y' ? ' yellow' : '');
       c.dataset.k = x + ',' + y;
       if (ch === '#') c.innerHTML = TILE.rock;
       if (ch === '*') { c.innerHTML = TILE.gem; gemEls[x + ',' + y] = c.firstChild; }
@@ -862,71 +1289,120 @@
     $('board').querySelectorAll('.trail').forEach((c) => c.classList.remove('trail'));
   }
 
-  // The tray shows the program. Tapping a block removes it (or, when fixing, picks it).
-  function renderTray() {
-    const t = $('tray');
-    t.innerHTML = '';
-    t.classList.toggle('target', !R.debug && !R.target);
-    if (R.max) {
-      const n = blocks(R.prog);
-      t.insertAdjacentHTML('beforeend', '<span class="count' + (n >= R.max ? ' full' : '') + '">' + n + ' / ' + R.max + '</span>');
-    }
-    if (!R.prog.length) t.insertAdjacentHTML('beforeend', '<span class="empty">The program is empty. Tap the arrows below.</span>');
-    R.prog.forEach((b, i) => {
-      if (b.t === 'loop') {
-        const L = document.createElement('div');
-        L.className = 'loop' + (R.target === b ? ' target' : '');
-        L.dataset.i = i;
-        L.innerHTML = '<span class="head"><span class="ic" aria-hidden="true">🔁</span></span><span class="body"></span>';
-        const times = document.createElement('button');
-        times.type = 'button'; times.className = 'times' + (R.sel && R.sel.loop === b ? ' pick' : '');
-        times.textContent = '×' + b.n;
-        times.setAttribute('aria-label', 'Repeat ' + b.n + ' times');
-        times.addEventListener('click', (e) => {
-          e.stopPropagation(); if (R.running) return;
-          if (R.debug) { selectFix({ loop: b }); return; }
-          b.n = b.n >= 5 ? 2 : b.n + 1; sfx.tap(); afterEdit();
-        });
-        L.querySelector('.head').appendChild(times);
-        const body = L.querySelector('.body');
-        b.body.forEach((c, j) => body.appendChild(blockBtn(c, () => {
-          if (R.debug) { selectFix({ cmd: c }); return; }
-          b.body.splice(j, 1); afterEdit();
-        }, i, j)));
-        if (!b.body.length) body.insertAdjacentHTML('beforeend', '<span class="hole"></span>');
-        if (!R.debug) {
-          const del = document.createElement('button');
-          del.type = 'button'; del.className = 'del'; del.textContent = '✕'; del.setAttribute('aria-label', 'Remove the repeat block');
-          del.addEventListener('click', (e) => { e.stopPropagation(); if (R.running) return; R.prog.splice(i, 1); if (R.target === b) R.target = null; afterEdit(); });
-          L.appendChild(del);
-        }
-        L.addEventListener('click', (e) => {
-          e.stopPropagation(); if (R.running || R.debug) return;
-          R.target = R.target === b ? null : b; sfx.tap(); renderTray();
-        });
-        t.appendChild(L);
-      } else {
-        t.appendChild(blockBtn(b, () => {
-          if (R.debug) { selectFix({ cmd: b }); return; }
-          R.prog.splice(i, 1); afterEdit();
-        }, i, -1));
-      }
-    });
-  }
+  // ---- The editor ----
+  // R.target says where the next block goes: null for the program, {kind: 'fn'} for the function,
+  // {kind: 'loop', b, home} for inside a repeat, or {kind: 'if', b, slot, back} for an arrow of an if block.
   const NAMES = { U: 'Up', D: 'Down', L: 'Left', R: 'Right' };
-  function blockBtn(c, onTap, i, j) {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'blk ' + c.t + (R.sel && R.sel.cmd === c ? ' pick' : '') + (c.fixed ? ' fixed' : '');
-    b.dataset.i = i; b.dataset.j = j;
-    b.innerHTML = arrowSvg;
-    b.setAttribute('aria-label', NAMES[c.t]);
-    b.addEventListener('click', (e) => { e.stopPropagation(); if (R.running) return; sfx.tap(); onTap(); });
-    return b;
+  const homeList = (home) => (home === 'fn' ? R.fn : R.prog);
+  function container(t) {
+    if (!t) return { list: R.prog, home: 'main', inLoop: false };
+    if (t.kind === 'fn') return { list: R.fn, home: 'fn', inLoop: false };
+    return { list: t.b.body, home: t.home, inLoop: true };
   }
-  $('tray').addEventListener('click', () => {
-    if (R.running || R.debug || !R.target) return;
-    R.target = null; renderTray();
-  });
+  function renderTray() {
+    renderList($('tray'), R.prog, 'm', 'main');
+    $('fnWrap').hidden = !(R.tools.includes('fn') || R.fn.length);
+    renderList($('fnTray'), R.fn, 'f', 'fn');
+    const t = R.target;
+    $('tray').classList.toggle('target', !R.debug && !t);
+    $('fnTray').classList.toggle('target', !R.debug && !!t && t.kind === 'fn');
+    if (R.max) {
+      const n = blocks();
+      $('tray').insertAdjacentHTML('afterbegin', '<span class="count' + (n >= R.max ? ' full' : '') + '">' + n + ' / ' + R.max + '</span>');
+    }
+    if (!R.prog.length) $('tray').insertAdjacentHTML('beforeend', '<span class="empty">The program is empty. Tap the arrows below.</span>');
+    if (!R.fn.length) $('fnTray').insertAdjacentHTML('beforeend', '<span class="empty">Tap here, then add blocks to build ★.</span>');
+  }
+  // Draws a list of blocks. With ro (read only), taps do nothing; it is used for the hint.
+  function renderList(el, list, pre, home, ro) {
+    el.innerHTML = '';
+    list.forEach((b, i) => el.appendChild(blockEl(b, list, i, pre + i, home, ro)));
+  }
+  function arrowBtn(d, cls) {
+    const e = document.createElement('button');
+    e.type = 'button'; e.className = 'blk ' + d + (cls || '');
+    e.innerHTML = d === 'F' ? '★' : arrowSvg;
+    e.setAttribute('aria-label', d === 'F' ? 'Function' : NAMES[d]);
+    return e;
+  }
+  function blockEl(b, list, i, id, home, ro) {
+    const hint = R.showBug && b.bug ? ' hintme' : '';
+    if (b.t === 'loop') {
+      const L = document.createElement('div');
+      L.className = 'loop' + (R.target && R.target.b === b ? ' target' : '');
+      L.dataset.id = id;
+      L.innerHTML = '<span class="head"><span class="ic" aria-hidden="true">🔁</span></span><span class="body"></span>';
+      const times = document.createElement('button');
+      times.type = 'button'; times.className = 'times' + (R.sel && R.sel.loop === b ? ' pick' : '') + (hint && b.bug === 'n' ? ' hintme' : '');
+      times.textContent = '×' + b.n;
+      times.setAttribute('aria-label', 'Repeat ' + b.n + ' times');
+      L.querySelector('.head').appendChild(times);
+      const body = L.querySelector('.body');
+      b.body.forEach((c, j) => body.appendChild(blockEl(c, b.body, j, id + '.' + j, home, ro)));
+      if (!b.body.length) body.insertAdjacentHTML('beforeend', '<span class="hole"></span>');
+      if (ro) return L;
+      times.addEventListener('click', (e) => {
+        e.stopPropagation(); if (R.running) return;
+        if (R.debug) { selectFix({ loop: b }); return; }
+        b.n = b.n >= 9 ? 2 : b.n + 1; sfx.tap(); afterEdit();
+      });
+      if (!R.debug) {
+        const del = document.createElement('button');
+        del.type = 'button'; del.className = 'del'; del.textContent = '✕'; del.setAttribute('aria-label', 'Remove the repeat block');
+        del.addEventListener('click', (e) => { e.stopPropagation(); if (R.running) return; list.splice(i, 1); R.target = null; afterEdit(); });
+        L.appendChild(del);
+        L.addEventListener('click', (e) => {
+          e.stopPropagation(); if (R.running) return;
+          R.target = R.target && R.target.b === b ? (home === 'fn' ? { kind: 'fn' } : null) : { kind: 'loop', b, home };
+          sfx.tap(); renderTray();
+        });
+      }
+      return L;
+    }
+    if (b.t === 'if') {
+      const E = document.createElement('div');
+      E.className = 'ifb'; E.dataset.id = id;
+      E.innerHTML = '<span class="cond" aria-label="If on yellow"><span class="ytile"></span>?</span>';
+      ['a', 'b'].forEach((slot, k) => {
+        if (k) E.insertAdjacentHTML('beforeend', '<span class="els">else</span>');
+        const sb = document.createElement('button');
+        sb.type = 'button'; sb.dataset.id = id + slot;
+        const on = R.target && R.target.kind === 'if' && R.target.b === b && R.target.slot === slot;
+        sb.className = 'slot' + (b[slot] ? ' full' : '') + (on ? ' target' : '');
+        sb.setAttribute('aria-label', (slot === 'a' ? 'On yellow: ' : 'Otherwise: ') + (b[slot] ? NAMES[b[slot]] : 'empty'));
+        if (b[slot]) sb.appendChild(arrowBtn(b[slot], (R.sel && R.sel.iff === b && R.sel.slot === slot ? ' pick' : '') + (R.showBug && b.bug === slot ? ' hintme' : '')));
+        if (!ro) sb.addEventListener('click', (e) => {
+          e.stopPropagation(); if (R.running) return; sfx.tap();
+          if (R.debug) { selectFix({ iff: b, slot }); return; }
+          const back = R.target && R.target.kind === 'if' ? R.target.back : R.target;
+          R.target = { kind: 'if', b, slot, back }; renderTray();
+        });
+        E.appendChild(sb);
+      });
+      if (!ro && !R.debug) {
+        const del = document.createElement('button');
+        del.type = 'button'; del.className = 'del'; del.textContent = '✕'; del.setAttribute('aria-label', 'Remove the if block');
+        del.addEventListener('click', (e) => {
+          e.stopPropagation(); if (R.running) return;
+          list.splice(i, 1);
+          if (R.target && R.target.kind === 'if' && R.target.b === b) R.target = R.target.back;
+          afterEdit();
+        });
+        E.appendChild(del);
+      }
+      return E;
+    }
+    const e = arrowBtn(b.t, (R.sel && R.sel.cmd === b ? ' pick' : '') + (b.fixed ? ' fixed' : '') + hint);
+    e.dataset.id = id;
+    if (!ro) e.addEventListener('click', (ev) => {
+      ev.stopPropagation(); if (R.running) return; sfx.tap();
+      if (R.debug) { if (b.t !== 'F') selectFix({ cmd: b }); return; }
+      list.splice(i, 1); afterEdit();
+    });
+    return e;
+  }
+  $('tray').addEventListener('click', () => { if (R.running || R.debug || !R.target) return; R.target = null; renderTray(); });
+  $('fnTray').addEventListener('click', () => { if (R.running || R.debug) return; R.target = { kind: 'fn' }; sfx.tap(); renderTray(); });
   function afterEdit() {
     resetBot(); renderTray();
     $('palette').classList.toggle('nudge', !R.debug && R.i === 0 && R.w.id === 'robot' && !R.prog.length);
@@ -936,43 +1412,58 @@
     p.innerHTML = '';
     p.hidden = R.debug;
     if (R.debug) return;
-    ['U', 'L', 'R', 'D'].forEach((d) => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'blk ' + d; b.innerHTML = arrowSvg; b.setAttribute('aria-label', 'Add: ' + NAMES[d]);
+    ARROWS.forEach((d) => {
+      const b = arrowBtn(d);
+      b.setAttribute('aria-label', 'Add: ' + NAMES[d]);
       b.addEventListener('click', () => addBlock({ t: d }));
       p.appendChild(b);
     });
-    if (R.loops) {
+    const extra = (cls, html, label, make) => {
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'blk loopBtn'; b.innerHTML = '🔁'; b.setAttribute('aria-label', 'Add a repeat block');
-      b.addEventListener('click', () => addBlock({ t: 'loop', n: 2, body: [] }));
+      b.type = 'button'; b.className = 'blk ' + cls; b.innerHTML = html; b.setAttribute('aria-label', label);
+      b.addEventListener('click', () => addBlock(make()));
       p.appendChild(b);
-    }
+    };
+    if (R.tools.includes('loop')) extra('loopBtn', '🔁', 'Add a repeat block', () => ({ t: 'loop', n: 2, body: [] }));
+    if (R.tools.includes('if')) extra('ifBtn', '<span class="ytile"></span>?', 'Add an if block', () => ({ t: 'if', a: null, b: null }));
+    if (R.tools.includes('fn')) extra('F', '★', 'Add a call of the function', () => ({ t: 'F' }));
     p.classList.toggle('nudge', R.i === 0 && R.w.id === 'robot' && !R.prog.length);
   }
   function addBlock(b) {
     if (R.running) return;
-    if (R.max && blocks(R.prog) >= R.max) { sfx.bad(); rSay(P.full, 'oops'); return; }
-    if (blocks(R.prog) >= 30) { sfx.bad(); return; }
+    const t = R.target;
+    // An arrow while an if block waits for one fills it; then the other arrow, then back to where it was.
+    if (t && t.kind === 'if' && ARROWS.includes(b.t)) {
+      t.b[t.slot] = b.t; sfx.tap();
+      const other = t.slot === 'a' ? 'b' : 'a';
+      R.target = !t.b[other] ? { kind: 'if', b: t.b, slot: other, back: t.back } : t.back;
+      afterEdit(); return;
+    }
+    if (t && t.kind === 'if') R.target = t.back;
+    if (R.max && blocks() >= R.max) { sfx.bad(); rSay(P.full, 'oops'); return; }
+    if (blocks() >= 40) { sfx.bad(); return; }
+    let c = container(R.target);
+    if (b.t === 'loop' && c.inLoop) { sfx.bad(); rSay(P.noLoopInLoop, 'oops'); return; }
+    if (b.t === 'F' && c.home === 'fn') { sfx.bad(); rSay(P.noFnInFn, 'oops'); return; }
     sfx.tap();
-    // Loops are not nested: a new loop goes in the main program and takes the next blocks.
-    if (b.t === 'loop') { R.prog.push(b); R.target = b; }
-    else if (R.target) R.target.body.push(b);
-    else R.prog.push(b);
+    c.list.push(b);
+    if (b.t === 'loop') R.target = { kind: 'loop', b, home: c.home };
+    if (b.t === 'if') R.target = { kind: 'if', b, slot: 'a', back: R.target };
     afterEdit();
   }
   $('rUndo').addEventListener('click', () => {
     if (R.running) return;
-    const last = R.prog[R.prog.length - 1];
-    if (!last) return;
-    if (last.t === 'loop' && last.body.length && R.target === last) last.body.pop();
-    else { R.prog.pop(); if (R.target === last) R.target = null; }
+    if (R.target && R.target.kind === 'if') R.target = R.target.back;
+    const c = container(R.target);
+    if (c.list.length) c.list.pop();
+    else if (R.target && R.target.kind === 'loop') { const L = homeList(R.target.home); L.splice(L.indexOf(R.target.b), 1); R.target = null; }
+    else if (R.target) R.target = null;
     sfx.tap(); afterEdit();
   });
-  $('rClear').addEventListener('click', () => { if (R.running) return; R.prog = []; R.target = null; sfx.tap(); afterEdit(); });
+  $('rClear').addEventListener('click', () => { if (R.running) return; R.prog = []; R.fn = []; R.target = null; sfx.tap(); afterEdit(); });
   $('rReset').addEventListener('click', () => {
     if (R.running) return;
-    R.prog = clone(R.orig); R.sel = null; $('fixbar').hidden = true; sfx.tap(); afterEdit(); robotIntro();
+    R.prog = clone(R.orig.prog); R.fn = clone(R.orig.fn); R.sel = null; $('fixbar').hidden = true; sfx.tap(); afterEdit(); robotIntro();
   });
 
   // Fixing: pick a block, then choose what it should be.
@@ -980,43 +1471,67 @@
     R.sel = sel; renderTray();
     const f = $('fixbar');
     f.hidden = false; f.innerHTML = '<span class="lbl">' + P.fix + '</span>';
-    const choices = sel.loop ? [2, 3, 4, 5] : ['U', 'L', 'R', 'D'];
+    const choices = sel.loop ? COUNTS : ARROWS;
     choices.forEach((v) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      if (sel.loop) { b.className = 'blk num'; b.textContent = '×' + v; b.setAttribute('aria-label', 'Repeat ' + v + ' times'); }
-      else { b.className = 'blk ' + v; b.innerHTML = arrowSvg; b.setAttribute('aria-label', NAMES[v]); }
+      let b;
+      if (sel.loop) { b = document.createElement('button'); b.type = 'button'; b.className = 'blk num'; b.textContent = '×' + v; b.setAttribute('aria-label', 'Repeat ' + v + ' times'); }
+      else b = arrowBtn(v);
       b.addEventListener('click', () => {
-        const before = sel.loop ? sel.loop.n : sel.cmd.t;
-        if (sel.loop) sel.loop.n = v; else sel.cmd.t = v;
-        if (before !== v) { R.edits++; (sel.loop || sel.cmd).fixed = true; }
+        const obj = sel.loop || sel.iff || sel.cmd, field = sel.loop ? 'n' : sel.iff ? sel.slot : 't';
+        if (obj[field] !== v) { R.edits++; obj[field] = v; obj.fixed = true; }
         R.sel = null; f.hidden = true; sfx.tap(); afterEdit();
       });
       f.appendChild(b);
     });
   }
 
+  // ---- Hints ----
+  // First the footprints of a working path, then a working program. A hint keeps the stars at two at most.
+  // When fixing, the hint makes the wrong block glow.
+  $('rHint').addEventListener('click', () => {
+    if (R.running) return;
+    R.hints++; sfx.tap();
+    if (R.debug) { R.showBug = true; renderTray(); rSay(P.hintBug, 'happy'); return; }
+    if (R.hints === 1) {
+      const res = execute(R.lv, R.sol.prog, R.sol.fn);
+      res.trace.forEach((st, k) => {
+        const c = $('board').querySelector('.cell[data-k="' + st.x + ',' + st.y + '"]');
+        if (c && !c.querySelector('.foot')) c.insertAdjacentHTML('beforeend', '<i class="foot" style="--k:' + k + '">' + (k + 1) + '</i>');
+      });
+      rSay(P.hintFoot, 'happy');
+      return;
+    }
+    const g = $('ghost');
+    g.hidden = false;
+    g.innerHTML = '<div class="lbl">💡 ' + P.hintProg + '</div><div class="prog-ro"></div>';
+    renderList(g.querySelector('.prog-ro'), clone(R.sol.prog), 'g', 'main', true);
+    if (R.sol.fn.length) {
+      g.insertAdjacentHTML('beforeend', '<div class="fnline"><span class="blk F" aria-hidden="true">★</span> =</div>');
+      const fl = g.querySelector('.fnline');
+      clone(R.sol.fn).forEach((b, i) => fl.appendChild(blockEl(b, [], i, 'h' + i, 'fn', true)));
+    }
+    rSay(P.hintProg, 'happy');
+  });
+
   const STEP = 420;
   async function runProgram() {
     if (R.running) return;
-    if (!blocks(R.prog)) { sfx.bad(); rSay('Add some commands first.', 'oops'); return; }
+    if (!blocks()) { sfx.bad(); rSay('Add some commands first.', 'oops'); return; }
     R.sel = null; $('fixbar').hidden = true;
     resetBot(); renderTray();
     const my = ++runToken;
-    R.running = true;
-    ['rRun', 'rUndo', 'rClear', 'rReset'].forEach((id) => { $(id).disabled = true; });
+    R.running = true; R.runs++;
+    const ctl = ['rRun', 'rUndo', 'rClear', 'rReset', 'rHint'];
+    ctl.forEach((id) => { $(id).disabled = true; });
     $('palette').querySelectorAll('button').forEach((b) => { b.disabled = true; });
     rSay('Gbot is on the move…', 'happy');
     await sleep(250);
-    const res = simulate(R.lv, R.prog);
-    const tray = $('tray');
+    const res = execute(R.lv, R.prog, R.fn);
+    const sec = $('robot');
     for (const st of res.trace) {
       if (my !== runToken) return;
-      tray.querySelectorAll('.run').forEach((e) => e.classList.remove('run'));
-      const loopEl = st.j >= 0 ? tray.querySelector('.loop[data-i="' + st.i + '"]') : null;
-      if (loopEl) loopEl.classList.add('run');
-      const blk = tray.querySelector('.blk[data-i="' + st.i + '"][data-j="' + st.j + '"]');
-      if (blk) blk.classList.add('run');
+      sec.querySelectorAll('.run').forEach((e) => e.classList.remove('run'));
+      st.hl.forEach((id) => { const e = sec.querySelector('#tray [data-id="' + id + '"], #fnTray [data-id="' + id + '"]'); if (e) e.classList.add('run'); });
       botEl.classList.toggle('face-L', st.d === 'L' || (st.d !== 'R' && botEl.classList.contains('face-L')));
       if (st.bump) {
         botEl.style.setProperty('--bx', DIR[st.d][0] * 30 + '%'); botEl.style.setProperty('--by', DIR[st.d][1] * 30 + '%');
@@ -1033,22 +1548,24 @@
       await sleep(STEP);
     }
     if (my !== runToken) return;
-    tray.querySelectorAll('.run').forEach((e) => e.classList.remove('run'));
+    sec.querySelectorAll('.run').forEach((e) => e.classList.remove('run'));
     R.running = false;
-    ['rRun', 'rUndo', 'rClear', 'rReset'].forEach((id) => { $(id).disabled = false; });
+    ctl.forEach((id) => { $(id).disabled = false; });
     $('palette').querySelectorAll('button').forEach((b) => { b.disabled = false; });
     if (res.end === 'win') {
       botEl.classList.add('dance'); mood(botEl.firstChild, 'cheer'); mood($('rCoach'), 'cheer');
       rSay('Hooray, Gbot made it!'); sfx.win(); confetti(40);
       let stars;
       if (R.debug) stars = 3 - (R.edits > 1 ? 1 : 0) - (R.fails >= 2 ? 1 : 0);
-      else stars = 3 - (blocks(R.prog) > R.par ? 1 : 0) - (R.fails >= 2 ? 1 : 0);
-      const textBits = R.debug ? (R.edits <= 1 ? 'Fixed with a single change!' : 'The program works now!')
-        : (blocks(R.prog) > R.par ? 'Can it be shorter? Try ' + R.par + ' blocks.' : 'A perfect program: ' + blocks(R.prog) + ' blocks!');
-      setTimeout(() => { if (my === runToken) finish(R.w, R.i, Math.max(1, stars), textBits); }, 1700);
+      else stars = 3 - (blocks() > R.par ? 1 : 0) - (R.fails >= 2 ? 1 : 0);
+      if (R.hints) stars = Math.min(stars, 2);
+      const text = R.debug ? (R.edits <= 1 ? 'Fixed with a single change!' : 'The program works now!')
+        : (blocks() > R.par ? 'Can it be shorter? Try ' + R.par + ' blocks.' : 'A perfect program: ' + blocks() + ' blocks!');
+      setTimeout(() => { if (my === runToken) finish(R.w, R.i, Math.max(1, stars), text); }, 1700);
     } else {
       // In fixing mode the first run, before any change, is to see the bug, so it does not count.
       if (!R.debug || R.edits > 0) R.fails++;
+      $('rHint').hidden = R.debug ? false : R.fails < 1;
       mood(botEl.firstChild, 'oops');
       rSay(res.end === 'bump' ? P.bump : res.end === 'gems' ? P.gems : P.short, 'oops');
       sfx.bad();
@@ -1061,7 +1578,7 @@
   // =====================================================================
   let Q = null;
   function startQuiz(w, i) {
-    Q = { w, i, n: 0, total: w.total, missedQ: 0, combo: 0, missed: false, tries: 0 };
+    Q = { w, i, n: 0, total: w.total - (S.diff === 'easy' ? 1 : 0), missedQ: 0, combo: 0, missed: false, tries: 0 };
     $('prog').innerHTML = '<i></i>'.repeat(Q.total);
     $('combo').textContent = '';
     show('quiz');
@@ -1141,7 +1658,7 @@
   function variantsOf(x) {
     if (x.s === 'dots') return [x.n + 1, x.n - 1, x.n + 2, x.n - 2].filter((n) => n >= 1 && n <= 10).map((n) => it('dots', x.c, { n }));
     if (x.s === 'number') return [x.v + 1, x.v - 1, x.v + 2, x.v - 2, x.v * 2, x.v + 10].filter((v) => v >= 0 && v !== x.v).map((v) => it('number', x.c, { v }));
-    if (x.s === 'arrow') return [0, 90, 180, 270].filter((r) => r !== x.r).map((r) => it('arrow', x.c, { r }));
+    if (x.s === 'arrow') { const st = x.r % 90 ? 45 : 90; return Array.from({ length: 360 / st }, (_, k) => k * st).filter((r) => r !== x.r).map((r) => it('arrow', x.c, { r })); }
     return shuffle([...CK.filter((c) => c !== x.c).map((c) => it(x.s, c, { z: x.z })), ...SK.filter((s) => s !== x.s).map((s) => it(s, x.c, { z: x.z }))]);
   }
   // The answer plus distinct wrong items: first from `prefer`, then near variants.
@@ -1152,22 +1669,24 @@
   }
 
   // ---- Pattern ----
+  // Easy: three choices and the gap is always at the end. Hard: four choices, the gap is often in the
+  // middle, dots grow by two and arrows turn by 45 degrees.
   function genPola(lvl) {
-    const cs = shuffle(CK.slice()), ss = shuffle(SK.slice());
-    const fam = lvl < 7 ? lvl : rnd(2, 6);
+    const d = S.diff, cs = shuffle(CK.slice()), ss = shuffle(SK.slice());
+    const fam = lvl < 7 ? lvl : d === 'easy' ? rnd(0, 4) : d === 'hard' ? rnd(3, 6) : rnd(2, 6);
     let seq, unit;
     if (fam === 0) unit = [it(ss[0], cs[0]), it(ss[0], cs[1])];
     if (fam === 1) unit = [0, 1, 2].map((k) => it(ss[k], cs[0]));
     if (fam === 2) { const A = it(ss[0], cs[0]), B = it(ss[1], cs[1]), D = it(ss[2], cs[2]); unit = pick([[A, A, B], [A, B, B], [A, A, B, B], [A, B, A, D]]); }
     if (fam === 3) unit = [0, 1, 2].map((k) => it(ss[k], cs[k]));
-    if (fam === 4) { const step = lvl === 7 ? pick([1, 2]) : 1, n0 = step === 2 ? 1 : rnd(1, 2); seq = [0, 1, 2, 3, 4].map((k) => it('dots', cs[0], { n: n0 + step * k })); }
-    if (fam === 5) { const r0 = pick([0, 90, 180, 270]), dir = pick([90, 270]); seq = [0, 1, 2, 3, 4, 5].map((k) => it('arrow', cs[0], { r: (r0 + dir * k) % 360 })); }
+    if (fam === 4) { const step = d === 'hard' || (lvl === 7 && d === 'medium') ? pick([1, 2]) : 1, n0 = step === 2 ? 1 : rnd(1, 2); seq = [0, 1, 2, 3, 4].map((k) => it('dots', cs[0], { n: n0 + step * k })); }
+    if (fam === 5) { const r0 = pick([0, 90, 180, 270]), dir = d === 'hard' ? pick([45, 90, 270, 315]) : pick([90, 270]); seq = [0, 1, 2, 3, 4, 5].map((k) => it('arrow', cs[0], { r: (r0 + dir * k) % 360 })); }
     if (fam === 6) { seq = [0, 1, 2, 3, 4, 5, 6].map((k) => it(ss[k % 2], cs[k % 3])); }
     if (!seq) { const len = unit.length * 2 + (unit.length <= 2 ? 2 : unit.length === 3 ? 1 : 0); seq = Array.from({ length: len }, (_, k) => unit[k % unit.length]); }
     let miss = seq.length - 1;
-    if (lvl >= 6 && Math.random() < 0.6) miss = rnd(2, seq.length - 2);
+    if ((d === 'medium' && lvl >= 6 && Math.random() < 0.6) || (d === 'hard' && lvl >= 3 && Math.random() < 0.5)) miss = rnd(2, seq.length - 2);
     const ans = seq[miss];
-    const opts = choices(ans, seq, lvl < 3 ? 3 : 4);
+    const opts = choices(ans, seq, d === 'easy' ? 3 : d === 'hard' ? 4 : lvl < 3 ? 3 : 4);
     const phrase = miss === seq.length - 1 ? P.next : P.missing;
     qSay(phrase);
 
@@ -1203,9 +1722,10 @@
     + [0, 60, 120].map((a) => '<rect x="79" y="56" width="6" height="28" rx="2" fill="#5ef2d6" transform="rotate(' + a + ' 82 70)"/>').join('')
     + '<circle cx="82" cy="70" r="4" fill="#2a2150"/></g>'
     + '<rect x="40" y="10" width="50" height="18" rx="6" fill="#5b3fd6"/><text x="65" y="23" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Baloo 2, system-ui, sans-serif">?</text></g></svg>';
+  // Easy: three examples and three choices. Hard: two examples, four choices and harder number rules.
   function genMesin(lvl) {
-    const T = pick(CK), Sh = pick(SK);
-    let rule, input, nEx = lvl < 4 ? 2 : 3, prefer = (x) => [x];
+    const d = S.diff, T = pick(CK), Sh = pick(SK);
+    let rule, input, nEx = d === 'easy' ? 3 : d === 'hard' ? 2 : lvl < 4 ? 2 : 3, prefer = (x) => [x];
     if (lvl === 0) { rule = (x) => it(x.s, T); input = () => it(pick(SK), pick(CK.filter((c) => c !== T))); }
     if (lvl === 1) { rule = (x) => it(Sh, x.c); input = () => it(pick(SK.filter((s) => s !== Sh)), pick(CK)); }
     if (lvl === 2) { rule = (x) => it('dots', x.c, { n: x.n + 1 }); input = () => it('dots', pick(CK), { n: rnd(1, 6) }); }
@@ -1217,16 +1737,17 @@
     }
     if (lvl === 6) { rule = (x) => it('dots', x.c, { n: x.n + 2 }); input = () => it('dots', pick(CK), { n: rnd(1, 7) }); prefer = (x) => [x, it('dots', x.c, { n: x.n + 1 })]; }
     if (lvl === 7) {
-      const [op, k] = pick([['+', 2], ['+', 3], ['×', 2], ['−', 1], ['+', 10]]);
+      const [op, k] = pick({ easy: [['+', 1], ['+', 2]], medium: [['+', 2], ['+', 3], ['×', 2], ['−', 1], ['+', 10]],
+        hard: [['×', 3], ['+', 5], ['−', 2], ['×', 2], ['+', 9]] }[d]);
       const f = (v) => op === '+' ? v + k : op === '×' ? v * k : v - k;
-      rule = (x) => it('number', 'purple', { v: f(x.v) }); input = () => it('number', 'blue', { v: rnd(op === '−' ? 2 : 1, 9) });
+      rule = (x) => it('number', 'purple', { v: f(x.v) }); input = () => it('number', 'blue', { v: rnd(op === '−' ? k + 1 : 1, d === 'easy' ? 5 : 9) });
       prefer = (x) => [it('number', 'purple', { v: x.v })];
     }
     // Different inputs for the examples and the question.
     const seen = new Set(), ins = [];
     while (ins.length < nEx + 1) { const x = input(); if (!seen.has(key(x))) { seen.add(key(x)); ins.push(x); } }
     const test = ins.pop(), ans = rule(test);
-    const opts = choices(ans, prefer(test), lvl < 2 ? 3 : 4);
+    const opts = choices(ans, prefer(test), d === 'easy' ? 3 : d === 'hard' ? 4 : lvl < 2 ? 3 : 4);
     qSay(P.machine);
 
     $('ask').innerHTML = '<div class="lab"><div class="tray2" id="mIn"></div>' + MACHINE + '<div class="tray2" id="mOut"></div></div><div class="history" id="mHist"></div>';
@@ -1300,28 +1821,35 @@
     $('ask').innerHTML = '<div class="scales" id="scales"></div>';
     const box = $('scales');
     const my = runToken;
+    const d = S.diff;
     if (lvl === 5) {
-      // How many light balls weigh the same as some heavy ones?
-      const [cx, cy] = shuffle(CK.slice()), k = pick([2, 3]), m = k === 3 ? 2 : pick([2, 3]);
-      const X = it('circle', cx), Y = it('circle', cy, { z: 0.8 });
-      box.classList.add('one');
-      box.innerHTML = scaleSvg([X], Array(k).fill(Y)) + scaleSvg(Array(m).fill(X), ['?']);
-      const ans = m * k;
+      // How many light balls weigh the same as some heavy ones? On hard there is sometimes a chain:
+      // one X is k Y, one Y is j Z, so one X is k × j Z.
+      const [cx, cy, cz] = shuffle(CK.slice()), X = it('circle', cx), Y = it('circle', cy, { z: 0.8 }), Z = it('circle', cz, { z: 0.65 });
+      let shown, ask, unit, ans;
+      if (d === 'hard' && Math.random() < 0.5) {
+        const k = pick([2, 3]), j = pick([2, 3]);
+        shown = scaleSvg([X], Array(k).fill(Y)) + scaleSvg([Y], Array(j).fill(Z)); ask = [X]; unit = Z; ans = k * j;
+      } else {
+        const k = d === 'easy' ? 2 : pick([2, 3]), m = d === 'easy' ? 2 : k === 3 ? 2 : pick([2, 3]);
+        shown = scaleSvg([X], Array(k).fill(Y)); ask = Array(m).fill(X); unit = Y; ans = m * k;
+      }
+      box.classList.toggle('one', !shown.includes('</svg><svg'));
+      box.innerHTML = shown + scaleSvg(ask, ['?']);
       const nums = new Set([ans]);
-      shuffle([ans + 1, ans - 1, k, m + k, ans + 2].filter((v) => v > 0)).forEach((v) => { if (nums.size < 4) nums.add(v); });
+      shuffle([ans + 1, ans - 1, ans + 2, ans - 2].filter((v) => v > 0)).forEach((v) => { if (nums.size < (d === 'easy' ? 3 : 4)) nums.add(v); });
       qSay(P.count);
-      setTimeout(() => { if (my === runToken) box.firstChild.classList.add('wob'); }, 300);
-      options(shuffle([...nums]).map((v) => ({ html: '<span class="numopt">' + v + ' ' + itemSvg(Y) + '</span>', ok: v === ans, label: String(v) })), () => {
-        const s = box.children[1];
-        s.outerHTML = scaleSvg(Array(m).fill(X), Array(ans).fill(Y));
-        box.children[1].classList.add('wob');
+      setTimeout(() => { if (my === runToken) [...box.children].slice(0, -1).forEach((sc) => sc.classList.add('wob')); }, 300);
+      options(shuffle([...nums]).map((v) => ({ html: '<span class="numopt">' + v + ' ' + itemSvg(unit) + '</span>', ok: v === ans, label: String(v) })), () => {
+        box.lastChild.outerHTML = scaleSvg(ask, Array(ans).fill(unit));
+        box.lastChild.classList.add('wob');
         solved(1700);
       });
       return;
     }
-    const n = lvl < 2 ? 2 : lvl < 4 ? 3 : 4;
+    const n = { easy: [2, 2, 3, 3, 3], medium: [2, 2, 3, 3, 4], hard: [3, 3, 4, 4, 5] }[d][lvl];
     const order = shuffle(CK.slice()).slice(0, n); // lightest first
-    const ask = lvl === 0 ? 'heavier' : lvl === 1 ? 'lighter' : lvl === 2 ? 'heaviest' : lvl === 3 ? 'lightest' : pick(['heaviest', 'lightest']);
+    const ask = lvl === 4 ? pick(['heaviest', 'lightest']) : lvl % 2 ? (n > 2 ? 'lightest' : 'lighter') : (n > 2 ? 'heaviest' : 'heavier');
     const ans = /heav/.test(ask) ? order[n - 1] : order[0];
     const pairs = shuffle(order.slice(1).map((c, k) => (Math.random() < 0.5 ? [order[k], c, 1] : [c, order[k], -1])));
     if (n === 2) box.classList.add('one');
@@ -1364,10 +1892,12 @@
     if (r.op === 'not') return ['not', word(r.a)];
     return [word(r.a), 'but not', word(r.b)];
   }
+  // Easy: six items. Medium: eight. Hard: ten items from four colors and four shapes.
   function genSaring(lvl) {
+    const d = S.diff, many = { easy: 6, medium: 8, hard: 10 }[d], kinds = d === 'hard' ? 4 : 3;
     let rule, items;
-    for (let tries = 0; tries < 200; tries++) {
-      const cs = shuffle(CK.slice()).slice(0, 3), ss = shuffle(SK.slice()).slice(0, 3);
+    for (let tries = 0; tries < 300; tries++) {
+      const cs = shuffle(CK.slice()).slice(0, kinds), ss = shuffle(SK.slice()).slice(0, kinds);
       const c = (k) => ({ k: 'c', v: cs[k] }), s = (k) => ({ k: 's', v: ss[k] }), z = { k: 'z', v: pick([1, 0.6]) };
       const fam = lvl < 6 ? lvl : rnd(2, 8);
       rule = [{ op: 'is', a: c(0) }, { op: 'is', a: s(0) }, { op: 'and', a: c(0), b: s(0) }, { op: 'not', a: c(0) },
@@ -1377,9 +1907,9 @@
       cs.forEach((cc) => ss.forEach((sh) => [1, 0.6].forEach((zz) => all.push(it(sh, cc, { z: zz })))));
       // Sizes vary only when the rule is about size, or for AND, where one color and one shape fit just one item of each size.
       const pool = rule.a.k === 'z' || rule.op === 'and' ? all : all.filter((x) => x.z === 1);
-      items = shuffle(pool).slice(0, 8);
+      items = shuffle(pool).slice(0, many);
       const n = items.filter((x) => passes(rule, x)).length;
-      if (n >= 2 && n <= 5) break;
+      if (n >= 2 && n <= Math.ceil(many * 0.6)) break;
     }
     qSay('Pick everything that is ' + ruleWords(rule).join(' ') + '.');
     $('ask').innerHTML = '<div class="rule">' + ruleHtml(rule) + '</div><div class="pool" id="pool"></div>';
@@ -1433,27 +1963,31 @@
   // Result and stickers
   // =====================================================================
   let last = null;
+  // i is -1 for a random map: it gives stars on screen but does not keep them.
   function finish(w, i, stars, text) {
     const before = totalStars();
-    S.best[w.id] = S.best[w.id] || [];
-    S.best[w.id][i] = Math.max(best(w.id, i), stars);
+    if (i >= 0) {
+      const b = bestOf(S.diff);
+      b[w.id] = b[w.id] || [];
+      b[w.id][i] = Math.max(best(w.id, i), stars);
+    }
     markDay(); save();
     const after = totalStars();
     const gained = STICKERS.slice(unlocked(before), unlocked(after));
-    last = { w, i };
+    last = { w, i, def: R && R.i < 0 ? R.def : null };
     $('resTitle').textContent = stars === 3 ? 'Amazing!' : stars === 2 ? 'Great!' : 'Good, keep practicing!';
     $('resStars').innerHTML = [0, 1, 2].map((k) => starSvg(k < stars, 'star')).join('');
     $('resText').textContent = text;
     const g = $('resGift');
     g.hidden = !gained.length;
     if (gained.length) g.innerHTML = '<b>New sticker!</b><div class="stk">' + gained.map(face).join('') + '</div>' + gained.map((k) => k.name).join(', ');
-    const hasNext = i + 1 < w.levels.length;
-    $('resNext').hidden = !hasNext;
+    $('resNext').hidden = i >= 0 && i + 1 >= levelsOf(w).length;
+    $('resNext').textContent = i < 0 ? 'New map' : 'Next level';
     show('result');
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
   }
-  $('resNext').addEventListener('click', () => play(last.w, last.i + 1));
-  $('resAgain').addEventListener('click', () => play(last.w, last.i));
+  $('resNext').addEventListener('click', () => { if (last.i < 0) startRobot(last.w, -1, randomLevel(S.diff)); else play(last.w, last.i + 1); });
+  $('resAgain').addEventListener('click', () => { if (last.i < 0) startRobot(last.w, -1, last.def); else play(last.w, last.i); });
   $('resWorld').addEventListener('click', () => { curWorld = last.w; show('world'); });
 
   function renderStickers() {
@@ -1465,7 +1999,8 @@
       + '<b>' + (k.at <= stars ? k.name : '???') + '</b><small>⭐ ' + k.at + '</small></div>').join('');
   }
 
-  renderHome();
+  // The first visit starts by adding a player.
+  if (S) renderHome(); else openForm(null);
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
   }
