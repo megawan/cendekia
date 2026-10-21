@@ -1,7 +1,7 @@
 // Checks every robot and fixing level in the content block of index.html, for every difficulty:
 //   - the map has one start, one flag and only known tiles, and all rows are the same width
 //   - the solution `sol` brings Gbot to the flag with every gem, within `max` blocks
-//   - the solution only uses the blocks the level offers (`tools`)
+//   - the solution only uses the blocks the level offers (`tools`: loop, if, fn, until)
 //   - for levels without loops, ifs or functions, no shorter path exists than the solution
 //   - a block limit is too small to reach the flag with arrows alone
 //
@@ -30,11 +30,14 @@ function parseList(s) {
   const out = [];
   for (let i = 0; i < s.length;) {
     const ch = s[i];
-    if (/\d/.test(ch)) {
+    if (/[\dw]/.test(ch)) {
       const end = s.indexOf(')', i);
-      out.push({ t: 'loop', n: +ch, body: parseList(s.slice(i + 2, end)) });
+      out.push({ t: 'loop', n: ch === 'w' ? 'w' : +ch, body: parseList(s.slice(i + 2, end)) });
       i = end + 1;
-    } else if (ch === '?') { out.push({ t: 'if', a: s[i + 1], b: s[i + 2] }); i += 3; }
+    } else if (ch === '?') {
+      const c = s[i + 1] === 'b' ? 'b' : 'y', k = c === 'b' ? i + 2 : i + 1;
+      out.push({ t: 'if', c, a: s[k], b: s[k + 1] }); i = k + 2;
+    }
     else { out.push({ t: ch }); i++; }
   }
   return out;
@@ -42,7 +45,7 @@ function parseList(s) {
 const parseProg = (s) => { const [main, fn] = s.split('|'); return { prog: parseList(main), fn: parseList(fn || '') }; };
 const count = (list) => list.reduce((n, b) => n + (b.t === 'loop' ? 1 + count(b.body) : 1), 0);
 const blocks = (p) => count(p.prog) + count(p.fn);
-const uses = (list, t) => list.some((b) => b.t === t || (b.t === 'loop' && t === 'loop') || (b.t === 'loop' && uses(b.body, t)));
+const uses = (list, t) => list.some((b) => b.t === t || (t === 'until' && b.t === 'loop' && b.n === 'w') || (b.t === 'loop' && uses(b.body, t)));
 const blocked = (lv, x, y) => x < 0 || y < 0 || x >= lv.w || y >= lv.h || lv.cells[y][x] === '#' || lv.cells[y][x] === '~';
 function wins(lv, p) {
   let x = lv.start.x, y = lv.start.y, steps = 0;
@@ -59,9 +62,9 @@ function wins(lv, p) {
   };
   const run = (list) => {
     for (const b of list) {
-      if (b.t === 'loop') { for (let r = 0; r < b.n; r++) if (run(b.body)) return true; }
+      if (b.t === 'loop') { for (let r = 0; b.n === 'w' ? r < 100 : r < b.n; r++) if (run(b.body)) return true; }
       else if (b.t === 'F') { if (run(p.fn)) return true; }
-      else if (b.t === 'if') { if (move(lv.cells[y][x] === 'y' ? b.a : b.b)) return true; }
+      else if (b.t === 'if') { if (move(lv.cells[y][x] === b.c ? b.a : b.b)) return true; }
       else if (move(b.t)) return true;
     }
     return false;
@@ -101,18 +104,18 @@ for (const set of ['robot', 'debug']) {
       n++;
       const where = `${set} ${diff} ${i + 1} (${l.name})`;
       if (l.map.some((r) => r.length !== l.map[0].length)) return fail(where, 'rows have different widths');
-      const marks = l.map.join('').replace(/[.#~*y]/g, '');
-      if (marks.length !== 2 || !marks.includes('R') || !marks.includes('F')) return fail(where, 'needs one R, one F and only . # ~ * y');
+      const marks = l.map.join('').replace(/[.#~*yb]/g, '');
+      if (marks.length !== 2 || !marks.includes('R') || !marks.includes('F')) return fail(where, 'needs one R, one F and only . # ~ * y b');
       const lv = parseMap(l.map), p = parseProg(l.sol), tools = l.tools || '';
       const path = shortest(lv);
       if (path === null) return fail(where, 'the flag cannot be reached');
       if (solve) console.log(`  ${where}: shortest ${path}`);
       if (!wins(lv, p)) return fail(where, `solution ${l.sol} does not win`);
-      for (const [t, tool] of [['loop', 'loop'], ['if', 'if'], ['F', 'fn']]) {
+      for (const [t, tool] of [['loop', 'loop'], ['if', 'if'], ['F', 'fn'], ['until', 'until']]) {
         if ((uses(p.prog, t) || uses(p.fn, t)) && !tools.includes(tool)) return fail(where, `solution uses ${tool} but tools are "${tools}"`);
       }
       if (l.max && blocks(p) > l.max) return fail(where, `solution uses ${blocks(p)} blocks, max is ${l.max}`);
-      const plain = !/[\d?F]/.test(l.sol);
+      const plain = !/[\dw?F]/.test(l.sol);
       if (plain && path.length < l.sol.length) return fail(where, `a path of ${path.length} moves exists, solution has ${l.sol.length}`);
       if (l.max && path.length <= l.max) return fail(where, `max ${l.max} allows a path with arrows only (${path.length} moves)`);
       console.log(`✓ ${where}: ${l.sol} (${blocks(p)} blocks, shortest path ${path.length} moves)`);
