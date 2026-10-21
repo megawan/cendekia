@@ -338,11 +338,13 @@
     #fx, .floaters { display: none; }
   }
   /* Players */
-  .who { position: absolute; right: 0; top: 0; display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 800;
+  .who { position: absolute; left: 0; top: 0; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 800;
     background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 2px 12px 2px 4px; cursor: pointer; color: inherit; }
   .who .av { font-size: 1.6rem; line-height: 1; }
   .who .lvl { font-size: .75rem; color: #fff; background: var(--c-teal); border-radius: 999px; padding: 0 8px; }
-  .homeTop { position: relative; min-height: 40px; }
+  .homeTop { position: relative; min-height: 48px; }
+  .diffBadge { position: absolute; right: 0; top: 0; font: inherit; font-weight: 800; color: #fff; background: var(--c-teal);
+    border: 0; border-radius: 999px; padding: 6px 14px; min-height: 44px; cursor: pointer; box-shadow: 0 3px 0 #0a7680; }
   .plist { display: grid; gap: 12px; margin-bottom: 16px; }
   .pcard { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-bottom-width: 5px;
     border-radius: var(--radius); padding: 10px 12px; }
@@ -519,7 +521,8 @@
 <main>
   <!-- Home -->
   <section id="home">
-    <div class="homeTop"><button type="button" class="who" id="who" aria-label="Change player"></button></div>
+    <div class="homeTop"><button type="button" class="who" id="who" aria-label="Change player"></button>
+      <button type="button" class="diffBadge" id="diffBadge" aria-label="Change difficulty"></button></div>
     <div class="hero">
       <svg class="gbot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div>
@@ -574,7 +577,7 @@
       <fieldset class="field"><legend>Pick a picture</legend><div class="avs" id="pfAvs"></div></fieldset>
       <fieldset class="field"><legend>How hard?</legend><div class="diffs" id="pfDiffs"></div></fieldset>
       <button type="button" class="btn go" id="pfSave">Save</button>
-      <button type="button" class="btn ghost danger" id="pfDel" hidden>Remove this player</button>
+      <p class="note">To remove a child from every app, use the <a href="../orangtua/">parents' page</a>.</p>
     </div>
   </section>
 
@@ -660,6 +663,13 @@
   </section>
 </main>
 <div id="fx" aria-hidden="true"></div>
+<div class="tutor" id="diffPick" role="dialog" aria-modal="true" aria-labelledby="dfTitle" hidden>
+  <div class="tcard">
+    <h2 id="dfTitle">How hard should it be?</h2>
+    <div class="diffs" id="dfList"></div>
+    <p class="note" id="dfNote"></p>
+  </div>
+</div>
 <div class="tutor" id="tutor" role="dialog" aria-modal="true" aria-labelledby="tuTitle" hidden>
   <div class="tcard">
     <h2 id="tuTitle">How to play</h2>
@@ -778,6 +788,7 @@
 }
 </script>
 
+<script src="../shared/profile.js"></script>
 <script>
 (() => {
   'use strict';
@@ -882,34 +893,43 @@
   };
   const P = C.phrases;
 
-  // ---- Players and saved state ----
-  // Every player picks a difficulty and keeps their own stars for each difficulty.
-  const KEY = 'logika.v2', OLD = 'logika.v1';
+  // ---- Children and saved state ----
+  // The children are shared by every Cendekia app (shared/profile.js). Robo Logic keeps, per child, the
+  // difficulty, the stars for every difficulty, days in a row, which guides were seen, and the details for the
+  // parents' summary, under logika.v3.<child id>.
+  const CD = window.Cendekia, BASE = 'logika.v3';
   const DIFFS = {
     easy: { name: 'Easy', age: 'Ages 4–5', icon: '🌱', note: 'Small maps, fewer choices' },
     medium: { name: 'Medium', age: 'Ages 6–7', icon: '🌿', note: 'Repeat blocks, longer patterns' },
     hard: { name: 'Hard', age: 'Ages 8–10', icon: '🌳', note: 'Functions, if blocks, bigger puzzles' }
   };
-  const AVATARS = ['🦊', '🐼', '🐯', '🐸', '🐵', '🦁', '🐰', '🐧', '🐨', '🦄'];
-  function newPlayer(name, av, diff) {
-    return { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, av, diff,
-             best: { easy: {}, medium: {}, hard: {} }, day: '', streak: 0, seen: {} };
-  }
-  let DB = { players: [], cur: '' };
-  try { Object.assign(DB, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { /* keep defaults */ }
-  // Progress from the first version, which had one player at medium difficulty.
-  if (!DB.players.length) {
-    try {
-      const old = JSON.parse(localStorage.getItem(OLD));
-      if (old && old.best) {
-        const p = newPlayer('Player 1', AVATARS[0], 'medium');
-        p.best.medium = old.best; p.day = old.day || ''; p.streak = old.streak || 0;
-        DB.players.push(p); DB.cur = p.id;
-      }
-    } catch (e) { /* nothing to move */ }
-  }
-  let S = DB.players.find((p) => p.id === DB.cur) || DB.players[0] || null;
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) { /* private mode */ } }
+  const AVATARS = CD.AVATARS;
+  const fresh = () => ({ diff: '', best: { easy: {}, medium: {}, hard: {} }, day: '', streak: 0, seen: {}, log: {}, days: {} });
+  const stateOf = (id) => Object.assign(fresh(), CD.state(BASE, id) || {});
+  // Robo Logic had its own players before (logika.v2, and logika.v1 before that). Each one moves to the shared
+  // child with the same name, the player who was playing moves to the current child, and the others become new children.
+  (function moveOldPlayers() {
+    const get = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+    const put = (k, v) => { try { localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); } catch (e) { /* private mode */ } };
+    if (get('logika.moved')) return;
+    let db = get('logika.v2');
+    const v1 = get('logika.v1');
+    if ((!db || !db.players || !db.players.length) && v1 && v1.best) {
+      db = { cur: 'old', players: [{ id: 'old', name: CD.profile().name, av: '', diff: 'medium', best: { medium: v1.best }, day: v1.day, streak: v1.streak }] };
+    }
+    const used = new Set();
+    ((db && db.players) || []).slice().sort((a) => (a.id === db.cur ? -1 : 1)).forEach((pl) => {
+      let kid = CD.profiles().find((q) => !used.has(q.id) && q.name.toLowerCase() === String(pl.name).toLowerCase());
+      if (!kid && pl.id === db.cur && !used.has(CD.profile().id)) kid = CD.profile();
+      if (!kid) kid = CD.add(pl.name, pl.av);
+      used.add(kid.id);
+      if (!CD.state(BASE, kid.id)) put(BASE + '.' + kid.id, { diff: pl.diff, best: pl.best, day: pl.day || '', streak: pl.streak || 0, seen: pl.seen || {}, log: pl.log || {}, days: pl.days || {} });
+    });
+    put('logika.moved', '1');
+  })();
+  let S = stateOf(CD.profile().id);
+  const me = () => CD.profile();
+  function save() { try { localStorage.setItem(CD.key(BASE), JSON.stringify(S)); } catch (e) { /* private mode */ } }
   const dayStr = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   function streakNow() {
     const y = new Date(); y.setDate(y.getDate() - 1);
@@ -992,7 +1012,8 @@
   function renderHome() {
     const stars = totalStars();
     const days = streakNow();
-    $('who').innerHTML = '<span class="av" aria-hidden="true">' + S.av + '</span>' + esc(S.name) + ' <span class="lvl">' + DIFFS[S.diff].name + '</span>';
+    $('who').innerHTML = '<span class="av" aria-hidden="true">' + me().avatar + '</span>' + esc(me().name) + ' <span aria-hidden="true">▾</span>';
+    $('diffBadge').innerHTML = DIFFS[S.diff].icon + ' ' + DIFFS[S.diff].name + ' <span aria-hidden="true">▾</span>';
     $('homeStars').textContent = stars + (stars === 1 ? ' star' : ' stars');
     $('homeDays').textContent = days + (days === 1 ? ' day' : ' days');
     $('homeStk').textContent = unlocked(stars) + '/' + STICKERS.length;
@@ -1018,58 +1039,77 @@
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   $('who').addEventListener('click', () => show('players'));
 
-  // ---- Choosing and editing players ----
+  // ---- Choosing and editing children ----
+  // Children are added, renamed and switched here; removing a child is on the parents' page, since it removes
+  // them from every Cendekia app.
+  const starsOf = (st) => Object.values(st.best).reduce((a, byW) => a + Object.values(byW).reduce((b, l) => b + sum(l), 0), 0);
+  function useChild(id) { CD.select(id); S = stateOf(id); ensureDiff(); }
+  // A child who has not played Robo Logic yet starts on medium and is asked to choose.
+  function ensureDiff() { if (!S.diff) { S.diff = 'medium'; save(); setTimeout(() => chooseDiff(true), 0); } }
   function renderPlayers() {
-    $('plBack').hidden = !S;
     const box = $('plist');
     box.innerHTML = '';
-    DB.players.forEach((p) => {
-      const d = document.createElement('div');
-      d.className = 'pcard' + (S && p.id === S.id ? ' cur' : '');
-      const stars = Object.values(p.best).reduce((a, byW) => a + Object.values(byW).reduce((b, l) => b + sum(l), 0), 0);
-      d.innerHTML = '<button type="button" class="pick"><span class="av" aria-hidden="true">' + p.av + '</span><span><b>' + esc(p.name) + '</b>'
-        + '<small>' + DIFFS[p.diff].icon + ' ' + DIFFS[p.diff].name + ' · ⭐ ' + stars + '</small></span></button>'
+    CD.profiles().forEach((p) => {
+      const st = stateOf(p.id), d = document.createElement('div');
+      d.className = 'pcard' + (p.id === me().id ? ' cur' : '');
+      const lvl = st.diff ? DIFFS[st.diff].icon + ' ' + DIFFS[st.diff].name : 'New here';
+      d.innerHTML = '<button type="button" class="pick"><span class="av" aria-hidden="true">' + p.avatar + '</span><span><b>' + esc(p.name) + '</b>'
+        + '<small>' + lvl + ' · ⭐ ' + starsOf(st) + '</small></span></button>'
         + '<button type="button" class="edit" aria-label="Change ' + esc(p.name) + '">✎</button>';
-      d.querySelector('.pick').addEventListener('click', () => { sfx.tap(); S = p; DB.cur = p.id; save(); show('home'); });
-      d.querySelector('.edit').addEventListener('click', () => openForm(p));
+      d.querySelector('.pick').addEventListener('click', () => { sfx.tap(); useChild(p.id); show('home'); });
+      d.querySelector('.edit').addEventListener('click', () => openForm(p.id));
       box.appendChild(d);
     });
   }
   $('plBack').addEventListener('click', () => show('home'));
   $('plAdd').addEventListener('click', () => openForm(null));
   let editing = null, formAv = AVATARS[0], formDiff = 'medium';
-  function openForm(p) {
-    editing = p;
-    formAv = p ? p.av : pick(AVATARS); formDiff = p ? p.diff : 'medium';
-    $('pfTitle').textContent = p ? 'Change player' : DB.players.length ? 'New player' : 'Hi! Who is playing?';
+  function openForm(id) {
+    const p = id ? CD.profiles().find((q) => q.id === id) : null;
+    editing = p ? p.id : null;
+    formAv = p ? p.avatar : pick(AVATARS);
+    formDiff = (p && stateOf(p.id).diff) || 'medium';
+    $('pfTitle').textContent = p ? 'Change player' : 'New player';
     $('pfName').value = p ? p.name : '';
-    $('pfBack').hidden = !DB.players.length;
-    $('pfDel').hidden = !p;
     renderForm();
     show('pform');
   }
   function renderForm() {
     $('pfAvs').innerHTML = AVATARS.map((a) => '<button type="button" aria-pressed="' + (a === formAv) + '" data-av="' + a + '">' + a + '</button>').join('');
-    $('pfDiffs').innerHTML = Object.entries(DIFFS).map(([k, d]) => '<button type="button" aria-pressed="' + (k === formDiff) + '" data-diff="' + k + '">'
-      + '<span class="ic" aria-hidden="true">' + d.icon + '</span><span><b>' + d.name + '</b> · ' + d.age + '<small>' + d.note + '</small></span></button>').join('');
+    $('pfDiffs').innerHTML = diffButtons(formDiff);
   }
+  const diffButtons = (cur) => Object.entries(DIFFS).map(([k, d]) => '<button type="button" aria-pressed="' + (k === cur) + '" data-diff="' + k + '">'
+    + '<span class="ic" aria-hidden="true">' + d.icon + '</span><span><b>' + d.name + '</b> · ' + d.age + '<small>' + d.note + '</small></span></button>').join('');
   $('pfAvs').addEventListener('click', (e) => { const b = e.target.closest('[data-av]'); if (b) { formAv = b.dataset.av; sfx.tap(); renderForm(); } });
   $('pfDiffs').addEventListener('click', (e) => { const b = e.target.closest('[data-diff]'); if (b) { formDiff = b.dataset.diff; sfx.tap(); renderForm(); } });
   $('pfBack').addEventListener('click', () => show('players'));
   $('pfSave').addEventListener('click', () => {
-    const name = $('pfName').value.trim() || 'Player ' + (DB.players.length + (editing ? 0 : 1));
-    if (editing) Object.assign(editing, { name, av: formAv, diff: formDiff });
-    else { const p = newPlayer(name, formAv, formDiff); DB.players.push(p); editing = p; }
-    S = editing; DB.cur = S.id; save(); sfx.good();
+    const name = $('pfName').value.trim().slice(0, 16) || 'Player ' + (CD.profiles().length + (editing ? 0 : 1));
+    const id = editing ? (CD.update(editing, { name, avatar: formAv }), editing) : CD.add(name, formAv).id;
+    const st = stateOf(id);
+    st.diff = formDiff;
+    try { localStorage.setItem(BASE + '.' + id, JSON.stringify(st)); } catch (e) { /* private mode */ }
+    useChild(id); sfx.good();
     show('home');
   });
-  $('pfDel').addEventListener('click', () => {
-    if (!editing || !window.confirm('Remove ' + editing.name + ' and all their stars?')) return;
-    DB.players = DB.players.filter((p) => p !== editing);
-    if (S === editing) { S = DB.players[0] || null; DB.cur = S ? S.id : ''; }
-    save();
-    if (S) show('players'); else openForm(null);
+
+  // ---- Choosing the difficulty: from the badge on the home screen, and on a child's first visit ----
+  function chooseDiff(first) {
+    $('dfTitle').textContent = first ? 'Hi ' + me().name + '! How hard should it be?' : 'How hard should it be?';
+    $('dfList').innerHTML = diffButtons(S.diff);
+    $('dfNote').textContent = 'Stars are kept for each difficulty, so you can switch any time.';
+    $('diffPick').hidden = false;
+    $('dfList').querySelector('[aria-pressed="true"], button').focus();
+  }
+  $('dfList').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-diff]'); if (!b) return;
+    S.diff = b.dataset.diff; save(); sfx.good();
+    $('diffPick').hidden = true;
+    show('home');
   });
+  $('diffBadge').addEventListener('click', () => chooseDiff(false));
+  $('diffPick').addEventListener('click', (e) => { if (e.target === $('diffPick')) $('diffPick').hidden = true; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $('diffPick').hidden = true; $('tutor').hidden = true; } });
 
   let curWorld = WORLDS[0];
   function renderWorld() {
@@ -1103,7 +1143,7 @@
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'card wide'; b.style.setProperty('--c', w.c);
       b.innerHTML = '<span class="badge" aria-hidden="true">🎲</span><span><b>Random map</b><br><small>A new map every time, just for practice</small></span>';
-      b.addEventListener('click', () => { sfx.tap(); markDay(); save(); startRobot(w, -1, randomLevel(S.diff)); });
+      b.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); markDay(); save(); startRobot(w, -1, randomLevel(S.diff)); });
       ex.appendChild(b);
     }
     if (!S.seen[w.id]) tutorial(w);
@@ -1134,7 +1174,7 @@
     e.preventDefault();
     if (+$('gateA').value !== gateAns) { $('gateErr').textContent = 'Not quite. Please try again.'; return; }
     $('gate').hidden = true; $('rep').hidden = false;
-    viewed = S; renderReport();
+    viewed = me().id; renderReport();
   });
 
   // Accuracy: questions right on the first try, or robot runs that reached the flag.
@@ -1147,7 +1187,10 @@
     return { cls: 'low', text: '🎯 Needs practice' };
   }
   function renderReport() {
-    const p = viewed, log = p.log || {}, days = p.days || {};
+    const kid = CD.profiles().find((q) => q.id === viewed) || me();
+    const p = Object.assign(kid.id === me().id ? S : stateOf(kid.id), {});
+    p.diff = p.diff || 'medium';
+    const log = p.log || {}, days = p.days || {};
     const pct = (x) => Math.round(x * 100) + '%';
     const levelName = (w, diff, i) => (w.kind === 'robot' ? C[w.id][diff][i].name : w.levels[i]);
     // Totals over every level the player has tried.
@@ -1159,11 +1202,11 @@
     const week = last14.slice(7).reduce((a, x) => a + x.n, 0);
 
     let h = '';
-    if (DB.players.length > 1) {
-      h += '<div class="pchips" role="group" aria-label="Player">' + DB.players.map((q, k) => '<button type="button" data-k="' + k + '" aria-pressed="' + (q === p) + '">'
-        + q.av + ' ' + esc(q.name) + '</button>').join('') + '</div>';
+    if (CD.profiles().length > 1) {
+      h += '<div class="pchips" role="group" aria-label="Player">' + CD.profiles().map((q) => '<button type="button" data-id="' + q.id + '" aria-pressed="' + (q.id === kid.id) + '">'
+        + q.avatar + ' ' + esc(q.name) + '</button>').join('') + '</div>';
     }
-    h += '<div class="box phead"><span class="av" aria-hidden="true">' + p.av + '</span><span><b>' + esc(p.name) + '</b><span class="muted">'
+    h += '<div class="box phead"><span class="av" aria-hidden="true">' + kid.avatar + '</span><span><b>' + esc(kid.name) + '</b><span class="muted">'
       + DIFFS[p.diff].icon + ' ' + DIFFS[p.diff].name + ' · ' + DIFFS[p.diff].age + '</span></span>'
       + '<button type="button" class="btn ghost" id="repEdit">Change difficulty</button></div>';
     h += '<div class="tiles">'
@@ -1219,20 +1262,22 @@
       : x.w.name + ': play it together and ask "what do you notice?" before choosing.'));
     if (all.h >= 5 && all.h > all.n * 0.2) tips.push('Hints are used often. Encourage one more try before tapping 💡.');
     if (!week && all.n) tips.push('No puzzles this week. Five to ten minutes a day works better than one long session.');
-    if (!all.n) tips.push('No games played since this summary was added. Details appear here as ' + esc(p.name) + ' plays.');
+    if (!all.n) tips.push('No games played since this summary was added. Details appear here as ' + esc(kid.name) + ' plays.');
     h += '<div class="box"><h3>Tips</h3>' + (tips.length ? '<ul class="tips">' + tips.map((t) => '<li>' + t + '</li>').join('') + '</ul>' : '<p class="muted">All good! Keep playing a little every day.</p>') + '</div>';
 
     h += '<div class="box about2"><details><summary>What each world trains</summary><dl>'
       + WORLDS.map((w) => '<dt>' + w.icon + ' ' + w.name + ' · ' + w.skill + '</dt><dd>' + SKILL_INFO[w.id] + '</dd>').join('') + '</dl></details></div>';
+    h += '<div class="box"><p class="muted">Time played, the daily time limit and the other Cendekia apps are on the <a href="../orangtua/">parents\' page for all apps</a>.</p></div>';
     h += '<p class="muted">Everything stays on this device. Details are counted from the first game after this summary was added; earlier stars are included.</p>';
 
     const rep = $('rep');
     rep.innerHTML = h;
-    rep.querySelectorAll('.pchips button').forEach((b) => b.addEventListener('click', () => { viewed = DB.players[+b.dataset.k]; renderReport(); }));
-    $('repEdit').addEventListener('click', () => openForm(viewed));
+    rep.querySelectorAll('.pchips button').forEach((b) => b.addEventListener('click', () => { viewed = b.dataset.id; renderReport(); }));
+    $('repEdit').addEventListener('click', () => openForm(kid.id));
   }
 
   function play(w, i) {
+    if (!CD.gate()) return; // the parent's daily time limit
     curWorld = w; markDay(); save();
     if (w.kind === 'robot') startRobot(w, i); else startQuiz(w, i);
   }
@@ -1435,7 +1480,7 @@
   function startRobot(w, i, def) {
     def = def || C[w.id][S.diff][i];
     const sol = parseProg(def.sol), tools = def.tools || '';
-    R = { w, i, def, lv: parseMap(def.map), debug: w.id === 'debug', prog: [], fn: [], target: null, fails: 0, edits: 0,
+    R = { t0: Date.now(), w, i, def, lv: parseMap(def.map), debug: w.id === 'debug', prog: [], fn: [], target: null, fails: 0, edits: 0,
           runs: 0, hints: 0, running: false, max: def.max || 0, sol, tools, sel: null, showBug: false };
     R.par = count(sol.prog) + count(sol.fn);
     if (R.debug) { const b = makeBug(R.lv, sol.prog, sol.fn); R.prog = b.prog; R.fn = b.fn; R.orig = clone(b); }
@@ -1776,6 +1821,7 @@
         : (blocks() > R.par ? 'Can it be shorter? Try ' + R.par + ' blocks.' : 'A perfect program: ' + blocks() + ' blocks!');
       setTimeout(() => { if (my === runToken) finish(R.w, R.i, Math.max(1, stars), text); }, 1700);
     } else {
+      if (counts && !R.fails && R.i >= 0) CD.weak('logika', R.w.name + ' · ' + R.def.name);
       if (counts) R.fails++;
       $('rHint').hidden = R.debug ? false : R.fails < 1;
       mood(botEl.firstChild, 'oops');
@@ -1790,7 +1836,7 @@
   // =====================================================================
   let Q = null;
   function startQuiz(w, i) {
-    Q = { w, i, n: 0, total: w.total - (S.diff === 'easy' ? 1 : 0), missedQ: 0, combo: 0, missed: false, tries: 0 };
+    Q = { t0: Date.now(), w, i, n: 0, total: w.total - (S.diff === 'easy' ? 1 : 0), missedQ: 0, combo: 0, missed: false, tries: 0 };
     $('prog').innerHTML = '<i></i>'.repeat(Q.total);
     $('combo').textContent = '';
     show('quiz');
@@ -1826,6 +1872,7 @@
   }
   // A wrong answer. After two, onHint shows the right one.
   function wrong(onHint) {
+    if (!Q.missed) CD.weak('logika', Q.w.name + ' · ' + Q.w.levels[Q.i]);
     Q.missed = true; Q.tries++; Q.combo = 0; $('combo').textContent = '';
     sfx.bad(); qSay(P.again, 'oops');
     if (Q.tries >= 2 && onHint) onHint();
@@ -2181,6 +2228,9 @@
   // i is -1 for a random map: it gives stars on screen but does not keep them.
   function finish(w, i, stars, text) {
     const before = totalStars();
+    const quiz = w.kind === 'quiz';
+    CD.round({ app: 'logika', stage: w.name + ' · ' + (i < 0 ? 'Random map' : levelsOf(w)[i]) + ' (' + DIFFS[S.diff].name + ')', stars,
+      right: quiz ? Q.total - Q.missedQ : 1, total: quiz ? Q.total : 1 + R.fails, ms: Date.now() - (quiz ? Q.t0 : R.t0) });
     if (i >= 0) {
       const b = bestOf(S.diff);
       b[w.id] = b[w.id] || [];
@@ -2201,8 +2251,8 @@
     show('result');
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
   }
-  $('resNext').addEventListener('click', () => { if (last.i < 0) startRobot(last.w, -1, randomLevel(S.diff)); else play(last.w, last.i + 1); });
-  $('resAgain').addEventListener('click', () => { if (last.i < 0) startRobot(last.w, -1, last.def); else play(last.w, last.i); });
+  $('resNext').addEventListener('click', () => { if (last.i >= 0) play(last.w, last.i + 1); else if (CD.gate()) startRobot(last.w, -1, randomLevel(S.diff)); });
+  $('resAgain').addEventListener('click', () => { if (last.i >= 0) play(last.w, last.i); else if (CD.gate()) startRobot(last.w, -1, last.def); });
   $('resWorld').addEventListener('click', () => { curWorld = last.w; show('world'); });
 
   function renderStickers() {
@@ -2214,8 +2264,8 @@
       + '<b>' + (k.at <= stars ? k.name : '???') + '</b><small>⭐ ' + k.at + '</small></div>').join('');
   }
 
-  // The first visit starts by adding a player.
-  if (S) renderHome(); else openForm(null);
+  ensureDiff();
+  renderHome();
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
   }

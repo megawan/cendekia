@@ -5,6 +5,7 @@
 //   Cendekia.round({...})          records a finished round (time, stars, right answers) for the parent page
 //   Cendekia.weak(app, label)      counts one wrong first answer on an item, for the parent page
 //   Cendekia.gate()                false, and a message, when the child's daily time limit is used up
+//   Cendekia.select(id)            makes another child the current one (for apps with their own child picker)
 //
 // Everything stays in this browser. The first time the script runs it creates one child, "Anak 1", and copies the
 // progress the apps saved before profiles existed into it, so nothing is lost.
@@ -175,7 +176,7 @@
     data.list = data.list.filter(function (p) { return p.id !== id; });
     var suffix = '.' + id;
     try {
-      Object.keys(localStorage).forEach(function (k) { if (k.slice(-suffix.length) === suffix && /^(baca|phonics|kosakata|hijaiyah|cendekia)\./.test(k)) del(k); });
+      Object.keys(localStorage).forEach(function (k) { if (k.slice(-suffix.length) === suffix && /^(baca|phonics|kosakata|hijaiyah|logika|cendekia)\./.test(k)) del(k); });
     } catch (e) { /* private mode */ }
     if (!data.list.length) { var p = add('Anak 1', AVATARS[0]); data.cur = p.id; } else if (data.cur === id) data.cur = data.list[0].id;
     save(PROFILES, data);
@@ -187,6 +188,7 @@
     profiles: function () { return data.list.slice(); },
     key: function (base) { return base + '.' + data.cur; },
     chip: chip, gate: gate, round: round, weak: weak,
+    select: function (id) { if (find(id)) { data.cur = id; save(PROFILES, data); } },
     add: function (name, avatar) { var p = add(name, avatar); save(PROFILES, data); return p; },
     update: function (id, fields) { var p = find(id); if (p) { Object.keys(fields).forEach(function (k) { p[k] = fields[k]; }); save(PROFILES, data); } },
     remove: remove,
