@@ -22,7 +22,7 @@ Each app keeps its own README with details.
 Several children can share one device. `shared/profile.js` is loaded by every app and by the landing page:
 
 - A chip at the top of each home screen shows the current child. Tapping it lets a child switch or add another one. Each child has their own stars, stickers and progress in every app (`<app key>.<child id>` in `localStorage`).
-- The first time it runs it creates "Anak 1" and copies the progress the apps saved before profiles existed into it, so nothing is lost.
+- The first time it runs it creates "Child 1" and copies the progress the apps saved before profiles existed into it, so nothing is lost.
 - Every finished round is logged (app, stage, stars, right answers, time), and so is each question answered wrong on the first try.
 
 [`orangtua/`](orangtua) is the page for parents, opened from "👪 Orang tua" and protected by a small sum so a young child does not open it by accident. For each child it shows the days in a row, stars, minutes this week, a seven-day chart, progress per app, the letters and words that most often went wrong, and the last rounds. It also sets a daily time limit (a new round cannot start once it is used up), renames, changes the picture of, adds and deletes children.
