@@ -25,7 +25,8 @@
   h1 { font-size: 2.4rem; margin: 0; text-align: center; }
   .sub { text-align: center; margin: 4px 0 28px; opacity: .8; font-size: 1.15rem; }
   .apps { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); list-style: none; padding: 0; margin: 0; }
-  .app { --c: var(--c-green); display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;
+  .apps > li { display: flex; }
+  .app { --c: var(--c-green); flex: 1; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;
     background: var(--card); border: 2px solid var(--line); border-bottom: 6px solid var(--c);
     border-radius: var(--radius); padding: 16px; transition: transform .1s; }
   .app:active { transform: translateY(3px); }
