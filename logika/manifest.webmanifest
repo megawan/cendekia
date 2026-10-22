@@ -1,6 +1,6 @@
 {
-  "name": "Robo Logic",
-  "short_name": "Robo Logic",
+  "name": "Logica",
+  "short_name": "Logica",
   "description": "Logical and computational thinking games for children: program a robot, find patterns, crack the magic machine, read balances, fix buggy code and sort with AND, OR and NOT.",
   "lang": "en",
   "start_url": "./",
