@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Numeria</title>
+<meta name="theme-color" content="#e0558a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="Everyday math for children, from counting apples to sale prices and train timetables: counting, adding, money, time, sharing and fractions, measuring, percent and trip planning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff5f3; --ink: #1f2a44; --card: #ffffff; --line: #f1d8d6;
+    --accent: #e0558a; --accent-d: #b83a6c; --warm: #f2a33a; --good: #1f9d6b; --bad: #d9534f;
+    --c-green: #1f9d6b; --c-orange: #f2891f; --c-pink: #e0558a; --c-purple: #7a5af8; --c-blue: #2e90fa;
+    --c-teal: #0e9aa7; --c-red: #e5484d; --c-indigo: #4c5fd5;
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { background: var(--bg); }
+  html, body { margin: 0; min-height: 100%; color: var(--ink);
+    font-family: "Baloo 2", system-ui, sans-serif; touch-action: manipulation; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 8% 6%, #ffe0ea 0, transparent 36%),
+                radial-gradient(circle at 94% 20%, #d6ebff 0, transparent 34%),
+                radial-gradient(circle at 50% 100%, #fff0c9 0, transparent 42%); }
+  main { max-width: 760px; margin: 0 auto; padding: 16px 16px 40px; }
+  h1 { font-size: 2.2rem; margin: 0; line-height: 1.05; letter-spacing: .01em; }
+  h2 { font-size: clamp(1.1rem, 5vw, 1.4rem); margin: 0; text-align: center; flex: 1; line-height: 1.15; }
+  .sub { margin: 0; opacity: .8; }
+  .btn { font: inherit; font-weight: 700; font-size: 1.15rem; border: 0; border-radius: var(--radius);
+    padding: 14px 22px; background: var(--accent); color: #fff; cursor: pointer;
+    box-shadow: 0 5px 0 var(--accent-d); min-height: 56px; transition: transform .08s, box-shadow .08s, opacity .2s; }
+  .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--accent-d); }
+  .btn.go { background: var(--good); box-shadow: 0 5px 0 #13714c; }
+  .btn.ghost { background: rgba(255,255,255,.85); color: var(--ink); box-shadow: none; border: 2px solid var(--line); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  button:focus-visible, a:focus-visible { outline: 3px solid var(--c-purple); outline-offset: 2px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .bar .btn { padding: 8px 14px; min-height: 46px; font-size: 1rem; box-shadow: none; }
+  .stack { display: grid; gap: 14px; max-width: 420px; margin: 20px auto; }
+  .spacer { width: 46px; }
+  .note { font-size: .95rem; text-align: center; opacity: .8; margin-top: 16px; }
+  .note a { color: inherit; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 2px solid var(--line);
+    border-radius: 999px; padding: 4px 14px 4px 10px; font-weight: 700; white-space: nowrap; }
+  .pill .ic { font-size: 1.2rem; line-height: 1; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes hop { 30% { transform: translateY(-14px) scale(1.08); } }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+  @keyframes fadeUp { from { transform: translateY(8px); opacity: 0; } }
+
+  /* Home */
+  .homeTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .hero { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 8px 0 12px; }
+  .owl { font-size: 4.2rem; line-height: 1; display: inline-block; animation: bob 3s ease-in-out infinite; }
+  .pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .scale { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: .9rem; margin: 0 4px 10px; }
+  .scale i { flex: 1; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #8fd6a8, #f2c14e, #f2891f, #e5484d); }
+  .worlds { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (min-width: 620px) { .worlds { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+  .card { --c: var(--c-blue); position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    text-align: center; background: var(--card); border: 2px solid var(--line); border-bottom: 6px solid var(--c);
+    border-radius: var(--radius); padding: 14px 8px 12px; font: inherit; color: inherit; cursor: pointer;
+    transition: transform .15s; animation: popIn .45s both; }
+  .card:hover { transform: translateY(-3px); }
+  .card:active { transform: translateY(3px); }
+  .card .num { position: absolute; top: 8px; left: 10px; font-weight: 800; font-size: .85rem; opacity: .45; }
+  .card .badge { width: 62px; height: 62px; border-radius: 50%; background: var(--c); color: #fff;
+    display: grid; place-items: center; font-size: 2rem; line-height: 1; box-shadow: inset 0 -5px 0 rgba(0,0,0,.12); }
+  .card b { font-size: 1.1rem; line-height: 1.2; }
+  .card small { font-size: .82rem; opacity: .75; line-height: 1.2; }
+  .card .skill { font-size: .72rem; font-weight: 700; color: var(--c); text-transform: uppercase; letter-spacing: .04em; line-height: 1.2; }
+  .card .meter { width: 80%; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; margin-top: 4px; }
+  .card .meter i { display: block; height: 100%; background: var(--warm); border-radius: 4px; }
+  .card.wide { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 16px; }
+  .card.wide span:last-child { text-align: left; }
+
+  /* World: level picker */
+  .about { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line);
+    border-radius: var(--radius); padding: 10px 14px; margin-bottom: 16px; }
+  .about .badge { flex: none; width: 54px; height: 54px; border-radius: 50%; background: var(--c); display: grid;
+    place-items: center; font-size: 1.7rem; }
+  .about p { margin: 0; line-height: 1.3; }
+  .about small { font-weight: 700; color: var(--c); text-transform: uppercase; font-size: .75rem; letter-spacing: .04em; }
+  .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 10px; }
+  .lv { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .lv button { width: 74px; height: 74px; border-radius: 50%; border: 4px solid #fff; cursor: pointer;
+    background: var(--c, var(--c-blue)); color: #fff; font: inherit; font-weight: 800; font-size: 1.8rem; line-height: 1;
+    box-shadow: 0 6px 0 rgba(0,0,0,.18); transition: transform .1s; animation: popIn .4s both; }
+  .lv button:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
+  .lv.locked button { background: #d4d9e2; cursor: default; font-size: 1.4rem; }
+  .lv.next button { animation: popIn .4s both, bounce 1.2s ease-in-out .4s infinite;
+    box-shadow: 0 6px 0 rgba(0,0,0,.18), 0 0 0 7px rgba(242,163,58,.35); }
+  .lv small { font-size: .85rem; text-align: center; line-height: 1.15; min-height: 2.3em; }
+  .lv .tier { font-size: .72rem; font-weight: 700; opacity: .7; }
+  .st { display: flex; gap: 2px; height: 20px; }
+  .st svg { width: 20px; height: 20px; fill: var(--line); }
+  .st svg.on { fill: var(--warm); }
+
+  /* Play */
+  .prog { display: flex; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
+  .prog i { width: 14px; height: 14px; border-radius: 50%; background: var(--line); }
+  .prog i.ok { background: var(--good); }
+  .prog i.miss { background: var(--warm); }
+  .prog i.now { background: var(--accent); transform: scale(1.25); }
+  .coach { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .coach .owl { font-size: 3rem; animation: none; flex: none; }
+  .coach .owl.cheer { animation: hop .5s ease-out; }
+  .coach .owl.oops { animation: shake .35s; }
+  .bubble { position: relative; flex: 1; background: #fff; border: 2px solid var(--line); border-radius: 16px;
+    padding: 8px 14px; font-weight: 700; font-size: 1.15rem; line-height: 1.3; }
+  .bubble::before { content: ""; position: absolute; left: -9px; top: 50%; margin-top: -8px; width: 14px; height: 14px;
+    background: #fff; border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); transform: rotate(45deg); }
+  .scene { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 14px;
+    min-height: 90px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 14px; animation: fadeUp .3s both; }
+  .scene:empty { display: none; }
+  .pics { display: grid; grid-template-columns: repeat(5, auto); gap: 4px 8px; font-size: 2.1rem; line-height: 1.15; }
+  .pics.small { font-size: 1.5rem; gap: 2px 4px; }
+  .pics span { animation: popIn .35s both; }
+  .pics span.gone { opacity: .25; filter: grayscale(1); }
+  .op { font-size: 2rem; font-weight: 800; color: var(--accent); }
+  .plates { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .plate { background: #fff7ec; border: 2px dashed #f0cfa0; border-radius: 50%; min-width: 96px; min-height: 96px;
+    padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .plate > b { font-size: .9rem; opacity: .7; }
+  .plate.tray { border-radius: 18px; }
+  .coin, .bill { display: inline-grid; place-items: center; font-weight: 800; animation: popIn .35s both; }
+  .coin { width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff3b0, #f2c14e 60%, #d79a1c);
+    border: 3px solid #c58a12; color: #6b4a00; font-size: 1.05rem; }
+  .coin.c2 { width: 60px; height: 60px; background: radial-gradient(circle at 35% 30%, #f6f6f6, #c7ccd4 60%, #98a0ad); border-color: #8a929f; color: #3a404a; }
+  .bill { width: 92px; height: 50px; border-radius: 8px; background: #bfe8cf; border: 3px solid #4fb07a; color: #1d6b41; font-size: 1.2rem; }
+  .bill.b10 { background: #cfe2ff; border-color: #4c84d6; color: #1f4c94; }
+  .bill.b20 { background: #ffe0c2; border-color: #e08a3a; color: #8a4410; }
+  .bill.b50 { background: #ead9ff; border-color: #8a5ad6; color: #4a2590; }
+  .money { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+  .tag { display: inline-flex; align-items: center; gap: 8px; background: #fff8e1; border: 2px solid #f1dfb2;
+    border-radius: 12px 26px 26px 12px; padding: 6px 16px 6px 10px; font-weight: 800; font-size: 1.2rem; }
+  .tag .e { font-size: 1.8rem; line-height: 1; }
+  .tag small { font-weight: 600; font-size: .95rem; opacity: .8; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .chips span { background: #f4f6fb; border: 2px solid #d9e0ee; border-radius: 12px; padding: 4px 12px; font-weight: 800; font-size: 1.25rem; }
+  .clocks { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; text-align: center; font-weight: 700; }
+  .clock { width: 150px; height: 150px; display: block; }
+  .clocks .clock { width: 120px; height: 120px; }
+  .clock .face { fill: #fff; stroke: var(--ink); stroke-width: 3; }
+  .clock .tk { stroke: #9aa3b5; stroke-width: 1; }
+  .clock .tk5 { stroke: var(--ink); stroke-width: 2.2; }
+  .clock text { font: 700 9.5px "Baloo 2", system-ui, sans-serif; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+  .clock .hh { stroke: var(--ink); stroke-width: 4.5; stroke-linecap: round; }
+  .clock .mh { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+  .digital { display: inline-block; background: var(--ink); color: #7ef0c4; border-radius: 10px; padding: 2px 12px;
+    font-weight: 800; font-size: 1.3rem; letter-spacing: .05em; }
+  .pie { width: 150px; height: 150px; }
+  .pie .sl { fill: #fbeee0; stroke: #c99a6b; stroke-width: 1.5; }
+  .pie .sl.on { fill: #f6b74a; }
+  .pie .crust { fill: none; stroke: #c98a3f; stroke-width: 5; }
+  .svgbox { width: 100%; max-width: 440px; height: auto; display: block; }
+  .svgbox text { font: 700 11px "Baloo 2", system-ui, sans-serif; fill: var(--ink); }
+  table.tt { border-collapse: collapse; font-weight: 700; font-size: 1.1rem; background: #fff; }
+  table.tt th, table.tt td { border: 2px solid var(--line); padding: 4px 14px; text-align: center; }
+  table.tt th { background: #fff0f5; }
+  .frac { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; font-weight: 800; vertical-align: middle; }
+  .frac span:first-child { border-bottom: 3px solid currentColor; padding: 0 4px 2px; }
+  .frac span:last-child { padding-top: 2px; }
+
+  /* Answers */
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .opts.three { grid-template-columns: repeat(3, 1fr); }
+  .opt { font: inherit; font-weight: 800; font-size: 1.45rem; min-height: 70px; border-radius: var(--radius);
+    background: #fff; color: var(--ink); border: 3px solid var(--line); box-shadow: 0 5px 0 var(--line);
+    cursor: pointer; padding: 8px; transition: transform .08s; animation: popIn .3s both; }
+  .opt:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--line); }
+  .opt.ok { background: #e3f7ec; border-color: var(--good); box-shadow: 0 5px 0 var(--good); animation: hop .45s; }
+  .opt.no { background: #fdecec; border-color: var(--bad); box-shadow: none; opacity: .6; animation: shake .35s; }
+  .padWrap { max-width: 360px; margin: 0 auto; }
+  .display { display: flex; align-items: center; justify-content: center; gap: 6px; background: #fff; border: 3px solid var(--line);
+    border-radius: var(--radius); min-height: 70px; font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
+  .display .val { min-width: 1ch; }
+  .display .val:empty::before { content: "?"; opacity: .3; }
+  .display .unit { font-size: 1.3rem; opacity: .65; }
+  .display.ok { border-color: var(--good); background: #e3f7ec; }
+  .display.no { border-color: var(--bad); animation: shake .35s; }
+  .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .key { font: inherit; font-weight: 800; font-size: 1.6rem; min-height: 60px; border-radius: 16px; background: #fff;
+    border: 2px solid var(--line); box-shadow: 0 4px 0 var(--line); color: var(--ink); cursor: pointer; }
+  .key:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--line); }
+  .key.check { grid-column: 1 / -1; background: var(--good); border-color: var(--good); color: #fff; box-shadow: 0 5px 0 #13714c; font-size: 1.3rem; }
+  .why { background: #fff8e1; border: 2px solid #f1dfb2; border-radius: var(--radius); padding: 12px 14px; margin-top: 14px;
+    text-align: center; animation: fadeUp .3s both; }
+  .why p { margin: 0 0 10px; font-size: 1.1rem; line-height: 1.35; }
+  .why b.ans { color: var(--good); }
+
+  /* Result */
+  .result { text-align: center; }
+  .result .owl { font-size: 5rem; animation: hop .6s ease-out; }
+  .stars { display: flex; justify-content: center; gap: 8px; }
+  .stars svg { width: 60px; height: 60px; fill: var(--line); }
+  .stars svg.on { fill: var(--warm); animation: popIn .5s both; }
+  .stars svg.on:nth-child(2) { animation-delay: .2s; }
+  .stars svg.on:nth-child(3) { animation-delay: .4s; }
+  .summary { font-size: 1.15rem; margin: 0; }
+  .gift { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 10px; font-weight: 700; }
+  .gift .face { font-size: 2.6rem; display: block; animation: popIn .5s .5s both; }
+
+  /* Stickers */
+  .sgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (min-width: 620px) { .sgrid { grid-template-columns: repeat(4, 1fr); } }
+  .stk { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 10px 6px; text-align: center; }
+  .stk .face { font-size: 2.6rem; display: grid; place-items: center; width: 70px; height: 70px; margin: 0 auto 4px;
+    border-radius: 50%; background: var(--c); }
+  .stk.lock .face { filter: grayscale(1) brightness(1.3); opacity: .35; }
+  .stk b { display: block; line-height: 1.15; }
+  .stk small { opacity: .7; }
+
+  #fx { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
+  #fx span { position: absolute; top: -40px; font-size: 1.8rem; animation: fall 2.4s ease-in forwards; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs><path id="starPath" d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></defs>
+</svg>
+<main>
+  <!-- Home: the eight places in town, from the easiest to the hardest -->
+  <section id="home">
+    <div class="homeTop"><div id="who"></div><span class="pill" title="Days in a row"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span></div>
+    <div class="hero">
+      <span class="owl" aria-hidden="true">🦉</span>
+      <div>
+        <h1>Numeria</h1>
+        <p class="sub">Math for everyday life, with Ollie the owl</p>
+      </div>
+    </div>
+    <div class="pills">
+      <span class="pill" title="Stars"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
+      <span class="pill" title="Stickers"><span class="ic" aria-hidden="true">🏠</span><span id="homeStk">0/12</span> stickers</span>
+    </div>
+    <div class="scale" aria-hidden="true"><span>🌱 Easiest</span><i></i><span>🏆 Hardest</span></div>
+    <div class="worlds" id="worlds"></div>
+    <p class="note"><a href="../orangtua/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
+  </section>
+
+  <!-- One place: its six levels -->
+  <section id="world" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Town</button>
+      <h2 id="wTitle">Levels</h2><span class="spacer"></span>
+    </div>
+    <div class="about" id="wAbout"></div>
+    <div class="levels" id="levels"></div>
+  </section>
+
+  <!-- A round of questions -->
+  <section id="play" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" id="pBack">← Levels</button>
+      <div class="prog" id="prog"></div>
+      <span class="spacer"></span>
+    </div>
+    <div class="coach">
+      <span class="owl" id="coach" aria-hidden="true">🦉</span>
+      <div class="bubble" id="say" aria-live="polite"></div>
+    </div>
+    <div class="scene" id="scene"></div>
+    <div id="answers"></div>
+    <div class="why" id="why" hidden aria-live="polite">
+      <p id="whyText"></p>
+      <button type="button" class="btn go" id="whyNext">Next →</button>
+    </div>
+  </section>
+
+  <!-- Result -->
+  <section id="result" class="result" hidden>
+    <div class="stack">
+      <span class="owl" aria-hidden="true">🦉</span>
+      <h2 id="resTitle">Great!</h2>
+      <div class="stars" id="resStars"></div>
+      <p class="summary" id="resText"></p>
+      <div class="gift" id="resGift" hidden></div>
+      <button type="button" class="btn go" id="resNext">Next level</button>
+      <button type="button" class="btn" id="resAgain">Play again</button>
+      <button type="button" class="btn ghost" id="resWorld">Choose a level</button>
+    </div>
+  </section>
+
+  <!-- Stickers -->
+  <section id="stickers" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Town Stickers</h2>
+      <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="stkStars">0</span></span>
+    </div>
+    <p class="note" id="stkNext"></p>
+    <div class="sgrid" id="sgrid"></div>
+  </section>
+</main>
+<div id="fx" aria-hidden="true"></div>
+
+<script src="../shared/profile.js"></script>
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const CD = window.Cendekia;
+
+  // ---- Random helpers ----
+  const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // n different numbers: the answer and others close to it (steps of `step`), none below `min`.
+  function near(ans, n, spread, min, step) {
+    step = step || 1; min = min === undefined ? 0 : min;
+    const set = new Set([ans]);
+    for (let k = 0; set.size < n && k < 200; k++) { const v = ans + step * R(-spread, spread); if (v >= min) set.add(v); }
+    for (let v = ans + step; set.size < n; v += step) set.add(v);
+    return shuffle([...set]);
+  }
+  // Fill a set of wrong options up to n, keeping the answer, and shuffle.
+  const options = (ans, others, n) => shuffle([ans, ...shuffle([...new Set(others.filter((o) => o !== ans))]).slice(0, n - 1)]);
+
+  // A question: what Ollie says, a picture, and either buttons to choose from or a number pad.
+  // `why` explains the answer after a second miss.
+  const choose = (say, scene, ans, opts, why) => ({ say, scene, kind: 'choice', ans: String(ans), opts: opts.map(String), why });
+  const typed = (say, scene, ans, why, unit) => ({ say, scene, kind: 'pad', ans, why, pre: (unit && unit.pre) || '', post: (unit && unit.post) || '', dec: !!(unit && unit.dec) });
+  const DOLLARS = { pre: '$' }, CENTS = { pre: '$', dec: true };
+
+  // ---- Words and things from everyday life ----
+  const NAMES = ['Mia', 'Budi', 'Sara', 'Leo', 'Siti', 'Omar', 'Rina', 'Ben', 'Dewi', 'Adi', 'Nina', 'Sam'];
+  const FOODS = [['🍎', 'apples', 'apple'], ['🥚', 'eggs', 'egg'], ['🍪', 'cookies', 'cookie'], ['🥕', 'carrots', 'carrot'],
+    ['🍌', 'bananas', 'banana'], ['🧁', 'cupcakes', 'cupcake'], ['🍓', 'strawberries', 'strawberry'], ['🍊', 'oranges', 'orange'], ['🥐', 'croissants', 'croissant']];
+  const TOYS = [['🧸', 'teddy bear'], ['⚽', 'ball'], ['🪀', 'yo-yo'], ['🖍️', 'box of crayons'], ['🎨', 'paint set'], ['🪁', 'kite'], ['📕', 'storybook'], ['🚗', 'toy car'], ['🧩', 'puzzle']];
+  const SHOP = [['🥛', 'milk'], ['🍞', 'bread'], ['🧃', 'juice'], ['🧀', 'cheese'], ['🍫', 'chocolate bar'], ['🍦', 'ice cream'], ['🥤', 'smoothie'], ['🍉', 'watermelon']];
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const word = (n, f) => (n === 1 ? f[2] : f[1]);
+  const counting = (n) => Array.from({ length: n }, (_, i) => i + 1).join(', ');
+  const name2 = () => { const a = pick(NAMES); let b = pick(NAMES); while (b === a) b = pick(NAMES); return [a, b]; };
+
+  // ---- Pictures ----
+  const pics = (e, n, gone, cls) => '<div class="pics' + (cls ? ' ' + cls : '') + '">' + Array.from({ length: n }, (_, i) =>
+    '<span' + (gone && i >= n - gone ? ' class="gone"' : '') + ' style="animation-delay:' + (i * 0.04).toFixed(2) + 's">' + e + '</span>').join('') + '</div>';
+  const plate = (label, inner, tray) => '<div class="plate' + (tray ? ' tray' : '') + '">' + (label ? '<b>' + label + '</b>' : '') + inner + '</div>';
+  const plates = (list) => '<div class="plates">' + list.join('') + '</div>';
+  const op = (t) => '<span class="op">' + t + '</span>';
+  const money = (vals) => '<div class="money">' + vals.map((v) => (v <= 2 ? '<span class="coin c' + v + '">$' + v + '</span>' : '<span class="bill b' + v + '">$' + v + '</span>')).join('') + '</div>';
+  const tag = (e, label, price) => '<span class="tag"><span class="e">' + e + '</span><span><small>' + esc(label) + '</small><br>' + price + '</span></span>';
+  const chips = (list) => '<div class="chips">' + list.map((x) => '<span>' + x + '</span>').join('') + '</div>';
+  const big = (e) => '<div class="pics" style="font-size:3rem">' + e + '</div>';
+  // Money is worked out in cents, so 0.1 + 0.2 never goes wrong.
+  const usd = (c) => '$' + (c % 100 ? (c / 100).toFixed(2) : String(c / 100));
+  const frac = (a, b) => '<span class="frac"><span>' + a + '</span><span>' + b + '</span></span>';
+
+  function clock(h, m) {
+    let s = '<svg class="clock" viewBox="0 0 100 100" role="img" aria-label="A clock"><circle class="face" cx="50" cy="50" r="47"/>';
+    for (let i = 0; i < 60; i++) {
+      const a = i * Math.PI / 30, r1 = i % 5 ? 43 : 40;
+      s += '<line class="' + (i % 5 ? 'tk' : 'tk5') + '" x1="' + (50 + r1 * Math.sin(a)).toFixed(2) + '" y1="' + (50 - r1 * Math.cos(a)).toFixed(2)
+        + '" x2="' + (50 + 46 * Math.sin(a)).toFixed(2) + '" y2="' + (50 - 46 * Math.cos(a)).toFixed(2) + '"/>';
+    }
+    for (let n = 1; n <= 12; n++) { const a = n * Math.PI / 6; s += '<text x="' + (50 + 33 * Math.sin(a)).toFixed(2) + '" y="' + (50 - 33 * Math.cos(a)).toFixed(2) + '">' + n + '</text>'; }
+    const ha = (h % 12) * 30 + m * 0.5, ma = m * 6;
+    s += '<line class="hh" x1="50" y1="50" x2="50" y2="27" transform="rotate(' + ha + ' 50 50)"/>'
+      + '<line class="mh" x1="50" y1="50" x2="50" y2="13" transform="rotate(' + ma + ' 50 50)"/>'
+      + '<circle cx="50" cy="50" r="3.5" fill="#1f2a44"/></svg>';
+    return s;
+  }
+  // Times are minutes after midnight, shown on a 12-hour clock.
+  const hourOf = (t) => { const h = Math.floor(t / 60) % 12; return h === 0 ? 12 : h; };
+  const fmtT = (t) => { t = ((t % 1440) + 1440) % 1440; return hourOf(t) + ':' + String(t % 60).padStart(2, '0'); };
+  const clockAt = (t) => clock(hourOf(t), t % 60);
+
+  function pie(d, on) {
+    let s = '<svg class="pie" viewBox="0 0 100 100" role="img" aria-label="A pizza cut into ' + d + ' equal slices">';
+    for (let i = 0; i < d; i++) {
+      const a0 = i / d * 2 * Math.PI - Math.PI / 2, a1 = (i + 1) / d * 2 * Math.PI - Math.PI / 2;
+      s += '<path class="sl' + (i < on ? ' on' : '') + '" d="M50 50 L' + (50 + 44 * Math.cos(a0)).toFixed(2) + ' ' + (50 + 44 * Math.sin(a0)).toFixed(2)
+        + ' A44 44 0 0 1 ' + (50 + 44 * Math.cos(a1)).toFixed(2) + ' ' + (50 + 44 * Math.sin(a1)).toFixed(2) + ' Z"/>';
+    }
+    return s + '<circle class="crust" cx="50" cy="50" r="45"/></svg>';
+  }
+  // A ruler in centimeters with a thing lying on it from `from` to `from + len`.
+  function ruler(from, len, label, color) {
+    const u = 30, x0 = 16, w = x0 * 2 + 12 * u;
+    let s = '<svg class="svgbox" viewBox="0 0 ' + w + ' 92" role="img" aria-label="A ruler with a ' + esc(label) + ' on it">'
+      + '<rect x="' + (x0 + from * u) + '" y="8" width="' + len * u + '" height="26" rx="13" fill="' + color + '"/>'
+      + '<text x="' + (x0 + from * u + len * u / 2) + '" y="25" text-anchor="middle" fill="#fff">' + esc(label) + '</text>'
+      + '<rect x="4" y="40" width="' + (w - 8) + '" height="46" rx="6" fill="#fff3c4" stroke="#d9b54a" stroke-width="2"/>';
+    for (let i = 0; i <= 24; i++) {
+      const x = x0 + i * u / 2, full = i % 2 === 0;
+      s += '<line x1="' + x + '" y1="40" x2="' + x + '" y2="' + (full ? 58 : 50) + '" stroke="#5a4a12" stroke-width="' + (full ? 2 : 1) + '"/>';
+      if (full) s += '<text x="' + x + '" y="74" text-anchor="middle">' + i / 2 + '</text>';
+    }
+    return s + '<text x="' + (w - 22) + '" y="74" text-anchor="middle" font-size="9">cm</text></svg>';
+  }
+  // A measuring jug from 0 to 1000 mL with water up to `ml`.
+  function jug(ml) {
+    const top = 14, bot = 214, y = (v) => bot - (bot - top) * v / 1000;
+    let s = '<svg class="svgbox" viewBox="0 0 170 230" style="max-width:190px" role="img" aria-label="A measuring jug with water">'
+      + '<rect x="40" y="' + y(ml) + '" width="90" height="' + (bot - y(ml)) + '" fill="#9fd3f7"/>'
+      + '<path d="M40 8 V214 H130 V8" fill="none" stroke="#1f2a44" stroke-width="3"/>'
+      + '<path d="M130 50 h18 a8 8 0 0 1 8 8 v70 a8 8 0 0 1 -8 8 h-18" fill="none" stroke="#1f2a44" stroke-width="3"/>';
+    for (let v = 0; v <= 1000; v += 100) {
+      const labeled = v % 200 === 0;
+      s += '<line x1="40" y1="' + y(v) + '" x2="' + (labeled ? 62 : 54) + '" y2="' + y(v) + '" stroke="#1f2a44" stroke-width="2"/>';
+      if (labeled) s += '<text x="34" y="' + (y(v) + 4) + '" text-anchor="end" font-size="10">' + v + '</text>';
+    }
+    return s + '<text x="34" y="226" text-anchor="end" font-size="9">mL</text></svg>';
+  }
+  // Two ribbons on squared paper.
+  function ribbons(a, b) {
+    const u = 30, x0 = 10, w = x0 * 2 + 11 * u;
+    let s = '<svg class="svgbox" viewBox="0 0 ' + w + ' 110" role="img" aria-label="A red ribbon and a blue ribbon on squared paper">';
+    for (let i = 0; i <= 11; i++) s += '<line x1="' + (x0 + i * u) + '" y1="6" x2="' + (x0 + i * u) + '" y2="104" stroke="#e3e7ef"/>';
+    for (let j = 0; j <= 3; j++) s += '<line x1="' + x0 + '" y1="' + (6 + j * 32.6) + '" x2="' + (x0 + 11 * u) + '" y2="' + (6 + j * 32.6) + '" stroke="#e3e7ef"/>';
+    s += '<rect x="' + x0 + '" y="16" width="' + a * u + '" height="20" rx="10" fill="#e5484d"/>'
+      + '<rect x="' + x0 + '" y="70" width="' + b * u + '" height="20" rx="10" fill="#2e90fa"/>';
+    return s + '</svg>';
+  }
+  // A garden on squared paper, one square for each square meter.
+  function field(l, w) {
+    const u = Math.min(28, Math.floor(300 / l)), W = l * u + 70, H = w * u + 50;
+    let s = '<svg class="svgbox" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="A garden ' + l + ' meters long and ' + w + ' meters wide">'
+      + '<rect x="40" y="10" width="' + l * u + '" height="' + w * u + '" fill="#bfe6a8" stroke="#4f9a3a" stroke-width="3"/>';
+    for (let i = 1; i < l; i++) s += '<line x1="' + (40 + i * u) + '" y1="10" x2="' + (40 + i * u) + '" y2="' + (10 + w * u) + '" stroke="#8cc777"/>';
+    for (let j = 1; j < w; j++) s += '<line x1="40" y1="' + (10 + j * u) + '" x2="' + (40 + l * u) + '" y2="' + (10 + j * u) + '" stroke="#8cc777"/>';
+    return s + '<text x="' + (40 + l * u / 2) + '" y="' + (H - 16) + '" text-anchor="middle" font-size="14">' + l + ' m</text>'
+      + '<text x="32" y="' + (14 + w * u / 2) + '" text-anchor="end" font-size="14">' + w + ' m</text></svg>';
+  }
+  // A bar chart of votes.
+  function chart(rows, max) {
+    const u = 22, H = max * u + 40, W = 60 + rows.length * 70;
+    let s = '<svg class="svgbox" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="A bar chart of votes">';
+    for (let v = 0; v <= max; v++) {
+      const y = H - 30 - v * u;
+      s += '<line x1="40" y1="' + y + '" x2="' + (W - 6) + '" y2="' + y + '" stroke="' + (v % 2 ? '#eef0f5' : '#d4d9e2') + '"/>';
+      if (v % 2 === 0) s += '<text x="32" y="' + (y + 4) + '" text-anchor="end">' + v + '</text>';
+    }
+    rows.forEach((r, i) => {
+      const x = 56 + i * 70;
+      s += '<rect x="' + x + '" y="' + (H - 30 - r[2] * u) + '" width="40" height="' + r[2] * u + '" rx="4" fill="' + ['#e0558a', '#2e90fa', '#1f9d6b', '#f2891f'][i] + '"/>'
+        + '<text x="' + (x + 20) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="22">' + r[0] + '</text>';
+    });
+    return s + '</svg>';
+  }
+
+  // ---- The eight places in town and their levels, from the easiest to the hardest ----
+  // Each level is [name, a function that makes one question].
+  const WORLDS = [
+    { id: 'count', name: 'Kitchen Counting', skill: 'Counting', ages: '4–6', icon: '🧺', c: 'var(--c-green)',
+      desc: 'Count apples, eggs and cookies in the kitchen, compare plates, and count in twos, fives and tens.',
+      levels: [
+        ['Count to 5', () => { const f = pick(FOODS), n = R(1, 5); return choose('How many ' + f[1] + ' are there?', pics(f[0], n), n, near(n, 3, 2, 1), 'Point and count: ' + counting(n) + '. There ' + (n === 1 ? 'is 1.' : 'are ' + n + '.')); }],
+        ['Count to 10', () => { const f = pick(FOODS), n = R(4, 10); return choose('How many ' + f[1] + ' are there?', pics(f[0], n), n, near(n, 3, 2, 1), 'Count the full row of 5 first, then keep going: ' + counting(n) + '.'); }],
+        ['More or fewer', () => {
+          const f = pick(FOODS), a = R(1, 9); let b = R(1, 9); while (b === a) b = R(1, 9);
+          const more = Math.random() < 0.5, ans = (more ? a > b : a < b) ? 'Plate A' : 'Plate B';
+          return choose('Which plate has ' + (more ? 'more' : 'fewer') + ' ' + f[1] + '?', plates([plate('A', pics(f[0], a, 0, 'small')), plate('B', pics(f[0], b, 0, 'small'))]), ans, ['Plate A', 'Plate B'],
+            'Plate A has ' + a + ' and plate B has ' + b + '. ' + Math.max(a, b) + ' is more than ' + Math.min(a, b) + ', so plate ' + (ans.slice(-1)) + ' has ' + (more ? 'more.' : 'fewer.'));
+        }],
+        ['One more, one less', () => {
+          const f = pick(FOODS), n = R(3, 14), ch = pick([1, 1, 2, -1, -1, -2]), ans = n + ch;
+          const say = ch > 0 ? 'There are ' + n + ' ' + f[1] + ' in the basket. Dad puts in ' + ch + ' more. How many are there now?'
+            : 'There are ' + n + ' ' + f[1] + ' in the basket. You take out ' + -ch + '. How many are left?';
+          return choose(say, pics(f[0], n, ch < 0 ? -ch : 0, 'small') + (ch > 0 ? op('+') + pics(f[0], ch, 0, 'small') : ''), ans, near(ans, 4, 2, 0),
+            (ch > 0 ? 'Count on from ' + n + ': ' : 'Count back from ' + n + ': ') + Array.from({ length: Math.abs(ch) }, (_, i) => n + (ch > 0 ? i + 1 : -(i + 1))).join(', ') + '.');
+        }],
+        ['Count by 2s and 5s', () => {
+          const t = pick([['👟', 'Each child has 2 shoes. How many shoes do {k} children have?', 2], ['🧦', 'Socks come in pairs of 2. How many socks are in {k} pairs?', 2],
+            ['✋', 'Each hand has 5 fingers. How many fingers are on {k} hands?', 5], ['🖐️', 'A glove has 5 fingers. How many fingers do {k} gloves have?', 5]]);
+          const k = R(2, t[2] === 2 ? 9 : 6), ans = k * t[2];
+          const scene = t[2] === 2 ? '<div class="plates">' + Array.from({ length: k }, () => plate('', t[0] + t[0], true)).join('') + '</div>' : pics(t[0], k);
+          return choose(t[1].replace('{k}', k), scene, ans, near(ans, 4, 2, t[2], t[2]),
+            'Count in ' + t[2] + 's: ' + Array.from({ length: k }, (_, i) => (i + 1) * t[2]).join(', ') + '.');
+        }],
+        ['Tens and ones', () => {
+          const t = R(1, 9), o = R(0, 9), ans = t * 10 + o;
+          const scene = '<div class="plates">' + Array.from({ length: t }, () => plate('10', '🥚', true)).join('') + '</div>' + (o ? pics('🥚', o, 0, 'small') : '');
+          return typed('Eggs come in boxes of 10. There are ' + t + (t === 1 ? ' box' : ' boxes') + (o ? ' and ' + o + ' loose ' + (o === 1 ? 'egg' : 'eggs') : '') + '. How many eggs in all?', scene, ans,
+            t + ' tens make ' + t * 10 + (o ? ', and ' + o + ' ones more make ' + ans : '') + '.');
+        }]
+      ] },
+    { id: 'add', name: 'Market Add & Take', skill: 'Adding and taking away', ages: '5–8', icon: '🛒', c: 'var(--c-blue)',
+      desc: 'Buy, give, eat and share at the market: add and take away, from tiny sums to two steps.',
+      levels: [
+        ['Add to 5', () => {
+          const f = pick(FOODS), a = R(1, 4), b = R(1, 5 - a), nm = pick(NAMES);
+          return choose(nm + ' has ' + a + ' ' + word(a, f) + '. Grandma gives ' + b + ' more. How many does ' + nm + ' have now?', pics(f[0], a, 0, 'small') + op('+') + pics(f[0], b, 0, 'small'), a + b, near(a + b, 3, 2, 1), a + ' + ' + b + ' = ' + (a + b) + '.');
+        }],
+        ['Take away to 5', () => {
+          const t = pick([['🐦', 'birds are on the fence', 'fly away'], ['🎈', 'balloons are at the party', 'pop'], ['🐟', 'fish are in the pond', 'swim away'], ['🦆', 'ducks are in the pond', 'walk away']]);
+          const a = R(2, 5), b = R(1, a - 1);
+          return choose(a + ' ' + t[1] + '. ' + b + ' ' + t[2] + '. How many are left?', pics(t[0], a, b), a - b, near(a - b, 3, 2, 0), a + ' − ' + b + ' = ' + (a - b) + '.');
+        }],
+        ['Within 10', () => {
+          const [nm] = name2(), a = R(2, 8), b = R(1, 10 - a);
+          const t = pick([
+            () => [a + ' kids are on the swings and ' + b + ' are on the slide. How many kids are playing?', '🛝', a + b, a + ' + ' + b],
+            () => [nm + ' had ' + (a + b) + ' crayons and gave ' + b + ' to a friend. How many crayons are left?', '🖍️', a, (a + b) + ' − ' + b],
+            () => ['A pack has ' + (a + b) + ' juice boxes. The family drinks ' + b + '. How many are left?', '🧃', a, (a + b) + ' − ' + b],
+            () => [nm + ' rode ' + a + ' laps on the bike and then ' + b + ' more. How many laps in all?', '🚲', a + b, a + ' + ' + b]])();
+          return choose(t[0], big(t[1]), t[2], near(t[2], 4, 2, 0), t[3] + ' = ' + t[2] + '.');
+        }],
+        ['Within 20', () => {
+          const [nm, n2] = name2();
+          const t = pick([
+            () => { const a = R(6, 14), b = R(3, 20 - a); return ['A bus has ' + a + ' people on it. At the stop ' + b + ' more get on. How many are on the bus now?', '🚌', a + b, a + ' + ' + b]; },
+            () => { const a = R(11, 20), b = R(2, 9); return ['A bus has ' + a + ' people on it. At the stop ' + b + ' get off. How many are still on the bus?', '🚌', a - b, a + ' − ' + b]; },
+            () => { const a = R(5, 12), b = R(4, 20 - a); return ['You read ' + a + ' pages on Monday and ' + b + ' pages on Tuesday. How many pages did you read?', '📖', a + b, a + ' + ' + b]; },
+            () => { const a = R(10, 20), b = R(2, a - 2); return [nm + ' has ' + a + ' stickers and ' + n2 + ' has ' + b + '. How many more stickers does ' + nm + ' have?', '⭐', a - b, a + ' − ' + b]; }])();
+          return typed(t[0], big(t[1]), t[2], t[3] + ' = ' + t[2] + '.');
+        }],
+        ['Two-digit numbers', () => {
+          const add = Math.random() < 0.5;
+          let a, b;
+          if (add) { a = R(1, 7) * 10 + R(0, 8); b = R(1, 9 - Math.floor(a / 10)) * 10 + R(0, 9 - a % 10); } else { a = R(3, 9) * 10 + R(2, 9); b = R(1, Math.floor(a / 10) - 1) * 10 + R(0, a % 10); }
+          const t = add ? pick([['📚', 'The library has ' + a + ' books on one shelf and ' + b + ' on another. How many books in all?'], ['🌻', 'A garden has ' + a + ' red flowers and ' + b + ' yellow ones. How many flowers?']])
+            : pick([['🥭', 'A farmer picked ' + a + ' mangoes and sold ' + b + '. How many mangoes are left?'], ['🪑', 'The hall has ' + a + ' chairs. ' + b + ' are taken. How many chairs are free?']]);
+          const ans = add ? a + b : a - b;
+          return typed(t[1], big(t[0]), ans, (add ? 'Add the tens, then the ones: ' : 'Take away the tens, then the ones: ') + a + (add ? ' + ' : ' − ') + b + ' = ' + ans + '.');
+        }],
+        ['Two steps', () => {
+          const t = pick([
+            () => { const b = R(12, 29), c = R(11, 29), a = R(b + c + 5, 99); return ['🍊', 'The shop had ' + a + ' oranges. It sold ' + b + ' in the morning and ' + c + ' in the afternoon. How many oranges are left?', a - b - c, a + ' − ' + b + ' = ' + (a - b) + ', then ' + (a - b) + ' − ' + c + ' = ' + (a - b - c)]; },
+            () => { const a = R(25, 60), b = R(12, 25), c = R(5, 20); return ['🔵', 'You have ' + a + ' marbles. You win ' + b + ', then you lose ' + c + '. How many marbles do you have now?', a + b - c, a + ' + ' + b + ' = ' + (a + b) + ', then ' + (a + b) + ' − ' + c + ' = ' + (a + b - c)]; },
+            () => { const a = R(40, 80), b = R(15, 35), c = R(8, 19); return ['🚆', 'A train has ' + a + ' passengers. At a station ' + b + ' get off and ' + c + ' get on. How many passengers are on the train now?', a - b + c, a + ' − ' + b + ' = ' + (a - b) + ', then ' + (a - b) + ' + ' + c + ' = ' + (a - b + c)]; }])();
+          return typed(t[1], big(t[0]), t[2], t[3] + '.');
+        }]
+      ] },
+    { id: 'money', name: 'Coin Shop', skill: 'Money', ages: '5–9', icon: '🪙', c: 'var(--c-orange)',
+      desc: 'Count coins and notes, check if you have enough, add up a shopping list and work out the change.',
+      levels: [
+        ['Count the coins', () => { const k = R(2, 8); return choose('How much money is this?', money(Array(k).fill(1)), '$' + k, near(k, 3, 2, 1).map((v) => '$' + v), 'Each coin is $1. Count them: ' + counting(k) + '. That is $' + k + '.'); }],
+        ['Coins and notes', () => {
+          let vals; do { vals = Array.from({ length: R(2, 4) }, () => pick([1, 2, 5])).sort((x, y) => y - x); } while (vals.reduce((a, v) => a + v, 0) > 15);
+          const s = vals.reduce((a, v) => a + v, 0);
+          return choose('How much money is this?', money(vals), '$' + s, near(s, 4, 3, 1).map((v) => '$' + v), 'Start with the biggest: ' + vals.join(' + ') + ' = ' + s + '. That is $' + s + '.');
+        }],
+        ['Is it enough?', () => {
+          let vals; do { vals = Array.from({ length: R(2, 4) }, () => pick([1, 2, 5])).sort((x, y) => y - x); } while (vals.reduce((a, v) => a + v, 0) > 15);
+          const x = vals.reduce((a, v) => a + v, 0), y = Math.max(1, x + pick([-3, -2, -1, 0, 1, 2, 3])), t = pick(TOYS);
+          return choose('You have this money. The ' + t[1] + ' costs $' + y + '. Do you have enough?', money(vals) + tag(t[0], t[1], '$' + y), y <= x ? 'Yes' : 'No', ['Yes', 'No'],
+            'You have $' + x + ' and it costs $' + y + '. ' + (y <= x ? 'That is enough' + (x > y ? ', with $' + (x - y) + ' left over.' : ', exactly!') : 'You need $' + (y - x) + ' more.'));
+        }],
+        ['Shopping list', () => {
+          const [a, b] = shuffle(SHOP), p = R(2, 15), q = R(2, 15);
+          return typed('You buy ' + a[1] + ' and ' + b[1] + '. How much do you pay?', tag(a[0], a[1], '$' + p) + tag(b[0], b[1], '$' + q), p + q, '$' + p + ' + $' + q + ' = $' + (p + q) + '.', DOLLARS);
+        }],
+        ['Change', () => {
+          const note = pick([10, 20, 20, 50]), p = note === 50 ? R(12, 46) : R(2, note - 1), t = pick(TOYS);
+          return typed('The ' + t[1] + ' costs $' + p + '. You pay with a $' + note + ' note. How much change do you get?', tag(t[0], t[1], '$' + p) + money([note]), note - p,
+            'Change is what you paid minus the price: $' + note + ' − $' + p + ' = $' + (note - p) + '.', DOLLARS);
+        }],
+        ['Dollars and cents', () => {
+          const [a, b] = shuffle(SHOP), p = R(10, 99) * 5, q = R(10, 99) * 5;
+          if (Math.random() < 0.5) return typed('You buy ' + a[1] + ' and ' + b[1] + '. How much do you pay?', tag(a[0], a[1], usd(p)) + tag(b[0], b[1], usd(q)), (p + q) / 100,
+            usd(p) + ' + ' + usd(q) + ' = ' + usd(p + q) + '. Add the dollars, then the cents.', CENTS);
+          const note = p + q < 1000 ? pick([1000, 2000]) : 2000;
+          return typed('You buy ' + a[1] + ' and ' + b[1] + ' and pay with $' + note / 100 + '. How much change do you get?', tag(a[0], a[1], usd(p)) + tag(b[0], b[1], usd(q)) + money([note / 100]), (note - p - q) / 100,
+            'Together they cost ' + usd(p) + ' + ' + usd(q) + ' = ' + usd(p + q) + '. Change: ' + usd(note) + ' − ' + usd(p + q) + ' = ' + usd(note - p - q) + '.', CENTS);
+        }]
+      ] },
+    { id: 'time', name: 'Daily Clock', skill: 'Telling time', ages: '5–10', icon: '⏰', c: 'var(--c-purple)',
+      desc: 'Read the clock for breakfast, school and bedtime, work out how long things take and which day it will be.',
+      levels: [
+        ["O'clock", () => {
+          const h = R(1, 12), ans = h + " o'clock", hr = (v) => ((v + 11) % 12) + 1;
+          return choose('What time does the clock show?', clock(h, 0), ans, options(ans, [hr(h + 1), hr(h - 1), hr(h + 2), hr(h + 6)].map((v) => v + " o'clock"), 3),
+            'The short hand points at ' + h + ' and the long hand points straight up at 12, so it is ' + h + " o'clock.");
+        }],
+        ['Half past', () => {
+          const h = R(1, 12), half = Math.random() < 0.6, nx = h % 12 + 1, say = (hh, hf) => (hf ? 'half past ' + hh : hh + " o'clock");
+          const ans = say(h, half);
+          return choose('What time does the clock show?', clock(h, half ? 30 : 0), ans, options(ans, [say(h, !half), say(nx, true), say(nx, false)], 4),
+            half ? 'The long hand points down at 6: that is half past. The short hand has gone past ' + h + ', so it is half past ' + h + '.' : 'The long hand points up at 12, and the short hand at ' + h + ': ' + h + " o'clock.");
+        }],
+        ['Quarter hours', () => {
+          const h = R(1, 12), m = pick([0, 15, 30, 45]), t = h * 60 + m, ans = fmtT(t);
+          return choose('What time does the clock show?', clock(h, m), ans, options(ans, [fmtT(h * 60 + (m + 15) % 60), fmtT(h * 60 + (m + 30) % 60), fmtT(t + 60), fmtT(t - 60)], 4),
+            'The short hand has passed ' + h + ', so the hour is ' + h + '. The long hand points at ' + (m ? m / 5 : 12) + ', which means ' + m + ' minutes. It is ' + ans + '.');
+        }],
+        ['Every 5 minutes', () => {
+          const h = R(1, 12), m = R(1, 11) * 5, t = h * 60 + m, ans = fmtT(t);
+          return choose('What time does the clock show?', clock(h, m), ans, options(ans, [fmtT(t + 5), fmtT(t - 5), fmtT(t + 60), fmtT(t - 60), fmtT((m / 5) * 60 + h * 5 % 60)], 4),
+            'The long hand points at ' + m / 5 + '. Count in fives: ' + Array.from({ length: m / 5 }, (_, i) => (i + 1) * 5).join(', ') + ' minutes. The short hand has passed ' + h + '. It is ' + ans + '.');
+        }],
+        ['How long?', () => {
+          const act = pick(['Soccer practice', 'The swimming class', 'The piano lesson', 'The bus ride', 'Baking cookies', 'The school trip']);
+          const s = R(1, 10) * 60 + R(0, 11) * 5, d = pick([15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 75, 90]), e = s + d;
+          const toHour = 60 - s % 60, cross = d > toHour && s % 60 !== 0;
+          return typed(act + ' starts at ' + fmtT(s) + ' and ends at ' + fmtT(e) + '. How many minutes does it take?',
+            '<div class="clocks"><div>' + clockAt(s) + 'Starts <span class="digital">' + fmtT(s) + '</span></div><div>' + clockAt(e) + 'Ends <span class="digital">' + fmtT(e) + '</span></div></div>', d,
+            cross ? 'From ' + fmtT(s) + ' to ' + fmtT(s + toHour) + ' is ' + toHour + ' minutes, then to ' + fmtT(e) + ' is ' + (d - toHour) + ' more: ' + toHour + ' + ' + (d - toHour) + ' = ' + d + ' minutes.'
+              : 'From ' + fmtT(s) + ' to ' + fmtT(e) + ' the long hand moves ' + d + ' minutes.', { post: 'min' });
+        }],
+        ['Times and days', () => {
+          if (Math.random() < 0.5) {
+            const today = R(0, 6), n = R(3, 20), ans = DAYS[(today + n) % 7];
+            return choose('Today is ' + DAYS[today] + '. Grandma visits in ' + n + ' days. What day will that be?', big('🗓️'), ans, options(ans, [DAYS[(today + n + 1) % 7], DAYS[(today + n + 6) % 7], DAYS[(today + n + 2) % 7], DAYS[(today + n + 5) % 7]], 4),
+              (n >= 7 ? 'Every 7 days it is ' + DAYS[today] + ' again. ' + n + ' = ' + Math.floor(n / 7) * 7 + ' + ' + n % 7 + ', so count ' + n % 7 + ' more ' + (n % 7 === 1 ? 'day' : 'days') + ' from ' + DAYS[today] + ': ' : 'Count ' + n + ' days on from ' + DAYS[today] + ': ') + ans + '.');
+          }
+          const act = pick(['The movie', 'The football match', 'The family picnic', 'The train ride']);
+          const s = R(1, 9) * 60 + R(0, 11) * 5, dh = R(1, 2), dm = R(1, 11) * 5, e = s + dh * 60 + dm, ans = fmtT(e);
+          return choose(act + ' starts at ' + fmtT(s) + ' and lasts ' + dh + ' h ' + dm + ' min. When does it end?', clockAt(s), ans, options(ans, [fmtT(e + 10), fmtT(e - 10), fmtT(e - 60), fmtT(e + 60), fmtT(e + 5)], 4),
+            'Add the hours first: ' + fmtT(s) + ' + ' + dh + ' h = ' + fmtT(s + dh * 60) + '. Then add ' + dm + ' minutes: ' + ans + '.');
+        }]
+      ] },
+    { id: 'share', name: 'Pizza Party', skill: 'Sharing and fractions', ages: '6–10', icon: '🍕', c: 'var(--c-red)',
+      desc: 'Share snacks fairly, count equal groups, times tables at the party, and slices of pizza.',
+      levels: [
+        ['Share fairly', () => {
+          const f = pick(FOODS), k = pick([2, 3]), n = R(1, 4), total = k * n;
+          return choose('Share ' + total + ' ' + f[1] + ' fairly between ' + k + ' friends. How many does each friend get?', pics(f[0], total, 0, 'small') + op('→') + pics('🧒', k), n, near(n, 3, 2, 1),
+            'Give one each, again and again, until none are left. ' + total + ' shared by ' + k + ' is ' + n + ' each, because ' + k + ' × ' + n + ' = ' + total + '.');
+        }],
+        ['Equal groups', () => {
+          const f = pick(FOODS), g = R(2, 5), n = R(2, 5);
+          return choose('There are ' + g + ' plates with ' + n + ' ' + f[1] + ' on each. How many ' + f[1] + ' in all?', plates(Array.from({ length: g }, () => plate('', pics(f[0], n, 0, 'small')))), g * n,
+            options(g * n, [g + n, g * n + 1, g * n - 1, g * (n + 1), (g - 1) * n], 4), g + ' groups of ' + n + ' is ' + g + ' × ' + n + ' = ' + g * n + '.');
+        }],
+        ['Times tables', () => {
+          const t = pick([['🚲', 'How many wheels do {a} bikes have?', 2], ['🚗', 'How many wheels do {a} cars have?', 4], ['🐕', 'How many legs do {a} dogs have?', 4],
+            ['✋', 'How many fingers are on {a} hands?', 5], ['🕷️', 'How many legs do {a} spiders have?', 8], ['🧃', 'Juice comes in packs of 6. How many boxes are in {a} packs?', 6],
+            ['🗓️', 'How many days are in {a} weeks?', 7], ['🐙', 'How many arms do {a} octopuses have?', 8], ['💵', 'How many dollars are {a} $10 notes?', 10], ['🥚', 'Eggs come in trays of 6. How many eggs are in {a} trays?', 6]]);
+          const a = R(2, 9);
+          return typed(t[1].replace('{a}', a), big(t[0]), a * t[2], a + ' × ' + t[2] + ' = ' + a * t[2] + '. Count in ' + t[2] + 's: ' + Array.from({ length: a }, (_, i) => (i + 1) * t[2]).join(', ') + '.');
+        }],
+        ['Dividing', () => {
+          const t = pick([
+            () => { const cap = pick([4, 5]), n = R(3, 8), extra = pick([0, 0, R(1, cap - 1)]), kids = cap * n + extra, ans = n + (extra ? 1 : 0);
+              return ['🚐', kids + ' children go on a trip. Each van fits ' + cap + ' children. How many vans do they need?', ans,
+                kids + ' ÷ ' + cap + ' = ' + n + (extra ? ' with ' + extra + ' left over. Those ' + extra + ' need a van too, so ' + ans + ' vans.' : '. ' + ans + ' vans.')]; },
+            () => { const k = R(3, 6), n = R(3, 9); return ['🌟', 'Share ' + k * n + ' stickers fairly between ' + k + ' friends. How many stickers does each friend get?', n, k * n + ' ÷ ' + k + ' = ' + n + ', because ' + k + ' × ' + n + ' = ' + k * n + '.']; },
+            () => { const box = 6, n = R(2, 7), extra = R(1, 5), eggs = box * n + extra; return ['🥚', 'You have ' + eggs + ' eggs. Each box holds 6. How many boxes can you fill all the way?', n, eggs + ' ÷ 6 = ' + n + ' with ' + extra + ' left over. You can fill ' + n + ' boxes.']; }])();
+          return typed(t[1], big(t[0]), t[2], t[3]);
+        }],
+        ['Pizza fractions', () => {
+          const d = pick([2, 3, 4, 4, 6, 8, 8]), eaten = R(1, d - 1), left = d - eaten, askLeft = Math.random() < 0.6;
+          const a = askLeft ? left : eaten, ans = a + '/' + d;
+          return choose('The pizza was cut into ' + d + ' equal slices. ' + eaten + (eaten === 1 ? ' slice was' : ' slices were') + ' eaten. What fraction of the pizza ' + (askLeft ? 'is left?' : 'was eaten?'),
+            pie(d, left), ans, options(ans, [(d - a) + '/' + d, a + '/' + (d + 1), (a + 1 <= d ? a + 1 : a - 1) + '/' + d, d + '/' + a, a + '/' + (d * 2)].filter((x) => !/^0\//.test(x)), 4),
+            'There are ' + d + ' slices, so the bottom number is ' + d + '. ' + a + (a === 1 ? ' slice ' : ' slices ') + (askLeft ? 'are left' : 'were eaten') + ', so the top number is ' + a + ': ' + a + '/' + d + '.');
+        }],
+        ['Fraction of a number', () => {
+          if (Math.random() < 0.3) {
+            const [x, y] = shuffle([2, 3, 4, 5, 6, 8]).slice(0, 2), ans = '1/' + Math.min(x, y);
+            return choose('Two friends share the same cake. One gets 1/' + x + ' and the other gets 1/' + y + '. Which piece is bigger?', '<div class="plates">' + pie(x, 1) + pie(y, 1) + '</div>', ans, ['1/' + x, '1/' + y],
+              'Cutting into fewer pieces makes each piece bigger. ' + Math.min(x, y) + ' is fewer pieces than ' + Math.max(x, y) + ', so 1/' + Math.min(x, y) + ' is bigger.');
+          }
+          const d = pick([2, 3, 4, 5, 10]), k = R(1, d - 1), each = R(2, 6), total = d * each, nm = pick(NAMES), part = k * each, keep = Math.random() < 0.4;
+          return typed(nm + ' has ' + total + ' marbles and gives ' + k + '/' + d + ' of them to a friend. How many marbles ' + (keep ? 'does ' + nm + ' keep?' : 'does ' + nm + ' give away?'), big('🔵'), keep ? total - part : part,
+            '1/' + d + ' of ' + total + ' is ' + total + ' ÷ ' + d + ' = ' + each + '. So ' + k + '/' + d + ' is ' + k + ' × ' + each + ' = ' + part + (keep ? '. ' + nm + ' keeps ' + total + ' − ' + part + ' = ' + (total - part) + '.' : '.'));
+        }]
+      ] },
+    { id: 'measure', name: 'Measure & Bake', skill: 'Measuring', ages: '6–11', icon: '📏', c: 'var(--c-teal)',
+      desc: 'Compare lengths, read a ruler and a measuring jug, change a recipe, and fence a garden.',
+      levels: [
+        ['Longer or shorter', () => {
+          const a = R(2, 10); let b = R(2, 10); while (b === a) b = R(2, 10);
+          const longer = Math.random() < 0.5, redWins = longer ? a > b : a < b, ans = redWins ? '🟥 Red' : '🟦 Blue';
+          return choose('Which ribbon is ' + (longer ? 'longer' : 'shorter') + '?', ribbons(a, b), ans, ['🟥 Red', '🟦 Blue'],
+            'Count the squares: red is ' + a + ' long and blue is ' + b + ' long. ' + (redWins ? 'Red' : 'Blue') + ' is ' + (longer ? 'longer.' : 'shorter.'));
+        }],
+        ['Use a ruler', () => {
+          const L = R(2, 11), t = pick([['crayon', '#e0558a'], ['pencil', '#f2891f'], ['key', '#7a5af8'], ['eraser', '#0e9aa7']]);
+          return choose('How long is the ' + t[0] + '?', ruler(0, L, t[0], t[1]), L + ' cm', near(L, 4, 2, 1).map((v) => v + ' cm'), 'It starts at 0 and ends at ' + L + ', so it is ' + L + ' cm long.');
+        }],
+        ['Read the scale', () => {
+          if (Math.random() < 0.5) {
+            const from = R(1, 4), L = R(2, 12 - from - 1), t = pick([['leaf', '#1f9d6b'], ['spoon', '#2e90fa'], ['comb', '#e0558a']]);
+            return choose('The ' + t[0] + ' does not start at 0. How long is it?', ruler(from, L, t[0], t[1]), L + ' cm', options(L + ' cm', [(from + L) + ' cm', (L + 1) + ' cm', (L - 1) + ' cm', (L + 2) + ' cm'], 4),
+              'It goes from ' + from + ' to ' + (from + L) + '. ' + (from + L) + ' − ' + from + ' = ' + L + ', so it is ' + L + ' cm long.');
+          }
+          const v = R(1, 9) * 100;
+          return choose('How much water is in the jug?', jug(v), v + ' mL', near(v, 4, 2, 100, 100).map((x) => x + ' mL'),
+            'Each small line is 100 mL. The water reaches the line for ' + v + ', so there are ' + v + ' mL.');
+        }],
+        ['Recipes', () => {
+          const t = pick([['🥞', 'pancakes', 'eggs'], ['🍪', 'cookies', 'cups of flour'], ['🍋', 'lemonade', 'lemons'], ['🍚', 'fried rice', 'cups of rice'], ['🥗', 'fruit salad', 'bananas']]);
+          const p = pick([2, 3, 4]), q = R(1, 4), m = pick([2, 3, 4]);
+          if (Math.random() < 0.3) {
+            const P = p * 2, Q = q * 2;
+            return typed('A recipe for ' + t[1] + ' for ' + P + ' people needs ' + Q + ' ' + t[2] + '. How many ' + t[2] + ' do you need for ' + p + ' people?', big(t[0]), q,
+              p + ' people is half of ' + P + ', so you need half of ' + Q + ': ' + q + '.');
+          }
+          return typed('A recipe for ' + t[1] + ' for ' + p + ' people needs ' + q + ' ' + t[2] + '. How many ' + t[2] + ' do you need for ' + p * m + ' people?', big(t[0]), q * m,
+            p * m + ' people is ' + m + ' times ' + p + ', so you need ' + m + ' × ' + q + ' = ' + q * m + '.');
+        }],
+        ['Changing units', () => {
+          const t = pick([['🎀', 'A ribbon is {a} m long. How many centimeters is that?', 100, 'cm', 'm'], ['🐛', 'A caterpillar is {a} cm long. How many millimeters is that?', 10, 'mm', 'cm'],
+            ['🍚', 'A bag of rice weighs {a} kg. How many grams is that?', 1000, 'g', 'kg'], ['💧', 'A bottle holds {a} L of water. How many milliliters is that?', 1000, 'mL', 'L'],
+            ['🚗', 'The drive takes {a} hours. How many minutes is that?', 60, 'min', 'h'], ['🎵', 'A song is {a} minutes long. How many seconds is that?', 60, 's', 'min']]);
+          const half = t[2] >= 100 && Math.random() < 0.35, a = half ? R(1, 4) + 0.5 : R(2, 9), ans = a * t[2];
+          if (!half && Math.random() < 0.3) {
+            return typed(t[1].replace('{a} ' + t[4], ans + ' ' + t[3]).replace(/How many \w+ is that\?/, 'How many ' + ({ m: 'meters', cm: 'centimeters', kg: 'kilograms', L: 'liters', h: 'hours', min: 'minutes' })[t[4]] + ' is that?'), big(t[0]), a,
+              '1 ' + t[4] + ' = ' + t[2] + ' ' + t[3] + ', so ' + ans + ' ' + t[3] + ' = ' + ans + ' ÷ ' + t[2] + ' = ' + a + ' ' + t[4] + '.', { post: t[4] });
+          }
+          return typed(t[1].replace('{a}', a), big(t[0]), ans, '1 ' + t[4] + ' = ' + t[2] + ' ' + t[3] + ', so ' + a + ' ' + t[4] + ' = ' + a + ' × ' + t[2] + ' = ' + ans + ' ' + t[3] + '.', { post: t[3] });
+        }],
+        ['Area and perimeter', () => {
+          const l = R(3, 10), w = R(2, Math.min(8, l)), around = Math.random() < 0.5;
+          return around ? typed('A garden is ' + l + ' m long and ' + w + ' m wide. How many meters of fence go all the way around it?', field(l, w), 2 * (l + w), 'Go around all four sides: ' + l + ' + ' + w + ' + ' + l + ' + ' + w + ' = ' + 2 * (l + w) + ' m.', { post: 'm' })
+            : typed('A garden is ' + l + ' m long and ' + w + ' m wide. How many square meters of grass does it have?', field(l, w), l * w, 'There are ' + w + ' rows of ' + l + ' squares: ' + l + ' × ' + w + ' = ' + l * w + ' square meters.', { post: 'm²' });
+        }]
+      ] },
+    { id: 'sale', name: 'Big Sale', skill: 'Percent and best buys', ages: '9–12', icon: '🏷️', c: 'var(--c-pink)',
+      desc: 'Half price, 10% off and bigger discounts, which pack is the better buy, and saving up for something special.',
+      levels: [
+        ['Half price', () => { const t = pick(TOYS), p = R(2, 40) * 2; return typed('The ' + t[1] + ' costs $' + p + '. Today everything is half price. How much does it cost now?', tag(t[0], t[1], '$' + p + ' · ½ price'), p / 2, 'Half of $' + p + ' is $' + p + ' ÷ 2 = $' + p / 2 + '.', DOLLARS); }],
+        ['10% off', () => {
+          const t = pick(TOYS), p = R(2, 20) * 10, save = Math.random() < 0.5;
+          return typed('The ' + t[1] + ' costs $' + p + ' and is 10% off. ' + (save ? 'How much money do you save?' : 'What is the new price?'), tag(t[0], t[1], '$' + p + ' · 10% off'), save ? p / 10 : p * 0.9,
+            '10% means 10 out of every 100, the same as dividing by 10. 10% of $' + p + ' is $' + p / 10 + (save ? '.' : '. New price: $' + p + ' − $' + p / 10 + ' = $' + p * 0.9 + '.'), DOLLARS);
+        }],
+        ['Discounts', () => {
+          const pct = pick([20, 25, 50, 75, 30, 40]), unit = { 20: 5, 25: 4, 50: 2, 75: 4, 30: 10, 40: 5 }[pct], p = unit * R(Math.ceil(20 / unit), Math.floor(200 / unit)), off = p * pct / 100;
+          const t = pick([['👟', 'pair of sneakers'], ['🎒', 'backpack'], ['🎧', 'pair of headphones'], ['🛴', 'scooter'], ['⌚', 'watch']]);
+          return typed('The ' + t[1] + ' costs $' + p + '. It is ' + pct + '% off. What is the sale price?', tag(t[0], t[1], '$' + p + ' · ' + pct + '% off'), p - off,
+            pct + '% of $' + p + ' is $' + off + (pct === 25 || pct === 75 ? ' (25% is a quarter)' : pct === 20 ? ' (20% is a fifth)' : '') + '. Sale price: $' + p + ' − $' + off + ' = $' + (p - off) + '.', DOLLARS);
+        }],
+        ['Best buy', () => {
+          const t = pick([['🧃', 'juice boxes', 'juice box'], ['🧻', 'rolls of paper', 'roll'], ['🍫', 'chocolate bars', 'bar'], ['🖊️', 'pens', 'pen']]);
+          const units = shuffle([100, 150, 200, 250, 300, 400]).slice(0, 2), n1 = R(2, 6); let n2 = R(2, 8); while (n2 === n1) n2 = R(2, 8);
+          const p1 = n1 * units[0], p2 = n2 * units[1], ans = units[0] < units[1] ? 'Pack A' : 'Pack B';
+          return choose('Which pack costs less for each ' + t[2] + '?', tag(t[0], 'Pack A: ' + n1 + ' ' + t[1], usd(p1)) + tag(t[0], 'Pack B: ' + n2 + ' ' + t[1], usd(p2)), ans, ['Pack A', 'Pack B'],
+            'Pack A: ' + usd(p1) + ' ÷ ' + n1 + ' = ' + usd(units[0]) + ' each. Pack B: ' + usd(p2) + ' ÷ ' + n2 + ' = ' + usd(units[1]) + ' each. ' + ans + ' is the better buy.');
+        }],
+        ['Saving up', () => {
+          const t = pick([['🚲', 'bike'], ['🎮', 'video game'], ['🛹', 'skateboard'], ['🔭', 'telescope']]), s = pick([5, 10, 15, 20, 25]);
+          const pick3 = R(1, 3);
+          if (pick3 === 1) { const w = R(3, 10), c = s * w - pick([0, 0, R(1, s - 1)]); return typed('A ' + t[1] + ' costs $' + c + '. You save $' + s + ' every week. How many weeks until you can buy it?', tag(t[0], t[1], '$' + c), Math.ceil(c / s), '$' + c + ' ÷ $' + s + ' = ' + (c / s % 1 ? (c / s).toFixed(1) + ', so after ' + Math.floor(c / s) + ' weeks you are still short. You need ' + Math.ceil(c / s) + ' weeks.' : Math.ceil(c / s) + ' weeks.'), { post: 'weeks' }); }
+          if (pick3 === 2) { const a = R(2, 9) * 5, w = R(3, 8); return typed('You have $' + a + '. You save $' + s + ' every week. How much money will you have after ' + w + ' weeks?', big('🐷'), a + s * w, '$' + s + ' × ' + w + ' = $' + s * w + ', plus the $' + a + ' you have: $' + (a + s * w) + '.', DOLLARS); }
+          const a = R(1, 6) * 5, w = R(2, 8), c = a + s * w;
+          return typed('A ' + t[1] + ' costs $' + c + '. You have $' + a + ' and save $' + s + ' every week. How many weeks until you can buy it?', tag(t[0], t[1], '$' + c), w, 'You still need $' + c + ' − $' + a + ' = $' + (c - a) + '. $' + (c - a) + ' ÷ $' + s + ' = ' + w + ' weeks.', { post: 'weeks' });
+        }],
+        ['Many steps', () => {
+          const t = pick([
+            () => { const p = R(8, 20) * 4, note = p * 0.75 <= 50 ? 50 : 100, cost = p * 0.75; return [tag('🧥', 'jacket', '$' + p + ' · 25% off'), 'A jacket costs $' + p + ' and is 25% off. You pay with $' + note + '. How much change do you get?', note - cost,
+              '25% of $' + p + ' is $' + p / 4 + ', so it costs $' + cost + '. Change: $' + note + ' − $' + cost + ' = $' + (note - cost) + '.']; },
+            () => { const e = R(2, 6) * 5, n = R(2, 4), sum = e * n; return [tag('👕', 'T-shirt', '$' + e + ' each'), 'You buy ' + n + ' T-shirts at $' + e + ' each. The shop takes 20% off the total. How much do you pay?', sum * 0.8,
+              n + ' × $' + e + ' = $' + sum + '. 20% of $' + sum + ' is $' + sum / 5 + '. You pay $' + sum + ' − $' + sum / 5 + ' = $' + sum * 0.8 + '.']; },
+            () => { const e = R(3, 9), n = pick([3, 6, 9]); return [tag('🥤', 'smoothie', '$' + e + ' each · buy 2, get 1 free'), 'Smoothies are $' + e + ' each: buy 2, get 1 free. How much do ' + n + ' smoothies cost?', (n / 3) * 2 * e,
+              'In every 3 smoothies you pay for 2. ' + n + ' smoothies is ' + n / 3 + ' × 3, so you pay for ' + (n / 3) * 2 + ': ' + (n / 3) * 2 + ' × $' + e + ' = $' + (n / 3) * 2 * e + '.']; }])();
+          return typed(t[1], t[0], t[2], t[3], DOLLARS);
+        }]
+      ] },
+    { id: 'trip', name: 'Trip Planner', skill: 'Data, speed and planning', ages: '10–12', icon: '🚌', c: 'var(--c-indigo)',
+      desc: 'Read charts, find averages, catch the right bus, work out speed and distance, and plan a whole trip.',
+      levels: [
+        ['Read a chart', () => {
+          const rows = shuffle([['🍎', 'apples'], ['🍌', 'bananas'], ['🍇', 'grapes'], ['🍊', 'oranges'], ['🍓', 'strawberries'], ['🍉', 'watermelon']]).slice(0, 4).map((r) => [r[0], r[1], R(1, 10)]);
+          const [a, b] = shuffle(rows), kind = R(1, 3), total = rows.reduce((s, r) => s + r[2], 0);
+          if (kind === 1) return typed('The class voted for their favorite fruit. How many children chose ' + a[1] + ' ' + a[0] + '?', chart(rows, 10), a[2], 'Follow the top of the ' + a[0] + ' bar across to the numbers: ' + a[2] + '.');
+          if (kind === 2 && a[2] !== b[2]) { const [hi, lo] = a[2] > b[2] ? [a, b] : [b, a]; return typed('How many more children chose ' + hi[1] + ' ' + hi[0] + ' than ' + lo[1] + ' ' + lo[0] + '?', chart(rows, 10), hi[2] - lo[2], hi[0] + ' has ' + hi[2] + ' and ' + lo[0] + ' has ' + lo[2] + ': ' + hi[2] + ' − ' + lo[2] + ' = ' + (hi[2] - lo[2]) + '.'); }
+          return typed('How many children voted in all?', chart(rows, 10), total, 'Add every bar: ' + rows.map((r) => r[2]).join(' + ') + ' = ' + total + '.');
+        }],
+        ['Averages', () => {
+          const t = pick([['🌡️', 'The temperature at noon this week was', '°C', 'What was the average temperature?', 24, 4], ['⚽', 'Your team scored these goals in its games:', '', 'What is the average number of goals per game?', 3, 2],
+            ['📖', 'You read these pages each day:', '', 'What is the average number of pages per day?', 12, 5], ['🏃', 'You ran these distances in km:', 'km', 'What is the average distance?', 5, 3]]);
+          const n = R(3, 5), mean = t[4] + R(-1, 2); let vals;
+          do { vals = Array.from({ length: n - 1 }, () => mean + R(-t[5], t[5])); vals.push(n * mean - vals.reduce((s, v) => s + v, 0)); } while (vals.some((v) => v < 0 || Math.abs(v - mean) > t[5] * 2));
+          const sum = vals.reduce((s, v) => s + v, 0);
+          return typed(t[1] + ' ' + vals.join(', ') + '. ' + t[3], big(t[0]) + chips(vals.map((v) => v + (t[2] ? ' ' + t[2] : ''))), mean,
+            'Add them: ' + vals.join(' + ') + ' = ' + sum + '. Then divide by how many there are: ' + sum + ' ÷ ' + n + ' = ' + mean + '.', t[2] ? { post: t[2] } : null);
+        }],
+        ['Timetables', () => {
+          const gap = pick([10, 15, 20, 30]), first = R(6, 8) * 60 + pick([0, 5, 10, 15]), deps = Array.from({ length: 6 }, (_, i) => first + i * gap);
+          const k = R(0, 4), arrive = deps[k] + R(1, gap - 1), next = deps[k + 1];
+          const scene = '<table class="tt"><thead><tr><th scope="col">🚌 Bus leaves</th></tr></thead><tbody>' + deps.map((d) => '<tr><td>' + fmtT(d) + '</td></tr>').join('') + '</tbody></table>';
+          if (Math.random() < 0.5) return choose('You get to the bus stop at ' + fmtT(arrive) + '. When does the next bus leave?', scene, fmtT(next), options(fmtT(next), deps.filter((d) => d !== next).map(fmtT).concat([fmtT(arrive)]), 4),
+            'The bus at ' + fmtT(deps[k]) + ' has already gone. The next one after ' + fmtT(arrive) + ' is at ' + fmtT(next) + '.');
+          return typed('You get to the bus stop at ' + fmtT(arrive) + '. How many minutes do you wait for the next bus?', scene, next - arrive,
+            'The next bus is at ' + fmtT(next) + '. From ' + fmtT(arrive) + ' to ' + fmtT(next) + ' is ' + (next - arrive) + ' minutes.', { post: 'min' });
+        }],
+        ['Speed and distance', () => {
+          const s = pick([40, 50, 60, 70, 80, 90, 100]), h = R(2, 5), d = s * h, t = pick([['🚆', 'A train'], ['🚗', 'A car'], ['🚌', 'A bus']]), kind = R(1, 4);
+          if (kind === 1) return typed(t[1] + ' goes ' + s + ' km every hour. How far does it go in ' + h + ' hours?', big(t[0]), d, 'Distance = speed × time: ' + s + ' × ' + h + ' = ' + d + ' km.', { post: 'km' });
+          if (kind === 2) return typed(t[1] + ' goes ' + s + ' km every hour. How many hours does it take to go ' + d + ' km?', big(t[0]), h, 'Time = distance ÷ speed: ' + d + ' ÷ ' + s + ' = ' + h + ' hours.', { post: 'hours' });
+          if (kind === 3) return typed(t[1] + ' goes ' + d + ' km in ' + h + ' hours. How many km does it go each hour?', big(t[0]), s, 'Speed = distance ÷ time: ' + d + ' ÷ ' + h + ' = ' + s + ' km per hour.', { post: 'km/h' });
+          const w = pick([4, 6, 8, 10, 12]), m = pick([15, 30, 45]);
+          return typed('You cycle ' + w + ' km every hour. How far do you go in ' + m + ' minutes?', big('🚴'), w * m / 60,
+            m + ' minutes is ' + (m === 30 ? 'half' : m === 15 ? 'a quarter' : 'three quarters') + ' of an hour. ' + (m === 30 ? 'Half' : m === 15 ? 'A quarter' : 'Three quarters') + ' of ' + w + ' km is ' + w * m / 60 + ' km.', { post: 'km', dec: true });
+        }],
+        ['Maps and fuel', () => {
+          const kind = R(1, 3);
+          if (kind === 1) { const k = pick([2, 5, 10, 25]), cm = R(2, 9); return typed('On the map, 1 cm is ' + k + ' km. The lake is ' + cm + ' cm away on the map. How far is it really?', big('🗺️'), k * cm, '1 cm is ' + k + ' km, so ' + cm + ' cm is ' + cm + ' × ' + k + ' = ' + k * cm + ' km.', { post: 'km' }); }
+          if (kind === 2) { const k = pick([5, 10, 20, 50]), cm = R(2, 9); return typed('On the map, 1 cm is ' + k + ' km. The town is ' + k * cm + ' km away. How many cm is that on the map?', big('🗺️'), cm, k * cm + ' ÷ ' + k + ' = ' + cm + ' cm.', { post: 'cm' }); }
+          const k = pick([8, 10, 12, 15]), l = R(3, 9);
+          return typed('The car goes ' + k + ' km on 1 liter of fuel. How many liters does it need for a ' + k * l + ' km trip?', big('⛽'), l, k * l + ' km ÷ ' + k + ' km per liter = ' + l + ' liters.', { post: 'L' });
+        }],
+        ['Grand challenge', () => {
+          const kind = R(1, 4);
+          if (kind === 1) { const A = R(4, 10) * 2, a = R(1, 2), c = R(1, 3), sum = A * a + A / 2 * c; return typed('Train tickets cost $' + A + ' for adults. Children pay half. How much do ' + a + (a === 1 ? ' adult' : ' adults') + ' and ' + c + (c === 1 ? ' child' : ' children') + ' pay?', big('🎫'), sum,
+            'Adults: ' + a + ' × $' + A + ' = $' + A * a + '. A child pays $' + A / 2 + ', so ' + c + ' × $' + A / 2 + ' = $' + A / 2 * c + '. Total: $' + sum + '.', DOLLARS); }
+          if (kind === 2) { const s = pick([40, 50, 60, 80]), h = pick([1.5, 2, 2.5, 3]), d = s * h, dep = R(7, 10) * 60, arr = dep + h * 60, ans = fmtT(arr);
+            return choose('The bus leaves at ' + fmtT(dep) + ' and drives ' + d + ' km at ' + s + ' km every hour. When does it arrive?', big('🚌'), ans, options(ans, [fmtT(arr + 30), fmtT(arr - 30), fmtT(arr + 60), fmtT(dep + d)], 4),
+              d + ' ÷ ' + s + ' = ' + h + ' hours' + (h % 1 ? ' (' + Math.floor(h) + ' h 30 min)' : '') + '. ' + fmtT(dep) + ' + ' + (h % 1 ? Math.floor(h) + ' h 30 min' : h + ' h') + ' = ' + ans + '.'); }
+          if (kind === 3) { const b = R(30, 60), n = R(2, 5), e = R(3, 6), x = R(5, 15), left = b - n * e - x;
+            if (left > 0) return typed('You have $' + b + ' for the trip. You buy ' + n + ' sandwiches at $' + e + ' each and a museum ticket for $' + x + '. How much is left?', big('🥪'), left,
+              n + ' × $' + e + ' = $' + n * e + '. $' + n * e + ' + $' + x + ' = $' + (n * e + x) + '. $' + b + ' − $' + (n * e + x) + ' = $' + left + '.', DOLLARS); }
+          const l = R(3, 6), w = R(2, 4), p = R(3, 8);
+          return typed('The tent floor is ' + l + ' m long and ' + w + ' m wide. A mat costs $' + p + ' for each square meter. How much do mats for the whole floor cost?', field(l, w), l * w * p,
+            'Area: ' + l + ' × ' + w + ' = ' + l * w + ' square meters. Cost: ' + l * w + ' × $' + p + ' = $' + l * w * p + '.', DOLLARS);
+        }]
+      ] }
+  ];
+  const TIERS = ['🌱 Easy', '🌱 Easy', '🌿 Medium', '🌿 Medium', '🌳 Hard', '🌳 Hard'];
+  const roundLength = (i) => (i < 3 ? 6 : 5);
+
+  // ---- Children and saved state ----
+  // The children are shared by every Cendekia app (shared/profile.js). Numeria keeps, per child, the best stars of
+  // every level (best["world.level"]), their total, and days in a row, under hitung.v1.<child id>.
+  const BASE = 'hitung.v1';
+  const fresh = () => ({ best: {}, stars: 0, day: '', streak: 0 });
+  let S = Object.assign(fresh(), CD.state(BASE, CD.profile().id) || {});
+  function save() { try { localStorage.setItem(CD.key(BASE), JSON.stringify(S)); } catch (e) { /* private mode */ } }
+  const dayStr = (d) => CD.dayStr(d);
+  const yesterday = () => { const y = new Date(); y.setDate(y.getDate() - 1); return dayStr(y); };
+  const streakNow = () => (S.day === dayStr(new Date()) || S.day === yesterday() ? S.streak : 0);
+  function markDay() {
+    const today = dayStr(new Date());
+    if (S.day === today) return;
+    S.streak = S.day === yesterday() ? S.streak + 1 : 1;
+    S.day = today;
+  }
+  const best = (w, i) => S.best[w.id + '.' + i] || 0;
+  const worldStars = (w) => w.levels.reduce((a, _, i) => a + best(w, i), 0);
+  const totalStars = () => Object.values(S.best).reduce((a, v) => a + v, 0);
+  const isOpen = (w, i) => i === 0 || best(w, i - 1) > 0;
+  const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
+
+  // ---- Stickers: places in town, unlocked by the total star count (144 at most) ----
+  const STICKERS = [
+    { at: 3, name: 'House', pic: '🏠', c: '#ffe3c2' }, { at: 8, name: 'Tree', pic: '🌳', c: '#d9f5e8' },
+    { at: 15, name: 'Bicycle', pic: '🚲', c: '#d6ebff' }, { at: 24, name: 'Shop', pic: '🏪', c: '#ffe0ec' },
+    { at: 34, name: 'Bakery', pic: '🥐', c: '#fff1c2' }, { at: 46, name: 'Bus', pic: '🚌', c: '#ffe3c2' },
+    { at: 60, name: 'School', pic: '🏫', c: '#ece6ff' }, { at: 75, name: 'Fire truck', pic: '🚒', c: '#ffe0ec' },
+    { at: 90, name: 'Ferris wheel', pic: '🎡', c: '#d6ebff' }, { at: 106, name: 'Train', pic: '🚆', c: '#d9f5e8' },
+    { at: 124, name: 'Castle', pic: '🏰', c: '#fff1c2' }, { at: 144, name: 'Math master', pic: '🏆', c: '#ffe3c2' }
+  ];
+  const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
+
+  // ---- Sound ----
+  let ctx = null;
+  function tone(freqs, dur, type, vol) {
+    try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+    freqs.forEach((f, i) => {
+      const t0 = ctx.currentTime + i * dur, o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(vol || 0.16, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      o.connect(g); g.connect(ctx.destination); o.start(t0); o.stop(t0 + dur);
+    });
+  }
+  const sfx = { tap() { tone([520], 0.05); }, good() { tone([660, 880], 0.11); }, bad() { tone([220], 0.22, 'triangle'); }, win() { tone([523, 659, 784, 1047], 0.13); } };
+
+  // ---- Screens ----
+  let curWorld = null, curLevel = 0;
+  function show(id) {
+    ['home', 'world', 'play', 'result', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
+    if (id === 'home') renderHome();
+    if (id === 'world') renderWorld();
+    if (id === 'stickers') renderStickers();
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => { sfx.tap(); show(b.dataset.go); }));
+
+  function renderHome() {
+    const stars = totalStars(), days = streakNow();
+    $('homeStars').textContent = stars + (stars === 1 ? ' star' : ' stars');
+    $('homeDays').textContent = days + (days === 1 ? ' day' : ' days');
+    $('homeStk').textContent = unlocked(stars) + '/' + STICKERS.length;
+    const box = $('worlds'); box.innerHTML = '';
+    WORLDS.forEach((w, k) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', w.c); b.style.animationDelay = k * 0.05 + 's';
+      b.setAttribute('aria-label', (k + 1) + '. ' + w.name + ', ' + w.skill + ', ages ' + w.ages + ', ' + worldStars(w) + ' of 18 stars');
+      b.innerHTML = '<span class="num" aria-hidden="true">' + (k + 1) + '</span><span class="badge" aria-hidden="true">' + w.icon + '</span><b>' + w.name + '</b>'
+        + '<span class="skill">' + w.skill + '</span><small>Ages ' + w.ages + '</small>'
+        + '<span class="meter" aria-hidden="true"><i style="width:' + Math.round(100 * worldStars(w) / 18) + '%"></i></span>'
+        + '<small>' + worldStars(w) + ' / 18 ⭐</small>';
+      b.addEventListener('click', () => { sfx.tap(); curWorld = w; show('world'); });
+      box.appendChild(b);
+    });
+    const s = document.createElement('button');
+    s.type = 'button'; s.className = 'card wide'; s.style.setProperty('--c', 'var(--c-orange)'); s.style.animationDelay = '.4s';
+    s.innerHTML = '<span class="badge" aria-hidden="true">🏠</span><span><b>Town Stickers</b><br><small>Collect stars to build your town</small></span>';
+    s.addEventListener('click', () => { sfx.tap(); show('stickers'); });
+    box.appendChild(s);
+  }
+
+  function renderWorld() {
+    const w = curWorld;
+    $('wTitle').textContent = w.icon + ' ' + w.name;
+    $('wAbout').style.setProperty('--c', w.c);
+    $('wAbout').innerHTML = '<span class="badge" aria-hidden="true">' + w.icon + '</span><p><small>' + w.skill + ' · ages ' + w.ages + '</small><br>' + w.desc + '</p>';
+    const box = $('levels'); box.innerHTML = '';
+    const next = w.levels.findIndex((_, i) => isOpen(w, i) && !best(w, i));
+    w.levels.forEach((lv, i) => {
+      const open = isOpen(w, i), d = document.createElement('div');
+      d.className = 'lv' + (open ? '' : ' locked') + (i === next ? ' next' : '');
+      d.style.setProperty('--c', w.c);
+      const b = document.createElement('button'); b.type = 'button'; b.style.animationDelay = i * 0.05 + 's';
+      b.textContent = open ? String(i + 1) : '🔒';
+      b.setAttribute('aria-label', 'Level ' + (i + 1) + ', ' + lv[0] + (open ? ', ' + best(w, i) + ' stars' : ', locked'));
+      if (open) b.addEventListener('click', () => { sfx.tap(); startLevel(w, i); });
+      d.appendChild(b);
+      d.insertAdjacentHTML('beforeend', '<span class="st">' + [0, 1, 2].map((k) => starSvg(k < best(w, i))).join('') + '</span><small>' + lv[0] + '</small><span class="tier">' + TIERS[i] + '</span>');
+      box.appendChild(d);
+    });
+  }
+
+  function renderStickers() {
+    const stars = totalStars();
+    $('stkStars').textContent = stars;
+    const nx = STICKERS.find((k) => k.at > stars);
+    $('stkNext').textContent = nx ? (nx.at - stars) + ' more ' + (nx.at - stars === 1 ? 'star' : 'stars') + ' for the next sticker!' : 'You built the whole town!';
+    $('sgrid').innerHTML = STICKERS.map((k) => '<div class="stk' + (k.at <= stars ? '' : ' lock') + '"><span class="face" style="--c:' + k.c + '" aria-hidden="true">' + k.pic + '</span><b>'
+      + (k.at <= stars ? k.name : '???') + '</b><small>⭐ ' + k.at + '</small></div>').join('');
+  }
+
+  // ---- Playing a level ----
+  let qs = [], qi = 0, tries = 0, results = [], started = 0, locked = false;
+  const PRAISE = ['Great!', 'Well done!', 'Yes, that is right!', 'Brilliant!', 'Super!', 'Spot on!', 'You got it!'];
+  function startLevel(w, i) {
+    if (!CD.gate()) return; // the parent's daily time limit
+    curWorld = w; curLevel = i;
+    const gen = w.levels[i][1], seen = new Set();
+    qs = [];
+    for (let k = 0; qs.length < roundLength(i) && k < 60; k++) { const q = gen(), id = q.say + '|' + q.ans + '|' + q.scene; if (!seen.has(id)) { seen.add(id); qs.push(q); } }
+    qi = 0; results = []; started = Date.now();
+    show('play');
+    ask();
+  }
+  function renderProg() {
+    $('prog').innerHTML = qs.map((_, k) => '<i class="' + (k < results.length ? (results[k] ? 'ok' : 'miss') : k === qi ? 'now' : '') + '"></i>').join('');
+    $('prog').setAttribute('aria-label', 'Question ' + (qi + 1) + ' of ' + qs.length);
+  }
+  const mood = (m) => { const c = $('coach'); c.className = 'owl'; void c.offsetWidth; if (m) c.classList.add(m); };
+  const label = (s) => (/^\d+\/\d+$/.test(s) ? frac(...s.split('/')) : esc(s));
+
+  function ask() {
+    const q = qs[qi];
+    tries = 0; locked = false;
+    renderProg(); mood('');
+    $('say').textContent = q.say;
+    $('scene').innerHTML = q.scene || '';
+    $('why').hidden = true;
+    const box = $('answers'); box.innerHTML = '';
+    if (q.kind === 'choice') {
+      const g = document.createElement('div'); g.className = 'opts' + (q.opts.length === 3 ? ' three' : '');
+      q.opts.forEach((o, k) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.style.animationDelay = k * 0.05 + 's';
+        b.innerHTML = label(o); b.dataset.v = o; b.setAttribute('aria-label', o);
+        b.addEventListener('click', () => answer(o, b));
+        g.appendChild(b);
+      });
+      box.appendChild(g);
+    } else {
+      box.innerHTML = '<div class="padWrap"><div class="display" id="disp" aria-live="polite">' + (q.pre ? '<span class="unit">' + q.pre + '</span>' : '')
+        + '<span class="val" id="val"></span>' + (q.post ? '<span class="unit">' + q.post + '</span>' : '') + '</div><div class="keys" id="keys"></div></div>';
+      const keys = $('keys');
+      ['1', '2', '3', '4', '5', '6', '7', '8', '9', q.dec ? '.' : '', '0', '⌫'].forEach((k) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'key'; b.textContent = k;
+        if (!k) { b.style.visibility = 'hidden'; b.tabIndex = -1; b.setAttribute('aria-hidden', 'true'); }
+        if (k === '⌫') b.setAttribute('aria-label', 'Delete');
+        b.addEventListener('click', () => press(k));
+        keys.appendChild(b);
+      });
+      const c = document.createElement('button'); c.type = 'button'; c.className = 'key check'; c.textContent = '✓ Check';
+      c.addEventListener('click', () => press('ok'));
+      keys.appendChild(c);
+    }
+  }
+  function press(k) {
+    if (locked || $('play').hidden) return;
+    const v = $('val'); if (!v) return;
+    $('disp').classList.remove('no');
+    if (k === '⌫') { v.textContent = v.textContent.slice(0, -1); return; }
+    if (k === 'ok') { if (v.textContent && v.textContent !== '.') answer(v.textContent); return; }
+    if (k === '.' && (!qs[qi].dec || v.textContent.includes('.'))) return;
+    if (v.textContent.length >= 7) return;
+    if (/^\d$/.test(k) && v.textContent.includes('.') && v.textContent.split('.')[1].length >= 2) return;
+    sfx.tap(); v.textContent = (v.textContent === '0' && k !== '.' ? '' : v.textContent) + k;
+  }
+  document.addEventListener('keydown', (e) => {
+    if ($('play').hidden || !qs[qi] || qs[qi].kind !== 'pad') return;
+    if (/^[0-9.]$/.test(e.key)) press(e.key);
+    else if (e.key === 'Backspace') press('⌫');
+    else if (e.key === 'Enter') { e.preventDefault(); if (!$('why').hidden) $('whyNext').click(); else press('ok'); }
+  });
+
+  function answer(v, btn) {
+    if (locked) return;
+    const q = qs[qi];
+    const right = q.kind === 'choice' ? v === q.ans : Math.abs(Number(v) - q.ans) < 1e-6;
+    if (right) {
+      locked = true;
+      if (tries === 0) results.push(true); else results.push(false);
+      sfx.good(); mood('cheer');
+      $('say').textContent = pick(PRAISE);
+      if (btn) btn.classList.add('ok'); else $('disp').classList.add('ok');
+      renderProg();
+      setTimeout(next, 900);
+      return;
+    }
+    tries++;
+    sfx.bad(); mood('oops');
+    if (tries === 1) CD.weak('hitung', curWorld.name + ': ' + curWorld.levels[curLevel][0]);
+    if (btn) { btn.classList.add('no'); btn.disabled = true; } else { $('disp').classList.remove('no'); void $('disp').offsetWidth; $('disp').classList.add('no'); $('val').textContent = ''; }
+    if (tries === 1) { $('say').textContent = 'Not quite. Have another go!'; return; }
+    // Second miss: show the answer and how to get it.
+    locked = true;
+    results.push(false);
+    renderProg();
+    const shown = q.kind === 'choice' ? label(q.ans) : esc(q.pre + (Number.isInteger(q.ans) ? q.ans : q.ans.toFixed(2).replace(/0$/, '').replace(/\.0?$/, '')) + (q.post ? ' ' + q.post : ''));
+    if (q.kind === 'choice') $('answers').querySelectorAll('.opt').forEach((b) => { if (b.dataset.v === q.ans) b.classList.add('ok'); b.disabled = true; });
+    else { $('val').textContent = String(q.ans); $('disp').classList.remove('no'); $('disp').classList.add('ok'); }
+    $('say').textContent = 'Let me show you how.';
+    $('whyText').innerHTML = 'The answer is <b class="ans">' + shown + '</b>. ' + esc(q.why);
+    $('why').hidden = false;
+    $('whyNext').focus();
+  }
+  $('whyNext').addEventListener('click', () => { sfx.tap(); next(); });
+  function next() {
+    if ($('play').hidden) return;
+    qi++;
+    if (qi < qs.length) ask(); else finish();
+  }
+  $('pBack').addEventListener('click', () => { sfx.tap(); show('world'); });
+
+  function finish() {
+    const w = curWorld, i = curLevel, right = results.filter(Boolean).length, misses = qs.length - right;
+    const stars = misses === 0 ? 3 : misses <= 2 ? 2 : 1;
+    const before = totalStars();
+    S.best[w.id + '.' + i] = Math.max(best(w, i), stars);
+    S.stars = totalStars();
+    markDay(); save();
+    CD.round({ app: 'hitung', stage: w.name + ' ' + (i + 1), stars, right, total: qs.length, ms: Date.now() - started });
+    show('result');
+    sfx.win();
+    $('resTitle').textContent = stars === 3 ? 'Perfect!' : stars === 2 ? 'Great job!' : 'Well done!';
+    $('resStars').innerHTML = [0, 1, 2].map((k) => starSvg(k < stars)).join('');
+    $('resText').textContent = right + ' of ' + qs.length + ' right on the first try.' + (stars < 3 ? ' Play again for ' + (stars === 2 ? 'three' : 'more') + ' stars!' : '');
+    const gained = STICKERS.filter((k) => k.at > before && k.at <= S.stars);
+    $('resGift').hidden = !gained.length;
+    if (gained.length) $('resGift').innerHTML = '<span class="face" aria-hidden="true">' + gained[gained.length - 1].pic + '</span>New sticker: ' + gained[gained.length - 1].name + '!';
+    const hasNext = i + 1 < w.levels.length;
+    $('resNext').hidden = !hasNext;
+    if (stars === 3) confetti();
+  }
+  $('resNext').addEventListener('click', () => { sfx.tap(); startLevel(curWorld, curLevel + 1); });
+  $('resAgain').addEventListener('click', () => { sfx.tap(); startLevel(curWorld, curLevel); });
+  $('resWorld').addEventListener('click', () => { sfx.tap(); show('world'); });
+
+  function confetti() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const fx = $('fx');
+    for (let k = 0; k < 24; k++) {
+      const s = document.createElement('span');
+      s.textContent = pick(['⭐', '🎉', '✨', '🍕', '🪙', '🍎']);
+      s.style.left = R(0, 96) + '%'; s.style.animationDelay = (Math.random() * 0.6).toFixed(2) + 's';
+      fx.appendChild(s); setTimeout(() => s.remove(), 3200);
+    }
+  }
+
+  CD.chip($('who'));
+  show('home');
+
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+  }
+})();
+</script>
+<script data-goatcounter="https://megawan.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
