@@ -29,7 +29,7 @@ Three stars for every question right on the first try, two for up to two misses,
 
 ## Children and parents
 
-Numeria uses the children shared by every Cendekia app (`shared/profile.js`). Each child's stars and days in a row are kept in `localStorage` under `hitung.v1.<child id>` (`best` holds the stars of each level as `"<place>.<level>"`). Every finished round goes to the shared log (`Cendekia.round`) and every first miss to the shared list of things that went wrong (`Cendekia.weak`, labeled with the place and level), so Numeria shows on the [parents' page](../orangtua/) with time played, progress, the levels that went wrong most and the last rounds. The daily time limit set there applies here too.
+Numeria uses the children shared by every Cendekia app (`shared/profile.js`). Each child's stars and days in a row are kept in `localStorage` under `numeria.v1.<child id>` (`best` holds the stars of each level as `"<place>.<level>"`). Every finished round goes to the shared log (`Cendekia.round`) and every first miss to the shared list of things that went wrong (`Cendekia.weak`, labeled with the place and level), so Numeria shows on the [parents' page](../orangtua/) with time played, progress, the levels that went wrong most and the last rounds. The daily time limit set there applies here too.
 
 ## Sound, motion and offline
 

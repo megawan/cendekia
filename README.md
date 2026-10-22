@@ -12,7 +12,7 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 | [`phonics/`](phonics) | Phonics Fun: English letter sounds, blending, spelling and first sentences, with the same adventure map and rewards. |
 | [`kosakata/`](kosakata) | Kosakata: English vocabulary for Indonesian speakers, in 24 themes (including body parts, organs and street furniture), with sound in both languages and the same stars, stickers and streaks. |
 | [`logika/`](logika) | Robo Logic: logical and computational thinking games in English, with Gbot the robot. Program a robot (with loops), find patterns, work out a machine's rule, read balances, fix a buggy program and pick items with AND, OR and NOT. With animations, stars and stickers. |
-| [`hitung/`](hitung) | Numeria: everyday math in English with Ollie the owl, in eight places around town ordered from the easiest to the hardest: counting in the kitchen, adding at the market, money, the clock, sharing pizza and fractions, measuring and baking, sale prices and percent, and planning a trip. Six levels each, from counting five apples to discounts, speed and timetables. |
+| [`numeria/`](numeria) | Numeria: everyday math in English with Ollie the owl, in eight places around town ordered from the easiest to the hardest: counting in the kitchen, adding at the market, money, the clock, sharing pizza and fractions, measuring and baking, sale prices and percent, and planning a trip. Six levels each, from counting five apples to discounts, speed and timetables. |
 
 Each app keeps its own README with details.
 

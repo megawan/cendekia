@@ -824,8 +824,8 @@
 
   // ---- Children and saved state ----
   // The children are shared by every Cendekia app (shared/profile.js). Numeria keeps, per child, the best stars of
-  // every level (best["world.level"]), their total, and days in a row, under hitung.v1.<child id>.
-  const BASE = 'hitung.v1';
+  // every level (best["world.level"]), their total, and days in a row, under numeria.v1.<child id>.
+  const BASE = 'numeria.v1';
   const fresh = () => ({ best: {}, stars: 0, day: '', streak: 0 });
   let S = Object.assign(fresh(), CD.state(BASE, CD.profile().id) || {});
   function save() { try { localStorage.setItem(CD.key(BASE), JSON.stringify(S)); } catch (e) { /* private mode */ } }
@@ -1020,7 +1020,7 @@
     }
     tries++;
     sfx.bad(); mood('oops');
-    if (tries === 1) CD.weak('hitung', curWorld.name + ': ' + curWorld.levels[curLevel][0]);
+    if (tries === 1) CD.weak('numeria', curWorld.name + ': ' + curWorld.levels[curLevel][0]);
     if (btn) { btn.classList.add('no'); btn.disabled = true; } else { $('disp').classList.remove('no'); void $('disp').offsetWidth; $('disp').classList.add('no'); $('val').textContent = ''; }
     if (tries === 1) { $('say').textContent = 'Not quite. Have another go!'; return; }
     // Second miss: show the answer and how to get it.
@@ -1050,7 +1050,7 @@
     S.best[w.id + '.' + i] = Math.max(best(w, i), stars);
     S.stars = totalStars();
     markDay(); save();
-    CD.round({ app: 'hitung', stage: w.name + ' ' + (i + 1), stars, right, total: qs.length, ms: Date.now() - started });
+    CD.round({ app: 'numeria', stage: w.name + ' ' + (i + 1), stars, right, total: qs.length, ms: Date.now() - started });
     show('result');
     sfx.win();
     $('resTitle').textContent = stars === 3 ? 'Perfect!' : stars === 2 ? 'Great job!' : 'Well done!';
