@@ -1,4 +1,4 @@
-# Ayo Membaca
+# Aksara
 
 An early reading game in Indonesian. Children go from vowels to letters, syllables, words and short sentences, then on to closed syllables, long words, gap-filling and short stories with questions, with every item read aloud. The UI and content are in Indonesian.
 

@@ -25,7 +25,7 @@ An English phonics game. Children learn letter sounds in the usual synthetic pho
 
 ## Rewards
 
-Same as Ayo Membaca: one to three stars per round, a combo counter with confetti for three or more first-try answers in a row, and a count of learning days in a row. A right answer gets a cheer in Kiki's speech bubble, a wrong answer gets "Try again" there and the sound is played again, and after two misses the right answer blinks. Nothing is said or sounded to praise the child: no chime on a right answer, no fanfare at the end of a round or when a sticker is won, only confetti.
+Same as Aksara: one to three stars per round, a combo counter with confetti for three or more first-try answers in a row, and a count of learning days in a row. A right answer gets a cheer in Kiki's speech bubble, a wrong answer gets "Try again" there and the sound is played again, and after two misses the right answer blinks. Nothing is said or sounded to praise the child: no chime on a right answer, no fanfare at the end of a round or when a sticker is won, only confetti.
 
 Progress is kept in `localStorage` under `phonics.v1.<child>`, one save per child (see the main README).
 
