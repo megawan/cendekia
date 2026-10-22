@@ -257,6 +257,10 @@
         <span class="badge" aria-hidden="true">🗺️</span>
         <span><b>Petualangan</b><br><small id="homeNext">Pilih tahap yang kamu suka</small></span>
       </button>
+      <button type="button" class="card hero-card" data-go="cerita" style="--c: var(--c-blue)">
+        <span class="badge" aria-hidden="true">📚</span>
+        <span><b>Cerita</b><br><small id="homeStories">Baca cerita pendek, lalu jawab pertanyaannya</small></span>
+      </button>
       <button type="button" class="card" data-go="abjad" style="--c: var(--c-pink)">
         <span class="badge" aria-hidden="true">Aa</span><b>Huruf A–Z</b><small>Ketuk untuk mendengar</small></button>
       <button type="button" class="card" data-go="suku" style="--c: var(--c-purple)">
@@ -279,6 +283,17 @@
     </div>
     <div id="mapNodes"></div>
     <p class="note"><button type="button" class="btn ghost" id="resetMap">Mulai ulang petualangan</button></p>
+  </section>
+
+  <!-- Stories: the stories of level 4, straight from the home screen -->
+  <section id="cerita" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
+      <h2>Cerita</h2>
+      <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="storyStars">0</span></span>
+    </div>
+    <p class="note">Baca ceritanya halaman demi halaman, lalu jawab pertanyaannya.</p>
+    <div class="themes" id="storyList"></div>
   </section>
 
   <!-- Alphabet -->
@@ -365,7 +380,7 @@
       <div class="gift" id="rGift" hidden></div>
       <button type="button" class="btn alt" id="rNext">Lanjut</button>
       <button type="button" class="btn" id="rAgain">Main lagi</button>
-      <button type="button" class="btn ghost" data-go="map">Ke peta</button>
+      <button type="button" class="btn ghost" id="rBack">Ke peta</button>
     </div>
   </section>
 
@@ -575,12 +590,13 @@
   'use strict';
   const C = JSON.parse(document.getElementById('content').textContent);
   const $ = (id) => document.getElementById(id);
-  const SECTIONS = ['home', 'map', 'abjad', 'suku', 'kata', 'story', 'quiz', 'result', 'stickers'];
+  const SECTIONS = ['home', 'map', 'cerita', 'abjad', 'suku', 'kata', 'story', 'quiz', 'result', 'stickers'];
   function show(id) {
     SECTIONS.forEach((s) => { $(s).hidden = s !== id; });
     stopSound(); clearTimeout(replayTimer); window.scrollTo(0, 0);
     if (id === 'home') renderHome();
     if (id === 'map') renderMap();
+    if (id === 'cerita') renderStories();
     if (id === 'stickers') renderStickers();
   }
   document.addEventListener('click', (e) => {
@@ -740,6 +756,8 @@
     $('homeStk').textContent = unlocked() + '/' + STICKERS.length;
     const n = nextStage();
     $('homeNext').textContent = n < 0 ? 'Semua tahap selesai! Kumpulkan 3 bintang' : 'Coba: ' + STAGES[n].title;
+    const stories = STAGES.filter((s) => s.kind === 'story'), read = stories.filter((s) => S.best[s.id]).length;
+    $('homeStories').textContent = read ? read + ' dari ' + stories.length + ' cerita sudah dibaca' : stories.length + ' cerita pendek dengan pertanyaan';
   }
 
   // Levels 1 and 2 are folded away so the map opens on sentences and stories; a child who needs them opens them.
@@ -752,7 +770,7 @@
       const go = document.createElement('button');
       go.type = 'button'; go.className = 'btn alt go';
       go.textContent = '▶ Mulai: ' + STAGES[nx].title;
-      go.addEventListener('click', () => startStage(nx));
+      go.addEventListener('click', () => { backTo = 'map'; startStage(nx); });
       box.appendChild(go);
     }
     LEVELS.forEach((lv) => {
@@ -764,20 +782,40 @@
       const grid = document.createElement('div'); grid.className = 'themes';
       STAGES.forEach((s, i) => {
         if (s.lv !== lv.n) return;
-        const best = S.best[s.id] || 0;
-        const b = document.createElement('button');
-        b.type = 'button'; b.className = 'theme' + (i === nx ? ' next' : '');
-        b.style.setProperty('--c', s.c);
-        b.innerHTML = '<span class="ico" aria-hidden="true"></span><b></b><span class="st"></span>';
-        b.firstChild.textContent = s.icon; b.children[1].textContent = s.title;
-        b.lastChild.innerHTML = [1, 2, 3].map((k) => starSvg(k <= best)).join('');
-        b.setAttribute('aria-label', s.title + ', ' + best + ' bintang');
-        b.addEventListener('click', () => startStage(i));
+        const b = stageButton(s, i, nx);
+        b.addEventListener('click', () => { backTo = 'map'; startStage(i); });
         grid.appendChild(b);
       });
       det.append(sum, grid);
       box.appendChild(det);
     });
+  }
+  // Where the back buttons of a round go: the map, or the list of stories when the round started there.
+  let backTo = 'map';
+  const backLabel = () => (backTo === 'cerita' ? 'Cerita' : 'Peta');
+  function stageButton(s, i, nx) {
+    const best = S.best[s.id] || 0;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'theme' + (i === nx ? ' next' : '');
+    b.style.setProperty('--c', s.c);
+    b.innerHTML = '<span class="ico" aria-hidden="true"></span><b></b><span class="st"></span>';
+    b.firstChild.textContent = s.icon; b.children[1].textContent = s.title;
+    b.lastChild.innerHTML = [1, 2, 3].map((k) => starSvg(k <= best)).join('');
+    b.setAttribute('aria-label', s.title + ', ' + best + ' bintang');
+    return b;
+  }
+  function renderStories() {
+    const list = $('storyList'); list.innerHTML = '';
+    let stars = 0;
+    const next = STAGES.findIndex((s) => s.kind === 'story' && !S.best[s.id]);
+    STAGES.forEach((s, i) => {
+      if (s.kind !== 'story') return;
+      stars += S.best[s.id] || 0;
+      const b = stageButton(s, i, next);
+      b.addEventListener('click', () => { backTo = 'cerita'; startStage(i); });
+      list.appendChild(b);
+    });
+    $('storyStars').textContent = stars;
   }
   $('resetMap').addEventListener('click', () => {
     if (!confirm('Mulai ulang petualangan? Bintang dan stiker tetap tersimpan.')) return;
@@ -970,11 +1008,13 @@
     if (pg < story.pages.length - 1) { pg++; renderPage(true); return; }
     startQuiz(story.questions.map((x) => ({ type: 'story', q: x.q, target: x.opts[0], opts: shuffle(x.opts.slice()) })));
   });
-  $('stBack').addEventListener('click', () => show('map'));
+  $('stBack').addEventListener('click', () => show(backTo));
 
   let roundStart = 0; // when the current round began, for the parent page
   const weakLabel = (q) => q.type === 'pickLetter' ? q.target.ch : q.type === 'pickSyl' ? q.target : q.type === 'story' ? q.q : q.target.text;
   function startStage(i) {
+    $('stBack').textContent = $('qBack').textContent = '← ' + backLabel();
+    $('rBack').textContent = backTo === 'cerita' ? 'Ke daftar cerita' : 'Ke peta';
     if (!Cendekia.gate()) return; // the parent's daily time limit
     roundStart = Date.now();
     if (STAGES[i].kind === 'story') { openStory(i); return; }
@@ -1244,7 +1284,8 @@
   }
   $('rNext').addEventListener('click', () => startStage(stageIdx + 1));
   $('rAgain').addEventListener('click', () => startStage(stageIdx));
-  $('qBack').addEventListener('click', () => show('map'));
+  $('qBack').addEventListener('click', () => show(backTo));
+  $('rBack').addEventListener('click', () => show(backTo));
 
   function renderStickers() {
     $('stkStars').textContent = S.stars;
