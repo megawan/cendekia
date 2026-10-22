@@ -11,6 +11,7 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 | [`baca/`](baca) | Ayo Membaca: early reading in Indonesian, from letters and syllables to words, sentences and short stories with questions, in four levels, with stars and stickers. |
 | [`kosakata/`](kosakata) | Kosakata: English vocabulary for Indonesian speakers, in 24 themes (including body parts, organs and street furniture), with sound in both languages and the same stars, stickers and streaks. |
 | [`logika/`](logika) | Robo Logic: logical and computational thinking games in English, with Gbot the robot. Program a robot (with loops), find patterns, work out a machine's rule, read balances, fix a buggy program and pick items with AND, OR and NOT. With animations, stars and stickers. |
+| [`numeria/`](numeria) | Numeria: everyday math in English with Ollie the owl, in eight places around town ordered from the easiest to the hardest: counting in the kitchen, adding at the market, money, the clock, sharing pizza and fractions, measuring and baking, sale prices and percent, and planning a trip. Six levels each, from counting five apples to discounts, speed and timetables. |
 
 `phonics/` (Phonics Fun) is paused: it is no longer linked from the home page or the parent page, and its address shows a closed notice. The full app is in git history (before the commit that closed it) and saved progress is kept.
 
