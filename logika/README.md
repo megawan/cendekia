@@ -1,12 +1,12 @@
-# Robo Logic
+# Logica
 
 Logical and computational thinking games for children, with Gbot the robot. Everything is in English, and there is no voice: prompts are shown in Gbot's speech bubble, with short sound effects.
 
 ## Children and difficulty
 
-Robo Logic uses the children shared by every Cendekia app (`shared/profile.js`): the same child plays here and in the other apps. The chip at the top left of the home screen switches children or adds one; renaming, the picture, the daily time limit and removing a child are also on the [parents' page](../orangtua/). The daily time limit applies here too: a level or random map cannot start once it is used up.
+Logica uses the children shared by every Cendekia app (`shared/profile.js`): the same child plays here and in the other apps. The chip at the top left of the home screen switches children or adds one; renaming, the picture, the daily time limit and removing a child are also on the [parents' page](../orangtua/). The daily time limit applies here too: a level or random map cannot start once it is used up.
 
-Each child picks a difficulty, stored per child: the badge at the top right (🌱 Easy, 🌿 Medium or 🌳 Hard) changes it at any time, and a child opening Robo Logic for the first time is asked to choose. Stars are kept for every difficulty, so switching never loses progress.
+Each child picks a difficulty, stored per child: the badge at the top right (🌱 Easy, 🌿 Medium or 🌳 Hard) changes it at any time, and a child opening Logica for the first time is asked to choose. Stars are kept for every difficulty, so switching never loses progress.
 
 | Difficulty | Ages | What changes |
 | --- | --- | --- |
@@ -33,7 +33,7 @@ Hints: after a failed run, 💡 appears in Robot Path. The first hint shows numb
 
 Robot stars: three for a program with no more blocks than the solution and fewer than two failed runs, one less for each of those missed. Fixing stars: one less for more than one change, and one less for two or more failed runs after the first change. Quiz stars: three with every question right on the first try, two with up to two misses.
 
-Stickers: twelve space stickers unlock as the player's total star count, over all difficulties, grows (`STICKERS` in `index.html`). Days in a row are counted as in the other apps. Each child's progress is kept in `localStorage` under `logika.v3.<child id>`. Robo Logic's own players from before (`logika.v2`, or `logika.v1`) moved once to the shared children: a player with the same name as a child becomes that child, the player who was playing becomes the current child, and the others become new children.
+Stickers: twelve space stickers unlock as the player's total star count, over all difficulties, grows (`STICKERS` in `index.html`). Days in a row are counted as in the other apps. Each child's progress is kept in `localStorage` under `logika.v3.<child id>`. Logica's own players from before (`logika.v2`, or `logika.v1`) moved once to the shared children: a player with the same name as a child becomes that child, the player who was playing becomes the current child, and the others become new children.
 
 ## For parents
 
@@ -48,7 +48,7 @@ Stickers: twelve space stickers unlock as the player's total star count, over al
 
 For the summary, every child keeps `log` (per difficulty, world and level: questions and how many were right on the first try, robot runs, wins, failed runs and hints) and `days` (puzzles solved per day, the last 60 days). This is counted from the first game after the summary was added; earlier stars are included. Nothing leaves the device.
 
-Every finished level also goes to the shared log (`Cendekia.round`), and the first mistake of a question or the first failed run of a level to the shared list of things that went wrong (`Cendekia.weak`), so Robo Logic shows on the [parents' page for all apps](../orangtua/) with time played, progress, mistakes and last rounds.
+Every finished level also goes to the shared log (`Cendekia.round`), and the first mistake of a question or the first failed run of a level to the shared list of things that went wrong (`Cendekia.weak`), so Logica shows on the [parents' page for all apps](../orangtua/) with time played, progress, mistakes and last rounds.
 
 ## Animations
 

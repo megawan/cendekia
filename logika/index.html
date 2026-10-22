@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Robo Logic</title>
+<title>Logica</title>
 <meta name="theme-color" content="#f2891f">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -526,7 +526,7 @@
     <div class="hero">
       <svg class="gbot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div>
-        <h1>Robo Logic</h1>
+        <h1>Logica</h1>
         <p class="sub">Think smart with Gbot</p>
       </div>
     </div>
@@ -894,7 +894,7 @@
   const P = C.phrases;
 
   // ---- Children and saved state ----
-  // The children are shared by every Cendekia app (shared/profile.js). Robo Logic keeps, per child, the
+  // The children are shared by every Cendekia app (shared/profile.js). Logica keeps, per child, the
   // difficulty, the stars for every difficulty, days in a row, which guides were seen, and the details for the
   // parents' summary, under logika.v3.<child id>.
   const CD = window.Cendekia, BASE = 'logika.v3';
@@ -906,7 +906,7 @@
   const AVATARS = CD.AVATARS;
   const fresh = () => ({ diff: '', best: { easy: {}, medium: {}, hard: {} }, day: '', streak: 0, seen: {}, log: {}, days: {} });
   const stateOf = (id) => Object.assign(fresh(), CD.state(BASE, id) || {});
-  // Robo Logic had its own players before (logika.v2, and logika.v1 before that). Each one moves to the shared
+  // Logica had its own players before (logika.v2, and logika.v1 before that). Each one moves to the shared
   // child with the same name, the player who was playing moves to the current child, and the others become new children.
   (function moveOldPlayers() {
     const get = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
@@ -1044,7 +1044,7 @@
   // them from every Cendekia app.
   const starsOf = (st) => Object.values(st.best).reduce((a, byW) => a + Object.values(byW).reduce((b, l) => b + sum(l), 0), 0);
   function useChild(id) { CD.select(id); S = stateOf(id); ensureDiff(); }
-  // A child who has not played Robo Logic yet starts on medium and is asked to choose.
+  // A child who has not played Logica yet starts on medium and is asked to choose.
   function ensureDiff() { if (!S.diff) { S.diff = 'medium'; save(); setTimeout(() => chooseDiff(true), 0); } }
   function renderPlayers() {
     const box = $('plist');
