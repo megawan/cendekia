@@ -12,7 +12,7 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 | [`kosakata/`](kosakata) | Kosakata: English vocabulary for Indonesian speakers, in 24 themes (including body parts, organs and street furniture), with sound in both languages and the same stars, stickers and streaks. |
 | [`logika/`](logika) | Robo Logic: logical and computational thinking games in English, with Gbot the robot. Program a robot (with loops), find patterns, work out a machine's rule, read balances, fix a buggy program and pick items with AND, OR and NOT. With animations, stars and stickers. |
 
-`phonics/` (Phonics Fun) is paused: it is no longer linked from the home page or the parent page, but its files stay and it still opens at its own address.
+`phonics/` (Phonics Fun) is paused: it is no longer linked from the home page or the parent page, and its address shows a closed notice. The full app is in git history (before the commit that closed it) and saved progress is kept.
 
 Each app keeps its own README with details.
 

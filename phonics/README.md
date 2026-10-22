@@ -1,5 +1,7 @@
 # Phonics Fun
 
+> Paused. `index.html` now shows a closed notice and `sw.js` only clears old caches. The game itself is in git history, in the commit before the one that closed it. To reopen it, restore `index.html` and `sw.js` from that commit.
+
 An English phonics game. Children learn letter sounds in the usual synthetic phonics order (s a t p i n first), then blend sounds into words, spell words from sounds, and read short sentences. The UI and spoken prompts are in English.
 
 ## Modes
