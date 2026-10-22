@@ -1,6 +1,6 @@
 {
-  "name": "Ayo Membaca",
-  "short_name": "Membaca",
+  "name": "Aksara",
+  "short_name": "Aksara",
   "description": "Permainan sederhana untuk anak belajar membaca dalam Bahasa Indonesia, lengkap dengan suara.",
   "lang": "id",
   "start_url": "./",

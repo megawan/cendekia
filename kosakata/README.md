@@ -1,4 +1,4 @@
-# Kosakata
+# Lexica
 
 An Indonesian–English vocabulary game. Children learn about 300 English words in 24 themes, hearing every word in both languages. The UI and spoken prompts are in Indonesian, the words being learned are in English.
 
