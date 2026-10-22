@@ -32,6 +32,7 @@ An early reading game in Indonesian. Children go from vowels to letters, syllabl
   | Cerita | Read a story of five or six pages, one sentence and picture each (tap any word to hear it, the speaker reads the page), then answer three or four questions about it. Three stars for no mistakes, two for one, one otherwise |
 
   The stories are Bola Merah Budi, Kucing yang Lapar, Hari Hujan, Semut dan Merpati, Pergi ke Pasar, Kancil dan Buaya, Kura-kura dan Kelinci, Hari Pertama di Sekolah, Menanam Biji Kacang and Pesta Ulang Tahun.
+- Cerita: the ten stories of level 4, straight from the home screen, with their stars. The home card shows how many have been read. A story opened here goes back to this list instead of the map.
 - Huruf A–Z: tap a letter to hear its name and an example word.
 - Suku Kata: pick a consonant to see it joined with each vowel (b + a = ba).
 - Kata Bergambar: tap a word card to hear it read syllable by syllable, then as a whole word.
