@@ -6,7 +6,7 @@ async function openLogica(page, diff) {
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
     for (const x of ['easy', 'medium', 'hard']) best[x] = { kode: Array(7).fill(1), sudoku: Array(7).fill(1) };
-    localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { kode: true, sudoku: true }, log: {}, days: {} }));
+    localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { robot: true, kode: true, sudoku: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
 }
@@ -20,7 +20,7 @@ async function openLevel(page, world, n) {
 // Reads the grid from the squares' labels and solves it the slow, sure way.
 function solveSudoku() {
   const cells = [...document.querySelectorAll('#sdk button')], n = Math.round(Math.sqrt(cells.length));
-  const names = [...document.querySelectorAll('.palette button')].slice(0, n).map((b) => b.getAttribute('aria-label').replace('Put a ', ''));
+  const names = [...document.querySelectorAll('.sdkPal button')].slice(0, n).map((b) => b.getAttribute('aria-label').replace('Put a ', ''));
   const g = cells.map((c) => names.indexOf(c.getAttribute('aria-label').split(': ')[1]));
   const box = n === 4 ? [2, 2] : n === 6 ? [2, 3] : null;
   const fits = (k, v) => {
@@ -52,7 +52,7 @@ test.describe('Mini Sudoku', () => {
       expect(moves.length).toBeGreaterThan(0);
       for (const [k, v] of moves) {
         await page.locator('#sdk button').nth(k).click();
-        await page.locator('.palette button').nth(v).click();
+        await page.locator('.sdkPal button').nth(v).click();
       }
       await page.getByRole('button', { name: '✓ Check' }).click();
       await expect(page.locator('#prog i.done')).toHaveCount(1);
@@ -65,15 +65,24 @@ test.describe('Mini Sudoku', () => {
     await page.getByRole('button', { name: '✓ Check' }).click();
     await expect(page.locator('#qSay')).toHaveText('Fill every gap first, then press ✓ Check.');
     const moves = await page.evaluate(solveSudoku);
-    const n = await page.locator('.palette button').count() - 1;
+    const n = await page.locator('.sdkPal button').count() - 1;
     for (const [i, [k, v]] of moves.entries()) {
       await page.locator('#sdk button').nth(k).click();
-      await page.locator('.palette button').nth(i === 0 ? (v + 1) % n : v).click();
+      await page.locator('.sdkPal button').nth(i === 0 ? (v + 1) % n : v).click();
     }
     await page.getByRole('button', { name: '✓ Check' }).click();
     await expect(page.locator('#sdk button.no')).toHaveCount(1);
     await expect(page.locator('#prog i.done')).toHaveCount(0);
   });
+});
+
+test('the robot blocks keep their own look next to the sudoku palette', async ({ page }) => {
+  await openLogica(page, 'medium');
+  await page.locator('#worlds .card', { hasText: 'Robot Path' }).click();
+  // The first level bounces until it has a star, so it never counts as stable for a normal click.
+  await page.locator('#wLevels .lv button').first().dispatchEvent('click');
+  const bg = await page.locator('#palette .blk.R').evaluate((b) => getComputedStyle(b).backgroundColor);
+  expect(bg).not.toBe('rgb(255, 255, 255)');
 });
 
 test.describe('Secret Code', () => {

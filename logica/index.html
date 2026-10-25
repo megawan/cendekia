@@ -353,12 +353,12 @@
   .sdk button.hint { animation: blink .8s ease-in-out infinite; }
   .sdk button.win { background: #e8f8f0; animation: pop .4s; }
   .sdk svg.it { width: 100%; height: 100%; }
-  .palette { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-  .palette button { width: 58px; height: 58px; padding: 7px; background: #fff; border: 3px solid var(--line); border-bottom-width: 6px;
+  .sdkPal { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .sdkPal button { width: 58px; height: 58px; padding: 7px; background: #fff; border: 3px solid var(--line); border-bottom-width: 6px;
     border-radius: 16px; cursor: pointer; font: inherit; font-size: 1.5rem; font-weight: 800; color: var(--ink); }
-  .palette button:active { transform: translateY(3px); }
-  .palette svg.it { width: 100%; height: 100%; }
-  @media (max-width: 420px) { .palette { gap: 6px; } .palette button { width: 42px; height: 42px; padding: 5px; border-radius: 12px; font-size: 1.2rem; } }
+  .sdkPal button:active { transform: translateY(3px); }
+  .sdkPal svg.it { width: 100%; height: 100%; }
+  @media (max-width: 420px) { .sdkPal { gap: 6px; } .sdkPal button { width: 42px; height: 42px; padding: 5px; border-radius: 12px; font-size: 1.2rem; } }
   .demo .pix.small { width: 60px; }
   .demo .bits { font-size: .8rem; padding: 4px 6px 4px 8px; border-radius: 8px; }
   .demo .secret { font-size: .95rem; padding: 3px 4px 3px 8px; border-radius: 8px; }
@@ -369,7 +369,7 @@
   .demo .sdk span { aspect-ratio: 1; background: #fff; display: grid; place-items: center; padding: 2px; }
   .demo .sdk span.q { border: 0; border-radius: 0; font-size: .7rem; width: auto; height: auto; }
   .demo .sdk svg.it { width: 100%; height: 100%; }
-  .demo .palette button { width: 30px; height: 30px; padding: 3px; border-radius: 8px; border-width: 2px; border-bottom-width: 3px; }
+  .demo .sdkPal button { width: 30px; height: 30px; padding: 3px; border-radius: 8px; border-width: 2px; border-bottom-width: 3px; }
   @keyframes pass { 40% { transform: translateY(-12px) scale(1.1); } 100% { transform: translateY(40px) scale(.3); opacity: 0; } }
   .check { display: flex; justify-content: center; margin-top: 14px; }
 
@@ -1407,7 +1407,7 @@
     sudoku: [
       ['<div class="demo"><div class="sdk" style="--n:3">' + [0, 1, 2, 1, 2, 0, 2, 0, -1].map((v) => '<span' + (v < 0 ? ' class="q">?' : '>' + itemSvg(SYMS[v])) + '</span>').join('') + '</div></div>',
         'Every row and every column has each shape once. Which one is missing?'],
-      ['<div class="demo"><div class="palette"><button type="button" tabindex="-1">' + itemSvg(SYMS[1]) + '</button><button type="button" tabindex="-1">' + itemSvg(SYMS[2]) + '</button></div></div>',
+      ['<div class="demo"><div class="sdkPal"><button type="button" tabindex="-1">' + itemSvg(SYMS[1]) + '</button><button type="button" tabindex="-1">' + itemSvg(SYMS[2]) + '</button></div></div>',
         'Tap a gap, then tap the shape that goes there.'],
       ['<div class="demo"><span class="btn go">✓ Check</span></div>', 'When every gap is full, press ✓ Check.']
     ]
@@ -2567,7 +2567,7 @@
       if (after >= 0 || first >= 0) select(after >= 0 ? after : first);
     }
     const pal = document.createElement('div');
-    pal.className = 'palette';
+    pal.className = 'sdkPal';
     syms.forEach((x, v) => {
       const p = document.createElement('button');
       p.type = 'button'; p.innerHTML = itemSvg(x); p.setAttribute('aria-label', 'Put a ' + symName(x));
