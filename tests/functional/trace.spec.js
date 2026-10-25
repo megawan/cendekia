@@ -95,8 +95,27 @@ test.describe('Hijaiyah: trace letters', () => {
   });
 });
 
+test.describe('Numeria: trace numbers', () => {
+  test('tracing a number is saved and does not change the town stars', async ({ page }) => {
+    await app(page, 'numeria');
+    await page.getByRole('button', { name: /Trace numbers/ }).click();
+    await expect(page.locator('#trace')).toBeVisible();
+    await traceLetter(page);
+    await expect(page.locator('.tr-box.done')).toBeVisible();
+    const saved = await page.evaluate(() => {
+      const k = Object.keys(localStorage).find((x) => x.startsWith('numeria.v1.'));
+      return JSON.parse(localStorage.getItem(k));
+    });
+    expect(saved.traced['0']).toBeGreaterThan(0);
+    expect(saved.stars).toBe(0);
+    await page.locator('#trNext').click();
+    await expect(page.locator('#trWord')).toHaveText('one');
+    await expect(page.locator('#trGrid .ttile').first()).toContainText('✓');
+  });
+});
+
 test.describe('the daily time limit', () => {
-  for (const dir of ['aksara', 'hijaiyah']) {
+  for (const dir of ['aksara', 'hijaiyah', 'numeria']) {
     test(`${dir}: tracing does not open once the time is used up`, async ({ page }) => {
       await app(page, dir);
       await page.evaluate(() => {
@@ -104,7 +123,7 @@ test.describe('the daily time limit', () => {
         C.update(C.profile().id, { limit: 15 });
         C.round({ app: 'numeria', stage: 'test', stars: 3, right: 5, total: 5, ms: 16 * 60000 });
       });
-      await page.getByRole('button', { name: /Trace letters/ }).click();
+      await page.getByRole('button', { name: /Trace (letters|numbers)/ }).click();
       await expect(page.getByRole('dialog')).toContainText('That is all the play time for today');
       await expect(page.locator('#trace')).toBeHidden();
     });
