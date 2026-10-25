@@ -1,10 +1,9 @@
 name: Links
 
 on:
+  # Merged changes are not checked again: the pull request already ran them.
+  # The weekly run still catches external links that break later.
   pull_request:
-    paths: ["**/*.html", "**/*.md", ".github/workflows/link-check.yml"]
-  push:
-    branches: [main]
     paths: ["**/*.html", "**/*.md", ".github/workflows/link-check.yml"]
   schedule:
     - cron: "0 6 * * 1"
