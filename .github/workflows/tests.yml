@@ -1,15 +1,30 @@
 name: Tests
 
 on:
+  # Merged changes are not tested again: the pull request already ran them.
   pull_request:
-  push:
-    branches: [main]
+    types: [opened, synchronize, reopened, edited, labeled]
   workflow_dispatch:
 
 permissions: {}
 
 jobs:
   playwright:
+    # Pull requests only. Skipped for docs, style and chore titles (chore(deps) still runs), unless the
+    # PR has the run-tests label. Editing a title or adding a label re-runs only when it can change the result.
+    if: >-
+      github.event_name != 'pull_request' || (
+        (github.event.action != 'edited' || github.event.changes.title != null) &&
+        (github.event.action != 'labeled' || github.event.label.name == 'run-tests') &&
+        (
+          contains(github.event.pull_request.labels.*.name, 'run-tests') ||
+          !(
+            startsWith(github.event.pull_request.title, 'docs') ||
+            startsWith(github.event.pull_request.title, 'style') ||
+            (startsWith(github.event.pull_request.title, 'chore') && !startsWith(github.event.pull_request.title, 'chore(deps)'))
+          )
+        )
+      )
     name: Playwright
     runs-on: ubuntu-latest
     permissions:
