@@ -50,5 +50,5 @@ for (const [dir, title] of APPS) {
 
 test('parent page opens', async ({ page }) => {
   await page.goto('/parents/');
-  await expect(page).toHaveTitle('Untuk Orang Tua');
+  await expect(page).toHaveTitle('For parents');
 });

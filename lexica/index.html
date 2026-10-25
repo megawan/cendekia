@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="description" content="Permainan sederhana untuk anak belajar kosakata Bahasa Inggris dari Bahasa Indonesia: hewan, buah, tubuh, warna, dan lainnya, lengkap dengan suara.">
+<meta name="description" content="A simple game for Indonesian-speaking children to learn English words: animals, fruit, the body, colors and more, all read aloud in both languages.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
@@ -232,50 +232,50 @@
       <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg>
       <div>
         <h1>Lexica</h1>
-        <p class="sub">Indonesia ↔ English bersama Kiki</p>
+        <p class="sub">Indonesian ↔ English with Kiki</p>
       </div>
     </div>
     <div class="pills">
-      <span class="pill" title="Jumlah bintang"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0</span> bintang</span>
-      <span class="pill" title="Hari belajar berturut-turut"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0</span> hari</span>
-      <span class="pill" title="Stiker terkumpul"><span class="ic" aria-hidden="true">🦜</span><span id="homeStk">0/12</span> stiker</span>
+      <span class="pill" title="Stars"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0</span> stars</span>
+      <span class="pill" title="Days in a row"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0</span> days</span>
+      <span class="pill" title="Stickers collected"><span class="ic" aria-hidden="true">🦜</span><span id="homeStk">0/12</span> stickers</span>
     </div>
     <div class="menu">
       <button type="button" class="card hero-card" data-go="map" style="--c: var(--c-orange)">
         <span class="badge" aria-hidden="true">🗺️</span>
-        <span><b>Petualangan</b><br><small id="homeNext">Pilih tema favoritmu</small></span>
+        <span><b>Adventure</b><br><small id="homeNext">Pick your favorite theme</small></span>
       </button>
       <button type="button" class="card" data-go="cards" style="--c: var(--c-pink)">
-        <span class="badge" aria-hidden="true">🐱</span><b>Kartu Kata</b><small>Ketuk, dengar dua bahasa</small></button>
+        <span class="badge" aria-hidden="true">🐱</span><b>Word cards</b><small>Tap to hear both languages</small></button>
       <button type="button" class="card" data-go="stickers" style="--c: var(--c-teal)">
-        <span class="badge" aria-hidden="true">🦜</span><b>Stiker-ku</b><small>Kumpulkan bintang</small></button>
+        <span class="badge" aria-hidden="true">🦜</span><b>My stickers</b><small>Collect stars</small></button>
     </div>
-    <p class="note" id="voiceNote" hidden>Perangkat ini belum punya suara Bahasa Indonesia atau Inggris. Rekaman suara tetap diputar bila tersedia.</p>
-    <p class="note"><a href="../">← Aplikasi lain di Cendekia</a> · <a href="../parents/">👪 Orang tua</a></p>
+    <p class="note" id="voiceNote" hidden>This device has no Indonesian or English voice yet. Recordings still play where there are some.</p>
+    <p class="note"><a href="../">← More apps in Cendekia</a> · <a href="../parents/">👪 For parents</a></p>
   </section>
 
   <!-- Adventure map -->
   <section id="map" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Pilih Tema</h2>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Choose a theme</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="mapStars">0</span></span>
     </div>
     <div class="themes" id="mapNodes"></div>
-    <p class="note"><button type="button" class="btn ghost" id="resetMap">Mulai ulang petualangan</button></p>
+    <p class="note"><button type="button" class="btn ghost" id="resetMap">Start the adventure again</button></p>
   </section>
 
   <!-- Cards -->
   <section id="cards" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Kartu Kata</h2><span class="spacer"></span>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Word cards</h2><span class="spacer"></span>
     </div>
     <div class="chips" id="cCats"></div>
     <div class="stage">
       <div class="pic" id="cPic" aria-hidden="true"></div>
       <div class="langs">
-        <button type="button" class="lang" id="cId"><small>Indonesia</small><b></b></button>
+        <button type="button" class="lang" id="cId"><small>Indonesian</small><b></b></button>
         <button type="button" class="lang" id="cEn"><small>English</small><b></b></button>
       </div>
     </div>
@@ -285,7 +285,7 @@
   <!-- Quiz -->
   <section id="quiz" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" id="qBack">← Peta</button>
+      <button type="button" class="btn ghost" id="qBack">← Map</button>
       <div class="prog" id="prog"></div>
       <div class="combo" id="combo" aria-live="polite"></div>
     </div>
@@ -303,21 +303,21 @@
   <section id="result" hidden>
     <div class="stack">
       <div class="hero"><svg class="mascot" data-mood="cheer" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg></div>
-      <h2 id="rTitle">Hebat!</h2>
+      <h2 id="rTitle">Great!</h2>
       <div class="stars" id="rStars"></div>
       <p class="summary" id="rText"></p>
       <div class="gift" id="rGift" hidden></div>
-      <button type="button" class="btn alt" id="rNext">Lanjut</button>
-      <button type="button" class="btn" id="rAgain">Main lagi</button>
-      <button type="button" class="btn ghost" data-go="map">Ke peta</button>
+      <button type="button" class="btn alt" id="rNext">Next</button>
+      <button type="button" class="btn" id="rAgain">Play again</button>
+      <button type="button" class="btn ghost" data-go="map">Back to the map</button>
     </div>
   </section>
 
   <!-- Stickers -->
   <section id="stickers" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Stiker-ku</h2>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>My stickers</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="stkStars">0</span></span>
     </div>
     <p class="note" id="stkNext"></p>
@@ -330,7 +330,7 @@
 <script type="application/json" id="content">
 {
   "cats": [
-    { "id": "hewan", "title": "Hewan Ternak", "icon": "🐄", "words": [
+    { "id": "hewan", "title": "Farm animals", "icon": "🐄", "words": [
       ["kucing", "cat", "🐱"],
       ["anjing", "dog", "🐶"],
       ["sapi", "cow", "🐄"],
@@ -343,7 +343,7 @@
       ["kambing", "goat", "🐐"],
       ["kerbau", "buffalo", "🐃"]
     ] },
-    { "id": "liar", "title": "Hewan Liar", "icon": "🦁", "words": [
+    { "id": "liar", "title": "Wild animals", "icon": "🦁", "words": [
       ["gajah", "elephant", "🐘"],
       ["singa", "lion", "🦁"],
       ["harimau", "tiger", "🐯"],
@@ -357,7 +357,7 @@
       ["kanguru", "kangaroo", "🦘"],
       ["serigala", "wolf", "🐺"]
     ] },
-    { "id": "laut", "title": "Hewan Laut", "icon": "🐬", "words": [
+    { "id": "laut", "title": "Sea animals", "icon": "🐬", "words": [
       ["ikan", "fish", "🐟"],
       ["hiu", "shark", "🦈"],
       ["paus", "whale", "🐋"],
@@ -371,7 +371,7 @@
       ["cumi-cumi", "squid", "🦑"],
       ["lobster", "lobster", "🦞"]
     ] },
-    { "id": "serangga", "title": "Serangga & Reptil", "icon": "🦋", "words": [
+    { "id": "serangga", "title": "Insects & reptiles", "icon": "🦋", "words": [
       ["kupu-kupu", "butterfly", "🦋"],
       ["lebah", "bee", "🐝"],
       ["semut", "ant", "🐜"],
@@ -384,7 +384,7 @@
       ["katak", "frog", "🐸"],
       ["kadal", "lizard", "🦎"]
     ] },
-    { "id": "burung", "title": "Burung", "icon": "🦜", "words": [
+    { "id": "burung", "title": "Birds", "icon": "🦜", "words": [
       ["burung", "bird", "🐦"],
       ["burung hantu", "owl", "🦉"],
       ["elang", "eagle", "🦅"],
@@ -396,7 +396,7 @@
       ["anak ayam", "chick", "🐤"],
       ["merpati", "dove", "🕊️"]
     ] },
-    { "id": "buah", "title": "Buah", "icon": "🍎", "words": [
+    { "id": "buah", "title": "Fruit", "icon": "🍎", "words": [
       ["apel", "apple", "🍎"],
       ["pisang", "banana", "🍌"],
       ["jeruk", "orange", "🍊"],
@@ -413,7 +413,7 @@
       ["kiwi", "kiwi", "🥝"],
       ["melon", "melon", "🍈"]
     ] },
-    { "id": "sayur", "title": "Sayuran", "icon": "🥕", "words": [
+    { "id": "sayur", "title": "Vegetables", "icon": "🥕", "words": [
       ["wortel", "carrot", "🥕"],
       ["tomat", "tomato", "🍅"],
       ["jagung", "corn", "🌽"],
@@ -427,7 +427,7 @@
       ["jamur", "mushroom", "🍄"],
       ["kacang tanah", "peanut", "🥜"]
     ] },
-    { "id": "makanan", "title": "Makanan & Minuman", "icon": "🍞", "words": [
+    { "id": "makanan", "title": "Food & drinks", "icon": "🍞", "words": [
       ["roti", "bread", "🍞"],
       ["nasi", "rice", "🍚"],
       ["telur", "egg", "🥚"],
@@ -445,7 +445,7 @@
       ["teh", "tea", "🍵"],
       ["air", "water", "💧"]
     ] },
-    { "id": "wajah", "title": "Wajah", "icon": "🙂", "types": ["picEn", "enId", "idEn", "spell"], "words": [
+    { "id": "wajah", "title": "The face", "icon": "🙂", "types": ["picEn", "enId", "idEn", "spell"], "words": [
       ["rambut", "hair", "fig:face:hair"],
       ["dahi", "forehead", "fig:face:forehead"],
       ["alis", "eyebrow", "fig:face:eyebrow"],
@@ -459,7 +459,7 @@
       ["lidah", "tongue", "fig:face:tongue"],
       ["dagu", "chin", "fig:face:chin"]
     ] },
-    { "id": "badan", "title": "Anggota Badan", "icon": "🧍", "types": ["picEn", "enId", "idEn", "spell"], "words": [
+    { "id": "badan", "title": "The body", "icon": "🧍", "types": ["picEn", "enId", "idEn", "spell"], "words": [
       ["kepala", "head", "fig:body:head"],
       ["leher", "neck", "fig:body:neck"],
       ["bahu", "shoulder", "fig:body:shoulder"],
@@ -480,7 +480,7 @@
       ["telapak kaki", "foot", "fig:body:foot"],
       ["jari kaki", "toe", "fig:body:toe"]
     ] },
-    { "id": "organ", "title": "Organ Dalam", "icon": "🫀", "types": ["picEn", "enId", "idEn", "spell"], "words": [
+    { "id": "organ", "title": "Inside the body", "icon": "🫀", "types": ["picEn", "enId", "idEn", "spell"], "words": [
       ["otak", "brain", "fig:body:brain"],
       ["tenggorokan", "throat", "fig:body:throat"],
       ["jantung", "heart", "fig:body:heart"],
@@ -494,7 +494,7 @@
       ["tengkorak", "skull", "fig:body:skull"],
       ["tulang belakang", "spine", "fig:back:spine"]
     ] },
-    { "id": "rumah", "title": "Rumah", "icon": "🏠", "words": [
+    { "id": "rumah", "title": "The house", "icon": "🏠", "words": [
       ["rumah", "house", "🏠"],
       ["pintu", "door", "🚪"],
       ["jendela", "window", "🪟"],
@@ -516,7 +516,7 @@
       ["ember", "bucket", "🪣"],
       ["sikat gigi", "toothbrush", "🪥"]
     ] },
-    { "id": "dapur", "title": "Dapur", "icon": "🍳", "words": [
+    { "id": "dapur", "title": "The kitchen", "icon": "🍳", "words": [
       ["sendok", "spoon", "🥄"],
       ["garpu", "fork", "🍴"],
       ["pisau", "knife", "🔪"],
@@ -528,7 +528,7 @@
       ["panci", "pot", "🍲"],
       ["sumpit", "chopsticks", "🥢"]
     ] },
-    { "id": "sekolah", "title": "Sekolah", "icon": "✏️", "words": [
+    { "id": "sekolah", "title": "School", "icon": "✏️", "words": [
       ["pensil", "pencil", "✏️"],
       ["pulpen", "pen", "🖊️"],
       ["penggaris", "ruler", "📏"],
@@ -542,7 +542,7 @@
       ["mikroskop", "microscope", "🔬"],
       ["sempoa", "abacus", "🧮"]
     ] },
-    { "id": "pakaian", "title": "Pakaian", "icon": "👕", "words": [
+    { "id": "pakaian", "title": "Clothes", "icon": "👕", "words": [
       ["topi", "hat", "🧢"],
       ["sepatu", "shoe", "👟"],
       ["kaus kaki", "sock", "🧦"],
@@ -559,7 +559,7 @@
       ["dasi", "necktie", "👔"],
       ["jilbab", "hijab", "🧕"]
     ] },
-    { "id": "kendaraan", "title": "Kendaraan", "icon": "🚗", "words": [
+    { "id": "kendaraan", "title": "Vehicles", "icon": "🚗", "words": [
       ["mobil", "car", "🚗"],
       ["bus", "bus", "🚌"],
       ["sepeda", "bicycle", "🚲"],
@@ -578,7 +578,7 @@
       ["skuter", "scooter", "🛵"],
       ["roket", "rocket", "🚀"]
     ] },
-    { "id": "jalan", "title": "Di Jalan Raya", "icon": "🚦", "words": [
+    { "id": "jalan", "title": "On the street", "icon": "🚦", "words": [
       ["zebra cross", "zebra crossing", "art:zebra"],
       ["lampu lalu lintas", "traffic light", "🚦"],
       ["tiang pembatas", "bollard", "art:bollard"],
@@ -598,7 +598,7 @@
       ["tutup selokan", "manhole", "art:manhole"],
       ["pejalan kaki", "pedestrian", "🚶"]
     ] },
-    { "id": "cuaca", "title": "Cuaca", "icon": "⛅", "words": [
+    { "id": "cuaca", "title": "Weather", "icon": "⛅", "words": [
       ["matahari", "sun", "☀️"],
       ["awan", "cloud", "☁️"],
       ["hujan", "rain", "🌧️"],
@@ -608,7 +608,7 @@
       ["angin", "wind", "💨"],
       ["kabut", "fog", "🌫️"]
     ] },
-    { "id": "alam", "title": "Alam", "icon": "🌳", "words": [
+    { "id": "alam", "title": "Nature", "icon": "🌳", "words": [
       ["bulan", "moon", "🌙"],
       ["bintang", "star", "⭐"],
       ["bumi", "earth", "🌍"],
@@ -622,7 +622,7 @@
       ["laut", "sea", "🌊"],
       ["api", "fire", "🔥"]
     ] },
-    { "id": "warna", "title": "Warna", "icon": "🌈", "words": [
+    { "id": "warna", "title": "Colors", "icon": "🌈", "words": [
       ["merah", "red", "🔴"],
       ["biru", "blue", "🔵"],
       ["hijau", "green", "🟢"],
@@ -633,7 +633,7 @@
       ["hitam", "black", "⚫"],
       ["putih", "white", "⚪"]
     ] },
-    { "id": "keluarga", "title": "Keluarga", "icon": "👨‍👩‍👧", "words": [
+    { "id": "keluarga", "title": "Family", "icon": "👨‍👩‍👧", "words": [
       ["ibu", "mother", "👩"],
       ["ayah", "father", "👨"],
       ["nenek", "grandmother", "👵"],
@@ -643,7 +643,7 @@
       ["anak perempuan", "girl", "👧"],
       ["keluarga", "family", "👨‍👩‍👧"]
     ] },
-    { "id": "profesi", "title": "Pekerjaan", "icon": "🧑‍⚕️", "words": [
+    { "id": "profesi", "title": "Jobs", "icon": "🧑‍⚕️", "words": [
       ["guru", "teacher", "🧑‍🏫"],
       ["dokter", "doctor", "🧑‍⚕️"],
       ["polisi", "police officer", "👮"],
@@ -657,7 +657,7 @@
       ["montir", "mechanic", "🧑‍🔧"],
       ["penyanyi", "singer", "🧑‍🎤"]
     ] },
-    { "id": "tempat", "title": "Tempat Umum", "icon": "🏥", "words": [
+    { "id": "tempat", "title": "Places in town", "icon": "🏥", "words": [
       ["rumah sakit", "hospital", "🏥"],
       ["sekolah", "school", "🏫"],
       ["masjid", "mosque", "🕌"],
@@ -670,7 +670,7 @@
       ["pantai", "beach", "🏖️"],
       ["hotel", "hotel", "🏨"]
     ] },
-    { "id": "mainan", "title": "Mainan & Musik", "icon": "🧸", "words": [
+    { "id": "mainan", "title": "Toys & music", "icon": "🧸", "words": [
       ["bola", "ball", "⚽"],
       ["layang-layang", "kite", "🪁"],
       ["boneka", "teddy bear", "🧸"],
@@ -686,14 +686,14 @@
       ["yoyo", "yo-yo", "🪀"]
     ] }
   ],
-  "cheers": ["Hebat!", "Pintar!", "Benar!", "Bagus sekali!", "Keren!", "Luar biasa!"],
+  "cheers": ["Great!", "Clever!", "Right!", "Very good!", "Cool!", "Amazing!"],
   "phrases": {
     "hearEn": "Dengarkan, lalu pilih gambarnya.",
     "picEn": "Apa bahasa Inggrisnya?",
     "idEn": "Apa bahasa Inggrisnya?",
     "enId": "Apa artinya?",
     "spell": "Susun hurufnya.",
-    "retry": ["Ayo coba lagi.", "Hampir benar!", "Dengarkan sekali lagi."]
+    "retry": ["Try again.", "Almost!", "Listen once more."]
   }
 }
 </script>
@@ -894,12 +894,12 @@
 
   // ---- Stickers: birds, unlocked by the total star count ----
   const STICKERS = [
-    { at: 3, name: 'Kakatua', pic: '🦜', c: '#ffe0ec' }, { at: 6, name: 'Bebek', pic: '🦆', c: '#fff1c2' },
-    { at: 10, name: 'Elang', pic: '🦅', c: '#f6e6d2' }, { at: 15, name: 'Flamingo', pic: '🦩', c: '#ffe0ec' },
-    { at: 21, name: 'Merak', pic: '🦚', c: '#dff5e8' }, { at: 28, name: 'Burung hantu', pic: '🦉', c: '#f6e6d2' },
-    { at: 36, name: 'Angsa', pic: '🦢', c: '#eceff3' }, { at: 45, name: 'Pinguin', pic: '🐧', c: '#e6ecf5' },
-    { at: 55, name: 'Anak ayam', pic: '🐤', c: '#fff1c2' }, { at: 66, name: 'Kalkun', pic: '🦃', c: '#ffe7cc' },
-    { at: 78, name: 'Burung biru', pic: '🐦', c: '#d6ebff' }, { at: 90, name: 'Burung dodo', pic: '🦤', c: '#ece6ff' }
+    { at: 3, name: 'Cockatoo', pic: '🦜', c: '#ffe0ec' }, { at: 6, name: 'Duck', pic: '🦆', c: '#fff1c2' },
+    { at: 10, name: 'Eagle', pic: '🦅', c: '#f6e6d2' }, { at: 15, name: 'Flamingo', pic: '🦩', c: '#ffe0ec' },
+    { at: 21, name: 'Peacock', pic: '🦚', c: '#dff5e8' }, { at: 28, name: 'Owl', pic: '🦉', c: '#f6e6d2' },
+    { at: 36, name: 'Swan', pic: '🦢', c: '#eceff3' }, { at: 45, name: 'Penguin', pic: '🐧', c: '#e6ecf5' },
+    { at: 55, name: 'Chick', pic: '🐤', c: '#fff1c2' }, { at: 66, name: 'Turkey', pic: '🦃', c: '#ffe7cc' },
+    { at: 78, name: 'Bluebird', pic: '🐦', c: '#d6ebff' }, { at: 90, name: 'Dodo', pic: '🦤', c: '#ece6ff' }
   ];
   const unlocked = () => STICKERS.filter((k) => k.at <= S.stars).length;
   const face = (k) => '<span class="face" style="--c:' + k.c + '" aria-hidden="true">' + k.pic + '</span>';
@@ -910,9 +910,9 @@
   const COLORS = ['var(--c-orange)', 'var(--c-pink)', 'var(--c-purple)', 'var(--c-blue)', 'var(--c-teal)', 'var(--c-green)'];
   const SHORT = ALL.filter((w) => /^[a-z]{3,5}$/.test(w.en));
   const STAGES = C.cats.map((k, i) => ({ id: k.id, title: k.title, icon: k.icon, c: COLORS[i % COLORS.length], pool: k.list, types: k.types || ['hearEn', 'picEn'] })).concat([
-    { id: 'arti', title: 'Tebak Arti', icon: 'A↔B', c: 'var(--c-teal)', pool: ALL, types: ['idEn', 'enId'] },
-    { id: 'eja', title: 'Eja Kata', icon: '🧩', c: 'var(--c-green)', pool: SHORT, types: ['spell'] },
-    { id: 'juara', title: 'Juara Kosakata', icon: '🏆', c: 'var(--c-orange)', pool: ALL, types: ['hearEn', 'picEn', 'idEn', 'enId', 'spell'] }
+    { id: 'arti', title: 'Guess the meaning', icon: 'A↔B', c: 'var(--c-teal)', pool: ALL, types: ['idEn', 'enId'] },
+    { id: 'eja', title: 'Spell it', icon: '🧩', c: 'var(--c-green)', pool: SHORT, types: ['spell'] },
+    { id: 'juara', title: 'Word champion', icon: '🏆', c: 'var(--c-orange)', pool: ALL, types: ['hearEn', 'picEn', 'idEn', 'enId', 'spell'] }
   ]);
   const nextStage = () => { const i = STAGES.findIndex((s) => !S.best[s.id]); return i < 0 ? -1 : i; };
   const starSvg = (on, cls) => '<svg class="' + (cls || '') + (on ? ' on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
@@ -922,7 +922,7 @@
     $('homeDays').textContent = streakNow();
     $('homeStk').textContent = unlocked() + '/' + STICKERS.length;
     const n = nextStage();
-    $('homeNext').textContent = n < 0 ? 'Semua tahap selesai! Kumpulkan 3 bintang' : 'Berikutnya: ' + STAGES[n].title;
+    $('homeNext').textContent = n < 0 ? 'Every stage done! Now collect 3 stars' : 'Next: ' + STAGES[n].title;
   }
 
   function renderMap() {
@@ -937,13 +937,13 @@
       b.innerHTML = '<span class="ico" aria-hidden="true"></span><b></b><span class="st"></span>';
       b.firstChild.textContent = s.icon; b.children[1].textContent = s.title;
       b.lastChild.innerHTML = [1, 2, 3].map((k) => starSvg(k <= best)).join('');
-      b.setAttribute('aria-label', s.title + ', ' + best + ' bintang');
+      b.setAttribute('aria-label', s.title + ', ' + best + (best === 1 ? ' star' : ' stars'));
       b.addEventListener('click', () => startStage(i));
       box.appendChild(b);
     });
   }
   $('resetMap').addEventListener('click', () => {
-    if (!confirm('Mulai ulang petualangan? Bintang dan stiker tetap tersimpan.')) return;
+    if (!confirm('Start the adventure again? Stars and stickers are kept.')) return;
     S.best = {}; save(); renderMap();
   });
 
@@ -1049,7 +1049,7 @@
   function speakerBtn(onClick, label) {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn round'; b.textContent = '🔊';
-    b.setAttribute('aria-label', label || 'Dengarkan lagi');
+    b.setAttribute('aria-label', label || 'Listen again');
     b.addEventListener('click', onClick);
     return b;
   }
@@ -1069,6 +1069,7 @@
     return go;
   }
 
+  // Kiki's instructions stay in Indonesian, the children's own language: they have recordings, like the words.
   const HINTS = { hearEn: 'Dengarkan, lalu pilih', picEn: 'Apa bahasa Inggrisnya?', idEn: 'Apa bahasa Inggrisnya?',
     enId: 'Apa artinya?', spell: 'Susun hurufnya' };
 
@@ -1101,14 +1102,14 @@
       return;
     }
     if (q.type === 'idEn') {
-      ask.append(label(w.id, 'id big'), speakerBtn(() => speak(id(w)), 'Dengarkan kata Indonesia'));
+      ask.append(label(w.id, 'id big'), speakerBtn(() => speak(id(w)), 'Hear the Indonesian word'));
       q.opts.forEach((o) => grid.appendChild(optButton('txt', o.en, o === w, (b) => answer(b, o === w, grid, () => speak(en(o)), close))));
       ans.appendChild(grid);
       lead(id(w));
       return;
     }
     if (q.type === 'enId') {
-      ask.append(label(w.en, 'big'), speakerBtn(() => speak(en(w)), 'Dengarkan kata Inggris'));
+      ask.append(label(w.en, 'big'), speakerBtn(() => speak(en(w)), 'Hear the English word'));
       q.opts.forEach((o) => grid.appendChild(optButton('txt', o.id, o === w, (b) => answer(b, o === w, grid, () => speak(en(w)), close))));
       ans.appendChild(grid);
       lead(en(w));
@@ -1161,7 +1162,7 @@
     if (!wrongThis) combo++;
     $('combo').textContent = combo >= 3 ? '🔥 ' + combo : '';
     const p = sample(C.cheers); // shown in the bubble only, a right answer is not read aloud
-    mood('cheer', combo >= 3 ? p + ' ' + combo + ' kali benar!' : p);
+    mood('cheer', combo >= 3 ? p + ' ' + combo + ' right in a row!' : p);
     if (combo >= 3) confetti(14);
     $('prog').children[qi].classList.add('done');
   }
@@ -1189,13 +1190,13 @@
     markDay(); save();
     const gained = STICKERS.slice(before, unlocked());
     show('result');
-    $('rTitle').textContent = stars === 3 ? 'Luar biasa!' : stars === 2 ? 'Hebat!' : 'Bagus, terus berlatih!';
+    $('rTitle').textContent = stars === 3 ? 'Amazing!' : stars === 2 ? 'Great!' : 'Good, keep practising!';
     $('rStars').innerHTML = [1, 2, 3].map((k) => starSvg(k <= stars, 'star')).join('');
-    $('rText').textContent = (ROUNDS - mistakes) + ' dari ' + ROUNDS + ' benar pada percobaan pertama. ' +
-      'Kamu dapat ' + stars + ' bintang. 🔥 ' + streakNow() + ' hari belajar.';
+    $('rText').textContent = (ROUNDS - mistakes) + ' of ' + ROUNDS + ' right on the first try. ' +
+      'You got ' + stars + (stars === 1 ? ' star' : ' stars') + '. 🔥 ' + streakNow() + (streakNow() === 1 ? ' day' : ' days') + ' in a row.';
     const g = $('rGift');
     g.hidden = !gained.length;
-    if (gained.length) g.innerHTML = '<b>Stiker baru!</b><div class="stk">' + gained.map(face).join('') + '</div><small>' + gained.map((k) => k.name).join(', ') + '</small>';
+    if (gained.length) g.innerHTML = '<b>New sticker!</b><div class="stk">' + gained.map(face).join('') + '</div><small>' + gained.map((k) => k.name).join(', ') + '</small>';
     $('rNext').hidden = stageIdx + 1 >= STAGES.length;
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
   }
@@ -1206,7 +1207,7 @@
   function renderStickers() {
     $('stkStars').textContent = S.stars;
     const nx = STICKERS.find((k) => k.at > S.stars);
-    $('stkNext').textContent = nx ? 'Kumpulkan ' + (nx.at - S.stars) + ' bintang lagi untuk stiker berikutnya.' : 'Semua stiker sudah terkumpul. Hebat!';
+    $('stkNext').textContent = nx ? 'Collect ' + (nx.at - S.stars) + ' more stars for the next sticker.' : 'You have every sticker. Great!';
     $('sgrid').innerHTML = '';
     STICKERS.forEach((k) => {
       const d = document.createElement('div');

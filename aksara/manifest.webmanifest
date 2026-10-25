@@ -1,8 +1,8 @@
 {
   "name": "Aksara",
   "short_name": "Aksara",
-  "description": "Permainan sederhana untuk anak belajar membaca dalam Bahasa Indonesia, lengkap dengan suara.",
-  "lang": "id",
+  "description": "A simple game for children learning to read in Indonesian, all read aloud.",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

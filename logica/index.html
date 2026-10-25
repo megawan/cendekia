@@ -1033,7 +1033,19 @@
   };
   const AVATARS = CD.AVATARS;
   const fresh = () => ({ diff: '', best: { easy: {}, medium: {}, hard: {} }, day: '', streak: 0, seen: {}, log: {}, days: {} });
-  const stateOf = (id) => Object.assign(fresh(), CD.state(BASE, id) || {});
+  // The quiz worlds had Indonesian ids before (pola, mesin, timbang, saring, kode). Saved stars, logs and seen
+  // guides under the old ids move to the new ones the first time a child's state is read.
+  const OLD_IDS = { pola: 'patterns', mesin: 'machine', timbang: 'balance', saring: 'filter', kode: 'code' };
+  function renameWorlds(st) {
+    Object.values(st.best || {}).forEach((byW) => Object.keys(OLD_IDS).forEach((o) => { if (byW[o]) { byW[OLD_IDS[o]] = byW[OLD_IDS[o]] || byW[o]; delete byW[o]; } }));
+    Object.keys(OLD_IDS).forEach((o) => { if (st.seen && st.seen[o]) { st.seen[OLD_IDS[o]] = true; delete st.seen[o]; } });
+    Object.keys(st.log || {}).forEach((k) => {
+      const [d, w, i] = k.split('/');
+      if (OLD_IDS[w]) { const nk = d + '/' + OLD_IDS[w] + '/' + i; st.log[nk] = st.log[nk] || st.log[k]; delete st.log[k]; }
+    });
+    return st;
+  }
+  const stateOf = (id) => renameWorlds(Object.assign(fresh(), CD.state(BASE, id) || {}));
   // Logica had its own players before (logika.v2, and logika.v1 before that). Each one moves to the shared
   // child with the same name, the player who was playing moves to the current child, and the others become new children.
   (function moveOldPlayers() {
@@ -1096,21 +1108,21 @@
   const WORLDS = [
     { id: 'robot', name: 'Robot Path', skill: 'Algorithms', icon: '🤖', c: 'var(--c-orange)', kind: 'robot',
       desc: 'Line up commands step by step to get Gbot to the flag. Later come repeat, function and if blocks.' },
-    { id: 'pola', name: 'Patterns', skill: 'Pattern recognition', icon: '🔷', c: 'var(--c-blue)', kind: 'quiz', total: 5,
+    { id: 'patterns', name: 'Patterns', skill: 'Pattern recognition', icon: '🔷', c: 'var(--c-blue)', kind: 'quiz', total: 5,
       desc: 'Spot the rule that repeats, then find what comes next or what is missing.',
       levels: ['Colors', 'Shapes', 'Repeats', 'Colors and shapes', 'Growing', 'Turning', 'Two rules', 'Mixed'] },
-    { id: 'mesin', name: 'Magic Machine', skill: 'Abstraction', icon: '⚙️', c: 'var(--c-purple)', kind: 'quiz', total: 4,
+    { id: 'machine', name: 'Magic Machine', skill: 'Abstraction', icon: '⚙️', c: 'var(--c-purple)', kind: 'quiz', total: 4,
       desc: 'Watch what goes in and what comes out of the machine. Find its rule!',
       levels: ['New color', 'New shape', 'Add one', 'Turn', 'Double', 'Two changes', 'Add two', 'Number machine'] },
-    { id: 'timbang', name: 'Balance', skill: 'Logical reasoning', icon: '⚖️', c: 'var(--c-teal)', kind: 'quiz', total: 5,
+    { id: 'balance', name: 'Balance', skill: 'Logical reasoning', icon: '⚖️', c: 'var(--c-teal)', kind: 'quiz', total: 5,
       desc: 'Read the scales, then find the heaviest or the lightest ball.',
       levels: ['Heavier', 'Lighter', 'Heaviest', 'Lightest', 'Many balls', 'Balanced'] },
     { id: 'debug', name: 'Fix the Code', skill: 'Debugging', icon: '🐞', c: 'var(--c-pink)', kind: 'robot',
       desc: 'Gbot\'s program has one mistake. Run it, find the wrong block and fix it.' },
-    { id: 'saring', name: 'Logic Filter', skill: 'AND, OR, NOT logic', icon: '🔍', c: 'var(--c-green)', kind: 'quiz', total: 4,
+    { id: 'filter', name: 'Logic Filter', skill: 'AND, OR, NOT logic', icon: '🔍', c: 'var(--c-green)', kind: 'quiz', total: 4,
       desc: 'Pick every item that fits the rule. Watch out for AND, OR and NOT.',
       levels: ['Colors', 'Shapes', 'AND', 'NOT', 'OR', 'But not', 'Mixed'] },
-    { id: 'kode', name: 'Secret Code', skill: 'Codes and binary', icon: '🔐', c: 'var(--c-indigo)', kind: 'quiz', total: 4,
+    { id: 'code', name: 'Secret Code', skill: 'Codes and binary', icon: '🔐', c: 'var(--c-indigo)', kind: 'quiz', total: 4,
       desc: 'Turn 0 and 1 into pictures, read numbers from light bulbs and crack secret messages.',
       levels: ['Read the picture', 'Paint by code', 'Short code', 'Light bulbs', 'Make a number', 'Secret message', 'Write in code'] },
     { id: 'sudoku', name: 'Mini Sudoku', skill: 'Deduction', icon: '🧩', c: 'var(--c-red)', kind: 'quiz', total: 3,
@@ -1299,12 +1311,12 @@
   // =====================================================================
   const SKILL_INFO = {
     robot: 'Planning steps in the right order. Later: repeating steps, reusing a group of steps (a function) and making a choice (if).',
-    pola: 'Spotting a rule that repeats and using it to predict.',
-    mesin: 'Finding the general rule behind a few examples, and applying it to something new.',
-    timbang: 'Combining facts to reach a conclusion: if red is heavier than blue and blue is heavier than green, red is the heaviest.',
+    patterns: 'Spotting a rule that repeats and using it to predict.',
+    machine: 'Finding the general rule behind a few examples, and applying it to something new.',
+    balance: 'Combining facts to reach a conclusion: if red is heavier than blue and blue is heavier than green, red is the heaviest.',
     debug: 'Finding where a plan goes wrong and fixing just that part, calmly.',
-    saring: 'Combining conditions with AND, OR and NOT, as in searches and programming.',
-    kode: 'How computers keep pictures and numbers as 0 and 1, write data in a shorter way, and hide a message with a code.',
+    filter: 'Combining conditions with AND, OR and NOT, as in searches and programming.',
+    code: 'How computers keep pictures and numbers as 0 and 1, write data in a shorter way, and hide a message with a code.',
     sudoku: 'Ruling out what cannot fit, one step at a time, until only one answer is left.'
   };
   let viewed = null, gateAns = 0;
@@ -1439,16 +1451,16 @@
       ['<div class="demo d-pop"><span class="blk loopBtn" style="--c:var(--loop)">🔁</span><span class="blk F">★</span><span class="blk ifBtn" style="--c:#f59e0b"><span class="ytile"></span></span></div>',
         'Later: 🔁 repeats blocks, ★ is a function you build once and use again, and the yellow block checks the tile.']
     ],
-    pola: [
+    patterns: [
       ['<div class="demo"><span class="seqd">' + [0, 1, 0].map((k) => itemSvg(it('circle', k ? 'blue' : 'red'))).join('') + '<span class="q">?</span></span></div>', 'Look at the row. What repeats?'],
       ['<div class="demo d-fly"><span class="flyme">' + itemSvg(it('circle', 'blue')) + '</span></div>', 'Tap the one that comes next or fills the gap.']
     ],
-    mesin: [
+    machine: [
       ['<div class="demo d-machine"><span class="in">' + itemSvg(it('star', 'red')) + '</span>' + MACHINE.replace('class="machine"', 'class="machine on"') + '<span class="out">' + itemSvg(it('star', 'blue')) + '</span></div>',
         'Watch what the machine does to each thing.'],
       ['<div class="demo"><span class="seqd">' + itemSvg(it('heart', 'red')) + '<b>→</b><span class="q">?</span></span></div>', 'Use the same rule: what comes out next?']
     ],
-    timbang: [
+    balance: [
       ['<div class="demo d-tilt"><span class="beam2"><span class="l">' + itemSvg(it('circle', 'red')) + '</span><span class="r">' + itemSvg(it('circle', 'blue')) + '</span></span></div>', 'The side that goes down is heavier.'],
       ['<div class="demo d-tilt level"><span class="beam2"><span class="l">' + itemSvg(it('circle', 'green')) + '</span><span class="r">' + itemSvg(it('circle', 'yellow')) + '</span></span></div>', 'A level scale means the same weight.'],
       ['<div class="demo">⚖️⚖️⚖️</div>', 'Put all the scales together to find the heaviest or lightest.']
@@ -1458,13 +1470,13 @@
       ['<div class="demo d-tap"><span class="btn go">▶ Run</span><span class="hand">👆</span></div>', 'Run it and see where Gbot goes wrong.'],
       ['<div class="demo d-pop">' + blkD('U') + blkD('L') + blkD('R') + blkD('D') + '</div>', 'Tap the wrong block, then pick the right one.']
     ],
-    saring: [
+    filter: [
       ['<div class="demo"><span class="chip"><i class="sw" style="background:#ef4444"></i>red</span></div>', 'Read the rule.'],
       ['<div class="demo d-sel"><span class="thingd on">' + itemSvg(it('circle', 'red')) + '</span><span class="thingd">' + itemSvg(it('star', 'blue')) + '</span><span class="thingd on">' + itemSvg(it('heart', 'red')) + '</span></div>',
         'Tap every item that fits.'],
       ['<div class="demo"><span class="btn go">✓ Check</span></div>', 'Then press ✓ Check.']
     ],
-    kode: [
+    code: [
       ['<div class="demo"><div class="bits"><div>0110</div><div>1001</div></div>' + pixHtml([[0, 1, 1, 0], [1, 0, 0, 1]], 'small') + '</div>', 'In a picture code, 1 is a filled square and 0 an empty one.'],
       ['<div class="demo">' + bulbHtml(4, 1) + bulbHtml(2, 0) + bulbHtml(1, 1) + '</div>', 'Add the numbers under the lit bulbs: 4 + 1 = 5.'],
       ['<div class="demo"><span class="secret">DBU</span><b>→</b><span class="secret plain">CAT</span></div>', 'In a secret message, every letter moves along the alphabet. Move it back to read it.']
@@ -2246,7 +2258,7 @@
   // ---- Pattern ----
   // Easy: three choices and the gap is always at the end. Hard: four choices, the gap is often in the
   // middle, dots grow by two and arrows turn by 45 degrees.
-  function genPola(lvl) {
+  function genPatterns(lvl) {
     const d = S.diff, cs = shuffle(CK.slice()), ss = shuffle(SK.slice());
     const fam = lvl < 7 ? lvl : d === 'easy' ? rnd(0, 4) : d === 'hard' ? rnd(3, 6) : rnd(2, 6);
     let seq, unit;
@@ -2298,7 +2310,7 @@
     + '<circle cx="82" cy="70" r="4" fill="#2a2150"/></g>'
     + '<rect x="40" y="10" width="50" height="18" rx="6" fill="#5b3fd6"/><text x="65" y="23" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Baloo 2, system-ui, sans-serif">?</text></g></svg>';
   // Easy: three examples and three choices. Hard: two examples, four choices and harder number rules.
-  function genMesin(lvl) {
+  function genMachine(lvl) {
     const d = S.diff, T = pick(CK), Sh = pick(SK);
     let rule, input, nEx = d === 'easy' ? 3 : d === 'hard' ? 2 : lvl < 4 ? 2 : 3, prefer = (x) => [x];
     if (lvl === 0) { rule = (x) => it(x.s, T); input = () => it(pick(SK), pick(CK.filter((c) => c !== T))); }
@@ -2392,7 +2404,7 @@
     pans[0].style.transform = 'translateY(' + (-dy) + 'px)';
     pans[1].style.transform = 'translateY(' + dy + 'px)';
   }
-  function genTimbang(lvl) {
+  function genBalance(lvl) {
     $('ask').innerHTML = '<div class="scales" id="scales"></div>';
     const box = $('scales');
     const my = runToken;
@@ -2468,7 +2480,7 @@
     return [word(r.a), 'but not', word(r.b)];
   }
   // Easy: six items. Medium: eight. Hard: ten items from four colors and four shapes.
-  function genSaring(lvl) {
+  function genFilter(lvl) {
     const d = S.diff, many = { easy: 6, medium: 8, hard: 10 }[d], kinds = d === 'hard' ? 4 : 3;
     let rule, items;
     for (let tries = 0; tries < 300; tries++) {
@@ -2592,7 +2604,7 @@
     .map((ch) => '<span' + (hl.includes(ch) ? ' class="hl"' : '') + '>' + ch + '</span>').join('') + '</div>';
   const steps = (k) => k + (k === 1 ? ' step' : ' steps');
 
-  function genKode(lvl) {
+  function genCode(lvl) {
     const d = S.diff, n = { easy: 4, medium: 5, hard: 6 }[d], many = d === 'easy' ? 3 : 4;
     if (lvl === 0) {
       const g = pixelArt(n), m = new Map([[gk(g), g]]);
@@ -2816,7 +2828,7 @@
     });
   }
 
-  const GEN = { pola: genPola, mesin: genMesin, timbang: genTimbang, saring: genSaring, kode: genKode, sudoku: genSudoku };
+  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku };
 
   // =====================================================================
   // Result and stickers
