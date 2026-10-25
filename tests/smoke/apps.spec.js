@@ -5,7 +5,7 @@ const APPS = [
   ['hijaiyah', /Hijaiyah/],
   ['aksara', /Aksara/],
   ['lexica', /Lexica/],
-  ['logika', /Logica/],
+  ['logica', /Logica/],
   ['numeria', /Numeria/],
 ];
 

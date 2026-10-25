@@ -1,0 +1,32 @@
+name: Lighthouse
+
+on:
+  pull_request:
+    paths: ["**/*.html", "**/*.js", "**/*.webmanifest", ".github/workflows/lighthouse.yml"]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  lighthouse:
+    permissions:
+      contents: read
+    uses: megawan/gha-shared-workflows/.github/workflows/site-lighthouse.yml@v1
+    with:
+      urls: |
+        /index.html
+        /hijaiyah/index.html
+        /aksara/index.html
+        /lexica/index.html
+        /logica/index.html
+        /numeria/index.html
+        /orangtua/index.html
+      # Measured locally on 2026-10-25: performance 0.8+, accessibility 0.87 to 1, best practices 0.82.
+      # The minimums sit just below that, so a drop fails and raising them is a later goal.
+      min-performance: "0.8"
+      min-accessibility: "0.85"
+      min-best-practices: "0.8"
+      # Scores vary between runners, so the weekly run only reports.
+      fail: ${{ github.event_name != 'schedule' }}

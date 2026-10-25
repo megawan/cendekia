@@ -57,6 +57,8 @@ npm test                  # or test:smoke, test:functional, test:regression
 
 Any uncaught script error on a page fails the test. The `Tests` workflow runs the suite on every pull request.
 
+Three more workflows run on every pull request: `Smoke` (pages, manifests and service workers answer 200) and `Lighthouse` (performance, accessibility and best-practices scores) both come from [gha-shared-workflows](https://github.com/megawan/gha-shared-workflows), and `Tests` runs the Playwright suite. [Dependabot](.github/dependabot.yml) keeps the actions and Playwright up to date.
+
 ## Contributing
 
 Every change goes through its own branch and pull request.

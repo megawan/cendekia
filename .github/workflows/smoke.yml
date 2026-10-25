@@ -1,0 +1,36 @@
+name: Smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  smoke:
+    permissions:
+      contents: read
+    uses: megawan/gha-shared-workflows/.github/workflows/site-smoke.yml@v1
+    with:
+      pages: |
+        /
+        /hijaiyah/
+        /aksara/
+        /lexica/
+        /logica/
+        /numeria/
+        /orangtua/
+      files: |
+        /shared/profile.js
+        /hijaiyah/manifest.webmanifest
+        /hijaiyah/sw.js
+        /aksara/manifest.webmanifest
+        /aksara/sw.js
+        /lexica/manifest.webmanifest
+        /lexica/sw.js
+        /logica/manifest.webmanifest
+        /logica/sw.js
+        /numeria/manifest.webmanifest
+        /numeria/sw.js
