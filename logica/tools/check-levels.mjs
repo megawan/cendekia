@@ -2,7 +2,7 @@
 //   - the map has one start, one flag and only known tiles, and all rows are the same width
 //   - the solution `sol` brings Gbot to the flag with every gem, within `max` blocks
 //   - the solution only uses the blocks the level offers (`tools`)
-//   - for levels without loops, ifs or functions, no shorter path exists than the solution
+//   - for levels without loops, until blocks, ifs or functions, no shorter path exists than the solution
 //   - a block limit is too small to reach the flag with arrows alone
 //
 //   node tools/check-levels.mjs            check
@@ -34,15 +34,20 @@ function parseList(s) {
       const end = s.indexOf(')', i);
       out.push({ t: 'loop', n: +ch, body: parseList(s.slice(i + 2, end)) });
       i = end + 1;
+    } else if (ch === '{') {
+      const close = s.indexOf('}', i), cond = s.slice(i + 1, close), end = s.indexOf(')', close);
+      out.push({ t: 'until', c: cond === 'F' ? 'F' : +cond, body: parseList(s.slice(close + 2, end)) });
+      i = end + 1;
     } else if (ch === '?') { out.push({ t: 'if', a: s[i + 1], b: s[i + 2] }); i += 3; }
     else { out.push({ t: ch }); i++; }
   }
   return out;
 }
 const parseProg = (s) => { const [main, fn] = s.split('|'); return { prog: parseList(main), fn: parseList(fn || '') }; };
-const count = (list) => list.reduce((n, b) => n + (b.t === 'loop' ? 1 + count(b.body) : 1), 0);
+const hasBody = (b) => b.t === 'loop' || b.t === 'until';
+const count = (list) => list.reduce((n, b) => n + (hasBody(b) ? 1 + count(b.body) : 1), 0);
 const blocks = (p) => count(p.prog) + count(p.fn);
-const uses = (list, t) => list.some((b) => b.t === t || (b.t === 'loop' && t === 'loop') || (b.t === 'loop' && uses(b.body, t)));
+const uses = (list, t) => list.some((b) => b.t === t || (hasBody(b) && uses(b.body, t)));
 const blocked = (lv, x, y) => x < 0 || y < 0 || x >= lv.w || y >= lv.h || lv.cells[y][x] === '#' || lv.cells[y][x] === '~';
 function wins(lv, p) {
   let x = lv.start.x, y = lv.start.y, steps = 0;
@@ -60,6 +65,10 @@ function wins(lv, p) {
   const run = (list) => {
     for (const b of list) {
       if (b.t === 'loop') { for (let r = 0; r < b.n; r++) if (run(b.body)) return true; }
+      else if (b.t === 'until') {
+        const done = () => (b.c === 'F' ? x === lv.goal.x && y === lv.goal.y : got.size >= b.c);
+        for (let r = 0; r < 60 && b.body.length && !done(); r++) if (run(b.body)) return true;
+      }
       else if (b.t === 'F') { if (run(p.fn)) return true; }
       else if (b.t === 'if') { if (move(lv.cells[y][x] === 'y' ? b.a : b.b)) return true; }
       else if (move(b.t)) return true;
@@ -108,11 +117,11 @@ for (const set of ['robot', 'debug']) {
       if (path === null) return fail(where, 'the flag cannot be reached');
       if (solve) console.log(`  ${where}: shortest ${path}`);
       if (!wins(lv, p)) return fail(where, `solution ${l.sol} does not win`);
-      for (const [t, tool] of [['loop', 'loop'], ['if', 'if'], ['F', 'fn']]) {
+      for (const [t, tool] of [['loop', 'loop'], ['until', 'until'], ['if', 'if'], ['F', 'fn']]) {
         if ((uses(p.prog, t) || uses(p.fn, t)) && !tools.includes(tool)) return fail(where, `solution uses ${tool} but tools are "${tools}"`);
       }
       if (l.max && blocks(p) > l.max) return fail(where, `solution uses ${blocks(p)} blocks, max is ${l.max}`);
-      const plain = !/[\d?F]/.test(l.sol);
+      const plain = !/[\d?F{]/.test(l.sol);
       if (plain && path.length < l.sol.length) return fail(where, `a path of ${path.length} moves exists, solution has ${l.sol.length}`);
       if (l.max && path.length <= l.max) return fail(where, `max ${l.max} allows a path with arrows only (${path.length} moves)`);
       console.log(`✓ ${where}: ${l.sol} (${blocks(p)} blocks, shortest path ${path.length} moves)`);
