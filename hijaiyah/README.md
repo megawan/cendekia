@@ -1,4 +1,4 @@
-# Learn Hijaiyah Letters
+# Hijaiyah
 
 A small game for children to learn the 28 hijaiyah letters and their harakat.
 
