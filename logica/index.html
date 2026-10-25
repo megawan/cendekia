@@ -97,7 +97,7 @@
     display: grid; place-items: center; font-size: 2rem; line-height: 1; box-shadow: inset 0 -5px 0 rgba(0,0,0,.12); }
   .card b { font-size: 1.15rem; line-height: 1.2; }
   .card small { font-size: .85rem; opacity: .75; line-height: 1.2; }
-  .card .skill { font-size: .75rem; font-weight: 700; color: var(--c); text-transform: uppercase; letter-spacing: .04em; }
+  .card .topic { font-size: .75rem; font-weight: 700; color: var(--c); text-transform: uppercase; letter-spacing: .04em; }
   .card .meter { width: 80%; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; margin-top: 4px; }
   .card .meter i { display: block; height: 100%; background: var(--warm); border-radius: 4px; }
   .card.wide { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 16px; }
@@ -1023,7 +1023,7 @@
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', w.c); b.style.animationDelay = k * 0.05 + 's';
       b.innerHTML = '<span class="badge" aria-hidden="true">' + w.icon + '</span><b>' + w.name + '</b>'
-        + '<span class="skill">' + w.skill + '</span>'
+        + '<span class="topic">' + w.skill + '</span>'
         + '<span class="meter" aria-hidden="true"><i style="width:' + Math.round(100 * worldStars(w) / maxStars(w)) + '%"></i></span>'
         + '<small>' + worldStars(w) + ' / ' + maxStars(w) + ' ⭐</small>';
       b.addEventListener('click', () => { sfx.tap(); curWorld = w; show('world'); });

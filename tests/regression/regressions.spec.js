@@ -59,3 +59,13 @@ test('removing a child deletes only that child\'s saved data', async ({ page }) 
   });
   expect(left).toEqual(['1', null]);
 });
+
+test('fix(logica): home card topic label is not squeezed into the parent report .skill grid', async ({ page }) => {
+  await page.setViewportSize({ width: 1000, height: 800 });
+  await page.goto('/logica/');
+  const label = page.locator('.worlds .card', { hasText: 'Logic Filter' }).locator('.topic');
+  await expect(label).toHaveText('AND, OR, NOT logic');
+  // Wide enough that the words sit on one or two lines, not one word per line.
+  const lines = await label.evaluate((el) => Math.round(el.getBoundingClientRect().height / (parseFloat(getComputedStyle(el).fontSize) * 1.2)));
+  expect(lines).toBeLessThanOrEqual(2);
+});
