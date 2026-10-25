@@ -230,6 +230,34 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
+  /* Number Lab tools */
+  .tool { background: #fff; border: 3px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 12px; justify-items: center; }
+  .tool.ok { border-color: var(--good); background: #e3f7ec; }
+  .tool.no { border-color: var(--bad); animation: shake .35s; }
+  .tf { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; width: min(100%, 300px); padding: 6px; background: #e8f1ff; border: 3px solid #9bbcf0; border-radius: 12px; }
+  .cell { aspect-ratio: 1; border-radius: 8px; background: #fff; border: 2px solid #c9dcf8; cursor: pointer; padding: 0; position: relative; }
+  .cell.on::after { content: ""; position: absolute; inset: 12%; border-radius: 50%; background: var(--c-orange); animation: popIn .25s both; }
+  .cell.fixed { cursor: default; background: #fff3d6; }
+  .cell.fixed::after { background: var(--c-indigo); }
+  .tline { display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; width: 100%; position: relative; padding-top: 22px; }
+  .tline::before { content: ""; position: absolute; left: 4%; right: 4%; top: 33px; height: 4px; background: var(--ink); border-radius: 2px; opacity: .55; }
+  .tick { position: relative; font: inherit; font-weight: 800; color: var(--ink); background: none; border: 0; cursor: pointer; padding: 24px 0 6px; font-size: .95rem; min-height: 56px; }
+  .tick::before { content: ""; position: absolute; left: 50%; top: 6px; width: 4px; height: 14px; margin-left: -2px; background: var(--ink); opacity: .55; border-radius: 2px; }
+  .tick.sel { color: #fff; background: var(--accent); border-radius: 10px; }
+  .tick.from::after { content: "🐸"; position: absolute; left: 50%; top: -22px; transform: translateX(-50%); font-size: 1.4rem; }
+  .tblocks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+  .tcol { display: grid; gap: 8px; justify-items: center; align-content: start; background: #f6f8fd; border-radius: 14px; padding: 8px; }
+  .tcol h3 { margin: 0; font-size: 1rem; opacity: .75; }
+  .tstack { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 64px; align-items: flex-end; }
+  .rod { width: 14px; height: 60px; border-radius: 3px; background: repeating-linear-gradient(#f2891f 0 5px, #ffb25a 5px 6px); border: 1px solid #c96b0f; animation: popIn .25s both; }
+  .cube { width: 16px; height: 16px; border-radius: 3px; background: #4c5fd5; border: 1px solid #36449b; animation: popIn .25s both; }
+  .tstack .rod, .tstack .cube { animation: none; }
+  .tstep { display: flex; align-items: center; gap: 10px; }
+  .tstep b { font-size: 1.8rem; min-width: 1.4ch; text-align: center; }
+  .tstep button { font: inherit; font-weight: 800; font-size: 1.6rem; width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--line); background: #fff; box-shadow: 0 3px 0 var(--line); cursor: pointer; color: var(--ink); }
+  .tstep button:active { transform: translateY(2px); }
+  .tsum { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; justify-content: center; }
+
   /* Trace numbers */
   .tstage { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 14px; text-align: center; margin-bottom: 14px; display: grid; gap: 8px; justify-items: center; }
   #trBox { width: 100%; }
@@ -368,6 +396,8 @@
   // `why` explains the answer after a second miss.
   const choose = (say, scene, ans, opts, why) => ({ say, scene, kind: 'choice', ans: String(ans), opts: opts.map(String), why });
   const typed = (say, scene, ans, why, unit) => ({ say, scene, kind: 'pad', ans, why, pre: (unit && unit.pre) || '', post: (unit && unit.post) || '', dec: !!(unit && unit.dec) });
+  // A hands-on question: the child works the tool and presses Check. `tool` is 'frame', 'line' or 'blocks'.
+  const tool = (say, kind, spec, ans, why, scene) => ({ say, scene: scene || '', kind: 'tool', tool: kind, spec, ans, why });
   const DOLLARS = { pre: '$' }, CENTS = { pre: '$', dec: true };
 
   // ---- Words and things from everyday life ----
@@ -386,6 +416,7 @@
     '<span' + (gone && i >= n - gone ? ' class="gone"' : '') + ' style="animation-delay:' + (i * 0.04).toFixed(2) + 's">' + e + '</span>').join('') + '</div>';
   const plate = (label, inner, tray) => '<div class="plate' + (tray ? ' tray' : '') + '">' + (label ? '<b>' + label + '</b>' : '') + inner + '</div>';
   const plates = (list) => '<div class="plates">' + list.join('') + '</div>';
+  const blocks = (n) => '<div class="tsum"><span class="tstack">' + '<span class="rod"></span>'.repeat(Math.floor(n / 10)) + '</span><span class="tstack">' + '<span class="cube"></span>'.repeat(n % 10) + '</span></div>';
   const op = (t) => '<span class="op">' + t + '</span>';
   const money = (vals) => '<div class="money">' + vals.map((v) => (v <= 2 ? '<span class="coin c' + v + '">$' + v + '</span>' : '<span class="bill b' + v + '">$' + v + '</span>')).join('') + '</div>';
   const tag = (e, label, price) => '<span class="tag"><span class="e">' + e + '</span><span><small>' + esc(label) + '</small><br>' + price + '</span></span>';
@@ -523,6 +554,41 @@
           return typed('Eggs come in boxes of 10. There are ' + t + (t === 1 ? ' box' : ' boxes') + (o ? ' and ' + o + ' loose ' + (o === 1 ? 'egg' : 'eggs') : '') + '. How many eggs in all?', scene, ans,
             t + ' tens make ' + t * 10 + (o ? ', and ' + o + ' ones more make ' + ans : '') + '.');
         }]
+      ] },
+    { id: 'lab', name: 'Number Lab', skill: 'Hands-on numbers', ages: '4–8', icon: '🧪', c: 'var(--c-indigo)',
+      desc: 'Fill ten-frames, hop along number lines and build numbers with tens and ones blocks.',
+      levels: [
+        ['Fill the frame', () => { const n = R(1, 10);
+          return tool('Show ' + n + ' on the ten-frame. Tap the squares to fill them.', 'frame', { frames: 1, pre: 0 }, n,
+            'Fill the top row first: it holds 5. Count as you tap, up to ' + n + '.'); }],
+        ['Make ten', () => { const k = R(1, 9);
+          return tool(k + ' ' + (k === 1 ? 'is' : 'are') + ' already in the frame. Fill it up to make 10.', 'frame', { frames: 1, pre: k }, 10,
+            k + ' and ' + (10 - k) + ' make 10, so fill the ' + (10 - k) + ' empty squares.'); }],
+        ['Two ten-frames', () => {
+          if (Math.random() < 0.5) { const n = R(11, 20);
+            return tool('Show ' + n + ' on the two ten-frames. Tap the squares to fill them.', 'frame', { frames: 2, pre: 0 }, n,
+              'A full frame is 10. ' + n + ' is 10 and ' + (n - 10) + ' more.'); }
+          const k = R(11, 19);
+          return tool(k + ' are already in the frames. Fill them up to make 20.', 'frame', { frames: 2, pre: k }, 20,
+            k + ' and ' + (20 - k) + ' make 20, so fill the ' + (20 - k) + ' empty squares.'); }],
+        ['Number line to 10', () => {
+          if (Math.random() < 0.4) { const n = R(0, 10);
+            return tool('Tap the number ' + n + ' on the line.', 'line', { max: 10 }, n, 'Count along the line from 0: ' + counting(n) + '.'); }
+          const a = R(0, 8), b = R(1, Math.min(4, 10 - a));
+          return tool('The frog starts at ' + a + ' and hops ' + b + ' forward. Tap where it lands.', 'line', { max: 10, from: a }, a + b,
+            'Hop ' + b + ' times from ' + a + ': ' + Array.from({ length: b }, (_, i) => a + i + 1).join(', ') + '. It lands on ' + (a + b) + '.'); }],
+        ['Number line to 20', () => {
+          const a = R(3, 17), fwd = Math.random() < 0.6, b = R(1, 5), c = fwd ? Math.min(a + b, 20) : Math.max(a - b, 0), d = Math.abs(c - a);
+          return tool('The frog starts at ' + a + ' and hops ' + d + ' ' + (fwd ? 'forward' : 'back') + '. Tap where it lands.', 'line', { max: 20, from: a }, c,
+            'Hop ' + d + ' ' + (fwd ? 'forward' : 'back') + ' from ' + a + ': ' + Array.from({ length: d }, (_, i) => a + (fwd ? i + 1 : -(i + 1))).join(', ') + '. It lands on ' + c + '.'); }],
+        ['Tens and ones', () => {
+          if (Math.random() < 0.5) { const n = R(11, 99);
+            return tool('Build the number ' + n + '. A tens rod is worth 10 and a cube is worth 1.', 'blocks', {}, n,
+              Math.floor(n / 10) + ' tens rods make ' + Math.floor(n / 10) * 10 + ', and ' + (n % 10) + ' cubes make ' + (n % 10) + '. Together that is ' + n + '.'); }
+          const a = R(11, 60), b = R(11, 99 - a), name = pick(NAMES);
+          return tool(name + ' has ' + a + ' blocks and gets ' + b + ' more. Build how many ' + name + ' has now.', 'blocks', {}, a + b,
+            a + ' + ' + b + ': add the tens (' + Math.floor(a / 10) * 10 + ' + ' + Math.floor(b / 10) * 10 + '), add the ones (' + (a % 10) + ' + ' + (b % 10) + '), then put them together: ' + (a + b) + '.',
+            blocks(a) + op('+') + blocks(b)); }]
       ] },
     { id: 'add', name: 'Market Add & Take', skill: 'Adding and taking away', ages: '5–8', icon: '🛒', c: 'var(--c-blue)',
       desc: 'Buy, give, eat and share at the market: add and take away, from tiny sums to two steps.',
@@ -873,14 +939,14 @@
   const isOpen = (w, i) => i === 0 || best(w, i - 1) > 0;
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places in town, unlocked by the total star count (144 at most) ----
+  // ---- Stickers: places in town, unlocked by the total star count (162 at most) ----
   const STICKERS = [
     { at: 3, name: 'House', pic: '🏠', c: '#ffe3c2' }, { at: 8, name: 'Tree', pic: '🌳', c: '#d9f5e8' },
     { at: 15, name: 'Bicycle', pic: '🚲', c: '#d6ebff' }, { at: 24, name: 'Shop', pic: '🏪', c: '#ffe0ec' },
     { at: 34, name: 'Bakery', pic: '🥐', c: '#fff1c2' }, { at: 46, name: 'Bus', pic: '🚌', c: '#ffe3c2' },
     { at: 60, name: 'School', pic: '🏫', c: '#ece6ff' }, { at: 75, name: 'Fire truck', pic: '🚒', c: '#ffe0ec' },
     { at: 90, name: 'Ferris wheel', pic: '🎡', c: '#d6ebff' }, { at: 106, name: 'Train', pic: '🚆', c: '#d9f5e8' },
-    { at: 124, name: 'Castle', pic: '🏰', c: '#fff1c2' }, { at: 144, name: 'Math master', pic: '🏆', c: '#ffe3c2' }
+    { at: 124, name: 'Castle', pic: '🏰', c: '#fff1c2' }, { at: 162, name: 'Math master', pic: '🏆', c: '#ffe3c2' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -988,6 +1054,69 @@
   const mood = (m) => { const c = $('coach'); c.className = 'owl'; void c.offsetWidth; if (m) c.classList.add(m); };
   const label = (s) => (/^\d+\/\d+$/.test(s) ? frac(...s.split('/')) : esc(s));
 
+  // The three hands-on tools of the Number Lab. Each returns { box, reveal }; the child's value is read when Check is pressed.
+  let curTool = null;
+  function buildTool(q, box) {
+    const wrap = document.createElement('div'); wrap.className = 'tool'; box.appendChild(wrap);
+    let get, set;
+    if (q.tool === 'frame') {
+      const total = q.spec.frames * 10, pre = q.spec.pre, filled = Array.from({ length: total }, (_, i) => i < pre), cells = [];
+      const paint = () => cells.forEach((c, i) => { c.classList.toggle('on', filled[i]); c.setAttribute('aria-pressed', filled[i]); });
+      for (let f = 0; f < q.spec.frames; f++) {
+        const fr = document.createElement('div'); fr.className = 'tf'; wrap.appendChild(fr);
+        for (let k = 0; k < 10; k++) {
+          const i = f * 10 + k, c = document.createElement('button');
+          c.type = 'button'; c.className = 'cell' + (i < pre ? ' fixed' : ''); c.setAttribute('aria-label', 'Square ' + (i + 1));
+          c.addEventListener('click', () => { if (locked || i < pre) return; filled[i] = !filled[i]; sfx.tap(); paint(); });
+          fr.appendChild(c); cells.push(c);
+        }
+      }
+      get = () => filled.filter(Boolean).length;
+      set = (n) => { filled.forEach((_, i) => { filled[i] = i < n; }); paint(); };
+      paint();
+    } else if (q.tool === 'line') {
+      let sel = null; const ticks = [];
+      const paint = () => ticks.forEach((t, n) => { t.classList.toggle('sel', n === sel); t.setAttribute('aria-pressed', n === sel); });
+      for (let start = 0; start <= q.spec.max; start += 11) {
+        const row = document.createElement('div'); row.className = 'tline'; wrap.appendChild(row);
+        for (let n = start; n < start + 11 && n <= q.spec.max; n++) {
+          const t = document.createElement('button');
+          t.type = 'button'; t.className = 'tick' + (n === q.spec.from ? ' from' : ''); t.textContent = n; t.setAttribute('aria-label', String(n));
+          t.addEventListener('click', () => { if (locked) return; sel = n; sfx.tap(); paint(); });
+          row.appendChild(t); ticks[n] = t;
+        }
+      }
+      get = () => (sel === null ? '' : sel);
+      set = (n) => { sel = n; paint(); };
+    } else {
+      let t = 0, o = 0;
+      const tens = document.createElement('div'), ones = document.createElement('div'), grid = document.createElement('div');
+      grid.className = 'tblocks'; wrap.appendChild(grid);
+      const col = (title, el, add) => {
+        const c = document.createElement('div'); c.className = 'tcol';
+        c.innerHTML = '<h3>' + title + '</h3>'; el.className = 'tstack'; c.appendChild(el);
+        const st = document.createElement('div'); st.className = 'tstep';
+        st.innerHTML = '<button type="button" aria-label="One less ' + title + '">−</button><b aria-live="polite">0</b><button type="button" aria-label="One more ' + title + '">+</button>';
+        st.children[0].addEventListener('click', () => { if (!locked) { add(-1); sfx.tap(); } });
+        st.children[2].addEventListener('click', () => { if (!locked) { add(1); sfx.tap(); } });
+        c.appendChild(st); grid.appendChild(c); return st.children[1];
+      };
+      let tn, on;
+      const paint = () => {
+        tens.innerHTML = '<span class="rod"></span>'.repeat(t); ones.innerHTML = '<span class="cube"></span>'.repeat(o);
+        tn.textContent = t; on.textContent = o;
+      };
+      tn = col('Tens', tens, (d) => { t = Math.min(9, Math.max(0, t + d)); paint(); });
+      on = col('Ones', ones, (d) => { o = Math.min(9, Math.max(0, o + d)); paint(); });
+      get = () => t * 10 + o;
+      set = (n) => { t = Math.floor(n / 10); o = n % 10; paint(); };
+      paint();
+    }
+    const go = document.createElement('button'); go.type = 'button'; go.className = 'btn go'; go.textContent = '✓ Check';
+    go.addEventListener('click', () => { const v = get(); if (!locked && v !== '') answer(String(v)); });
+    box.appendChild(go);
+    return { box: wrap, reveal: () => set(q.ans) };
+  }
   function ask() {
     const q = qs[qi];
     tries = 0; locked = false;
@@ -996,7 +1125,10 @@
     $('scene').innerHTML = q.scene || '';
     $('why').hidden = true;
     const box = $('answers'); box.innerHTML = '';
-    if (q.kind === 'choice') {
+    curTool = null;
+    if (q.kind === 'tool') {
+      curTool = buildTool(q, box);
+    } else if (q.kind === 'choice') {
       const g = document.createElement('div'); g.className = 'opts' + (q.opts.length === 3 ? ' three' : '');
       q.opts.forEach((o, k) => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.style.animationDelay = k * 0.05 + 's';
@@ -1048,7 +1180,7 @@
       if (tries === 0) results.push(true); else results.push(false);
       sfx.good(); mood('cheer');
       $('say').textContent = pick(PRAISE);
-      if (btn) btn.classList.add('ok'); else $('disp').classList.add('ok');
+      if (btn) btn.classList.add('ok'); else if (curTool) curTool.box.classList.add('ok'); else $('disp').classList.add('ok');
       renderProg();
       setTimeout(next, 900);
       return;
@@ -1056,14 +1188,16 @@
     tries++;
     sfx.bad(); mood('oops');
     if (tries === 1) CD.weak('numeria', curWorld.name + ': ' + curWorld.levels[curLevel][0]);
-    if (btn) { btn.classList.add('no'); btn.disabled = true; } else { $('disp').classList.remove('no'); void $('disp').offsetWidth; $('disp').classList.add('no'); $('val').textContent = ''; }
+    if (curTool) { curTool.box.classList.remove('no'); void curTool.box.offsetWidth; curTool.box.classList.add('no'); }
+    else if (btn) { btn.classList.add('no'); btn.disabled = true; } else { $('disp').classList.remove('no'); void $('disp').offsetWidth; $('disp').classList.add('no'); $('val').textContent = ''; }
     if (tries === 1) { $('say').textContent = 'Not quite. Have another go!'; return; }
     // Second miss: show the answer and how to get it.
     locked = true;
     results.push(false);
     renderProg();
-    const shown = q.kind === 'choice' ? label(q.ans) : esc(q.pre + (Number.isInteger(q.ans) ? q.ans : q.ans.toFixed(2).replace(/0$/, '').replace(/\.0?$/, '')) + (q.post ? ' ' + q.post : ''));
+    const shown = q.kind === 'choice' ? label(q.ans) : esc((q.pre || '') + (Number.isInteger(q.ans) ? q.ans : q.ans.toFixed(2).replace(/0$/, '').replace(/\.0?$/, '')) + (q.post ? ' ' + q.post : ''));
     if (q.kind === 'choice') $('answers').querySelectorAll('.opt').forEach((b) => { if (b.dataset.v === q.ans) b.classList.add('ok'); b.disabled = true; });
+    else if (curTool) { curTool.reveal(); curTool.box.classList.remove('no'); curTool.box.classList.add('ok'); }
     else { $('val').textContent = String(q.ans); $('disp').classList.remove('no'); $('disp').classList.add('ok'); }
     $('say').textContent = 'Let me show you how.';
     $('whyText').innerHTML = 'The answer is <b class="ans">' + shown + '</b>. ' + esc(q.why);
