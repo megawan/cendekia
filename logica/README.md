@@ -37,6 +37,12 @@ Robot stars: three for a program with no more blocks than the solution and fewer
 
 Stickers: twelve space stickers unlock as the player's total star count, over all difficulties, grows (`STICKERS` in `index.html`). Days in a row are counted as in the other apps. Each child's progress is kept in `localStorage` under `logika.v3.<child id>`. Logica's own players from before (`logika.v2`, or `logika.v1`) moved once to the shared children: a player with the same name as a child becomes that child, the player who was playing becomes the current child, and the others become new children.
 
+## Map Maker
+
+🛠️ Map Maker, on the home screen and in Robot Path, lets a child build a robot map: pick a size (4×3, 5×4 or 6×5), then tap Gbot, the flag, rocks, water, gems (three at most) or grass onto the squares. Gbot checks the map with the same search used for the levels and says how many moves it takes, or that the way is blocked, so ▶ Play, 💾 Save and 🔗 Share only work for a map that can be done. Playing a map uses the blocks of the child's difficulty (arrows on easy, arrows and repeat otherwise); its stars are shown but not kept, and "✎ Change the map" goes back to the editor.
+
+Each child keeps up to twelve maps in My maps (`maps` in their saved state), to play, change or delete. 🔗 Share opens the device's share sheet, or copies a link, with the map in the address: `#map=00300-04150-00000-00000` has one digit per square (0 grass, 1 rock, 2 water, 3 gem, 4 Gbot, 5 flag) and a dash between rows. Opening the link shows the map in Map Maker, ready to play; a link that is not a map of one of the three sizes, with one Gbot, one flag, three gems at most and a way through, is ignored.
+
 ## For parents
 
 👪 For parents, at the bottom of the home screen, opens a summary after a small sum for grown-ups (a × b). For each child it shows:

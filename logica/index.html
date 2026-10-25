@@ -341,6 +341,34 @@
   .alpha span.hl { background: #fff1c2; border-color: var(--warm); }
   .wordopt { font: 800 1.45rem ui-monospace, Menlo, Consolas, monospace; letter-spacing: .12em; }
 
+  /* Map Maker */
+  .mkSizes, .mkTools, .mkActions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .mkSizes button { font: inherit; font-weight: 700; background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 4px 14px;
+    min-height: 40px; cursor: pointer; color: inherit; }
+  .mkSizes button[aria-pressed="true"] { border-color: var(--c-blue); background: #e3f0ff; }
+  .mkTools button { width: 58px; height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    background: #fff; border: 3px solid var(--line); border-bottom-width: 5px; border-radius: 14px; cursor: pointer; padding: 3px;
+    font: inherit; font-size: .72rem; font-weight: 700; color: inherit; }
+  .mkTools button[aria-pressed="true"] { border-color: var(--c-blue); background: #e3f0ff; transform: translateY(-2px); }
+  .mkTools svg { width: 34px; height: 34px; }
+  .mkTools .sw { width: 30px; height: 30px; border-radius: 8px; display: block; }
+  .mkTools .sw.grass { background: #c9eeb3; } .mkTools .sw.water { background: #7cc8f2; }
+  @media (max-width: 420px) { .mkTools { gap: 6px; } .mkTools button { width: 51px; height: 58px; } .mkTools svg { width: 28px; height: 28px; } .mkTools .sw { width: 26px; height: 26px; } }
+  .mkBoard .cell { border: 0; padding: 0; cursor: pointer; font: inherit; }
+  .mkBoard .cell .gbot { width: 86%; height: 86%; }
+  .mkBoard .cell.put { animation: pop .3s; }
+  .mkActions .btn { padding: 10px 16px; min-height: 48px; font-size: 1.05rem; }
+  .mkLink { word-break: break-all; user-select: all; background: #fff; border: 2px dashed var(--line); border-radius: 12px; padding: 8px; opacity: 1; }
+  .mkHead { margin: 18px 0 8px; font-size: 1.15rem; text-align: center; }
+  .mkList { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .mkItem { background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 8px; display: grid; gap: 6px; justify-items: center; }
+  .mkItem .row { display: flex; gap: 6px; }
+  .mkItem .row button { font: inherit; font-size: 1.1rem; width: 40px; height: 40px; border-radius: 12px; background: #f4f6fb; border: 2px solid #d9e0ee; cursor: pointer; }
+  .mini { display: grid; grid-template-columns: repeat(var(--w), 18px); gap: 1px; background: #a7d38f; border-radius: 6px; overflow: hidden; }
+  .mini span { width: 18px; height: 18px; background: #c9eeb3; display: grid; place-items: center; font-size: 12px; line-height: 1; }
+  .mini span.water { background: #7cc8f2; }
+  .mkEmpty { text-align: center; opacity: .7; grid-column: 1 / -1; }
+
   /* Mini Sudoku */
   .sdk { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 2px; width: min(100%, calc(var(--n) * 66px));
     margin: 0 auto; background: #94a3b8; border: 4px solid var(--ink); border-radius: 12px; overflow: hidden; }
@@ -734,6 +762,30 @@
     <p class="note" id="stkNext"></p>
     <div class="sgrid" id="sgrid"></div>
   </section>
+
+  <!-- Map Maker: build a robot map, Gbot checks that it can be done, then play it, save it or share it -->
+  <section id="maker" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Map Maker</h2><span class="spacer"></span>
+    </div>
+    <div class="coach">
+      <svg class="gbot" id="mkCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <div class="bubble" id="mkSay" aria-live="polite"></div>
+    </div>
+    <div class="mkSizes" id="mkSizes" role="group" aria-label="Map size"></div>
+    <div class="mkTools" id="mkTools" role="group" aria-label="What to put on the map"></div>
+    <div class="board mkBoard" id="mkBoard"></div>
+    <div class="mkActions">
+      <button type="button" class="btn go" id="mkPlay">▶ Play</button>
+      <button type="button" class="btn blue" id="mkSave">💾 Save</button>
+      <button type="button" class="btn ghost" id="mkShare">🔗 Share</button>
+      <button type="button" class="btn ghost" id="mkClear">🧹 Clear</button>
+    </div>
+    <p class="note mkLink" id="mkLink" hidden></p>
+    <h3 class="mkHead">My maps</h3>
+    <div class="mkList" id="mkList"></div>
+  </section>
 </main>
 <div id="fx" aria-hidden="true"></div>
 <div class="tutor" id="diffPick" role="dialog" aria-modal="true" aria-labelledby="dfTitle" hidden>
@@ -856,7 +908,8 @@
     "hintFoot": "Follow the footprints!",
     "hintProg": "Here is a program that works. Try it!",
     "hintBug": "Look closely at the glowing block.",
-    "random": "A brand new map! Take Gbot to the flag."
+    "random": "A brand new map! Take Gbot to the flag.",
+    "custom": "Your own map! Take Gbot to the flag."
   }
 }
 </script>
@@ -867,7 +920,7 @@
   'use strict';
   const C = JSON.parse(document.getElementById('content').textContent);
   const $ = (id) => document.getElementById(id);
-  const SECTIONS = ['home', 'players', 'pform', 'world', 'robot', 'quiz', 'result', 'stickers', 'parents'];
+  const SECTIONS = ['home', 'players', 'pform', 'world', 'robot', 'quiz', 'result', 'stickers', 'parents', 'maker'];
   let runToken = 0; // bumped whenever a screen changes, so running animations stop
   function show(id) {
     SECTIONS.forEach((s) => { $(s).hidden = s !== id; });
@@ -876,6 +929,7 @@
     if (id === 'players') renderPlayers();
     if (id === 'world') renderWorld();
     if (id === 'stickers') renderStickers();
+    if (id === 'maker') renderMaker();
   }
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-go]');
@@ -1109,6 +1163,12 @@
       b.addEventListener('click', () => { sfx.tap(); curWorld = w; show('world'); });
       box.appendChild(b);
     });
+    const mk = document.createElement('button');
+    mk.type = 'button'; mk.className = 'card wide'; mk.style.setProperty('--c', 'var(--c-orange)');
+    mk.style.animationDelay = '.25s';
+    mk.innerHTML = '<span class="badge" aria-hidden="true">🛠️</span><span><b>Map Maker</b><br><small>Build a map for Gbot and share it</small></span>';
+    mk.addEventListener('click', () => { sfx.tap(); show('maker'); });
+    box.appendChild(mk);
     const s = document.createElement('button');
     s.type = 'button'; s.className = 'card wide'; s.style.setProperty('--c', 'var(--c-purple)');
     s.style.animationDelay = '.3s';
@@ -1225,6 +1285,11 @@
       b.innerHTML = '<span class="badge" aria-hidden="true">🎲</span><span><b>Random map</b><br><small>A new map every time, just for practice</small></span>';
       b.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); markDay(); save(); startRobot(w, -1, randomLevel(S.diff)); });
       ex.appendChild(b);
+      const m = document.createElement('button');
+      m.type = 'button'; m.className = 'card wide'; m.style.setProperty('--c', w.c);
+      m.innerHTML = '<span class="badge" aria-hidden="true">🛠️</span><span><b>Map Maker</b><br><small>Build your own map and share it</small></span>';
+      m.addEventListener('click', () => { sfx.tap(); show('maker'); });
+      ex.appendChild(m);
     }
     if (!S.seen[w.id]) tutorial(w);
   }
@@ -1579,7 +1644,8 @@
     R.par = count(sol.prog) + count(sol.fn);
     if (R.debug) { const b = makeBug(R.lv, sol.prog, sol.fn); R.prog = b.prog; R.fn = b.fn; R.orig = clone(b); }
     $('rTitle').textContent = w.name;
-    $('rLevel').textContent = i < 0 ? '🎲' : 'Level ' + (i + 1);
+    $('rLevel').textContent = def.custom ? '🛠️' : i < 0 ? '🎲' : 'Level ' + (i + 1);
+    $('rBack').textContent = def.custom ? '← Map Maker' : '← Levels';
     $('rUndo').hidden = $('rClear').hidden = R.debug;
     $('rReset').hidden = !R.debug;
     $('rHint').hidden = true;
@@ -1591,7 +1657,7 @@
   }
   function robotIntro() {
     const t = R.tools;
-    const p = R.debug ? P.debug : R.i < 0 ? P.random : t.includes('if') ? P.robotIf : t.includes('fn') ? P.robotFn
+    const p = R.debug ? P.debug : R.def.custom ? P.custom : R.i < 0 ? P.random : t.includes('if') ? P.robotIf : t.includes('fn') ? P.robotFn
       : t.includes('loop') && R.max ? P.robotLoop : R.lv.gems.length ? P.robotGem : P.robot;
     $('rSay').textContent = p + (R.max ? ' (' + R.max + ' blocks at most)' : '');
   }
@@ -1599,7 +1665,7 @@
     $('rSay').textContent = text;
     if (m) mood($('rCoach'), m);
   }
-  $('rBack').addEventListener('click', () => show('world'));
+  $('rBack').addEventListener('click', () => show(R && R.def.custom ? 'maker' : 'world'));
 
   const TILE = {
     rock: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M14 78 Q8 56 24 42 Q30 22 52 22 Q74 20 82 40 Q96 54 88 76 Q82 88 50 88 Q20 88 14 78Z" fill="#9aa3b2"/><path d="M28 46 Q36 34 50 34" stroke="#c6ccd6" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M14 78 Q50 92 88 76 Q82 88 50 88 Q20 88 14 78Z" fill="#7c8596"/></svg>',
@@ -1633,6 +1699,159 @@
     mood(botEl.firstChild, 'happy');
     Object.values(gemEls).forEach((g) => g.classList.remove('got'));
     $('board').querySelectorAll('.trail').forEach((c) => c.classList.remove('trail'));
+  }
+
+  // =====================================================================
+  // Map Maker
+  // =====================================================================
+  // The child places Gbot, the flag, rocks, water and gems. Gbot checks the map with the same search the levels
+  // use, so only a map that can be done can be played, saved or shared. Saved maps belong to the child (S.maps,
+  // twelve at most). A shared link carries the map in the address: #map=40010-01105 is one digit per square
+  // (0 grass, 1 rock, 2 water, 3 gem, 4 Gbot, 5 flag) and a dash between rows.
+  const MK_SIZES = { small: [4, 3], medium: [5, 4], big: [6, 5] };
+  const MK_CODE = '.#~*RF', MK_GEMS = 3, MK_MAX = 12;
+  const MK_TOOLS = [
+    { ch: 'R', name: 'Gbot', pic: () => gbotSvg('happy') }, { ch: 'F', name: 'Flag', pic: () => TILE.flag },
+    { ch: '#', name: 'Rock', pic: () => TILE.rock }, { ch: '~', name: 'Water', pic: () => '<span class="sw water"></span>' },
+    { ch: '*', name: 'Gem', pic: () => TILE.gem }, { ch: '.', name: 'Grass', pic: () => '<span class="sw grass"></span>' }
+  ];
+  const blank = (w, h) => Array.from({ length: h }, () => Array(w).fill('.'));
+  const M = { cells: null, tool: 'R', editing: null };
+  const mkRows = () => M.cells.map((r) => r.join(''));
+  const mkCount = (ch) => M.cells.flat().filter((c) => c === ch).length;
+  const mkSay = (t, m) => { $('mkSay').textContent = t; if (m) mood($('mkCoach'), m); };
+  // The fewest moves for the map as it is, or null.
+  function mkCheck() {
+    if (!mkCount('R') || !mkCount('F')) return null;
+    return shortestPath(parseMap(mkRows()));
+  }
+  function mkStatus() {
+    const sol = mkCheck();
+    ['mkPlay', 'mkSave', 'mkShare'].forEach((id) => { $(id).disabled = !sol; });
+    if (!mkCount('R')) mkSay('Pick 🤖 Gbot, then tap a square to put Gbot on the map.');
+    else if (!mkCount('F')) mkSay('Now pick 🚩 the flag and put it somewhere.');
+    else if (!sol) mkSay(mkCount('*') ? 'Gbot cannot reach the flag and every gem. Clear a way!' : 'Gbot cannot reach the flag. Clear a way!', 'oops');
+    else mkSay('Gbot can do it in ' + sol.length + (sol.length === 1 ? ' move' : ' moves') + '! Press ▶ Play, or keep building.', 'happy');
+    return sol;
+  }
+  function renderMaker() {
+    if (!M.cells) { const [w, h] = MK_SIZES[{ easy: 'small', medium: 'medium', hard: 'big' }[S.diff] || 'medium']; M.cells = blank(w, h); }
+    const w = M.cells[0].length, h = M.cells.length;
+    $('mkSizes').innerHTML = Object.entries(MK_SIZES).map(([k, [sw, sh]]) => '<button type="button" data-size="' + k + '" aria-pressed="' + (sw === w && sh === h) + '">'
+      + k[0].toUpperCase() + k.slice(1) + ' ' + sw + '×' + sh + '</button>').join('');
+    $('mkTools').innerHTML = MK_TOOLS.map((t) => '<button type="button" data-tool="' + esc(t.ch) + '" aria-pressed="' + (t.ch === M.tool) + '">' + t.pic() + t.name + '</button>').join('');
+    renderMkBoard();
+    renderMkList();
+    $('mkLink').hidden = true;
+    mkStatus();
+  }
+  function renderMkBoard() {
+    const b = $('mkBoard'), w = M.cells[0].length;
+    b.style.setProperty('--w', w);
+    b.innerHTML = '';
+    M.cells.forEach((row, y) => row.forEach((ch, x) => {
+      const c = document.createElement('button');
+      c.type = 'button';
+      c.className = 'cell' + ((x + y) % 2 ? ' alt' : '') + (ch === '~' ? ' water' : '');
+      c.dataset.x = x; c.dataset.y = y;
+      c.innerHTML = ch === 'R' ? gbotSvg('happy') : ch === '#' ? TILE.rock : ch === '*' ? TILE.gem : ch === 'F' ? TILE.flag : '';
+      c.setAttribute('aria-label', 'Row ' + (y + 1) + ', square ' + (x + 1) + ': ' + MK_TOOLS.find((t) => t.ch === ch).name);
+      b.appendChild(c);
+    }));
+  }
+  $('mkSizes').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-size]'); if (!b) return;
+    const [w, h] = MK_SIZES[b.dataset.size], old = M.cells;
+    // Squares that still fit keep what is on them.
+    M.cells = blank(w, h).map((row, y) => row.map((ch, x) => (old[y] && old[y][x]) || ch));
+    sfx.tap(); renderMaker();
+  });
+  $('mkTools').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tool]'); if (!b) return;
+    M.tool = b.dataset.tool; sfx.tap();
+    $('mkTools').querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  });
+  $('mkBoard').addEventListener('click', (e) => {
+    const c = e.target.closest('.cell'); if (!c) return;
+    const x = +c.dataset.x, y = +c.dataset.y, t = M.tool;
+    if (t === '*' && M.cells[y][x] !== '*' && mkCount('*') >= MK_GEMS) { mkSay('Three gems at most. Take one away first.', 'oops'); sfx.bad(); return; }
+    // There is one Gbot and one flag: putting one down moves it.
+    if (t === 'R' || t === 'F') M.cells.forEach((row) => row.forEach((ch, xx) => { if (ch === t) row[xx] = '.'; }));
+    M.cells[y][x] = M.cells[y][x] === t && t !== '.' ? '.' : t;
+    $('mkLink').hidden = true;
+    sfx.tap(); renderMkBoard();
+    $('mkBoard').children[y * M.cells[0].length + x].classList.add('put');
+    mkStatus();
+  });
+  $('mkClear').addEventListener('click', () => {
+    M.cells = blank(M.cells[0].length, M.cells.length); M.editing = null; M.tool = 'R';
+    sfx.tap(); renderMaker();
+  });
+  function mkPlay(rows) {
+    const sol = shortestPath(parseMap(rows));
+    if (!sol || !CD.gate()) return;
+    markDay(); save();
+    startRobot(WORLDS[0], -1, { name: 'My map', map: rows, sol, tools: S.diff === 'easy' ? '' : 'loop', custom: true });
+  }
+  $('mkPlay').addEventListener('click', () => { sfx.tap(); mkPlay(mkRows()); });
+  $('mkSave').addEventListener('click', () => {
+    if (!mkCheck()) return;
+    S.maps = S.maps || [];
+    const old = S.maps.find((m) => m.id === M.editing);
+    if (old) old.map = mkRows();
+    else {
+      if (S.maps.length >= MK_MAX) { mkSay('You have ' + MK_MAX + ' maps. Delete one to save a new one.', 'oops'); sfx.bad(); return; }
+      M.editing = Date.now().toString(36);
+      S.maps.push({ id: M.editing, map: mkRows() });
+    }
+    save(); sfx.good(); renderMkList();
+    mkSay(old ? 'Map saved again!' : 'Saved in My maps!', 'cheer');
+  });
+  const mkCode = (rows) => rows.map((r) => [...r].map((ch) => MK_CODE.indexOf(ch)).join('')).join('-');
+  $('mkShare').addEventListener('click', async () => {
+    if (!mkCheck()) return;
+    const url = location.href.split('#')[0] + '#map=' + mkCode(mkRows());
+    const box = $('mkLink');
+    box.textContent = url; box.hidden = false;
+    sfx.tap();
+    if (navigator.share) {
+      try { await navigator.share({ title: 'A Logica map', text: 'Can you get Gbot to the flag?', url }); return; } catch (e) { /* closed, or not allowed */ }
+    }
+    try { await navigator.clipboard.writeText(url); mkSay('Link copied! Send it to a friend.', 'cheer'); } catch (e) { mkSay('Here is the link. Send it to a friend.', 'happy'); }
+  });
+  function renderMkList() {
+    const list = $('mkList'), maps = S.maps || [];
+    list.innerHTML = maps.length ? '' : '<p class="mkEmpty">No maps yet. Build one and press 💾 Save.</p>';
+    maps.forEach((m, k) => {
+      const d = document.createElement('div');
+      d.className = 'mkItem';
+      d.innerHTML = '<div class="mini" style="--w:' + m.map[0].length + '" aria-hidden="true">' + m.map.join('').split('').map((ch) => '<span' + (ch === '~' ? ' class="water"' : '') + '>'
+        + ({ R: '🤖', F: '🚩', '#': '🪨', '*': '💎' }[ch] || '') + '</span>').join('') + '</div>'
+        + '<div class="row"><button type="button" data-a="play" aria-label="Play map ' + (k + 1) + '">▶</button>'
+        + '<button type="button" data-a="edit" aria-label="Change map ' + (k + 1) + '">✎</button>'
+        + '<button type="button" data-a="del" aria-label="Delete map ' + (k + 1) + '">🗑</button></div>';
+      d.addEventListener('click', (e) => {
+        const a = e.target.closest('[data-a]'); if (!a) return;
+        sfx.tap();
+        if (a.dataset.a === 'play') mkPlay(m.map);
+        if (a.dataset.a === 'edit') { M.cells = m.map.map((r) => [...r]); M.editing = m.id; renderMaker(); window.scrollTo(0, 0); mkSay('Change the map, then press 💾 Save.'); }
+        if (a.dataset.a === 'del' && confirm('Delete this map?')) {
+          S.maps = maps.filter((x) => x.id !== m.id); if (M.editing === m.id) M.editing = null;
+          save(); renderMkList();
+        }
+      });
+      list.appendChild(d);
+    });
+  }
+  // A map from a shared link. Anything that is not a valid map that can be done is ignored.
+  function mapFromLink() {
+    const m = /^#map=([0-5]{4,6}(?:-[0-5]{4,6}){2,4})$/.exec(location.hash);
+    if (!m) return null;
+    const rows = m[1].split('-').map((r) => [...r].map((d) => MK_CODE[d]).join(''));
+    const all = rows.join(''), n = (ch) => all.split(ch).length - 1;
+    if (!Object.values(MK_SIZES).some(([w, h]) => rows.length === h && rows.every((r) => r.length === w))) return null;
+    if (n('R') !== 1 || n('F') !== 1 || n('*') > MK_GEMS || !shortestPath(parseMap(rows))) return null;
+    return rows;
   }
 
   // ---- The editor ----
@@ -2607,7 +2826,7 @@
   function finish(w, i, stars, text) {
     const before = totalStars();
     const quiz = w.kind === 'quiz';
-    CD.round({ app: 'logika', stage: w.name + ' · ' + (i < 0 ? 'Random map' : levelsOf(w)[i]) + ' (' + DIFFS[S.diff].name + ')', stars,
+    CD.round({ app: 'logika', stage: w.name + ' · ' + (i < 0 ? (R.def.custom ? 'My map' : 'Random map') : levelsOf(w)[i]) + ' (' + DIFFS[S.diff].name + ')', stars,
       right: quiz ? Q.total - Q.missedQ : 1, total: quiz ? Q.total : 1 + R.fails, ms: Date.now() - (quiz ? Q.t0 : R.t0) });
     if (i >= 0) {
       const b = bestOf(S.diff);
@@ -2625,11 +2844,15 @@
     g.hidden = !gained.length;
     if (gained.length) g.innerHTML = '<b>New sticker!</b><div class="stk">' + gained.map(face).join('') + '</div>' + gained.map((k) => k.name).join(', ');
     $('resNext').hidden = i >= 0 && i + 1 >= levelsOf(w).length;
-    $('resNext').textContent = i < 0 ? 'New map' : 'Next level';
+    $('resNext').textContent = last.def && last.def.custom ? '✎ Change the map' : i < 0 ? 'New map' : 'Next level';
     show('result');
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
   }
-  $('resNext').addEventListener('click', () => { if (last.i >= 0) play(last.w, last.i + 1); else if (CD.gate()) startRobot(last.w, -1, randomLevel(S.diff)); });
+  $('resNext').addEventListener('click', () => {
+    if (last.def && last.def.custom) show('maker');
+    else if (last.i >= 0) play(last.w, last.i + 1);
+    else if (CD.gate()) startRobot(last.w, -1, randomLevel(S.diff));
+  });
   $('resAgain').addEventListener('click', () => { if (last.i >= 0) play(last.w, last.i); else if (CD.gate()) startRobot(last.w, -1, last.def); });
   $('resWorld').addEventListener('click', () => { curWorld = last.w; show('world'); });
 
@@ -2644,6 +2867,16 @@
 
   ensureDiff();
   renderHome();
+  // Opened from a shared map link: show that map in Map Maker, ready to play.
+  if (location.hash.startsWith('#map=')) {
+    const rows = mapFromLink();
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* file: pages */ }
+    if (rows) {
+      M.cells = rows.map((r) => [...r]); M.editing = null;
+      show('maker');
+      mkSay('A friend made this map for you! Press ▶ Play.', 'cheer');
+    }
+  }
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
   }
