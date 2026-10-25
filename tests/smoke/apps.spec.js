@@ -14,7 +14,7 @@ test('landing page links to every app and to the parent page', async ({ page }) 
   await expect(page).toHaveTitle('Cendekia');
   const hrefs = await page.locator('a.app').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
   expect(hrefs).toEqual(APPS.map(([dir]) => `${dir}/`));
-  await expect(page.getByRole('link', { name: /For parents/ })).toHaveAttribute('href', 'orangtua/');
+  await expect(page.getByRole('link', { name: /For parents/ })).toHaveAttribute('href', 'parents/');
 });
 
 for (const [dir, title] of APPS) {
@@ -49,6 +49,6 @@ for (const [dir, title] of APPS) {
 }
 
 test('parent page opens', async ({ page }) => {
-  await page.goto('/orangtua/');
+  await page.goto('/parents/');
   await expect(page).toHaveTitle('Untuk Orang Tua');
 });

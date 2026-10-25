@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Untuk Orang Tua</title>
+<meta name="description" content="Ringkasan belajar anak di Cendekia: hari belajar, waktu, bintang, dan hal yang perlu dilatih.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1f9d6b">
+<link rel="icon" type="image/png" sizes="192x192" href="../hijaiyah/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff7e6; --ink: #35260f; --card: #ffffff; --line: #ecd9b0; --accent: #1f9d6b; --accent-d: #167a53;
+    --warm: #f2a33a; --bad: #d9534f; --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body { margin: 0; color: var(--ink); font-family: "Baloo 2", system-ui, sans-serif; font-size: 1.05rem; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 12% 8%, #ffe6a8 0, transparent 38%), radial-gradient(circle at 92% 22%, #d4f2e3 0, transparent 36%); }
+  main { max-width: 760px; margin: 0 auto; padding: 16px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 6px 0 2px; }
+  h2 { font-size: 1.25rem; margin: 22px 0 8px; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  a { color: inherit; }
+  button, input, select { font: inherit; color: inherit; }
+  button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid #2e90fa; outline-offset: 2px; }
+  .btn { font-weight: 700; border: 0; border-radius: 14px; padding: 10px 18px; background: var(--accent); color: #fff; cursor: pointer; min-height: 46px; }
+  .btn.ghost { background: rgba(255,255,255,.8); color: var(--ink); border: 2px solid var(--line); }
+  .btn.danger { background: #fff; color: var(--bad); border: 2px solid var(--bad); }
+  .card { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .gate { max-width: 360px; margin: 40px auto; text-align: center; }
+  .gate input { width: 120px; font-size: 1.6rem; text-align: center; padding: 8px; border: 2px solid var(--line); border-radius: 14px; margin: 10px 0; }
+  .gate .err { color: var(--bad); min-height: 1.5em; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+  .tab { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px 6px 8px; border-radius: 999px; border: 2px solid var(--line); background: #fff; cursor: pointer; font-weight: 700; min-height: 46px; }
+  .tab .av { font-size: 1.5rem; line-height: 1; }
+  .tab[aria-pressed="true"] { background: var(--accent); border-color: var(--accent-d); color: #fff; }
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+  @media (min-width: 560px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stat { text-align: center; padding: 10px 6px; }
+  .stat b { display: block; font-size: 1.9rem; line-height: 1.1; }
+  .stat small { opacity: .75; }
+  .bars { display: flex; align-items: flex-end; gap: 8px; height: 130px; padding-top: 6px; }
+  .bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; min-width: 0; }
+  .bar i { display: block; width: 100%; max-width: 44px; background: var(--accent); border-radius: 8px 8px 0 0; min-height: 3px; }
+  .bar span { font-size: .8rem; opacity: .8; margin-top: 4px; }
+  .bar em { font-style: normal; font-size: .8rem; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .85rem; opacity: .75; font-weight: 700; }
+  td.n, th.n { text-align: right; white-space: nowrap; }
+  .tag { display: inline-block; font-size: .75rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: #e7f6ef; color: var(--accent-d); margin-right: 6px; }
+  .muted { opacity: .7; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0; }
+  .row label { font-weight: 700; }
+  select, input[type=text] { padding: 8px 10px; border: 2px solid var(--line); border-radius: 12px; background: #fff; min-height: 44px; }
+  .avs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .avs button { font-size: 1.5rem; line-height: 1; width: 46px; height: 46px; border-radius: 12px; border: 2px solid var(--line); background: #fff; cursor: pointer; }
+  .avs button[aria-pressed="true"] { border-color: var(--accent); background: #e7f6ef; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <section id="gate" class="card gate">
+    <h1>Untuk Orang Tua</h1>
+    <p>Supaya tidak terbuka sendiri oleh anak, jawab dulu:</p>
+    <p><b id="q"></b></p>
+    <form id="gateForm">
+      <input id="a" type="text" inputmode="numeric" autocomplete="off" aria-label="Jawaban">
+      <div class="err" id="err" role="alert"></div>
+      <button class="btn" type="submit">Buka</button>
+    </form>
+    <p><a href="../">← Kembali ke Cendekia</a></p>
+  </section>
+
+  <section id="app" hidden>
+    <div class="top">
+      <h1>Untuk Orang Tua</h1>
+      <a class="btn ghost" href="../" style="text-decoration:none;white-space:nowrap">← Cendekia</a>
+    </div>
+    <p class="muted">Data tersimpan di perangkat ini saja dan tidak dikirim ke mana pun.</p>
+    <div class="tabs" id="tabs"></div>
+    <div id="kid"></div>
+    <div class="card" id="newKid" style="margin-top:14px" hidden>
+      <h2 style="margin-top:0">Tambah anak</h2>
+      <div class="row"><input type="text" id="newName" maxlength="16" placeholder="Nama anak" aria-label="Nama anak"></div>
+      <div class="avs" id="newAvs"></div>
+      <div class="row"><button class="btn" type="button" id="newSave">Simpan</button><button class="btn ghost" type="button" id="newCancel">Batal</button></div>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="btn ghost" type="button" id="addKid">＋ Tambah anak</button></div>
+  </section>
+</main>
+<script src="../shared/profile.js"></script>
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const C = window.Cendekia;
+  // Stages in each app, to show how far the child has come. Change them when an app gets more stages.
+  const APPS = [
+    { id: 'baca', name: 'Aksara', base: 'baca.v1', stages: 28 },
+    { id: 'kosakata', name: 'Lexica', base: 'kosakata.v1', stages: 27 },
+    { id: 'hijaiyah', name: 'Huruf Hijaiyah', base: 'hijaiyah.stars.v1' },
+    // Logica keeps stars per difficulty; the levels count is for the child's current difficulty.
+    { id: 'logika', name: 'Logica', base: 'logika.v3', levels: { easy: 59, medium: 65, hard: 61 } },
+    { id: 'numeria', name: 'Numeria', base: 'numeria.v1', stages: 48 }
+  ];
+  const appName = (id) => (APPS.find((a) => a.id === id) || { name: id }).name;
+  const DAYS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+  const LIMITS = [[0, 'Tidak dibatasi'], [15, '15 menit'], [30, '30 menit'], [45, '45 menit'], [60, '1 jam'], [90, '1,5 jam']];
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+
+  // ---- Gate: a small sum, so a young child cannot open the page by accident ----
+  let a = 0, b = 0;
+  function ask() { a = 6 + Math.floor(Math.random() * 4); b = 6 + Math.floor(Math.random() * 4); $('q').textContent = a + ' × ' + b + ' = ?'; $('a').value = ''; }
+  function open() { $('gate').hidden = true; $('app').hidden = false; try { sessionStorage.setItem('cendekia.parent', '1'); } catch (e) { /* private mode */ } render(); }
+  $('gateForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (Number($('a').value) === a * b) { open(); return; }
+    $('err').textContent = 'Belum tepat, coba lagi.'; ask(); $('a').focus();
+  });
+  ask();
+  let remembered = false;
+  try { remembered = sessionStorage.getItem('cendekia.parent') === '1'; } catch (e) { /* private mode */ }
+  if (remembered) { $('gate').hidden = true; $('app').hidden = false; }
+
+  // ---- Children ----
+  let kidId = C.profile().id;
+  function renderTabs() {
+    const tabs = $('tabs'); tabs.innerHTML = '';
+    C.profiles().forEach((p) => {
+      const t = el('button', 'tab'); t.type = 'button';
+      t.append(el('span', 'av', p.avatar), el('span', '', p.name));
+      t.setAttribute('aria-pressed', String(p.id === kidId));
+      t.addEventListener('click', () => { kidId = p.id; render(); });
+      tabs.appendChild(t);
+    });
+  }
+
+  // ---- Numbers for one child ----
+  function days(log) { return new Set(log.map((e) => C.dayStr(new Date(e.t)))); }
+  function streak(set) {
+    const d = new Date(); let n = 0;
+    if (!set.has(C.dayStr(d))) d.setDate(d.getDate() - 1); // today may not be played yet
+    while (set.has(C.dayStr(d))) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  function appRow(app, log) {
+    const st = C.state(app.base, kidId);
+    if (app.id === 'hijaiyah') {
+      const prog = C.state('hijaiyah.progress.v1', kidId) || {};
+      const known = Object.keys(prog).filter((k) => /^\d+$/.test(k) && prog[k].lv >= 4).length;
+      return { stars: Number(st) || 0, done: known + ' dari 28 huruf dikuasai' };
+    }
+    if (app.id === 'logika') {
+      const byDiff = (st && st.best) || {}, diff = (st && st.diff) || 'medium';
+      const all = (d) => Object.values(byDiff[d] || {}).flat();
+      const stars = ['easy', 'medium', 'hard'].reduce((n, d) => n + all(d).reduce((a, x) => a + (x || 0), 0), 0);
+      const names = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
+      return { stars, done: all(diff).filter((x) => x > 0).length + ' dari ' + app.levels[diff] + ' level (' + names[diff] + ')' };
+    }
+    const best = (st && st.best) || {};
+    return { stars: (st && st.stars) || 0, done: Object.keys(best).filter((k) => best[k] > 0).length + ' dari ' + app.stages + ' tahap' };
+  }
+  const fmtDate = (t) => { const d = new Date(t); return d.getDate() + '/' + (d.getMonth() + 1) + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+
+  function render() {
+    renderTabs();
+    const p = C.profiles().find((x) => x.id === kidId) || C.profiles()[0];
+    kidId = p.id;
+    const log = C.log(kidId), set = days(log);
+    const box = $('kid'); box.innerHTML = '';
+
+    // Last seven days
+    const today = new Date(); const week = [];
+    for (let i = 6; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); week.push({ d, key: C.dayStr(d), min: C.minutesOn(kidId, C.dayStr(d)) }); }
+    const weekMin = week.reduce((s, x) => s + x.min, 0);
+    const weekRounds = log.filter((e) => week.some((x) => x.key === C.dayStr(new Date(e.t)))).length;
+    const rows = APPS.map((app) => ({ app, ...appRow(app, log) }));
+    // The apps count their own days in a row too (also from before profiles existed); use the longest.
+    const own = APPS.map((app) => C.state(app.base, kidId)).filter((st) => st && st.day && (st.day === C.dayStr(today) || st.day === C.dayStr(new Date(today.getTime() - 864e5)))).map((st) => st.streak | 0);
+    const inARow = Math.max(streak(set), ...own);
+    const mins = (m) => (m >= 1 ? String(Math.round(m)) : m > 0 ? '<1' : '0');
+    const stars = rows.reduce((s, r) => s + r.stars, 0);
+
+    const stats = el('div', 'stats');
+    [['🔥', inARow, 'hari beruntun'], ['⭐', stars, 'bintang'], ['⏱', mins(weekMin), 'menit minggu ini'], ['✅', weekRounds, 'putaran minggu ini']].forEach(([ic, n, label]) => {
+      const c = el('div', 'card stat'); c.append(el('b', '', ic + ' ' + n), el('small', '', label)); stats.appendChild(c);
+    });
+    box.appendChild(stats);
+
+    box.appendChild(el('h2', '', '7 hari terakhir'));
+    const chart = el('div', 'card');
+    const bars = el('div', 'bars'); bars.setAttribute('role', 'img');
+    bars.setAttribute('aria-label', 'Menit belajar tiap hari: ' + week.map((x) => DAYS[x.d.getDay()] + ' ' + mins(x.min)).join(', '));
+    const max = Math.max(10, ...week.map((x) => x.min));
+    week.forEach((x) => {
+      const col = el('div', 'bar'); const bar = el('i'); bar.style.height = Math.max(3, Math.round(x.min / max * 80)) + '%';
+      col.append(el('em', '', x.min ? mins(x.min) : ''), bar, el('span', '', DAYS[x.d.getDay()]));
+      bars.appendChild(col);
+    });
+    chart.append(bars, el('p', 'muted', 'Menit belajar tiap hari, dari putaran yang selesai.'));
+    box.appendChild(chart);
+
+    box.appendChild(el('h2', '', 'Per aplikasi'));
+    const t1 = el('table'); t1.innerHTML = '<thead><tr><th>Aplikasi</th><th>Kemajuan</th><th class="n">Bintang</th></tr></thead>';
+    const tb = el('tbody');
+    rows.forEach((r) => {
+      const last = log.filter((e) => e.app === r.app.id).pop();
+      const tr = el('tr'); const name = el('td'); name.append(el('b', '', r.app.name), el('br'), el('small', 'muted', last ? 'Terakhir: ' + fmtDate(last.t) : 'Belum dimainkan'));
+      tr.append(name, el('td', '', r.done), el('td', 'n', String(r.stars))); tb.appendChild(tr);
+    });
+    t1.appendChild(tb); const c1 = el('div', 'card'); c1.appendChild(t1); box.appendChild(c1);
+
+    box.appendChild(el('h2', '', 'Perlu dilatih'));
+    const weak = Object.entries(C.weakItems(kidId)).sort((x, y) => y[1] - x[1]).slice(0, 10);
+    const c2 = el('div', 'card');
+    if (!weak.length) c2.appendChild(el('p', 'muted', 'Belum ada. Huruf dan kata yang sering salah pada percobaan pertama akan muncul di sini.'));
+    else {
+      const t2 = el('table'); t2.innerHTML = '<thead><tr><th>Yang dijawab salah</th><th class="n">Kali</th></tr></thead>';
+      const b2 = el('tbody');
+      weak.forEach(([k, n]) => {
+        const [app, ...rest] = k.split('|'); const tr = el('tr'); const td = el('td');
+        td.append(el('span', 'tag', appName(app)), el('span', '', rest.join('|')));
+        tr.append(td, el('td', 'n', String(n))); b2.appendChild(tr);
+      });
+      t2.appendChild(b2); c2.appendChild(t2);
+    }
+    box.appendChild(c2);
+
+    box.appendChild(el('h2', '', 'Putaran terakhir'));
+    const c3 = el('div', 'card'); const recent = log.slice(-10).reverse();
+    if (!recent.length) c3.appendChild(el('p', 'muted', 'Belum ada putaran yang selesai.'));
+    else {
+      const t3 = el('table'); t3.innerHTML = '<thead><tr><th>Kapan</th><th>Tahap</th><th class="n">Benar</th><th class="n">⭐</th></tr></thead>';
+      const b3 = el('tbody');
+      recent.forEach((e) => {
+        const tr = el('tr'); const w = el('td'); w.append(el('small', 'muted', fmtDate(e.t)));
+        const s = el('td'); s.append(el('span', 'tag', appName(e.app)), el('span', '', e.stage));
+        tr.append(w, s, el('td', 'n', e.right + '/' + e.total), el('td', 'n', String(e.stars))); b3.appendChild(tr);
+      });
+      t3.appendChild(b3); c3.appendChild(t3);
+    }
+    box.appendChild(c3);
+
+    box.appendChild(el('h2', '', 'Pengaturan'));
+    const c4 = el('div', 'card');
+    const r1 = el('div', 'row'); const lab = el('label', '', 'Batas waktu bermain per hari'); lab.setAttribute('for', 'limit');
+    const sel = el('select'); sel.id = 'limit';
+    LIMITS.forEach(([v, text]) => { const o = el('option', '', text); o.value = String(v); if ((p.limit || 0) === v) o.selected = true; sel.appendChild(o); });
+    sel.addEventListener('change', () => { C.update(kidId, { limit: Number(sel.value) }); note.textContent = Number(sel.value) ? 'Tersimpan. Putaran baru tidak bisa dimulai setelah ' + sel.options[sel.selectedIndex].text + ' hari ini.' : 'Tersimpan. Tidak ada batas.'; });
+    r1.append(lab, sel); c4.appendChild(r1);
+    const note = el('p', 'muted'); note.setAttribute('role', 'status'); c4.appendChild(note);
+    const r2 = el('div', 'row'); const nl = el('label', '', 'Nama'); nl.setAttribute('for', 'rename');
+    const inp = el('input'); inp.type = 'text'; inp.id = 'rename'; inp.maxLength = 16; inp.value = p.name;
+    const sv = el('button', 'btn ghost', 'Simpan nama'); sv.type = 'button';
+    sv.addEventListener('click', () => { if (inp.value.trim()) { C.update(kidId, { name: inp.value.trim().slice(0, 16) }); render(); } });
+    r2.append(nl, inp, sv); c4.appendChild(r2);
+    const r3 = el('div', 'avs'); r3.setAttribute('role', 'group'); r3.setAttribute('aria-label', 'Gambar');
+    C.AVATARS.forEach((av) => { const bt = el('button', '', av); bt.type = 'button'; bt.setAttribute('aria-pressed', String(av === p.avatar)); bt.setAttribute('aria-label', 'Gambar ' + av);
+      bt.addEventListener('click', () => { C.update(kidId, { avatar: av }); render(); }); r3.appendChild(bt); });
+    c4.appendChild(r3);
+    const r4 = el('div', 'row'); const del = el('button', 'btn danger', 'Hapus ' + p.name); del.type = 'button';
+    del.addEventListener('click', () => {
+      if (!confirm('Hapus ' + p.name + '? Semua bintang, stiker, dan riwayat anak ini ikut terhapus dan tidak bisa dikembalikan.')) return;
+      C.remove(kidId); kidId = C.profile().id; render();
+    });
+    r4.appendChild(del); c4.appendChild(r4);
+    box.appendChild(c4);
+  }
+
+  // ---- Add a child ----
+  let chosen = C.AVATARS[0];
+  C.AVATARS.forEach((av, i) => {
+    const bt = el('button', '', av); bt.type = 'button'; bt.setAttribute('aria-pressed', String(i === 0)); bt.setAttribute('aria-label', 'Gambar ' + av);
+    bt.addEventListener('click', () => { chosen = av; [...$('newAvs').children].forEach((x) => x.setAttribute('aria-pressed', String(x === bt))); });
+    $('newAvs').appendChild(bt);
+  });
+  $('addKid').addEventListener('click', () => { $('newKid').hidden = false; $('addKid').hidden = true; $('newName').focus(); });
+  $('newCancel').addEventListener('click', () => { $('newKid').hidden = true; $('addKid').hidden = false; });
+  $('newSave').addEventListener('click', () => {
+    if (!$('newName').value.trim()) { $('newName').focus(); return; }
+    const p = C.add($('newName').value, chosen); kidId = p.id; $('newName').value = '';
+    $('newKid').hidden = true; $('addKid').hidden = false; render();
+  });
+
+  if (remembered) render();
+})();
+</script>
+</body>
+</html>

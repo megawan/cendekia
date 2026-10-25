@@ -1,5 +1,5 @@
 // Offline support for Numeria. Bump CACHE when the precached files change.
-const CACHE = 'numeria-v2';
+const CACHE = 'numeria-v3';
 const FONTS = 'numeria-fonts-v1';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js'];
 

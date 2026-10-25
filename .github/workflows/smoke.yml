@@ -36,7 +36,7 @@ jobs:
         /lexica/
         /logica/
         /numeria/
-        /orangtua/
+        /parents/
       files: |
         /shared/profile.js
         /hijaiyah/manifest.webmanifest

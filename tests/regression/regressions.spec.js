@@ -2,7 +2,7 @@
 const { test, expect } = require('../support/fixtures');
 
 test.describe('renamed apps keep their old addresses', () => {
-  for (const [from, to] of [['baca', 'aksara'], ['kosakata', 'lexica'], ['logika', 'logica']]) {
+  for (const [from, to] of [['baca', 'aksara'], ['kosakata', 'lexica'], ['logika', 'logica'], ['orangtua', 'parents']]) {
     test(`/${from}/ redirects to /${to}/`, async ({ page }) => {
       await page.goto(`/${from}/`);
       await expect(page).toHaveURL(new RegExp(`/${to}/$`));
