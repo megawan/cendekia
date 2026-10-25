@@ -9,6 +9,7 @@ A small game for children to learn the 28 hijaiyah letters and their harakat.
 - Guess the sound, Guess the name, Guess the harakat: ten-question quizzes.
 - Look-alikes: groups of letters that differ only by dots, with a short practice for each group.
 - Letter shapes: shows each letter alone and at the beginning, middle and end of a word, with a quiz. Letters that do not join to the next one (alif, dal, dzal, ra, zai, wau) only show two shapes. Shapes are drawn with a zero-width joiner, so they depend on the font's joining rules.
+- Trace letters: draw over each of the 28 letters with a finger or mouse. Every separate part of the letter has to be touched, so the dots cannot be skipped. Scoring, stars and the shared code are described in [Aksara's README](../aksara/README.md#tracing) and live in `shared/trace.js`. The best stars for each letter are kept per child under `hijaiyah.trace.v1.<child>`, and only a better result adds stars. The letter is drawn from the Amiri font, so it is the isolated form; stroke order is not checked.
 - Match pairs: flip cards to match each letter with its name (easy, medium, hard).
 - Read syllables: pick two letters and a vowel for each, then hear the two sounds together. The practice quiz asks you to read a written pair or pick the pair you heard. It reuses the existing letter and harakat recordings, so no new audio is needed.
 - My stickers: 12 stickers unlock as the total star count grows (thresholds in the `STICKERS` constant). Stars are kept even when progress is reset.

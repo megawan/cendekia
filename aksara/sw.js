@@ -1,7 +1,7 @@
 // Offline support for Aksara. Bump CACHE when the precached files change.
-const CACHE = 'aksara-v10';
+const CACHE = 'aksara-v11';
 const FONTS = 'aksara-fonts-v1';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js'];
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/trace.js'];
 
 // The audio list comes from audio/index.json, which tools/make-audio.mjs writes.
 self.addEventListener('install', (event) => {
