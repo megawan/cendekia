@@ -252,6 +252,8 @@
         <span class="badge"><span class="ar" lang="ar">أب</span></span><b>Match pairs</b><small>Flip cards, find the pairs</small></button>
       <button class="card" id="goStickers" type="button" style="--c: var(--c-pink)">
         <span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.5 7 .9-5.2 4.8 1.4 7L12 17.8 5.8 21.2l1.4-7L2 9.4l7-.9z"/></svg></span><b>My stickers</b><small id="stickerHint">Earn stars to win stickers</small></button>
+      <button class="card" id="goTrace" type="button" style="--c: var(--c-orange)">
+        <span class="badge"><span class="ar" lang="ar">ح</span></span><b>Trace letters</b><small>Draw each letter</small></button>
       <button class="card" id="goSyll" type="button" style="--c: var(--c-purple)">
         <span class="badge"><span class="ar" lang="ar">بَتَ</span></span><b>Read syllables</b><small>Put two sounds together</small></button>
       <button class="card wide" id="goProgress" type="button" style="--c: var(--c-orange)">
@@ -272,6 +274,19 @@
       <div class="row"><button class="btn" id="lPlay" type="button">Listen again</button></div>
     </div>
     <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="trace" hidden>
+    <div class="bar"><button class="btn ghost" data-home type="button">Back</button></div>
+    <h1>Trace letters</h1>
+    <p class="sub">Draw over the letter with your finger. Do not forget the dots!</p>
+    <div class="stage">
+      <div id="trBox"></div>
+      <div class="name" id="trName"></div>
+      <div class="row"><button class="btn" id="trPlay" type="button">Listen</button>
+        <button class="btn alt" id="trNext" type="button" hidden>Next letter</button></div>
+    </div>
+    <div class="grid" id="trGrid"></div>
   </section>
 
   <section id="syll" hidden>
@@ -380,6 +395,7 @@
 <div id="fx" aria-hidden="true"></div>
 
 <script src="../shared/profile.js"></script>
+<script src="../shared/trace.js"></script>
 <script>
 (function () {
   'use strict';
@@ -417,7 +433,7 @@
 
   const $ = (id) => document.getElementById(id);
   const AUDIO_BASE = 'audio/'; // can point to any folder or URL that serves the same file names
-  const sections = ['home', 'learn', 'quiz', 'result', 'progress', 'similar', 'memory', 'forms', 'stickers', 'syll'].map($);
+  const sections = ['home', 'learn', 'trace', 'quiz', 'result', 'progress', 'similar', 'memory', 'forms', 'stickers', 'syll'].map($);
   function show(id) { sections.forEach((s) => { s.hidden = s.id !== id; }); window.scrollTo(0, 0); }
 
   // ---- Sound ----
@@ -507,6 +523,50 @@
     $('grid').appendChild(b);
   });
   $('lPlay').addEventListener('click', () => speak(form(learnIdx, learnH)));
+
+  // ---- Trace letters ----
+  // The best stars for each letter the child traced, one save per child. A better result adds only the difference to the star total.
+  const TRACE_KEY = Cendekia.key('hijaiyah.trace.v1');
+  let traced = {};
+  try { traced = JSON.parse(localStorage.getItem(TRACE_KEY)) || {}; } catch (e) { traced = {}; }
+  let trIdx = 0;
+  const tracer = Cendekia.trace($('trBox'), {
+    font: '"Amiri", "Noto Naskh Arabic", "Geeza Pro", serif', weight: 700, label: 'Tracing area for the letter',
+    onDone(r) {
+      const gain = Math.max(0, r.stars - (traced[trIdx] || 0));
+      traced[trIdx] = Math.max(traced[trIdx] || 0, r.stars);
+      try { localStorage.setItem(TRACE_KEY, JSON.stringify(traced)); } catch (e) { /* private mode */ }
+      const fresh = gain ? addStars(gain) : [];
+      Cendekia.round({ app: 'hijaiyah', stage: 'Tracing', stars: r.stars, right: 1, total: 1, ms: r.ms });
+      confetti(r.stars * 15 + (fresh.length ? 40 : 0));
+      speak(LETTERS[trIdx]);
+      $('trNext').hidden = false;
+      renderTraceTiles();
+    }
+  });
+  function renderTraceTiles() {
+    [...$('trGrid').children].forEach((t, i) => {
+      t.classList.toggle('on', i === trIdx);
+      t.lastChild.textContent = traced[i] ? '✓' : '\u00a0';
+    });
+  }
+  function renderTrace() {
+    $('trName').textContent = LETTERS[trIdx].name;
+    $('trNext').hidden = true;
+    tracer.set(LETTERS[trIdx].ch);
+    renderTraceTiles();
+  }
+  LETTERS.forEach((l, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tile';
+    b.innerHTML = '<span class="ar" lang="ar"></span><small></small>';
+    b.firstChild.textContent = l.ch; b.setAttribute('aria-label', l.name);
+    b.addEventListener('click', () => { if (Cendekia.gate()) { trIdx = i; renderTrace(); } });
+    $('trGrid').appendChild(b);
+  });
+  $('trPlay').addEventListener('click', () => speak(LETTERS[trIdx]));
+  $('trNext').addEventListener('click', () => { if (Cendekia.gate()) { trIdx = (trIdx + 1) % LETTERS.length; renderTrace(); } });
+  $('goTrace').addEventListener('click', () => { if (!Cendekia.gate()) return; audioCtx(); show('trace'); renderTrace(); });
 
   // ---- Quiz ----
   const ROUNDS = 10;

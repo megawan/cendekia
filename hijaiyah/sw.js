@@ -1,5 +1,5 @@
 // Offline support for the hijaiyah game. Bump CACHE when the precached files change.
-const CACHE = 'hijaiyah-v5';
+const CACHE = 'hijaiyah-v6';
 const FONTS = 'hijaiyah-fonts-v1';
 
 const BASES = ['alif', 'ba', 'ta', 'tsa', 'jim', 'ha', 'kho', 'dal', 'dzal', 'ra', 'zai', 'sin', 'syin', 'shad',
@@ -9,7 +9,7 @@ BASES.forEach((b, i) => {
   const n = String(i + 1).padStart(2, '0');
   [b, 'fathah', 'kasrah', 'dammah'].forEach((v) => audio.push('audio/' + n + '-' + v + '.mp3'));
 });
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js'];
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/trace.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

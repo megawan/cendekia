@@ -34,9 +34,14 @@ An early reading game in Indonesian. Children go from vowels to letters, syllabl
   The stories (their titles stay in Indonesian) are Bola Merah Budi, Kucing yang Lapar, Hari Hujan, Semut dan Merpati, Pergi ke Pasar, Kancil dan Buaya, Kura-kura dan Kelinci, Hari Pertama di Sekolah, Menanam Biji Kacang and Pesta Ulang Tahun.
 - Stories: the ten stories of level 4, straight from the home screen, with their stars. The home card shows how many have been read. A story opened here goes back to this list instead of the map.
 - Letters A–Z: tap a letter to hear its name and an example word.
+- Trace letters: draw over each letter A–Z, capital or small, with a finger or mouse. A check mark on the tile shows what was traced (see below).
 - Syllables: pick a consonant to see it joined with each vowel (b + a = ba).
 - Picture words: tap a word card to hear it read syllable by syllable, then as a whole word.
 - My stickers: twelve animals of Indonesia that unlock as the total star count grows (`STICKERS` in `index.html`).
+
+## Tracing
+
+The letter is drawn faintly from the Andika font (made for early readers, with a single-story a and g), and the child draws over it. The drawing is compared with the letter on a 128×128 grid: it counts when at least 80% of the letter was covered and at least 60% of the line stayed on the letter. Three stars for a neat line (85% or more on the letter), two for 72% or more, one otherwise. The bar under the letter fills as the letter gets covered. Only a better result than before adds stars, so tracing the same letter again cannot farm them. The best stars for each of the 52 glyphs are kept in `traced` in the child's save. Every traced letter goes to the shared log as a round called "Tracing". The tracing itself is in [`shared/trace.js`](../shared/trace.js), shared with Hijaiyah. It does not check stroke order.
 
 ## Rewards
 

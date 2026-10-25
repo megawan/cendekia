@@ -19,7 +19,9 @@ Each app keeps its own README with details.
 
 ## Children and the parent page
 
-Several children can share one device. `shared/profile.js` is loaded by every app and by the landing page:
+Several children can share one device. `shared/profile.js` is loaded by every app and by the landing page. `shared/trace.js` (letter tracing, used by Aksara and Hijaiyah) is loaded after it and must be in those apps' service worker `CORE` list too.
+
+`shared/profile.js` gives:
 
 - A chip at the top of each home screen shows the current child. Tapping it lets a child switch or add another one. Each child has their own stars, stickers and progress in every app (`<app key>.<child id>` in `localStorage`).
 - The first time it runs it creates "Child 1" and copies the progress the apps saved before profiles existed into it, so nothing is lost.

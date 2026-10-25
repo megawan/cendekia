@@ -12,7 +12,7 @@
 <meta name="description" content="A simple game for children learning to read in Indonesian: letters, syllables, words, sentences and short stories, all read aloud.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #eef7ff; --ink: #1f2a44; --card: #ffffff; --line: #cfe0f5;
@@ -263,6 +263,8 @@
       </button>
       <button type="button" class="card" data-go="alphabet" style="--c: var(--c-pink)">
         <span class="badge" aria-hidden="true">Aa</span><b>Letters A–Z</b><small>Tap to listen</small></button>
+      <button type="button" class="card" data-go="trace" style="--c: var(--c-orange)">
+        <span class="badge" aria-hidden="true">✏️</span><b>Trace letters</b><small id="homeTrace">Draw each letter</small></button>
       <button type="button" class="card" data-go="syllables" style="--c: var(--c-purple)">
         <span class="badge" aria-hidden="true">ba</span><b>Syllables</b><small>b + a = ba</small></button>
       <button type="button" class="card" data-go="words" style="--c: var(--c-teal)">
@@ -309,6 +311,26 @@
         <button type="button" class="btn round" id="aPlay" aria-label="Play the sound">🔊</button></div>
     </div>
     <div class="grid" id="aGrid"></div>
+  </section>
+
+  <!-- Trace letters -->
+  <section id="trace" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Trace letters</h2>
+      <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="trStars">0</span></span>
+    </div>
+    <div class="chips">
+      <button type="button" class="chip on" id="trUp" aria-pressed="true">ABC</button>
+      <button type="button" class="chip" id="trLow" aria-pressed="false">abc</button>
+    </div>
+    <div class="stage">
+      <div id="trBox"></div>
+      <div class="row"><span class="pic" id="trPic" aria-hidden="true"></span><span class="name" id="trWord"></span>
+        <button type="button" class="btn round" id="trPlay" aria-label="Play the sound">🔊</button></div>
+      <div class="row"><button type="button" class="btn alt" id="trNext" hidden>Next letter →</button></div>
+    </div>
+    <div class="grid" id="trGrid"></div>
   </section>
 
   <!-- Syllables -->
@@ -585,12 +607,13 @@
 </script>
 
 <script src="../shared/profile.js"></script>
+<script src="../shared/trace.js"></script>
 <script>
 (() => {
   'use strict';
   const C = JSON.parse(document.getElementById('content').textContent);
   const $ = (id) => document.getElementById(id);
-  const SECTIONS = ['home', 'map', 'stories', 'alphabet', 'syllables', 'words', 'story', 'quiz', 'result', 'stickers'];
+  const SECTIONS = ['home', 'map', 'stories', 'alphabet', 'trace', 'syllables', 'words', 'story', 'quiz', 'result', 'stickers'];
   function show(id) {
     SECTIONS.forEach((s) => { $(s).hidden = s !== id; });
     stopSound(); clearTimeout(replayTimer); window.scrollTo(0, 0);
@@ -598,9 +621,11 @@
     if (id === 'map') renderMap();
     if (id === 'stories') renderStories();
     if (id === 'stickers') renderStickers();
+    if (id === 'trace') renderTrace();
   }
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-go]');
+    if (b && b.dataset.go === 'trace' && !Cendekia.gate()) return; // the parent's daily time limit
     if (b) show(b.dataset.go);
   });
 
@@ -679,7 +704,7 @@
 
   // ---- Saved state ----
   const KEY = Cendekia.key('baca.v1'); // one save per child
-  let S = { stars: 0, best: {}, day: '', streak: 0 };
+  let S = { stars: 0, best: {}, traced: {}, day: '', streak: 0 };
   try { Object.assign(S, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { /* keep defaults */ }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* private mode */ } }
   const dayStr = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -755,6 +780,8 @@
     $('homeStars').textContent = S.stars;
     $('homeDays').textContent = streakNow();
     $('homeStk').textContent = unlocked() + '/' + STICKERS.length;
+    const nTr = Object.keys(S.traced).length;
+    $('homeTrace').textContent = nTr ? nTr + ' of 52 traced' : 'Draw each letter';
     const n = nextStage();
     $('homeNext').textContent = n < 0 ? 'Every stage done! Now collect 3 stars' : 'Try: ' + STAGES[n].title;
     const stories = STAGES.filter((s) => s.kind === 'story'), read = stories.filter((s) => S.best[s.id]).length;
@@ -842,6 +869,56 @@
   });
   $('aPlay').addEventListener('click', sayLetter);
   renderAlphabet();
+
+  // ---- Trace letters ----
+  // S.traced holds the best stars for each glyph the child traced: "A" and "a" are separate. Only a better result adds stars.
+  let trIdx = 0, trUpper = true;
+  const trGlyph = (i, upper) => (upper ? C.letters[i].ch.toUpperCase() : C.letters[i].ch);
+  const tracer = Cendekia.trace($('trBox'), {
+    font: '"Andika", "Baloo 2", system-ui, sans-serif', weight: 700, label: 'Tracing area for',
+    onDone(r) {
+      const g = trGlyph(trIdx, trUpper), before = unlocked(), gain = Math.max(0, r.stars - (S.traced[g] || 0));
+      S.traced[g] = Math.max(S.traced[g] || 0, r.stars);
+      S.stars += gain; markDay(); save();
+      Cendekia.round({ app: 'baca', stage: 'Tracing', stars: r.stars, right: 1, total: 1, ms: r.ms });
+      const gained = STICKERS.slice(before, unlocked());
+      $('trStars').textContent = S.stars;
+      confetti(r.stars * 15 + (gained.length ? 40 : 0));
+      sayTraced();
+      $('trNext').hidden = false;
+      renderTraceTiles();
+    }
+  });
+  function sayTraced() { const l = C.letters[trIdx]; speakSeq([l.say, l.word]); }
+  function renderTraceTiles() {
+    [...$('trGrid').children].forEach((t, i) => {
+      const n = (S.traced[trGlyph(i, true)] ? 1 : 0) + (S.traced[trGlyph(i, false)] ? 1 : 0);
+      t.classList.toggle('on', i === trIdx);
+      t.querySelector('small').textContent = n === 2 ? '✓✓' : n === 1 ? '✓' : '\u00a0';
+    });
+  }
+  function renderTrace() {
+    const l = C.letters[trIdx];
+    $('trStars').textContent = S.stars;
+    $('trUp').classList.toggle('on', trUpper); $('trUp').setAttribute('aria-pressed', trUpper);
+    $('trLow').classList.toggle('on', !trUpper); $('trLow').setAttribute('aria-pressed', !trUpper);
+    $('trPic').textContent = l.pic; $('trWord').textContent = l.word;
+    $('trNext').hidden = true;
+    tracer.set(trGlyph(trIdx, trUpper));
+    renderTraceTiles();
+  }
+  C.letters.forEach((l, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tile';
+    b.innerHTML = '<span></span><small></small>';
+    b.firstChild.textContent = l.ch.toUpperCase() + l.ch;
+    b.addEventListener('click', () => { if (Cendekia.gate()) { trIdx = i; renderTrace(); } });
+    $('trGrid').appendChild(b);
+  });
+  $('trUp').addEventListener('click', () => { if (Cendekia.gate()) { trUpper = true; renderTrace(); } });
+  $('trLow').addEventListener('click', () => { if (Cendekia.gate()) { trUpper = false; renderTrace(); } });
+  $('trPlay').addEventListener('click', sayTraced);
+  $('trNext').addEventListener('click', () => { if (Cendekia.gate()) { trIdx = (trIdx + 1) % C.letters.length; renderTrace(); } });
 
   // ---- Explore: syllables ----
   let sylCon = 'b';
