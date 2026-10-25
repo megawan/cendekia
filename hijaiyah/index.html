@@ -81,6 +81,12 @@
   .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
   .tab { flex: 1; font: inherit; font-weight: 700; font-size: 1rem; padding: 8px 4px; min-height: 52px;
     background: var(--card); color: inherit; border: 2px solid var(--line); border-radius: 16px; cursor: pointer; }
+  .mrow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .mbtn { font: inherit; color: inherit; cursor: pointer; background: #f4f9ff; border: 2px solid var(--line); border-radius: var(--radius); padding: 6px 2px 8px; }
+  .mbtn:active { transform: scale(.96); }
+  .mbtn .ar { font-size: 3.4rem; display: block; line-height: 2.1; padding-top: 6px; }
+  .mbtn b { font-size: 1.2rem; }
+  .tab:disabled, .tile:disabled { opacity: .35; cursor: default; }
   .tab.on { background: var(--accent); border-color: var(--accent-d); color: #fff; }
   .tab .ar { font-size: 1.4rem; display: block; }
 
@@ -252,6 +258,8 @@
         <span class="badge"><span class="ar" lang="ar">أب</span></span><b>Match pairs</b><small>Flip cards, find the pairs</small></button>
       <button class="card" id="goStickers" type="button" style="--c: var(--c-pink)">
         <span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.5 7 .9-5.2 4.8 1.4 7L12 17.8 5.8 21.2l1.4-7L2 9.4l7-.9z"/></svg></span><b>My stickers</b><small id="stickerHint">Earn stars to win stickers</small></button>
+      <button class="card" id="goMore" type="button" style="--c: var(--c-blue)">
+        <span class="badge"><span class="ar" lang="ar">بًّ</span></span><b>More harakat</b><small>Tanwin, long vowels, sukun, tasydid</small></button>
       <button class="card" id="goTrace" type="button" style="--c: var(--c-orange)">
         <span class="badge"><span class="ar" lang="ar">ح</span></span><b>Trace letters</b><small>Draw each letter</small></button>
       <button class="card" id="goSyll" type="button" style="--c: var(--c-purple)">
@@ -274,6 +282,18 @@
       <div class="row"><button class="btn" id="lPlay" type="button">Listen again</button></div>
     </div>
     <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="more" hidden>
+    <div class="bar"><button class="btn ghost" data-home type="button">Back</button></div>
+    <h1>More harakat</h1>
+    <div class="tabs" id="mTabs"></div>
+    <p class="sub" id="mInfo"></p>
+    <div class="stage">
+      <div class="mrow" id="mRow"></div>
+      <div class="row"><button class="btn alt" id="mPractise" type="button">Practise</button></div>
+    </div>
+    <div class="grid" id="mGrid"></div>
   </section>
 
   <section id="trace" hidden>
@@ -396,6 +416,7 @@
 
 <script src="../shared/profile.js"></script>
 <script src="../shared/trace.js"></script>
+<script src="more.js"></script>
 <script>
 (function () {
   'use strict';
@@ -433,7 +454,7 @@
 
   const $ = (id) => document.getElementById(id);
   const AUDIO_BASE = 'audio/'; // can point to any folder or URL that serves the same file names
-  const sections = ['home', 'learn', 'trace', 'quiz', 'result', 'progress', 'similar', 'memory', 'forms', 'stickers', 'syll'].map($);
+  const sections = ['home', 'learn', 'more', 'trace', 'quiz', 'result', 'progress', 'similar', 'memory', 'forms', 'stickers', 'syll'].map($);
   function show(id) { sections.forEach((s) => { s.hidden = s.id !== id; }); window.scrollTo(0, 0); }
 
   // ---- Sound ----
@@ -523,6 +544,48 @@
     $('grid').appendChild(b);
   });
   $('lPlay').addEventListener('click', () => speak(form(learnIdx, learnH)));
+
+  // ---- More harakat: tanwin, long vowels, sukun, tasydid ----
+  const MORE = window.HijaiyahMore;
+  let moreK = 0, moreI = 1;
+  const mform = (i, v) => MORE.form(MORE.KINDS[moreK].key, i, v);
+  const moreOff = (i) => MORE.KINDS[moreK].skipAlif && i === 0;
+  function renderMore() {
+    const kind = MORE.KINDS[moreK];
+    if (moreOff(moreI)) moreI = 1;
+    [...$('mTabs').children].forEach((t, k) => t.classList.toggle('on', k === moreK));
+    $('mInfo').textContent = kind.info;
+    $('mRow').innerHTML = '';
+    [0, 1, 2].forEach((v) => {
+      const f = mform(moreI, v), b = document.createElement('button');
+      b.type = 'button'; b.className = 'mbtn'; b.innerHTML = '<span class="ar" lang="ar"></span><b></b>';
+      b.firstChild.textContent = f.ch; b.lastChild.textContent = f.name;
+      b.setAttribute('aria-label', f.name);
+      b.addEventListener('click', () => speak(f));
+      $('mRow').appendChild(b);
+    });
+    [...$('mGrid').children].forEach((t, i) => {
+      t.disabled = moreOff(i); t.classList.toggle('on', i === moreI);
+    });
+  }
+  MORE.KINDS.forEach((kind, k) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tab';
+    b.innerHTML = '<span class="ar" lang="ar"></span><small></small>';
+    b.firstChild.textContent = kind.example; b.lastChild.textContent = kind.title;
+    b.addEventListener('click', () => { moreK = k; renderMore(); speak(mform(moreI, 0)); });
+    $('mTabs').appendChild(b);
+  });
+  LETTERS.forEach((l, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tile';
+    b.innerHTML = '<span class="ar" lang="ar"></span>';
+    b.firstChild.textContent = l.ch; b.setAttribute('aria-label', l.name);
+    b.addEventListener('click', () => { moreI = i; renderMore(); speak(mform(i, 0)); });
+    $('mGrid').appendChild(b);
+  });
+  $('goMore').addEventListener('click', () => { audioCtx(); show('more'); renderMore(); });
+  $('mPractise').addEventListener('click', () => { audioCtx(); startQuiz('more'); });
 
   // ---- Trace letters ----
   // The best stars for each letter the child traced, one save per child. A better result adds only the difference to the star total.
@@ -688,8 +751,8 @@
     if (!ok) {
       e.wrong++;
       // For the parent page: the letter that was answered wrong. Keys are "i", "i:h" (with a vowel mark) or "fi" (shapes).
-      const m = String(key).match(/^f?(\d+)/);
-      if (m && LETTERS[+m[1]]) Cendekia.weak('hijaiyah', LETTERS[+m[1]].ch + ' ' + LETTERS[+m[1]].name);
+      const m = String(key).match(/^(?:f|([a-z]+):)?(\d+)/);
+      if (m && LETTERS[+m[2]]) Cendekia.weak('hijaiyah', LETTERS[+m[2]].ch + ' ' + LETTERS[+m[2]].name + (m[1] ? ' ' + MORE.KINDS.find((k) => k.key === m[1]).title : ''));
     }
     save();
   }
@@ -714,6 +777,7 @@
   }
   function qKey() {
     if (mode === 'forms') return (fType === 'letter' ? '' : 'f') + order[qi].i;
+    if (mode === 'more') return MORE.KINDS[moreK].key + ':' + order[qi].i + ':' + order[qi].v;
     return mode === 'harakat' ? order[qi].i + ':' + order[qi].h : String(LETTERS.indexOf(answer));
   }
 
@@ -741,6 +805,12 @@
         if (j === i) j = (j + 1) % LETTERS.length;
         return [{ i, h: h1 }, { i: j, h: h2 }];
       });
+    } else if (m === 'more') {
+      // Weak letters come up more often, and each gets the vowel it knows least.
+      const key = (i, v) => MORE.KINDS[moreK].key + ':' + i + ':' + v;
+      const avg = (i) => Math.round([0, 1, 2].reduce((a, v) => a + level(key(i, v)), 0) / 3);
+      const letters = weightedPick(LETTERS.map((_, i) => i).filter((i) => !moreOff(i)), (i) => weightFor(avg(i)), ROUNDS);
+      order = letters.map((i) => ({ i, v: shuffle([0, 1, 2]).sort((a, b) => level(key(i, a)) - level(key(i, b)))[0] }));
     } else if (m === 'forms') {
       // Letters that join get all four shapes; letters that do not join only have two.
       const letters = weightedPick(LETTERS.map((_, i) => i), (i) => weightFor(level(String(i))), ROUNDS);
@@ -789,6 +859,14 @@
         choices = avail.map((f) => ({ ch: '', name: POS[f], say: POS[f] }));
         label = 'Where in a word does this shape go?';
       }
+    } else if (mode === 'more') {
+      const q = order[qi];
+      answer = mform(q.i, q.v);
+      qKind = Math.random() < 0.5 ? 'hear' : 'see';
+      hear = qKind === 'hear';
+      choices = [0, 1, 2].map((v) => mform(q.i, v));
+      if (!hear) choices = choices.map((c) => ({ ch: c.name, say: c.say, name: c.name, file: c.file, text: true }));
+      label = hear ? 'Which one do you hear?' : 'How do you read this?';
     } else if (mode === 'harakat') {
       const q = order[qi];
       answer = form(q.i, q.h);
@@ -810,7 +888,7 @@
       choices = shuffle([answer].concat(shuffle(LETTERS.filter((l) => l !== answer)).slice(0, 3)));
       label = hear ? 'Which letter do you hear?' : 'What is the name of this letter?';
     }
-    if (mode !== 'harakat' && mode !== 'similar' && mode !== 'forms' && mode !== 'syll') qKind = hear ? 'hear' : 'see';
+    if (mode !== 'harakat' && mode !== 'more' && mode !== 'similar' && mode !== 'forms' && mode !== 'syll') qKind = hear ? 'hear' : 'see';
     if (arOpts === null) arOpts = hear;
     $('qBig').textContent = bigText !== null ? bigText : (hear ? '' : answer.ch);
     $('qBig').hidden = bigText === null && hear;
@@ -865,7 +943,7 @@
   }
   const MODE_NAMES = { hear: 'Tebak suara', see: 'Tebak nama', harakat: 'Tebak harakat', similar: 'Huruf mirip', forms: 'Bentuk huruf', syll: 'Baca suku kata', memory: 'Pasangan kartu' };
   function showResult(n, title, text) {
-    Cendekia.round({ app: 'hijaiyah', stage: MODE_NAMES[mode] || mode, stars: n, right: mode === 'memory' ? mem.pairs : score, total: mode === 'memory' ? mem.pairs : order.length, ms: Date.now() - roundStart });
+    Cendekia.round({ app: 'hijaiyah', stage: mode === 'more' ? MORE.KINDS[moreK].title : (MODE_NAMES[mode] || mode), stars: n, right: mode === 'memory' ? mem.pairs : score, total: mode === 'memory' ? mem.pairs : order.length, ms: Date.now() - roundStart });
     const fresh = addStars(n);
     const box = $('newSticker');
     box.hidden = !fresh.length;

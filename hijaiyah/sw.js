@@ -1,15 +1,22 @@
 // Offline support for the hijaiyah game. Bump CACHE when the precached files change.
-const CACHE = 'hijaiyah-v6';
+const CACHE = 'hijaiyah-v7';
 const FONTS = 'hijaiyah-fonts-v1';
 
 const BASES = ['alif', 'ba', 'ta', 'tsa', 'jim', 'ha', 'kho', 'dal', 'dzal', 'ra', 'zai', 'sin', 'syin', 'shad',
   'dhad', 'tho', 'zho', 'ain', 'ghain', 'fa', 'qaf', 'kaf', 'lam', 'mim', 'nun', 'wau', 'ha2', 'ya'];
+importScripts('more.js'); // the forms and file names of the second stage
 const audio = [];
 BASES.forEach((b, i) => {
   const n = String(i + 1).padStart(2, '0');
   [b, 'fathah', 'kasrah', 'dammah'].forEach((v) => audio.push('audio/' + n + '-' + v + '.mp3'));
 });
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/trace.js'];
+HijaiyahMore.KINDS.forEach((k) => {
+  for (let i = 0; i < HijaiyahMore.LETTER_COUNT; i++) {
+    if (k.skipAlif && i === 0) continue;
+    for (let v = 0; v < 3; v++) audio.push('audio/' + HijaiyahMore.form(k.key, i, v).file);
+  }
+});
+const CORE = ['./', 'more.js', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/trace.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
