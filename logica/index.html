@@ -18,7 +18,7 @@
     --bg: #fff6ec; --ink: #1f2a44; --card: #ffffff; --line: #f0dcc4;
     --accent: #f2891f; --accent-d: #c96a0c; --warm: #f2a33a; --good: #1f9d6b; --bad: #d9534f;
     --c-green: #1f9d6b; --c-orange: #f2891f; --c-pink: #e0558a; --c-purple: #7a5af8; --c-blue: #2e90fa; --c-teal: #0e9aa7;
-    --c-indigo: #4c5fd5; --c-red: #e5484d;
+    --c-indigo: #4c5fd5; --c-red: #e5484d; --c-sky: #0284c7; --c-lime: #4d9a1a;
     --d-U: #1f9d6b; --d-D: #7a5af8; --d-L: #e0558a; --d-R: #2e90fa; --loop: #f2891f;
     --screen: #1f2a44; --glow: #5ef2d6;
     --radius: 20px;
@@ -340,6 +340,48 @@
   .alpha span { background: #fff; border: 2px solid var(--line); border-radius: 6px; font-weight: 800; font-size: .95rem; line-height: 1.6; }
   .alpha span.hl { background: #fff1c2; border-color: var(--warm); }
   .wordopt { font: 800 1.45rem ui-monospace, Menlo, Consolas, monospace; letter-spacing: .12em; }
+
+  /* Who Is It? */
+  .clues { display: grid; gap: 6px; margin: 0 0 12px; text-align: left; }
+  .clue { display: flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 1.05rem; color: inherit; text-align: left;
+    background: #fff8e1; border: 2px solid #f1dfb2; border-radius: 14px; padding: 6px 10px; cursor: pointer; line-height: 1.3; }
+  .clue .n { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--c-sky); color: #fff; display: grid; place-items: center; font-size: .85rem; }
+  .clue.used { opacity: .5; text-decoration: line-through; }
+  .clue .e { font-size: 1.3rem; }
+  .people { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 8px; }
+  .person { display: flex; flex-direction: column; align-items: center; gap: 2px; font: inherit; font-weight: 700; color: inherit; background: #fff;
+    border: 3px solid var(--line); border-radius: 16px; padding: 6px 2px; cursor: pointer; min-width: 0; }
+  .person .av { font-size: 2rem; line-height: 1.1; }
+  .person .nm { font-size: .95rem; }
+  .person .has { width: 46px; height: 46px; border-radius: 12px; border: 2px dashed #c3cde0; display: grid; place-items: center; font-size: 1.9rem; }
+  .person.sel { border-color: var(--c-blue); background: #e3f0ff; }
+  .person.no { border-color: var(--bad); background: #fdeceb; animation: shake .3s; }
+  .person.hint { animation: blink .8s ease-in-out infinite; }
+  .person.win { border-color: var(--good); background: #e8f8f0; animation: pop .4s; }
+  .pets { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .pets button { display: flex; flex-direction: column; align-items: center; width: 66px; padding: 4px 2px; background: #fff; border: 3px solid var(--line);
+    border-bottom-width: 6px; border-radius: 16px; cursor: pointer; font: inherit; font-size: .8rem; font-weight: 700; color: inherit; }
+  .pets button .e { font-size: 1.9rem; line-height: 1.2; }
+  .pets button.taken { opacity: .45; }
+  .demo .clue { font-size: .7rem; padding: 2px 6px; border-radius: 8px; }
+
+  /* Sort the Train */
+  .train { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 4px; align-items: end; margin: 6px auto 4px;
+    max-width: calc(var(--n) * 64px); }
+  .train .engine { font-size: 2.4rem; line-height: 1; text-align: center; }
+  .wagon { position: relative; aspect-ratio: 1 / .9; min-width: 0; border: 0; border-radius: 10px 10px 6px 6px; background: var(--c-lime); color: #fff;
+    font: inherit; font-weight: 800; font-size: clamp(1rem, 6vw, 1.6rem); cursor: pointer; box-shadow: inset 0 -6px 0 rgba(0,0,0,.18);
+    transition: transform .2s; }
+  .wagon::before, .wagon::after { content: ""; position: absolute; bottom: -9px; width: 14px; height: 14px; border-radius: 50%; background: #334155; border: 3px solid #94a3b8; }
+  .wagon::before { left: 12%; } .wagon::after { right: 12%; }
+  .wagon.sel { background: var(--c-blue); transform: translateY(-8px); }
+  .wagon.swap { animation: pop .3s; }
+  .wagon.hint { animation: blink .8s ease-in-out infinite; }
+  .wagon.done { background: var(--good); }
+  .rails { height: 6px; border-radius: 3px; background: repeating-linear-gradient(90deg, #8a6a4a 0 10px, #c9a27a 10px 16px); margin: 10px 0 8px; }
+  .swaps { font-weight: 800; }
+  .demo .train { max-width: 100px; gap: 2px; } .demo .train .engine { font-size: 1.2rem; }
+  .demo .wagon { font-size: .8rem; border-radius: 5px; } .demo .wagon::before, .demo .wagon::after { width: 6px; height: 6px; bottom: -4px; border-width: 1px; }
 
   /* Map Maker */
   .mkSizes, .mkTools, .mkActions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
@@ -1127,7 +1169,13 @@
       levels: ['Read the picture', 'Paint by code', 'Short code', 'Light bulbs', 'Make a number', 'Secret message', 'Write in code'] },
     { id: 'sudoku', name: 'Mini Sudoku', skill: 'Deduction', icon: '🧩', c: 'var(--c-red)', kind: 'quiz', total: 3,
       desc: 'Fill the gaps so every row and column, and every box in the bigger grids, has each shape once.',
-      levels: ['Warm up', 'A few gaps', 'Half empty', 'Think ahead', 'Boxes', 'Big grid', 'Master'] }
+      levels: ['Warm up', 'A few gaps', 'Half empty', 'Think ahead', 'Boxes', 'Big grid', 'Master'] },
+    { id: 'clues', name: 'Who Is It?', skill: 'Reasoning with clues', icon: '🕵️', c: 'var(--c-sky)', kind: 'quiz', total: 3,
+      desc: 'Read the clues and work out which pet belongs to which friend.',
+      levels: ['Two friends', 'Three friends', 'Not this one', 'Clever pets', 'This or that', 'Big group', 'Detective'] },
+    { id: 'train', name: 'Sort the Train', skill: 'Sorting', icon: '🚂', c: 'var(--c-lime)', kind: 'quiz', total: 4,
+      desc: 'Swap wagons that stand side by side until the whole train is in order, with as few swaps as you can.',
+      levels: ['Three wagons', 'Four wagons', 'Five wagons', 'Biggest first', 'Letters', 'Long train', 'Mixed up'] }
   ];
   // Robot and fixing levels are different for each difficulty; quiz levels are the same, with harder questions.
   const levelsOf = (w) => (w.kind === 'robot' ? C[w.id][S.diff].map((l) => l.name) : w.levels);
@@ -1317,7 +1365,9 @@
     debug: 'Finding where a plan goes wrong and fixing just that part, calmly.',
     filter: 'Combining conditions with AND, OR and NOT, as in searches and programming.',
     code: 'How computers keep pictures and numbers as 0 and 1, write data in a shorter way, and hide a message with a code.',
-    sudoku: 'Ruling out what cannot fit, one step at a time, until only one answer is left.'
+    sudoku: 'Ruling out what cannot fit, one step at a time, until only one answer is left.',
+    clues: 'Combining several clues, including "not", "or" and facts about things, to find the only answer that fits them all.',
+    train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.'
   };
   let viewed = null, gateAns = 0;
   $('toParents').addEventListener('click', () => {
@@ -1487,6 +1537,16 @@
       ['<div class="demo"><div class="sdkPal"><button type="button" tabindex="-1">' + itemSvg(SYMS[1]) + '</button><button type="button" tabindex="-1">' + itemSvg(SYMS[2]) + '</button></div></div>',
         'Tap a gap, then tap the shape that goes there.'],
       ['<div class="demo"><span class="btn go">✓ Check</span></div>', 'When every gap is full, press ✓ Check.']
+    ],
+    clues: [
+      ['<div class="demo"><span class="clue"><span class="n">1</span>Leo does not have the 🐱</span></div>', 'Read every clue.'],
+      ['<div class="demo">👧<b>→</b>🐶</div>', 'Tap a friend, then the pet that belongs to them.'],
+      ['<div class="demo"><span class="btn go">✓ Check</span></div>', 'When everyone has a pet, press ✓ Check.']
+    ],
+    train: [
+      ['<div class="demo"><div class="train" style="--n:4"><span class="engine">🚂</span><span class="wagon">3</span><span class="wagon">1</span><span class="wagon">2</span></div></div>', 'The wagons are mixed up.'],
+      ['<div class="demo"><div class="train" style="--n:3"><span class="wagon sel">3</span><span class="wagon">1</span></div><b>⇄</b></div>', 'Tap two wagons side by side to swap them.'],
+      ['<div class="demo"><div class="train" style="--n:4"><span class="engine">🚂</span><span class="wagon done">1</span><span class="wagon done">2</span><span class="wagon done">3</span></div></div>', 'Every swap should fix the order. Use as few swaps as you can.']
     ]
   });
   function tutorial(w) {
@@ -2828,7 +2888,189 @@
     });
   }
 
-  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku };
+  // ---- Who Is It? ----
+  // Each friend has one pet and no two have the same. The clues are picked at random from true ones until only
+  // one way to hand out the pets fits them all, then any clue that is not needed is dropped.
+  const FRIENDS = [['Mia', '👧'], ['Leo', '👦'], ['Sara', '👧🏽'], ['Omar', '👦🏾'], ['Rina', '👧🏻'], ['Budi', '👦🏻']];
+  const PETS = [
+    { e: '🐱', n: 'cat', says: 'says meow', no: 'does not say meow' }, { e: '🐶', n: 'dog', says: 'barks', no: 'does not bark' },
+    { e: '🐟', n: 'fish', says: 'lives in water', no: 'does not live in water' }, { e: '🐦', n: 'bird', says: 'can fly', no: 'cannot fly' },
+    { e: '🐢', n: 'turtle', says: 'has a shell', no: 'has no shell' }, { e: '🐰', n: 'rabbit', says: 'has long ears', no: 'does not have long ears' }
+  ];
+  // [friends, clue kinds] for each level and difficulty.
+  const CLUES = {
+    easy: [[2, 'not'], [2, 'is,not'], [3, 'not'], [3, 'pet,not'], [3, 'either,not,pet'], [3, 'either,not,pet,nopet'], [4, 'not,pet,nopet,either']],
+    medium: [[2, 'not'], [3, 'is,not'], [3, 'not'], [4, 'pet,not'], [4, 'either,not,pet'], [4, 'either,not,pet,nopet,neither'], [5, 'not,pet,nopet,either,neither']],
+    hard: [[3, 'not'], [3, 'not,pet'], [4, 'not'], [4, 'pet,nopet,not'], [5, 'either,not,pet,nopet'], [5, 'either,not,pet,nopet,neither'], [5, 'not,nopet,either,neither']]
+  };
+  function perms(n) {
+    if (n === 1) return [[0]];
+    return perms(n - 1).flatMap((p) => Array.from({ length: n }, (_, k) => [...p.slice(0, k), n - 1, ...p.slice(k)]));
+  }
+  // A clue as a test on a way of handing out the pets (a[i] is the pet of friend i), and as words.
+  function clueOf(kind, i, j, k, friends, pets) {
+    const F = (x) => friends[x][0], Pn = (x) => 'the ' + pets[x].e + ' ' + pets[x].n;
+    if (kind === 'is') return { ok: (a) => a[i] === j, text: F(i) + ' has ' + Pn(j) + '.' };
+    if (kind === 'not') return { ok: (a) => a[i] !== j, text: F(i) + ' does not have ' + Pn(j) + '.' };
+    if (kind === 'pet') return { ok: (a) => a[i] === j, text: F(i) + '’s pet ' + pets[j].says + '.' };
+    if (kind === 'nopet') return { ok: (a) => a[i] !== j, text: F(i) + '’s pet ' + pets[j].no + '.' };
+    if (kind === 'either') return { ok: (a) => a[i] === j || a[k] === j, text: Pn(j)[0].toUpperCase() + Pn(j).slice(1) + ' belongs to ' + F(i) + ' or ' + F(k) + '.' };
+    return { ok: (a) => a[i] !== j && a[k] !== j, text: 'Neither ' + F(i) + ' nor ' + F(k) + ' has ' + Pn(j) + '.' };
+  }
+  function makeClues(n, kinds, friends, pets) {
+    const all = perms(n), sol = pick(all), pool = [];
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      for (const kind of kinds) {
+        if ((kind === 'is' || kind === 'pet') && sol[i] === j) pool.push(clueOf(kind, i, j, 0, friends, pets));
+        if ((kind === 'not' || kind === 'nopet') && sol[i] !== j) pool.push(clueOf(kind, i, j, 0, friends, pets));
+        for (let k = i + 1; k < n; k++) {
+          if (kind === 'either' && (sol[i] === j || sol[k] === j)) pool.push(clueOf(kind, i, j, k, friends, pets));
+          if (kind === 'neither' && sol[i] !== j && sol[k] !== j) pool.push(clueOf(kind, i, j, k, friends, pets));
+        }
+      }
+    }
+    const fits = (cs) => all.filter((a) => cs.every((c) => c.ok(a))).length;
+    let chosen = [];
+    for (const c of shuffle(pool)) {
+      if (fits(chosen) === 1) break;
+      if (fits(chosen.concat(c)) < fits(chosen)) chosen.push(c);
+    }
+    for (const c of shuffle(chosen.slice())) { const rest = chosen.filter((x) => x !== c); if (fits(rest) === 1) chosen = rest; }
+    return { sol, clues: shuffle(chosen) };
+  }
+  function genClues(lvl) {
+    const [n, kinds] = CLUES[S.diff][lvl], friends = shuffle(FRIENDS.slice()).slice(0, n), pets = shuffle(PETS.slice()).slice(0, n);
+    const { sol, clues } = makeClues(n, kinds.split(','), friends, pets), cur = Array(n).fill(-1);
+    let sel = 0;
+    qSay('Read the clues. Which pet belongs to which friend?');
+    $('ask').innerHTML = '<div class="clues" id="clueList"></div><div class="people" id="people" style="--n:' + n + '"></div>';
+    clues.forEach((c, k) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'clue'; b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<span class="n" aria-hidden="true">' + (k + 1) + '</span><span></span>';
+      b.lastChild.textContent = c.text;
+      // Tapping a clue crosses it out, to keep track of the ones already used.
+      b.addEventListener('click', () => { b.classList.toggle('used'); b.setAttribute('aria-pressed', b.classList.contains('used')); sfx.tap(); });
+      $('clueList').appendChild(b);
+    });
+    const people = friends.map(([name, av], i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'person';
+      b.innerHTML = '<span class="av" aria-hidden="true">' + av + '</span><span class="nm"></span><span class="has" aria-hidden="true"></span>';
+      b.querySelector('.nm').textContent = name;
+      b.addEventListener('click', () => { if (!$('people').classList.contains('done')) { select(i); sfx.tap(); } });
+      $('people').appendChild(b);
+      return b;
+    });
+    const pal = document.createElement('div');
+    pal.className = 'pets';
+    const petBtns = pets.map((x, j) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.innerHTML = '<span class="e" aria-hidden="true">' + x.e + '</span>' + x.n;
+      b.setAttribute('aria-label', 'Give the ' + x.n);
+      b.addEventListener('click', () => give(j));
+      pal.appendChild(b);
+      return b;
+    });
+    $('answers').appendChild(pal);
+    function paint() {
+      people.forEach((b, i) => {
+        b.querySelector('.has').textContent = cur[i] >= 0 ? pets[cur[i]].e : '?';
+        b.classList.toggle('sel', i === sel);
+        b.setAttribute('aria-label', friends[i][0] + ': ' + (cur[i] >= 0 ? 'the ' + pets[cur[i]].n : 'no pet yet'));
+      });
+      petBtns.forEach((b, j) => b.classList.toggle('taken', cur.includes(j)));
+    }
+    function select(i) { sel = i; paint(); }
+    function give(j) {
+      if (sel < 0 || $('people').classList.contains('done')) return;
+      const had = cur.indexOf(j);
+      if (had >= 0) { cur[had] = -1; people[had].classList.remove('no'); }
+      cur[sel] = j; people[sel].classList.remove('no', 'hint'); sfx.tap();
+      const next = cur.findIndex((x, i) => x < 0 && i > sel), first = cur.indexOf(-1);
+      sel = next >= 0 ? next : first;
+      paint();
+    }
+    paint();
+    checkBtn(() => {
+      if (cur.includes(-1)) { qSay('Give every friend a pet first, then press ✓ Check.'); select(cur.indexOf(-1)); return false; }
+      const bad = cur.map((v, i) => (v !== sol[i] ? i : -1)).filter((i) => i >= 0);
+      if (!bad.length) {
+        $('people').classList.add('done'); sel = -1; paint();
+        people.forEach((b, i) => setTimeout(() => b.classList.add('win'), i * 80));
+        solved(1700);
+        return true;
+      }
+      bad.forEach((i) => { people[i].classList.remove('no'); void people[i].offsetWidth; people[i].classList.add('no'); });
+      select(bad[0]);
+      // After two tries, one friend gets the right pet.
+      wrong(() => {
+        const i = bad[0], j = sol[i], had = cur.indexOf(j);
+        if (had >= 0) cur[had] = -1;
+        cur[i] = j; people[i].classList.remove('no'); people[i].classList.add('hint');
+        select(cur.indexOf(-1));
+      });
+      return false;
+    });
+  }
+
+  // ---- Sort the Train ----
+  // Swapping two neighbours that are in the wrong order fixes exactly one "pair the wrong way round", so the fewest
+  // swaps is the number of such pairs. A swap of two neighbours already in order is a wasted move and counts as a miss.
+  const TRAIN = { easy: [3, 3, 4, 4, 4, 5, 5], medium: [3, 4, 5, 5, 5, 6, 6], hard: [4, 5, 6, 6, 6, 7, 7] };
+  const inversions = (a, before) => a.reduce((n, x, i) => n + a.slice(i + 1).filter((y) => before(y, x)).length, 0);
+  function genTrain(lvl) {
+    const n = TRAIN[S.diff][lvl];
+    const kind = lvl === 3 ? 'down' : lvl === 4 ? 'abc' : lvl === 6 ? pick(['up', 'down', 'abc']) : 'up';
+    const top = S.diff === 'easy' ? 9 : S.diff === 'medium' ? 20 : 99;
+    let vals;
+    if (kind === 'abc') vals = shuffle('ABCDEFGHIJKLMNOPRSTUW'.split('')).slice(0, n);
+    else { const set = new Set(); while (set.size < n) set.add(rnd(1, Math.max(top, n + 2))); vals = [...set]; }
+    const before = kind === 'down' ? (x, y) => x > y : (x, y) => x < y;
+    do shuffle(vals); while (inversions(vals, before) < Math.min(2, n - 1));
+    const par = inversions(vals, before);
+    let swaps = 0, sel = -1;
+    qSay(kind === 'down' ? 'Put the wagons in order, biggest first. Tap two wagons side by side to swap them.'
+      : kind === 'abc' ? 'Put the wagons in ABC order. Tap two wagons side by side to swap them.'
+        : 'Put the wagons in order, smallest first. Tap two wagons side by side to swap them.');
+    $('ask').innerHTML = '<div class="train" id="train" style="--n:' + (n + 1) + '"></div><div class="rails" aria-hidden="true"></div>'
+      + '<p class="swaps" id="swaps" aria-live="polite"></p>';
+    const train = $('train');
+    function paint(swapped) {
+      train.innerHTML = '<span class="engine" aria-hidden="true">🚂</span>';
+      vals.forEach((v, i) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'wagon' + (i === sel ? ' sel' : '') + (swapped && swapped.includes(i) ? ' swap' : '');
+        b.textContent = v; b.setAttribute('aria-label', 'Wagon ' + (i + 1) + ': ' + v + (i === sel ? ', picked' : ''));
+        b.addEventListener('click', () => tap(i));
+        train.appendChild(b);
+      });
+      $('swaps').textContent = 'Swaps: ' + swaps + ' · Fewest: ' + par;
+    }
+    function tap(i) {
+      if (train.classList.contains('done')) return;
+      if (sel < 0 || sel === i || Math.abs(sel - i) > 1) { sel = sel === i ? -1 : i; sfx.tap(); paint(); return; }
+      const a = Math.min(sel, i), b = a + 1, fixes = before(vals[b], vals[a]);
+      [vals[a], vals[b]] = [vals[b], vals[a]];
+      swaps++; sel = -1; sfx.drop();
+      paint([a, b]);
+      if (!inversions(vals, before)) {
+        train.classList.add('done');
+        [...train.querySelectorAll('.wagon')].forEach((w, k) => setTimeout(() => w.classList.add('done'), k * 70));
+        sfx.whir(); solved(1600);
+        return;
+      }
+      // A wasted swap. After two, a pair in the wrong order glows.
+      if (!fixes) wrong(() => {
+        const k = vals.findIndex((v, j) => j + 1 < vals.length && before(vals[j + 1], v));
+        const w = train.querySelectorAll('.wagon');
+        w[k].classList.add('hint'); w[k + 1].classList.add('hint');
+      });
+    }
+    paint();
+  }
+
+  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain };
 
   // =====================================================================
   // Result and stickers
