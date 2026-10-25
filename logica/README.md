@@ -20,7 +20,7 @@ Every world has its own levels. A level opens once the level before it has at le
 
 | World | Skill | What the child does |
 | --- | --- | --- |
-| Robot Path | Algorithms | Builds a program from arrow blocks, then runs it and watches Gbot follow it step by step on a grid with rocks, water, gems, yellow tiles and a flag. Later levels add a repeat block (🔁 ×2 to ×9), a function (★, built once in its own tray and used again) and an if block (on a yellow tile Gbot takes the first arrow, anywhere else the second). A block limit makes the new block necessary. 🎲 Random map makes a new map every time, for practice without stars. |
+| Robot Path | Algorithms | Builds a program from arrow blocks, then runs it and watches Gbot follow it step by step on a grid with rocks, water, gems, yellow tiles and a flag. Later levels add a repeat block (🔁 ×2 to ×9), a repeat-until block (teal 🔁: until Gbot is at the 🚩 flag, or, after tapping the 🚩, until 1, 2 or 3 gems are collected, with a 💎 counter under the board), a function (★, built once in its own tray and used again) and an if block (on a yellow tile Gbot takes the first arrow, anywhere else the second). A block limit makes the new block necessary. 🎲 Random map makes a new map every time, for practice without stars. |
 | Patterns (8 levels) | Pattern recognition | Finds what comes next or what is missing: colors, shapes, repeating units, growing dot counts, turning arrows, and two rules at once. |
 | Magic Machine (8 levels) | Abstraction | Watches items go in and out of a machine, works out the rule (change color, change shape, add one, turn, double, two changes, add two, number rules) and picks what comes out next. |
 | Balance (6 levels) | Logical reasoning | Reads one to four balances and picks the heaviest or lightest ball, then finds how many small balls balance some big ones. |
@@ -66,7 +66,7 @@ Gbot walks, wobbles, bumps into rocks and dances at the flag, gems fly up when c
 
 ## Content
 
-Robot and fixing levels, for each difficulty, and Gbot's messages live in the `<script type="application/json" id="content">` block in `index.html`. Maps use `.` grass, `#` rock, `~` water, `*` gem, `y` yellow tile, `R` Gbot and `F` the flag. A program is written with `U D L R`; `4(RD)` repeats `R D` four times, `?DR` goes down on a yellow tile and right anywhere else, and `F` calls the function, which is written after `|` (`FFF|RRU`). `tools` lists the blocks a level offers besides the arrows (`loop`, `if`, `fn`) and `max` is the most blocks a program may use. Pattern, machine, balance and filter questions are generated each time.
+Robot and fixing levels, for each difficulty, and Gbot's messages live in the `<script type="application/json" id="content">` block in `index.html`. Maps use `.` grass, `#` rock, `~` water, `*` gem, `y` yellow tile, `R` Gbot and `F` the flag. A program is written with `U D L R`; `4(RD)` repeats `R D` four times, `{F}(RD)` repeats `R D` until Gbot is at the flag and `{2}(R)` until two gems are collected, `?DR` goes down on a yellow tile and right anywhere else, and `F` calls the function, which is written after `|` (`FFF|RRU`). `tools` lists the blocks a level offers besides the arrows (`loop`, `until`, `if`, `fn`) and `max` is the most blocks a program may use. Pattern, machine, balance and filter questions are generated each time.
 
 After changing a level, check that every map can be solved:
 

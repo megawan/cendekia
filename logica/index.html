@@ -201,6 +201,13 @@
   .palette .blk svg { width: 40px; height: 40px; }
   .palette .blk:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,.18); }
   .palette .blk.loopBtn { --c: var(--loop); font-size: 1.1rem; font-weight: 800; color: #fff; }
+  .palette .blk.untilBtn { --c: #0e9aa7; font-size: 1rem; font-weight: 800; color: #fff; }
+  .loop.until { background: #e0f6f7; border-color: #0e9aa7; }
+  .loop.until .times { background: #0e9aa7; }
+  .loop.until .body .hole { border-color: #0e9aa7; }
+  .gemCount { display: flex; justify-content: center; margin: -4px 0 10px; }
+  .gemCount span { background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 2px 12px; font-weight: 800; }
+  .gemCount span.pop { animation: pop .35s; }
   .palette.nudge .blk.R { animation: pulse 1s ease-in-out infinite; }
   .tools { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .tools .btn.run { min-width: 150px; font-size: 1.3rem; }
@@ -748,6 +755,7 @@
       <div class="bubble" id="rSay" aria-live="polite"></div>
     </div>
     <div class="board" id="board"></div>
+    <div class="gemCount" id="gemCount" aria-live="polite" hidden><span></span></div>
     <div class="tray" id="tray" role="group" aria-label="Program"></div>
     <div class="fnwrap" id="fnWrap" hidden>
       <div class="lbl"><span class="blk F" aria-hidden="true">★</span> Function</div>
@@ -863,7 +871,8 @@
       {"name": "Corner", "map": ["R.*", "##.", "F.."], "sol": "RRDDLL"},
       {"name": "Two gems", "map": ["*..*", "R..F"], "sol": "URRRD"},
       {"name": "Repeat", "map": ["~~~~~~", "R....F", "~~~~~~"], "sol": "5(R)", "max": 2, "tools": "loop"},
-      {"name": "Repeat twice", "map": ["R~~~", ".~~~", ".~~~", "...F"], "sol": "3(D)3(R)", "max": 4, "tools": "loop"}
+      {"name": "Repeat twice", "map": ["R~~~", ".~~~", ".~~~", "...F"], "sol": "3(D)3(R)", "max": 4, "tools": "loop"},
+      {"name": "Until the flag", "map": ["~~~~~~~~~", "R.......F", "~~~~~~~~~"], "sol": "{F}(R)", "max": 2, "tools": "until"}
     ],
     "medium": [
       {"name": "Forward", "map": [".....", "R...F"], "sol": "RRRR"},
@@ -879,7 +888,9 @@
       {"name": "Snake", "map": ["R....", "####.", ".....", ".####", "....F"], "sol": "4(R)2(D)4(L)2(D)4(R)", "max": 10, "tools": "loop"},
       {"name": "Gem stairs", "map": ["R.*#.", "##.#.", ".#*.*", ".###.", "...#F"], "sol": "2(RRDD)", "max": 5, "tools": "loop"},
       {"name": "My function", "map": ["~~~~~~F", "~~~~...", "~~...~~", "R..~~~~"], "sol": "FFF|RRU", "max": 6, "tools": "fn"},
-      {"name": "Yellow tiles", "map": ["R.y~~~~", "~~..y~~", "~~~~..F"], "sol": "8(?DR)", "max": 3, "tools": "loop,if"}
+      {"name": "Yellow tiles", "map": ["R.y~~~~", "~~..y~~", "~~~~..F"], "sol": "8(?DR)", "max": 3, "tools": "loop,if"},
+      {"name": "Until the flag", "map": ["R.~~~", "~..~~", "~~..~", "~~~.F"], "sol": "{F}(RD)", "max": 3, "tools": "until"},
+      {"name": "Count the gems", "map": ["R.*.*", "~~~~.", "~~~~.", "~~~~F"], "sol": "{2}(R){F}(D)", "max": 4, "tools": "until"}
     ],
     "hard": [
       {"name": "Long road", "map": ["R..#...", "##.#.#.", "...#.#.", ".###.#.", ".....#F"], "sol": "RRDDLLDDRRRRUUUURRDDDD"},
@@ -891,7 +902,9 @@
       {"name": "Function gems", "map": ["R.~~~~~", "~.*.~~~", "~~~.*.~", "~~~~~.F"], "sol": "FFF|RDR", "max": 6, "tools": "fn"},
       {"name": "Yellow maze", "map": ["R.y~~~~", "~~y~~~~", "~~..y~~", "~~~~..F"], "sol": "9(?DR)", "max": 3, "tools": "loop,if"},
       {"name": "Big steps", "map": ["R...~~~", "~~~.~~~", "~~~.~~~", "~~~....", "~~~~~~.", "~~~~~~.", "~~~~~~F"], "sol": "2(F)|3(R)3(D)", "max": 6, "tools": "loop,fn"},
-      {"name": "Long snake", "map": ["R..*...", "######.", "..*....", ".######", "....*.F"], "sol": "6(R)2(D)6(L)2(D)6(R)", "max": 10, "tools": "loop"}
+      {"name": "Long snake", "map": ["R..*...", "######.", "..*....", ".######", "....*.F"], "sol": "6(R)2(D)6(L)2(D)6(R)", "max": 10, "tools": "loop"},
+      {"name": "Gem counter", "map": ["R.~~~~~", "~*.~~~~", "~~*.~~~", "~~~*..F"], "sol": "{3}(RD){F}(R)", "max": 5, "tools": "until"},
+      {"name": "Until and if", "map": ["R.y~~~~~", "~~y~~~~~", "~~..y~~~", "~~~~y~~~", "~~~~...F"], "sol": "{F}(?DR)", "max": 2, "tools": "until,if"}
     ]
   },
   "debug": {
@@ -951,6 +964,7 @@
     "hintProg": "Here is a program that works. Try it!",
     "hintBug": "Look closely at the glowing block.",
     "random": "A brand new map! Take Gbot to the flag.",
+    "robotUntil": "The teal 🔁 block repeats until Gbot is at the flag. Tap its 🚩 to make it count gems instead.",
     "custom": "Your own map! Take Gbot to the flag."
   }
 }
@@ -1499,7 +1513,7 @@
       ['<div class="demo d-tap"><span class="btn go">▶ Run</span><span class="hand">👆</span></div>', 'Press ▶ Run.'],
       ['<div class="demo d-walk"><span class="track"></span>' + gbotSvg('happy') + '<span class="flagd">🚩</span></div>', 'Gbot follows your program. Reach the flag!'],
       ['<div class="demo d-pop"><span class="blk loopBtn" style="--c:var(--loop)">🔁</span><span class="blk F">★</span><span class="blk ifBtn" style="--c:#f59e0b"><span class="ytile"></span></span></div>',
-        'Later: 🔁 repeats blocks, ★ is a function you build once and use again, and the yellow block checks the tile.']
+        'Later: 🔁 repeats blocks, the teal 🔁 repeats until the flag or a number of gems, ★ is a function you build once and use again, and the yellow block checks the tile.']
     ],
     patterns: [
       ['<div class="demo"><span class="seqd">' + [0, 1, 0].map((k) => itemSvg(it('circle', k ? 'blue' : 'red'))).join('') + '<span class="q">?</span></span></div>', 'Look at the row. What repeats?'],
@@ -1605,13 +1619,19 @@
         const end = s.indexOf(')', i);
         out.push({ t: 'loop', n: +ch, body: parseList(s.slice(i + 2, end)) });
         i = end + 1;
+      } else if (ch === '{') {
+        // {F}(RD) repeats R D until Gbot is at the flag; {2}(R) repeats R until two gems are collected.
+        const close = s.indexOf('}', i), cond = s.slice(i + 1, close), end = s.indexOf(')', close);
+        out.push({ t: 'until', c: cond === 'F' ? 'F' : +cond, body: parseList(s.slice(close + 2, end)) });
+        i = end + 1;
       } else if (ch === '?') { out.push({ t: 'if', a: s[i + 1], b: s[i + 2] }); i += 3; }
       else { out.push({ t: ch }); i++; }
     }
     return out;
   }
   const parseProg = (s) => { const [main, fn] = s.split('|'); return { prog: parseList(main), fn: parseList(fn || '') }; };
-  const count = (list) => list.reduce((n, b) => n + (b.t === 'loop' ? 1 + count(b.body) : 1), 0);
+  const hasBody = (b) => b.t === 'loop' || b.t === 'until';
+  const count = (list) => list.reduce((n, b) => n + (hasBody(b) ? 1 + count(b.body) : 1), 0);
   const blocks = () => count(R.prog) + count(R.fn);
   const blocked = (lv, x, y) => x < 0 || y < 0 || x >= lv.w || y >= lv.h || lv.cells[y][x] === '#' || lv.cells[y][x] === '~';
   // Runs a program without drawing it. Each step lists the ids of the blocks to light up:
@@ -1636,6 +1656,10 @@
       for (let i = 0; i < list.length; i++) {
         const b = list[i], id = pre + i, h = hl.concat(id);
         if (b.t === 'loop') { for (let r = 0; r < b.n; r++) if (run(b.body, id + '.', h)) return true; }
+        else if (b.t === 'until') {
+          const done = () => (b.c === 'F' ? x === lv.goal.x && y === lv.goal.y : got.size >= b.c);
+          for (let r = 0; r < 60 && b.body.length && !done(); r++) if (run(b.body, id + '.', h)) return true;
+        }
         else if (b.t === 'F') { if (run(fn, 'f', h)) return true; }
         else if (b.t === 'if') { const yes = lv.cells[y][x] === 'y'; if (move(yes ? b.a : b.b, h.concat(id + (yes ? 'a' : 'b')))) return true; }
         else if (move(b.t, h)) return true;
@@ -1693,6 +1717,7 @@
       const p = clone(prog), f = clone(fn), slots = [];
       const collect = (list) => list.forEach((b) => {
         if (b.t === 'loop') { slots.push({ loop: b }); collect(b.body); }
+        else if (b.t === 'until') collect(b.body);
         else if (b.t === 'if') slots.push({ iff: b, slot: 'a' }, { iff: b, slot: 'b' });
         else if (b.t !== 'F') slots.push({ cmd: b });
       });
@@ -1729,7 +1754,7 @@
   }
   function robotIntro() {
     const t = R.tools;
-    const p = R.debug ? P.debug : R.def.custom ? P.custom : R.i < 0 ? P.random : t.includes('if') ? P.robotIf : t.includes('fn') ? P.robotFn
+    const p = R.debug ? P.debug : R.def.custom ? P.custom : R.i < 0 ? P.random : t.includes('until') ? P.robotUntil : t.includes('if') ? P.robotIf : t.includes('fn') ? P.robotFn
       : t.includes('loop') && R.max ? P.robotLoop : R.lv.gems.length ? P.robotGem : P.robot;
     $('rSay').textContent = p + (R.max ? ' (' + R.max + ' blocks at most)' : '');
   }
@@ -1765,7 +1790,17 @@
     resetBot();
   }
   function placeBot(x, y) { botEl.style.setProperty('--x', x); botEl.style.setProperty('--y', y); }
+  // Gems collected so far, under the board, for maps with gems.
+  function gemCount(n) {
+    const g = $('gemCount'), total = R.lv.gems.length;
+    g.hidden = !total;
+    const sp = g.firstChild;
+    sp.textContent = '💎 ' + n + ' / ' + total;
+    sp.setAttribute('aria-label', n + ' of ' + total + ' gems');
+    if (n) { sp.classList.remove('pop'); void sp.offsetWidth; sp.classList.add('pop'); }
+  }
   function resetBot() {
+    gemCount(0);
     placeBot(R.lv.start.x, R.lv.start.y);
     botEl.className = 'bot';
     mood(botEl.firstChild, 'happy');
@@ -1964,15 +1999,16 @@
   }
   function blockEl(b, list, i, id, home, ro) {
     const hint = R.showBug && b.bug ? ' hintme' : '';
-    if (b.t === 'loop') {
+    if (hasBody(b)) {
+      const until = b.t === 'until';
       const L = document.createElement('div');
-      L.className = 'loop' + (R.target && R.target.b === b ? ' target' : '');
+      L.className = 'loop' + (until ? ' until' : '') + (R.target && R.target.b === b ? ' target' : '');
       L.dataset.id = id;
       L.innerHTML = '<span class="head"><span class="ic" aria-hidden="true">🔁</span></span><span class="body"></span>';
       const times = document.createElement('button');
       times.type = 'button'; times.className = 'times' + (R.sel && R.sel.loop === b ? ' pick' : '') + (hint && b.bug === 'n' ? ' hintme' : '');
-      times.textContent = '×' + b.n;
-      times.setAttribute('aria-label', 'Repeat ' + b.n + ' times');
+      times.textContent = until ? (b.c === 'F' ? '🚩' : '💎×' + b.c) : '×' + b.n;
+      times.setAttribute('aria-label', until ? (b.c === 'F' ? 'Repeat until at the flag' : 'Repeat until ' + b.c + (b.c === 1 ? ' gem' : ' gems')) : 'Repeat ' + b.n + ' times');
       L.querySelector('.head').appendChild(times);
       const body = L.querySelector('.body');
       b.body.forEach((c, j) => body.appendChild(blockEl(c, b.body, j, id + '.' + j, home, ro)));
@@ -1980,12 +2016,15 @@
       if (ro) return L;
       times.addEventListener('click', (e) => {
         e.stopPropagation(); if (R.running) return;
-        if (R.debug) { selectFix({ loop: b }); return; }
-        b.n = b.n >= 9 ? 2 : b.n + 1; sfx.tap(); afterEdit();
+        if (R.debug) { if (!until) selectFix({ loop: b }); return; }
+        // The until block counts: the flag, then one gem, two gems … up to the gems on the map.
+        if (until) { const opts = ['F'].concat(Array.from({ length: R.lv.gems.length }, (_, k) => k + 1)); b.c = opts[(opts.indexOf(b.c) + 1) % opts.length]; }
+        else b.n = b.n >= 9 ? 2 : b.n + 1;
+        sfx.tap(); afterEdit();
       });
       if (!R.debug) {
         const del = document.createElement('button');
-        del.type = 'button'; del.className = 'del'; del.textContent = '✕'; del.setAttribute('aria-label', 'Remove the repeat block');
+        del.type = 'button'; del.className = 'del'; del.textContent = '✕'; del.setAttribute('aria-label', until ? 'Remove the repeat-until block' : 'Remove the repeat block');
         del.addEventListener('click', (e) => { e.stopPropagation(); if (R.running) return; list.splice(i, 1); R.target = null; afterEdit(); });
         L.appendChild(del);
         L.addEventListener('click', (e) => {
@@ -2062,6 +2101,7 @@
       p.appendChild(b);
     };
     if (R.tools.includes('loop')) extra('loopBtn', '🔁', 'Add a repeat block', () => ({ t: 'loop', n: 2, body: [] }));
+    if (R.tools.includes('until')) extra('untilBtn', '🔁🚩', 'Add a repeat-until block', () => ({ t: 'until', c: 'F', body: [] }));
     if (R.tools.includes('if')) extra('ifBtn', '<span class="ytile"></span>?', 'Add an if block', () => ({ t: 'if', a: null, b: null }));
     if (R.tools.includes('fn')) extra('F', '★', 'Add a call of the function', () => ({ t: 'F' }));
     p.classList.toggle('nudge', R.i === 0 && R.w.id === 'robot' && !R.prog.length);
@@ -2080,11 +2120,11 @@
     if (R.max && blocks() >= R.max) { sfx.bad(); rSay(P.full, 'oops'); return; }
     if (blocks() >= 40) { sfx.bad(); return; }
     let c = container(R.target);
-    if (b.t === 'loop' && c.inLoop) { sfx.bad(); rSay(P.noLoopInLoop, 'oops'); return; }
+    if (hasBody(b) && c.inLoop) { sfx.bad(); rSay(P.noLoopInLoop, 'oops'); return; }
     if (b.t === 'F' && c.home === 'fn') { sfx.bad(); rSay(P.noFnInFn, 'oops'); return; }
     sfx.tap();
     c.list.push(b);
-    if (b.t === 'loop') R.target = { kind: 'loop', b, home: c.home };
+    if (hasBody(b)) R.target = { kind: 'loop', b, home: c.home };
     if (b.t === 'if') R.target = { kind: 'if', b, slot: 'a', back: R.target };
     afterEdit();
   }
@@ -2182,7 +2222,7 @@
       placeBot(st.x, st.y);
       botEl.classList.remove('walk'); void botEl.offsetWidth; botEl.classList.add('walk');
       sfx.step();
-      if (st.gem) setTimeout(() => { if (my === runToken) { gemEls[st.x + ',' + st.y].classList.add('got'); sfx.gem(); } }, 220);
+      if (st.gem) setTimeout(() => { if (my === runToken) { gemEls[st.x + ',' + st.y].classList.add('got'); sfx.gem(); gemCount($('board').querySelectorAll('.gem.got').length); } }, 220);
       await sleep(STEP);
     }
     if (my !== runToken) return;
