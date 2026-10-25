@@ -39,6 +39,24 @@ python3 -m http.server 8000
 
 Then open `http://localhost:8000/`.
 
+## Tests
+
+[Playwright](https://playwright.dev) tests live in [`tests/`](tests). They run against the static files, served locally, on a desktop and a phone-sized Chromium, with the service workers off and external requests (fonts, analytics) answered locally.
+
+| Folder | What it covers |
+| --- | --- |
+| [`tests/smoke/`](tests/smoke) | Landing page links, every app opens, manifests, icons and service workers exist |
+| [`tests/functional/`](tests/functional) | Child profiles (add, switch, persist), the parent page gate, the daily time limit |
+| [`tests/regression/`](tests/regression) | One test per past bug or change, such as the old `baca/` and `kosakata/` addresses |
+
+```bash
+npm ci
+npx playwright install chromium
+npm test                  # or test:smoke, test:functional, test:regression
+```
+
+Any uncaught script error on a page fails the test. The `Tests` workflow runs the suite on every pull request.
+
 ## Contributing
 
 Every change goes through its own branch and pull request.
