@@ -23,6 +23,10 @@ Questions are made fresh every round (`WORLDS` in `index.html`; each level is a 
 
 A wrong answer gets a second try. A second miss shows the answer with a short explanation of how to get it (count on, add the tens first, 10% is dividing by 10, and so on).
 
+## Trace numbers
+
+✏️ "Trace numbers" on the home screen, under the eight places, lets a child draw over the numbers 0 to 10, each with the matching number of apples and its word. The scoring, three stars for a neat line and the `shared/trace.js` code are described in [Aksara's README](../aksara/README.md#tracing). Numbers are drawn in the Andika font. The best stars for each number are kept in `traced` in the child's save, each traced number goes to the shared log as a round called "Tracing", and the daily time limit applies. These stars are shown on the tracing screen only and do not count toward the town stars, so the town stickers still mean that the levels were played.
+
 ## Stars and stickers
 
 Three stars for every question right on the first try, two for up to two misses, one for finishing. Twelve town stickers unlock as the total star count grows (144 stars at most). Days in a row are counted as in the other apps.
@@ -35,4 +39,4 @@ Numeria uses the children shared by every Cendekia app (`shared/profile.js`). Ea
 
 Sound effects are made with the Web Audio API; there is no voice. With "reduce motion" turned on in the device settings, all animation is off.
 
-`sw.js` precaches the page, the icons and `../shared/profile.js`. After changing the page, bump `CACHE` in `sw.js` so installed copies refresh.
+`sw.js` precaches the page, the icons, `../shared/profile.js` and `../shared/trace.js`. After changing the page, bump `CACHE` in `sw.js` so installed copies refresh.
