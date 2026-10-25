@@ -22,7 +22,7 @@ jobs:
         /lexica/index.html
         /logica/index.html
         /numeria/index.html
-        /orangtua/index.html
+        /parents/index.html
       # Measured locally on 2026-10-25: performance 0.8+, accessibility 0.87 to 1, best practices 0.82.
       # The minimums sit just below that, so a drop fails and raising them is a later goal.
       min-performance: "0.8"

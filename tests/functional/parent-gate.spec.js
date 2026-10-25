@@ -6,7 +6,7 @@ async function answer(page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/orangtua/');
+  await page.goto('/parents/');
 });
 
 test('the page starts behind a multiplication gate', async ({ page }) => {

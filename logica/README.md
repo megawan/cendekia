@@ -4,7 +4,7 @@ Logical and computational thinking games for children, with Gbot the robot. Ever
 
 ## Children and difficulty
 
-Logica uses the children shared by every Cendekia app (`shared/profile.js`): the same child plays here and in the other apps. The chip at the top left of the home screen switches children or adds one; renaming, the picture, the daily time limit and removing a child are also on the [parents' page](../orangtua/). The daily time limit applies here too: a level or random map cannot start once it is used up.
+Logica uses the children shared by every Cendekia app (`shared/profile.js`): the same child plays here and in the other apps. The chip at the top left of the home screen switches children or adds one; renaming, the picture, the daily time limit and removing a child are also on the [parents' page](../parents/). The daily time limit applies here too: a level or random map cannot start once it is used up.
 
 Each child picks a difficulty, stored per child: the badge at the top right (🌱 Easy, 🌿 Medium or 🌳 Hard) changes it at any time, and a child opening Logica for the first time is asked to choose. Stars are kept for every difficulty, so switching never loses progress.
 
@@ -56,7 +56,7 @@ Each child keeps up to twelve maps in My maps (`maps` in their saved state), to 
 
 For the summary, every child keeps `log` (per difficulty, world and level: questions and how many were right on the first try, robot runs, wins, failed runs and hints) and `days` (puzzles solved per day, the last 60 days). This is counted from the first game after the summary was added; earlier stars are included. Nothing leaves the device.
 
-Every finished level also goes to the shared log (`Cendekia.round`), and the first mistake of a question or the first failed run of a level to the shared list of things that went wrong (`Cendekia.weak`), so Logica shows on the [parents' page for all apps](../orangtua/) with time played, progress, mistakes and last rounds.
+Every finished level also goes to the shared log (`Cendekia.round`), and the first mistake of a question or the first failed run of a level to the shared list of things that went wrong (`Cendekia.weak`), so Logica shows on the [parents' page for all apps](../parents/) with time played, progress, mistakes and last rounds.
 
 ## Animations
 
