@@ -18,6 +18,7 @@
     --bg: #fff6ec; --ink: #1f2a44; --card: #ffffff; --line: #f0dcc4;
     --accent: #f2891f; --accent-d: #c96a0c; --warm: #f2a33a; --good: #1f9d6b; --bad: #d9534f;
     --c-green: #1f9d6b; --c-orange: #f2891f; --c-pink: #e0558a; --c-purple: #7a5af8; --c-blue: #2e90fa; --c-teal: #0e9aa7;
+    --c-indigo: #4c5fd5; --c-red: #e5484d;
     --d-U: #1f9d6b; --d-D: #7a5af8; --d-L: #e0558a; --d-R: #2e90fa; --loop: #f2891f;
     --screen: #1f2a44; --glow: #5ef2d6;
     --radius: 20px;
@@ -297,6 +298,78 @@
   .thing.hint { animation: blink .8s ease-in-out infinite; }
   .thing.pass { animation: pass .8s cubic-bezier(.5,-.4,.6,1) forwards; }
   .thing.drop { opacity: .25; transform: scale(.85); }
+
+  /* Secret code */
+  .legend { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 10px; font-weight: 700; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .px { display: inline-block; width: 22px; height: 22px; border-radius: 5px; background: #fff; border: 2px solid #c3cde0; vertical-align: middle; }
+  .px.on { background: var(--ink); border-color: var(--ink); }
+  .codebox { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 14px; }
+  .bits { background: var(--screen); color: var(--glow); border-radius: 14px; padding: 8px 12px 8px 16px;
+    font: 800 1.35rem/1.3 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .3em; text-align: left; }
+  .bits div { white-space: nowrap; }
+  .pix { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 3px; width: min(100%, calc(var(--n) * 44px)); }
+  .pix > span, .pix > button { aspect-ratio: 1; border-radius: 6px; background: #fff; border: 2px solid #c3cde0; padding: 0; min-width: 0; }
+  .pix > .on { background: var(--ink); border-color: var(--ink); }
+  .pix > button { cursor: pointer; transition: background .12s; }
+  .pix > button.no { border-color: var(--bad); background: #fdeceb; animation: shake .3s; }
+  .pix > button.hint { animation: blink .8s ease-in-out infinite; }
+  .pix.small { width: min(100%, calc(var(--n) * 15px)); gap: 2px; margin: 0 auto; }
+  .opt:has(> .pix) { grid-template-columns: minmax(0, 1fr); padding: 8px; }
+  .pix.small > span { border-width: 1px; border-radius: 3px; }
+  .pix.row { width: min(100%, calc(var(--n) * 40px)); margin: 0 auto; }
+  .rl { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 4px 8px; }
+  .rl .run { display: inline-flex; align-items: center; gap: 3px; font-weight: 800; font-size: 1.35rem; }
+  .rl .px { width: 20px; height: 20px; }
+  .bulbs { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .bulb { display: flex; flex-direction: column; align-items: center; gap: 2px; font: inherit; color: inherit; background: none; border: 0; padding: 0; }
+  button.bulb { cursor: pointer; }
+  .bulb .glass { width: 46px; height: 56px; border-radius: 50% 50% 42% 42%; background: #e5e7eb; border: 3px solid #cbd5e1;
+    transition: background .2s, box-shadow .2s; }
+  .bulb .base { width: 22px; height: 9px; border-radius: 0 0 6px 6px; background: #94a3b8; margin-top: -3px; }
+  .bulb.on .glass { background: #fde047; border-color: #f59e0b; box-shadow: 0 0 18px 6px rgba(250, 204, 21, .55); }
+  .bulb .val { font-weight: 800; font-size: 1.25rem; line-height: 1.1; }
+  .bulb .bit { font: 800 .95rem ui-monospace, Menlo, Consolas, monospace; color: #64748b; }
+  .bulb.hint .glass { animation: blink .8s ease-in-out infinite; }
+  .total { margin-top: 10px; font-weight: 800; font-size: 1.2rem; }
+  .secret { display: inline-block; background: var(--screen); color: var(--glow); border-radius: 14px; padding: 6px 10px 6px 18px;
+    font: 800 2.1rem/1.2 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .3em; }
+  .secret.plain { background: #fff; color: var(--ink); border: 3px solid var(--line); }
+  .shift { margin: 8px 0 0; font-weight: 700; }
+  .alpha { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 3px; max-width: 430px; margin: 10px auto 0; }
+  .alpha span { background: #fff; border: 2px solid var(--line); border-radius: 6px; font-weight: 800; font-size: .95rem; line-height: 1.6; }
+  .alpha span.hl { background: #fff1c2; border-color: var(--warm); }
+  .wordopt { font: 800 1.45rem ui-monospace, Menlo, Consolas, monospace; letter-spacing: .12em; }
+
+  /* Mini Sudoku */
+  .sdk { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 2px; width: min(100%, calc(var(--n) * 66px));
+    margin: 0 auto; background: #94a3b8; border: 4px solid var(--ink); border-radius: 12px; overflow: hidden; }
+  .sdk button { aspect-ratio: 1; background: #fff; border: 0; padding: 12%; display: grid; place-items: center; cursor: pointer; min-width: 0; }
+  .sdk button.bR { border-right: 4px solid var(--ink); }
+  .sdk button.bB { border-bottom: 4px solid var(--ink); }
+  .sdk button.given { background: #e9edf4; cursor: default; }
+  .sdk button.sel { background: #e3f0ff; box-shadow: inset 0 0 0 4px var(--c-blue); }
+  .sdk button.no { background: #fdeceb; animation: shake .3s; }
+  .sdk button.hint { animation: blink .8s ease-in-out infinite; }
+  .sdk button.win { background: #e8f8f0; animation: pop .4s; }
+  .sdk svg.it { width: 100%; height: 100%; }
+  .palette { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .palette button { width: 58px; height: 58px; padding: 7px; background: #fff; border: 3px solid var(--line); border-bottom-width: 6px;
+    border-radius: 16px; cursor: pointer; font: inherit; font-size: 1.5rem; font-weight: 800; color: var(--ink); }
+  .palette button:active { transform: translateY(3px); }
+  .palette svg.it { width: 100%; height: 100%; }
+  @media (max-width: 420px) { .palette { gap: 6px; } .palette button { width: 42px; height: 42px; padding: 5px; border-radius: 12px; font-size: 1.2rem; } }
+  .demo .pix.small { width: 60px; }
+  .demo .bits { font-size: .8rem; padding: 4px 6px 4px 8px; border-radius: 8px; }
+  .demo .secret { font-size: .95rem; padding: 3px 4px 3px 8px; border-radius: 8px; }
+  .demo .bulb .glass { width: 22px; height: 27px; border-width: 2px; }
+  .demo .bulb .base { width: 11px; height: 5px; }
+  .demo .bulb .val { font-size: .8rem; }
+  .demo .sdk { width: 66px; border-width: 2px; border-radius: 6px; gap: 1px; }
+  .demo .sdk span { aspect-ratio: 1; background: #fff; display: grid; place-items: center; padding: 2px; }
+  .demo .sdk span.q { border: 0; border-radius: 0; font-size: .7rem; width: auto; height: auto; }
+  .demo .sdk svg.it { width: 100%; height: 100%; }
+  .demo .palette button { width: 30px; height: 30px; padding: 3px; border-radius: 8px; border-width: 2px; border-bottom-width: 3px; }
   @keyframes pass { 40% { transform: translateY(-12px) scale(1.1); } 100% { transform: translateY(40px) scale(.3); opacity: 0; } }
   .check { display: flex; justify-content: center; margin-top: 14px; }
 
@@ -838,7 +911,8 @@
     triangle: '<path d="M50 10 L92 86 L8 86 Z" stroke-linejoin="round"/>',
     star: '<path d="M50 6 L62 36 L94 38 L69 59 L77 91 L50 73 L23 91 L31 59 L6 38 L38 36 Z" stroke-linejoin="round"/>',
     heart: '<path d="M50 90 C18 66 6 48 12 30 C18 12 42 10 50 28 C58 10 82 12 88 30 C94 48 82 66 50 90 Z"/>',
-    arrow: '<path d="M50 6 L88 46 L64 46 L64 92 L36 92 L36 46 L12 46 Z" stroke-linejoin="round"/>'
+    arrow: '<path d="M50 6 L88 46 L64 46 L64 92 L36 92 L36 46 L12 46 Z" stroke-linejoin="round"/>',
+    diamond: '<path d="M50 6 L90 50 L50 94 L10 50 Z" stroke-linejoin="round"/>'
   };
   // Dot layouts for 1 to 10, like dice.
   const DOTS = [[], [[50, 50]], [[30, 30], [70, 70]], [[26, 26], [50, 50], [74, 74]], [[30, 30], [70, 30], [30, 70], [70, 70]],
@@ -981,7 +1055,13 @@
       desc: 'Gbot\'s program has one mistake. Run it, find the wrong block and fix it.' },
     { id: 'saring', name: 'Logic Filter', skill: 'AND, OR, NOT logic', icon: '🔍', c: 'var(--c-green)', kind: 'quiz', total: 4,
       desc: 'Pick every item that fits the rule. Watch out for AND, OR and NOT.',
-      levels: ['Colors', 'Shapes', 'AND', 'NOT', 'OR', 'But not', 'Mixed'] }
+      levels: ['Colors', 'Shapes', 'AND', 'NOT', 'OR', 'But not', 'Mixed'] },
+    { id: 'kode', name: 'Secret Code', skill: 'Codes and binary', icon: '🔐', c: 'var(--c-indigo)', kind: 'quiz', total: 4,
+      desc: 'Turn 0 and 1 into pictures, read numbers from light bulbs and crack secret messages.',
+      levels: ['Read the picture', 'Paint by code', 'Short code', 'Light bulbs', 'Make a number', 'Secret message', 'Write in code'] },
+    { id: 'sudoku', name: 'Mini Sudoku', skill: 'Deduction', icon: '🧩', c: 'var(--c-red)', kind: 'quiz', total: 3,
+      desc: 'Fill the gaps so every row and column, and every box in the bigger grids, has each shape once.',
+      levels: ['Warm up', 'A few gaps', 'Half empty', 'Think ahead', 'Boxes', 'Big grid', 'Master'] }
   ];
   // Robot and fixing levels are different for each difficulty; quiz levels are the same, with harder questions.
   const levelsOf = (w) => (w.kind === 'robot' ? C[w.id][S.diff].map((l) => l.name) : w.levels);
@@ -1158,7 +1238,9 @@
     mesin: 'Finding the general rule behind a few examples, and applying it to something new.',
     timbang: 'Combining facts to reach a conclusion: if red is heavier than blue and blue is heavier than green, red is the heaviest.',
     debug: 'Finding where a plan goes wrong and fixing just that part, calmly.',
-    saring: 'Combining conditions with AND, OR and NOT, as in searches and programming.'
+    saring: 'Combining conditions with AND, OR and NOT, as in searches and programming.',
+    kode: 'How computers keep pictures and numbers as 0 and 1, write data in a shorter way, and hide a message with a code.',
+    sudoku: 'Ruling out what cannot fit, one step at a time, until only one answer is left.'
   };
   let viewed = null, gateAns = 0;
   $('toParents').addEventListener('click', () => {
@@ -1316,6 +1398,18 @@
       ['<div class="demo d-sel"><span class="thingd on">' + itemSvg(it('circle', 'red')) + '</span><span class="thingd">' + itemSvg(it('star', 'blue')) + '</span><span class="thingd on">' + itemSvg(it('heart', 'red')) + '</span></div>',
         'Tap every item that fits.'],
       ['<div class="demo"><span class="btn go">✓ Check</span></div>', 'Then press ✓ Check.']
+    ],
+    kode: [
+      ['<div class="demo"><div class="bits"><div>0110</div><div>1001</div></div>' + pixHtml([[0, 1, 1, 0], [1, 0, 0, 1]], 'small') + '</div>', 'In a picture code, 1 is a filled square and 0 an empty one.'],
+      ['<div class="demo">' + bulbHtml(4, 1) + bulbHtml(2, 0) + bulbHtml(1, 1) + '</div>', 'Add the numbers under the lit bulbs: 4 + 1 = 5.'],
+      ['<div class="demo"><span class="secret">DBU</span><b>→</b><span class="secret plain">CAT</span></div>', 'In a secret message, every letter moves along the alphabet. Move it back to read it.']
+    ],
+    sudoku: [
+      ['<div class="demo"><div class="sdk" style="--n:3">' + [0, 1, 2, 1, 2, 0, 2, 0, -1].map((v) => '<span' + (v < 0 ? ' class="q">?' : '>' + itemSvg(SYMS[v])) + '</span>').join('') + '</div></div>',
+        'Every row and every column has each shape once. Which one is missing?'],
+      ['<div class="demo"><div class="palette"><button type="button" tabindex="-1">' + itemSvg(SYMS[1]) + '</button><button type="button" tabindex="-1">' + itemSvg(SYMS[2]) + '</button></div></div>',
+        'Tap a gap, then tap the shape that goes there.'],
+      ['<div class="demo"><span class="btn go">✓ Check</span></div>', 'When every gap is full, press ✓ Check.']
     ]
   });
   function tutorial(w) {
@@ -2219,7 +2313,291 @@
     $('answers').appendChild(wrap);
   }
 
-  const GEN = { pola: genPola, mesin: genMesin, timbang: genTimbang, saring: genSaring };
+  // A ✓ Check button under the answers. onCheck returns true when the puzzle is solved.
+  function checkBtn(onCheck) {
+    const wrap = document.createElement('div');
+    wrap.className = 'check';
+    const go = document.createElement('button');
+    go.type = 'button'; go.className = 'btn go'; go.textContent = '✓ Check';
+    go.addEventListener('click', () => { if (!go.disabled && onCheck() === true) go.disabled = true; });
+    wrap.appendChild(go);
+    $('answers').appendChild(wrap);
+  }
+
+  // ---- Secret code ----
+  // Pictures are random and mirrored left to right, like little space invaders. Easy: 4×4, medium: 5×5, hard: 6×6.
+  function pixelArt(n) {
+    for (;;) {
+      const half = Math.ceil(n / 2);
+      const g = Array.from({ length: n }, () => { const l = Array.from({ length: half }, () => rnd(0, 1)); return l.concat(l.slice(0, n - half).reverse()); });
+      const on = g.flat().filter(Boolean).length;
+      if (on >= n * n * 0.35 && on <= n * n * 0.65) return g;
+    }
+  }
+  const gk = (g) => g.map((r) => r.join('')).join('/');
+  function pixHtml(g, cls) {
+    return '<div class="pix' + (cls ? ' ' + cls : '') + '" style="--n:' + g[0].length + '" aria-hidden="true">'
+      + g.flat().map((b) => '<span' + (b ? ' class="on"' : '') + '></span>').join('') + '</div>';
+  }
+  const bitsHtml = (g) => '<div class="bits" aria-label="Code: ' + g.map((r) => r.join(' ')).join(', ') + '">' + g.map((r) => '<div>' + r.join('') + '</div>').join('') + '</div>';
+  const LEGEND = '<p class="legend"><span><i class="px"></i>0 = empty</span><span><i class="px on"></i>1 = filled</span></p>';
+  // Pictures close to g: one row turned around, a mirrored pair of squares changed, or upside down.
+  function pixVariants(g) {
+    const n = g.length, copy = () => g.map((r) => r.slice()), out = [g.slice().reverse()];
+    for (let k = 0; k < 8; k++) {
+      const v = copy(), r = rnd(0, n - 1), c = rnd(0, Math.ceil(n / 2) - 1);
+      v[r][c] = 1 - v[r][c]; v[r][n - 1 - c] = v[r][c];
+      out.push(v);
+    }
+    for (let k = 0; k < 4; k++) { const v = copy(), r = rnd(0, n - 1); v[r] = v[r].map((b) => 1 - b); out.push(v); }
+    return out;
+  }
+  // A row of squares as runs: [[1, 3], [0, 2]] is three filled, then two empty.
+  const runsOf = (row) => row.reduce((a, b) => { if (a.length && a[a.length - 1][0] === b) a[a.length - 1][1]++; else a.push([b, 1]); return a; }, []);
+  const runsKey = (rs) => rs.map(([b, c]) => c + (b ? 'F' : 'E')).join(' ');
+  const runsHtml = (rs) => '<span class="rl">' + rs.map(([b, c]) => '<span class="run">' + c + '<i class="px' + (b ? ' on' : '') + '"></i></span>').join('') + '</span>';
+  const runsLabel = (rs) => rs.map(([b, c]) => c + (b ? ' filled' : ' empty')).join(', ');
+  function bulbHtml(v, on, tag) {
+    tag = tag || 'span';
+    return '<' + tag + (tag === 'button' ? ' type="button"' : '') + ' class="bulb' + (on ? ' on' : '') + '" data-v="' + v + '"><span class="glass"></span><span class="base"></span>'
+      + '<span class="val">' + v + '</span><span class="bit">' + (on ? 1 : 0) + '</span></' + tag + '>';
+  }
+  const BULBS = { easy: [4, 2, 1], medium: [8, 4, 2, 1], hard: [16, 8, 4, 2, 1] };
+  const WORDS = {
+    easy: ['CAT', 'DOG', 'SUN', 'BUS', 'HAT', 'PIG', 'BED', 'CUP', 'FOX', 'EGG', 'BOX', 'MAP', 'JAM', 'BEE', 'OWL', 'ANT', 'COW', 'HEN', 'KEY', 'PEN'],
+    medium: ['FISH', 'BIRD', 'CAKE', 'STAR', 'MOON', 'TREE', 'FROG', 'BOAT', 'SHIP', 'LION', 'BEAR', 'DUCK', 'KITE', 'RAIN', 'SNOW', 'MILK'],
+    hard: ['APPLE', 'HOUSE', 'ROBOT', 'TIGER', 'PLANT', 'TRAIN', 'CLOUD', 'SNAKE', 'HORSE', 'LEMON', 'PIZZA', 'MOUSE', 'RIVER', 'SMILE', 'CHAIR']
+  };
+  const shiftWord = (w, k) => w.replace(/[A-Z]/g, (ch) => String.fromCharCode((ch.charCodeAt(0) - 65 + k + 260) % 26 + 65));
+  const alphaHtml = (hl) => '<div class="alpha" aria-hidden="true">' + Array.from({ length: 26 }, (_, k) => String.fromCharCode(65 + k))
+    .map((ch) => '<span' + (hl.includes(ch) ? ' class="hl"' : '') + '>' + ch + '</span>').join('') + '</div>';
+  const steps = (k) => k + (k === 1 ? ' step' : ' steps');
+
+  function genKode(lvl) {
+    const d = S.diff, n = { easy: 4, medium: 5, hard: 6 }[d], many = d === 'easy' ? 3 : 4;
+    if (lvl === 0) {
+      const g = pixelArt(n), m = new Map([[gk(g), g]]);
+      shuffle(pixVariants(g)).forEach((v) => { if (m.size < many && !m.has(gk(v))) m.set(gk(v), v); });
+      qSay('Read the code row by row. Which picture does it make?');
+      $('ask').innerHTML = LEGEND + '<div class="codebox">' + bitsHtml(g) + '</div>';
+      options(shuffle([...m.values()]).map((v) => ({ html: pixHtml(v, 'small'), ok: gk(v) === gk(g), label: 'Picture ' + gk(v).replace(/\//g, ' ') })), () => solved());
+      return;
+    }
+    if (lvl === 1) {
+      const g = pixelArt(n), want = g.flat();
+      qSay('Paint every square that is 1 in the code.');
+      $('ask').innerHTML = LEGEND + '<div class="codebox">' + bitsHtml(g) + '<div class="pix" id="paint" style="--n:' + n + '"></div></div>';
+      const box = $('paint');
+      const cells = want.map((_, k) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('aria-label', 'Row ' + (((k / n) | 0) + 1) + ', square ' + (k % n + 1));
+        b.addEventListener('click', () => {
+          if (box.classList.contains('done')) return;
+          b.classList.remove('no', 'hint'); b.classList.toggle('on'); b.setAttribute('aria-pressed', b.classList.contains('on')); sfx.tap();
+        });
+        box.appendChild(b);
+        return b;
+      });
+      checkBtn(() => {
+        const bad = cells.filter((b, k) => b.classList.contains('on') !== !!want[k]);
+        if (!bad.length) { box.classList.add('done'); solved(1500); return true; }
+        bad.forEach((b) => { if (b.classList.contains('on')) { b.classList.remove('on', 'no'); void b.offsetWidth; b.classList.add('no'); b.setAttribute('aria-pressed', 'false'); } });
+        wrong(() => cells.forEach((b, k) => { if (want[k] && !b.classList.contains('on')) b.classList.add('hint'); }));
+        return false;
+      });
+      return;
+    }
+    if (lvl === 2) {
+      // Run-length code: "3 filled, 2 empty" is shorter than writing every square.
+      const len = { easy: 6, medium: 8, hard: 10 }[d], lo = d === 'easy' ? 2 : 3, hi = d === 'hard' ? 5 : 4;
+      let row; do { row = Array.from({ length: len }, () => rnd(0, 1)); } while (runsOf(row).length < lo || runsOf(row).length > hi);
+      const ans = runsOf(row), wrongs = [];
+      ans.forEach((_, k) => [1, -1].forEach((dd) => { const v = ans.map((x) => x.slice()); v[k][1] += dd; if (v[k][1] > 0) wrongs.push(v); }));
+      wrongs.push(ans.map(([b, c]) => [1 - b, c]));
+      if (ans.length > 1) { const v = ans.map((x) => x.slice()); const k = rnd(0, ans.length - 2); [v[k][1], v[k + 1][1]] = [v[k + 1][1], v[k][1]]; wrongs.push(v); }
+      const m = new Map([[runsKey(ans), ans]]);
+      shuffle(wrongs).forEach((v) => { if (m.size < many && !m.has(runsKey(v))) m.set(runsKey(v), v); });
+      const opts = shuffle([...m.values()]);
+      if (d === 'hard' && Math.random() < 0.5) {
+        // The other way round: read the short code and pick the row.
+        qSay('Each number counts squares of one kind. Which row does this short code make?');
+        $('ask').innerHTML = '<div class="codebox">' + runsHtml(ans) + '</div>';
+        options(opts.map((v) => ({ html: pixHtml([v.flatMap(([b, c]) => Array(c).fill(b))], 'small'), ok: runsKey(v) === runsKey(ans), label: runsLabel(v) })), () => solved()).style.setProperty('--n', 2);
+        return;
+      }
+      qSay('Count the squares of each kind, from left to right. Which short code fits the row?');
+      $('ask').innerHTML = pixHtml([row], 'row');
+      options(opts.map((v) => ({ html: runsHtml(v), ok: runsKey(v) === runsKey(ans), label: runsLabel(v) })), () => solved()).style.setProperty('--n', 2);
+      return;
+    }
+    if (lvl === 3 || lvl === 4) {
+      const vals = BULBS[d], max = vals.reduce((a, v) => a + v, 0);
+      if (lvl === 3) {
+        let bits; do { bits = vals.map(() => rnd(0, 1)); } while (!bits.some(Boolean));
+        const ans = vals.reduce((a, v, k) => a + v * bits[k], 0), nums = new Set([ans]);
+        shuffle([ans + 1, ans - 1, ans + 2, ans - 2, ans + vals[vals.length - 2], max - ans].filter((v) => v > 0 && v <= max)).forEach((v) => { if (nums.size < many) nums.add(v); });
+        qSay('Add the numbers under the lit bulbs. Which number do they make?');
+        $('ask').innerHTML = '<div class="bulbs">' + vals.map((v, k) => bulbHtml(v, bits[k])).join('') + '</div>';
+        options(shuffle([...nums]).map((v) => ({ html: '<span class="numopt">' + v + '</span>', ok: v === ans, label: String(v) })), () => solved());
+        return;
+      }
+      const target = rnd(d === 'easy' ? 2 : 3, max), live = d !== 'hard';
+      qSay('Turn on bulbs to make ' + target + '.');
+      $('ask').innerHTML = '<div class="bulbs" id="bulbs">' + vals.map((v) => bulbHtml(v, 0, 'button')).join('') + '</div>'
+        + '<div class="total" id="btotal" aria-live="polite"></div>';
+      const bulbs = [...$('bulbs').children], lit = () => bulbs.filter((b) => b.classList.contains('on')).reduce((a, b) => a + +b.dataset.v, 0);
+      const showTotal = () => { $('btotal').textContent = live ? 'Lit: ' + (lit() || 0) + ' · Goal: ' + target : 'Goal: ' + target; };
+      showTotal();
+      bulbs.forEach((b) => {
+        b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', 'Bulb ' + b.dataset.v);
+        b.addEventListener('click', () => {
+          if ($('bulbs').classList.contains('done')) return;
+          b.classList.toggle('on'); b.classList.remove('hint');
+          b.setAttribute('aria-pressed', b.classList.contains('on')); b.querySelector('.bit').textContent = b.classList.contains('on') ? 1 : 0;
+          sfx.tap(); showTotal();
+        });
+      });
+      checkBtn(() => {
+        if (lit() === target) { $('bulbs').classList.add('done'); solved(1500); return true; }
+        // Only one set of bulbs makes each number: the binary digits of the target.
+        wrong(() => bulbs.forEach((b) => { if (((target & +b.dataset.v) > 0) !== b.classList.contains('on')) b.classList.add('hint'); }));
+        return false;
+      });
+      return;
+    }
+    // Shifted letters, like a Caesar cipher. Easy moves 1 step, medium 1 or 2, hard up to 3.
+    const k = d === 'easy' ? 1 : d === 'medium' ? rnd(1, 2) : rnd(1, 3), pool = WORDS[d], word = pick(pool), coded = shiftWord(word, k);
+    if (lvl === 5) {
+      const others = shuffle(pool.filter((w) => w !== word)).slice(0, many - 2);
+      qSay('Every letter of this message moved ' + steps(k) + ' forward. Move each one ' + steps(k) + ' back to read it.');
+      $('ask').innerHTML = '<span class="secret" aria-label="Secret message: ' + coded.split('').join(' ') + '">' + coded + '</span>'
+        + '<p class="shift">Each letter moved ' + steps(k) + ' forward.</p>' + alphaHtml(d === 'easy' ? coded : '');
+      const opts = [word, ...others, shiftWord(coded, k)];
+      options(shuffle([...new Set(opts)].slice(0, many)).map((w) => ({ html: '<span class="wordopt">' + w + '</span>', ok: w === word, label: w.toLowerCase() })), () => solved())
+        .style.setProperty('--n', word.length > 4 ? 2 : many);
+      return;
+    }
+    const opts = new Set([coded, shiftWord(word, -k), shiftWord(word, k + 1), coded.slice(0, -1) + shiftWord(word.slice(-1), k + 1)]);
+    if (k > 1) opts.add(shiftWord(word, k - 1));
+    qSay('Write ' + word + ' in code: move each letter ' + steps(k) + ' forward.');
+    $('ask').innerHTML = '<span class="secret plain" aria-label="Word: ' + word.split('').join(' ') + '">' + word + '</span>'
+      + '<p class="shift">Move each letter ' + steps(k) + ' forward.</p>' + alphaHtml(d === 'easy' ? word : '');
+    const list = [coded, ...shuffle([...opts].filter((w) => w !== coded))].slice(0, many);
+    options(shuffle(list).map((w) => ({ html: '<span class="wordopt">' + w + '</span>', ok: w === coded, label: w.split('').join(' ') })), () => solved())
+      .style.setProperty('--n', word.length > 4 ? 2 : many);
+  }
+
+  // ---- Mini Sudoku ----
+  // [size, gaps] for each level. A 3×3 grid has no boxes; 4×4 has boxes of 2×2 and 6×6 boxes of 2 rows × 3 columns.
+  // Every puzzle has exactly one solution, so it can always be worked out without guessing.
+  const SUDOKU = {
+    easy: [[3, 2], [3, 3], [3, 4], [4, 4], [4, 6], [4, 7], [4, 8]],
+    medium: [[4, 3], [4, 5], [4, 7], [4, 8], [4, 10], [6, 12], [6, 16]],
+    hard: [[4, 6], [4, 8], [4, 10], [6, 14], [6, 17], [6, 20], [6, 22]]
+  };
+  const SYMS = [it('circle', 'red'), it('square', 'blue'), it('triangle', 'green'), it('star', 'yellow'), it('heart', 'purple'), it('diamond', '#f2891f')];
+  const symName = (x) => (x.c[0] === '#' ? 'orange' : x.c) + ' ' + x.s;
+  const boxOf = (n) => (n === 4 ? [2, 2] : n === 6 ? [2, 3] : null);
+  function sdkFits(g, n, r, c, v) {
+    for (let k = 0; k < n; k++) if (g[r * n + k] === v || g[k * n + c] === v) return false;
+    const b = boxOf(n);
+    if (b) {
+      const r0 = r - r % b[0], c0 = c - c % b[1];
+      for (let i = 0; i < b[0]; i++) for (let j = 0; j < b[1]; j++) if (g[(r0 + i) * n + c0 + j] === v) return false;
+    }
+    return true;
+  }
+  function sdkFill(g, n) {
+    const k = g.indexOf(-1);
+    if (k < 0) return true;
+    for (const v of shuffle([...Array(n).keys()])) {
+      if (sdkFits(g, n, (k / n) | 0, k % n, v)) { g[k] = v; if (sdkFill(g, n)) return true; g[k] = -1; }
+    }
+    return false;
+  }
+  // Counts solutions, stopping at `limit`.
+  function sdkCount(g, n, limit) {
+    const k = g.indexOf(-1);
+    if (k < 0) return 1;
+    let c = 0;
+    for (let v = 0; v < n && c < limit; v++) {
+      if (sdkFits(g, n, (k / n) | 0, k % n, v)) { g[k] = v; c += sdkCount(g, n, limit - c); g[k] = -1; }
+    }
+    return c;
+  }
+  function makeSudoku(n, gaps) {
+    const sol = Array(n * n).fill(-1);
+    sdkFill(sol, n);
+    const puz = sol.slice();
+    let gone = 0;
+    for (const k of shuffle([...sol.keys()])) {
+      if (gone >= gaps) break;
+      const v = puz[k];
+      puz[k] = -1;
+      if (sdkCount(puz.slice(), n, 2) === 1) gone++; else puz[k] = v;
+    }
+    return { sol, puz };
+  }
+  function genSudoku(lvl) {
+    const [n, gaps] = SUDOKU[S.diff][lvl], { sol, puz } = makeSudoku(n, gaps), b = boxOf(n), syms = SYMS.slice(0, n), cur = puz.slice();
+    let sel = -1;
+    qSay(b ? 'Fill the gaps. Every row, column and box has each shape once.' : 'Fill the gaps. Every row and column has each shape once.');
+    $('ask').innerHTML = '<div class="sdk" id="sdk" style="--n:' + n + '"></div>';
+    const grid = $('sdk');
+    const label = (k) => 'Row ' + (((k / n) | 0) + 1) + ', column ' + (k % n + 1) + ': ' + (cur[k] >= 0 ? symName(syms[cur[k]]) : 'empty');
+    const paint = (k) => { cells[k].innerHTML = cur[k] >= 0 ? itemSvg(syms[cur[k]]) : ''; cells[k].setAttribute('aria-label', label(k)); };
+    const select = (k) => { sel = k; cells.forEach((c, j) => c.classList.toggle('sel', j === k)); };
+    const cells = cur.map((v, k) => {
+      const c = document.createElement('button'), r = (k / n) | 0, col = k % n;
+      c.type = 'button';
+      c.className = (puz[k] >= 0 ? 'given' : '') + (b && col % b[1] === b[1] - 1 && col < n - 1 ? ' bR' : '') + (b && r % b[0] === b[0] - 1 && r < n - 1 ? ' bB' : '');
+      if (puz[k] >= 0) c.setAttribute('aria-disabled', 'true');
+      c.addEventListener('click', () => { if (puz[k] < 0 && !grid.classList.contains('done')) { select(k); sfx.tap(); } });
+      grid.appendChild(c);
+      return c;
+    });
+    cells.forEach((_, k) => paint(k));
+    select(cur.indexOf(-1));
+    function put(v) {
+      if (sel < 0 || grid.classList.contains('done')) return;
+      cur[sel] = v; cells[sel].classList.remove('no', 'hint'); paint(sel); sfx.tap();
+      if (v < 0) return;
+      const after = cur.findIndex((x, j) => x < 0 && j > sel), first = cur.indexOf(-1);
+      if (after >= 0 || first >= 0) select(after >= 0 ? after : first);
+    }
+    const pal = document.createElement('div');
+    pal.className = 'palette';
+    syms.forEach((x, v) => {
+      const p = document.createElement('button');
+      p.type = 'button'; p.innerHTML = itemSvg(x); p.setAttribute('aria-label', 'Put a ' + symName(x));
+      p.addEventListener('click', () => put(v));
+      pal.appendChild(p);
+    });
+    const er = document.createElement('button');
+    er.type = 'button'; er.textContent = '⌫'; er.setAttribute('aria-label', 'Clear the square');
+    er.addEventListener('click', () => put(-1));
+    pal.appendChild(er);
+    $('answers').appendChild(pal);
+    checkBtn(() => {
+      if (grid.classList.contains('done')) return true;
+      if (cur.includes(-1)) { qSay('Fill every gap first, then press ✓ Check.'); select(cur.indexOf(-1)); return false; }
+      const bad = cur.map((v, k) => (v !== sol[k] ? k : -1)).filter((k) => k >= 0);
+      if (!bad.length) {
+        grid.classList.add('done'); select(-1);
+        cells.forEach((c, k) => setTimeout(() => c.classList.add('win'), k * 30));
+        solved(1800);
+        return true;
+      }
+      bad.forEach((k) => { cells[k].classList.remove('no'); void cells[k].offsetWidth; cells[k].classList.add('no'); });
+      select(bad[0]);
+      // After two tries, one wrong square is filled in for the child.
+      wrong(() => { const k = bad[0]; cur[k] = sol[k]; paint(k); cells[k].classList.remove('no'); cells[k].classList.add('hint'); select(bad[1] === undefined ? -1 : bad[1]); });
+      return false;
+    });
+  }
+
+  const GEN = { pola: genPola, mesin: genMesin, timbang: genTimbang, saring: genSaring, kode: genKode, sudoku: genSudoku };
 
   // =====================================================================
   // Result and stickers

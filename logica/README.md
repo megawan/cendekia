@@ -10,9 +10,9 @@ Each child picks a difficulty, stored per child: the badge at the top right (�
 
 | Difficulty | Ages | What changes |
 | --- | --- | --- |
-| Easy | 4–5 | 10 small robot maps, a repeat block only at the end, three choices, one question fewer per round, six items in the filter, simple number machines |
-| Medium | 6–7 | 14 robot maps with repeat blocks, a first function and a first if block; the original questions |
-| Hard | 8–10 | 10 bigger robot maps with repeat, function and if blocks; four choices, gaps in the middle of patterns, arrows turning by 45 degrees, two machine examples, up to five balls and chained balances, ten items from four colors and shapes in the filter |
+| Easy | 4–5 | 10 small robot maps, a repeat block only at the end, three choices, one question fewer per round, six items in the filter, simple number machines, 4×4 pictures, three bulbs and letters moved one step, 3×3 sudokus that grow to 4×4 |
+| Medium | 6–7 | 14 robot maps with repeat blocks, a first function and a first if block; the original questions, 5×5 pictures, four bulbs, letters moved one or two steps, 4×4 and 6×6 sudokus |
+| Hard | 8–10 | 10 bigger robot maps with repeat, function and if blocks; four choices, gaps in the middle of patterns, arrows turning by 45 degrees, two machine examples, up to five balls and chained balances, ten items from four colors and shapes in the filter, 6×6 pictures, five bulbs (up to 31) with no running total, letters moved up to three steps and five-letter words, 4×4 and 6×6 sudokus with more gaps |
 
 ## Worlds
 
@@ -25,6 +25,8 @@ Every world has its own levels. A level opens once the level before it has at le
 | Magic Machine (8 levels) | Abstraction | Watches items go in and out of a machine, works out the rule (change color, change shape, add one, turn, double, two changes, add two, number rules) and picks what comes out next. |
 | Balance (6 levels) | Logical reasoning | Reads one to four balances and picks the heaviest or lightest ball, then finds how many small balls balance some big ones. |
 | Fix the Code | Debugging | Runs a program with one wrong block, finds the block and fixes it. The bug is chosen at random each time and is checked to make the program fail. |
+| Secret Code (7 levels) | Codes and binary | Reads a picture from rows of 0 and 1 and paints one from a code; writes a row as a short code (3 filled, 2 empty: run-length coding); reads a number from light bulbs worth 16, 8, 4, 2 and 1 and lights the bulbs for a number (binary); reads and writes words whose letters moved along the alphabet (a Caesar cipher). Pictures are random and mirrored, like little space invaders. |
+| Mini Sudoku (7 levels) | Deduction | Fills the gaps so each shape is once in every row and column, and in every box of the 4×4 (2×2 boxes) and 6×6 (2×3 boxes) grids. Tap a gap, then a shape. Each puzzle is made fresh and checked to have exactly one solution, so it never needs guessing. After two wrong checks, one wrong square is filled in. |
 | Logic Filter (7 levels) | Boolean logic | Picks every item that matches a rule: one property, AND, NOT, OR, BUT NOT, and rules about size. |
 
 The first time a player opens a world, a short animated "How to play" appears; ❓ How on the world screen shows it again.
