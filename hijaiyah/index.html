@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Learn Hijaiyah Letters</title>
+<title>Hijaiyah</title>
 <meta name="theme-color" content="#1f9d6b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -22,6 +22,8 @@
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { background: var(--bg); }
+  .homeTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .homeTop .back { text-decoration: none; padding: 8px 14px; min-height: 44px; display: inline-flex; align-items: center; font-size: 1rem; }
   .who { display: flex; justify-content: flex-end; }
   html, body { margin: 0; min-height: 100%; color: var(--ink);
     font-family: "Baloo 2", system-ui, sans-serif; touch-action: manipulation; }
@@ -216,7 +218,7 @@
 <body>
 <main>
   <section id="home">
-    <div class="who" id="who"></div>
+    <div class="homeTop"><a class="btn ghost back" href="../">← All apps</a><div class="who" id="who"></div></div>
     <div class="hero">
       <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true">
         <ellipse class="body" cx="50" cy="56" rx="38" ry="36"/>
@@ -226,7 +228,7 @@
         <path class="m smile" d="M36 62 Q50 76 64 62"/>
       </svg>
       <div>
-        <h1>Learn Hijaiyah Letters</h1>
+        <h1>Hijaiyah</h1>
         <p class="sub">Let's learn while we play</p>
       </div>
     </div>
