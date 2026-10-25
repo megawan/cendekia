@@ -1,8 +1,8 @@
 {
   "name": "Lexica",
   "short_name": "Lexica",
-  "description": "Permainan sederhana untuk anak belajar kosakata Bahasa Inggris dari Bahasa Indonesia, lengkap dengan suara.",
-  "lang": "id",
+  "description": "A simple game for Indonesian-speaking children to learn English words, read aloud in both languages.",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

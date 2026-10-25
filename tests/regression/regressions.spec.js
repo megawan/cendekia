@@ -69,3 +69,18 @@ test('fix(logica): home card topic label is not squeezed into the parent report 
   const lines = await label.evaluate((el) => Math.round(el.getBoundingClientRect().height / (parseFloat(getComputedStyle(el).fontSize) * 1.2)));
   expect(lines).toBeLessThanOrEqual(2);
 });
+
+test('feat(logica) English world ids: stars saved under the old Indonesian ids are kept', async ({ page }) => {
+  await page.goto('/logica/');
+  await page.evaluate(() => {
+    const id = window.Cendekia.profile().id;
+    localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: 'medium', best: { easy: {}, medium: { pola: [3, 2], kode: [1] }, hard: {} },
+      day: '', streak: 0, seen: { pola: true }, log: { 'medium/pola/0': { q: 5, ok: 5, runs: 0, wins: 0, fails: 0, hints: 0 } }, days: {} }));
+  });
+  await page.reload();
+  await expect(page.locator('#worlds .card', { hasText: 'Patterns' })).toContainText('5 / 24');
+  await expect(page.locator('#worlds .card', { hasText: 'Secret Code' })).toContainText('1 / 21');
+  // The guide was seen under the old id, so it does not open again.
+  await page.locator('#worlds .card', { hasText: 'Patterns' }).click();
+  await expect(page.locator('#tutor')).toBeHidden();
+});

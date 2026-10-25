@@ -15,16 +15,16 @@ test('the page starts behind a multiplication gate', async ({ page }) => {
 });
 
 test('a wrong answer shows an error and asks a new sum', async ({ page }) => {
-  await page.getByLabel('Jawaban').fill('0');
-  await page.getByRole('button', { name: 'Buka' }).click();
-  await expect(page.locator('#err')).toHaveText('Belum tepat, coba lagi.');
+  await page.getByLabel('Answer').fill('0');
+  await page.getByRole('button', { name: 'Open' }).click();
+  await expect(page.locator('#err')).toHaveText('Not quite. Please try again.');
   await expect(page.locator('#app')).toBeHidden();
-  await expect(page.getByLabel('Jawaban')).toHaveValue('');
+  await expect(page.getByLabel('Answer')).toHaveValue('');
 });
 
 test('the right answer opens the page and the choice is remembered for the session', async ({ page }) => {
-  await page.getByLabel('Jawaban').fill(await answer(page));
-  await page.getByRole('button', { name: 'Buka' }).click();
+  await page.getByLabel('Answer').fill(await answer(page));
+  await page.getByRole('button', { name: 'Open' }).click();
   await expect(page.locator('#app')).toBeVisible();
   await expect(page.locator('#gate')).toBeHidden();
 

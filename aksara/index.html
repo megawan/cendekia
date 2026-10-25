@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="description" content="Permainan sederhana untuk anak belajar membaca dalam Bahasa Indonesia: huruf, suku kata, kata dan kalimat, lengkap dengan suara.">
+<meta name="description" content="A simple game for children learning to read in Indonesian: letters, syllables, words, sentences and short stories, all read aloud.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
@@ -244,78 +244,78 @@
       <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg>
       <div>
         <h1>Aksara</h1>
-        <p class="sub">Belajar membaca bersama Kiki</p>
+        <p class="sub">Learn to read Indonesian with Kiki</p>
       </div>
     </div>
     <div class="pills">
-      <span class="pill" title="Jumlah bintang"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0</span> bintang</span>
-      <span class="pill" title="Hari belajar berturut-turut"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0</span> hari</span>
-      <span class="pill" title="Stiker terkumpul"><span class="ic" aria-hidden="true">🐘</span><span id="homeStk">0/12</span> stiker</span>
+      <span class="pill" title="Stars"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0</span> stars</span>
+      <span class="pill" title="Days in a row"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0</span> days</span>
+      <span class="pill" title="Stickers collected"><span class="ic" aria-hidden="true">🐘</span><span id="homeStk">0/12</span> stickers</span>
     </div>
     <div class="menu">
       <button type="button" class="card hero-card" data-go="map" style="--c: var(--c-orange)">
         <span class="badge" aria-hidden="true">🗺️</span>
-        <span><b>Petualangan</b><br><small id="homeNext">Pilih tahap yang kamu suka</small></span>
+        <span><b>Adventure</b><br><small id="homeNext">Pick any stage you like</small></span>
       </button>
-      <button type="button" class="card hero-card" data-go="cerita" style="--c: var(--c-blue)">
+      <button type="button" class="card hero-card" data-go="stories" style="--c: var(--c-blue)">
         <span class="badge" aria-hidden="true">📚</span>
-        <span><b>Cerita</b><br><small id="homeStories">Baca cerita pendek, lalu jawab pertanyaannya</small></span>
+        <span><b>Stories</b><br><small id="homeStories">Read short stories, then answer questions</small></span>
       </button>
-      <button type="button" class="card" data-go="abjad" style="--c: var(--c-pink)">
-        <span class="badge" aria-hidden="true">Aa</span><b>Huruf A–Z</b><small>Ketuk untuk mendengar</small></button>
-      <button type="button" class="card" data-go="suku" style="--c: var(--c-purple)">
-        <span class="badge" aria-hidden="true">ba</span><b>Suku Kata</b><small>b + a = ba</small></button>
-      <button type="button" class="card" data-go="kata" style="--c: var(--c-teal)">
-        <span class="badge" aria-hidden="true">⚽</span><b>Kata Bergambar</b><small>Baca per suku kata</small></button>
+      <button type="button" class="card" data-go="alphabet" style="--c: var(--c-pink)">
+        <span class="badge" aria-hidden="true">Aa</span><b>Letters A–Z</b><small>Tap to listen</small></button>
+      <button type="button" class="card" data-go="syllables" style="--c: var(--c-purple)">
+        <span class="badge" aria-hidden="true">ba</span><b>Syllables</b><small>b + a = ba</small></button>
+      <button type="button" class="card" data-go="words" style="--c: var(--c-teal)">
+        <span class="badge" aria-hidden="true">⚽</span><b>Picture words</b><small>Read syllable by syllable</small></button>
       <button type="button" class="card" data-go="stickers" style="--c: var(--c-green)">
-        <span class="badge" aria-hidden="true">🦎</span><b>Stiker-ku</b><small>Kumpulkan bintang</small></button>
+        <span class="badge" aria-hidden="true">🦎</span><b>My stickers</b><small>Collect stars</small></button>
     </div>
-    <p class="note" id="voiceNote" hidden>Perangkat ini belum punya suara Bahasa Indonesia. Rekaman suara tetap diputar bila tersedia.</p>
-    <p class="note"><a href="../">← Aplikasi lain di Cendekia</a> · <a href="../parents/">👪 Orang tua</a></p>
+    <p class="note" id="voiceNote" hidden>This device has no Indonesian voice yet. Recordings still play where there are some.</p>
+    <p class="note"><a href="../">← More apps in Cendekia</a> · <a href="../parents/">👪 For parents</a></p>
   </section>
 
   <!-- Adventure map -->
   <section id="map" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Pilih Tahap</h2>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Choose a stage</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="mapStars">0</span></span>
     </div>
     <div id="mapNodes"></div>
-    <p class="note"><button type="button" class="btn ghost" id="resetMap">Mulai ulang petualangan</button></p>
+    <p class="note"><button type="button" class="btn ghost" id="resetMap">Start the adventure again</button></p>
   </section>
 
   <!-- Stories: the stories of level 4, straight from the home screen -->
-  <section id="cerita" hidden>
+  <section id="stories" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Cerita</h2>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Stories</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="storyStars">0</span></span>
     </div>
-    <p class="note">Baca ceritanya halaman demi halaman, lalu jawab pertanyaannya.</p>
+    <p class="note">Read each story page by page, then answer the questions.</p>
     <div class="themes" id="storyList"></div>
   </section>
 
   <!-- Alphabet -->
-  <section id="abjad" hidden>
+  <section id="alphabet" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Huruf A–Z</h2><span class="spacer"></span>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Letters A–Z</h2><span class="spacer"></span>
     </div>
     <div class="stage">
       <div class="big" id="aBig">Aa</div>
       <div class="name" id="aName"></div>
       <div class="row"><span class="pic" id="aPic" aria-hidden="true"></span><span class="name" id="aWord"></span>
-        <button type="button" class="btn round" id="aPlay" aria-label="Putar suara">🔊</button></div>
+        <button type="button" class="btn round" id="aPlay" aria-label="Play the sound">🔊</button></div>
     </div>
     <div class="grid" id="aGrid"></div>
   </section>
 
   <!-- Syllables -->
-  <section id="suku" hidden>
+  <section id="syllables" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Suku Kata</h2><span class="spacer"></span>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Syllables</h2><span class="spacer"></span>
     </div>
     <div class="chips" id="sCons"></div>
     <div class="stage">
@@ -325,38 +325,38 @@
   </section>
 
   <!-- Picture words -->
-  <section id="kata" hidden>
+  <section id="words" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Kata Bergambar</h2><span class="spacer"></span>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Picture words</h2><span class="spacer"></span>
     </div>
-    <p class="note">Ketuk kartu: Kiki membaca per suku kata, lalu kata utuhnya.</p>
+    <p class="note">Tap a card: Kiki reads it syllable by syllable, then the whole word.</p>
     <div class="wgrid" id="wGrid"></div>
   </section>
 
   <!-- Story -->
   <section id="story" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" id="stBack">← Peta</button>
-      <h2 id="stTitle">Cerita</h2>
+      <button type="button" class="btn ghost" id="stBack">← Map</button>
+      <h2 id="stTitle">Story</h2>
       <span class="pill" id="stPage"></span>
     </div>
     <div class="stage">
       <div class="story-pic" id="stPic" aria-hidden="true"></div>
       <div class="sentence story-line" id="stLine"></div>
-      <div class="row"><button type="button" class="btn round" id="stPlay" aria-label="Baca kalimat ini">🔊</button></div>
+      <div class="row"><button type="button" class="btn round" id="stPlay" aria-label="Read this sentence">🔊</button></div>
     </div>
-    <p class="note">Ketuk sebuah kata untuk mendengarnya.</p>
+    <p class="note">Tap a word to hear it.</p>
     <div class="center">
-      <button type="button" class="btn ghost" id="stPrev">◀ Sebelumnya</button>
-      <button type="button" class="btn" id="stNext">Berikutnya ▶</button>
+      <button type="button" class="btn ghost" id="stPrev">◀ Back</button>
+      <button type="button" class="btn" id="stNext">Next ▶</button>
     </div>
   </section>
 
   <!-- Quiz -->
   <section id="quiz" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" id="qBack">← Peta</button>
+      <button type="button" class="btn ghost" id="qBack">← Map</button>
       <div class="prog" id="prog"></div>
       <div class="combo" id="combo" aria-live="polite"></div>
     </div>
@@ -374,21 +374,21 @@
   <section id="result" hidden>
     <div class="stack">
       <div class="hero"><svg class="mascot" data-mood="cheer" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg></div>
-      <h2 id="rTitle">Hebat!</h2>
+      <h2 id="rTitle">Great!</h2>
       <div class="stars" id="rStars"></div>
       <p class="summary" id="rText"></p>
       <div class="gift" id="rGift" hidden></div>
-      <button type="button" class="btn alt" id="rNext">Lanjut</button>
-      <button type="button" class="btn" id="rAgain">Main lagi</button>
-      <button type="button" class="btn ghost" id="rBack">Ke peta</button>
+      <button type="button" class="btn alt" id="rNext">Next</button>
+      <button type="button" class="btn" id="rAgain">Play again</button>
+      <button type="button" class="btn ghost" id="rBack">Back to the map</button>
     </div>
   </section>
 
   <!-- Stickers -->
   <section id="stickers" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Kembali</button>
-      <h2>Stiker-ku</h2>
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>My stickers</h2>
       <span class="pill"><span class="ic" aria-hidden="true">⭐</span><span id="stkStars">0</span></span>
     </div>
     <p class="note" id="stkNext"></p>
@@ -568,7 +568,7 @@
     {"text": "dokter memeriksa adik yang sedang sakit", "pic": "🧑‍⚕️🤒", "gap": "dokter"},
     {"text": "kupu-kupu terbang dari bunga ke bunga", "pic": "🦋🌸", "gap": "terbang"}
   ],
-  "cheers": ["Hebat!", "Pintar!", "Benar!", "Bagus sekali!", "Keren!", "Luar biasa!"],
+  "cheers": ["Great!", "Clever!", "Right!", "Very good!", "Cool!", "Amazing!"],
   "phrases": {
     "pickLetter": "Dengarkan, lalu pilih hurufnya.",
     "pickSyl": "Dengarkan, lalu pilih suku katanya.",
@@ -579,7 +579,7 @@
     "fill": "Lengkapi kalimatnya.",
     "order": "Susun kalimatnya.",
     "story": "Dengarkan pertanyaannya, lalu pilih jawabannya.",
-    "retry": ["Ayo coba lagi.", "Hampir benar!", "Dengarkan sekali lagi."]
+    "retry": ["Try again.", "Almost!", "Listen once more."]
   }
 }
 </script>
@@ -590,13 +590,13 @@
   'use strict';
   const C = JSON.parse(document.getElementById('content').textContent);
   const $ = (id) => document.getElementById(id);
-  const SECTIONS = ['home', 'map', 'cerita', 'abjad', 'suku', 'kata', 'story', 'quiz', 'result', 'stickers'];
+  const SECTIONS = ['home', 'map', 'stories', 'alphabet', 'syllables', 'words', 'story', 'quiz', 'result', 'stickers'];
   function show(id) {
     SECTIONS.forEach((s) => { $(s).hidden = s !== id; });
     stopSound(); clearTimeout(replayTimer); window.scrollTo(0, 0);
     if (id === 'home') renderHome();
     if (id === 'map') renderMap();
-    if (id === 'cerita') renderStories();
+    if (id === 'stories') renderStories();
     if (id === 'stickers') renderStickers();
   }
   document.addEventListener('click', (e) => {
@@ -698,12 +698,12 @@
 
   // ---- Stickers: animals of Indonesia, unlocked by the total star count ----
   const STICKERS = [
-    { at: 3, name: 'Komodo', pic: '🦎', c: '#d9f5e8' }, { at: 6, name: 'Orangutan', pic: '🦧', c: '#ffe7cc' },
-    { at: 10, name: 'Gajah', pic: '🐘', c: '#e6ecf5' }, { at: 15, name: 'Harimau', pic: '🐯', c: '#fff1c2' },
-    { at: 21, name: 'Penyu', pic: '🐢', c: '#d8f3f5' }, { at: 28, name: 'Kakatua', pic: '🦜', c: '#ffe0ec' },
-    { at: 36, name: 'Ikan badut', pic: '🐠', c: '#d6ebff' }, { at: 45, name: 'Kupu-kupu', pic: '🦋', c: '#ece6ff' },
-    { at: 55, name: 'Lumba-lumba', pic: '🐬', c: '#d6ebff' }, { at: 66, name: 'Badak', pic: '🦏', c: '#eceff3' },
-    { at: 78, name: 'Burung hantu', pic: '🦉', c: '#f6e6d2' }, { at: 90, name: 'Merak', pic: '🦚', c: '#dff5e8' }
+    { at: 3, name: 'Komodo dragon', pic: '🦎', c: '#d9f5e8' }, { at: 6, name: 'Orangutan', pic: '🦧', c: '#ffe7cc' },
+    { at: 10, name: 'Elephant', pic: '🐘', c: '#e6ecf5' }, { at: 15, name: 'Tiger', pic: '🐯', c: '#fff1c2' },
+    { at: 21, name: 'Sea turtle', pic: '🐢', c: '#d8f3f5' }, { at: 28, name: 'Kakatua', pic: '🦜', c: '#ffe0ec' },
+    { at: 36, name: 'Clownfish', pic: '🐠', c: '#d6ebff' }, { at: 45, name: 'Butterfly', pic: '🦋', c: '#ece6ff' },
+    { at: 55, name: 'Dolphin', pic: '🐬', c: '#d6ebff' }, { at: 66, name: 'Rhino', pic: '🦏', c: '#eceff3' },
+    { at: 78, name: 'Owl', pic: '🦉', c: '#f6e6d2' }, { at: 90, name: 'Merak', pic: '🦚', c: '#dff5e8' }
   ];
   const unlocked = () => STICKERS.filter((k) => k.at <= S.stars).length;
   const face = (k) => '<span class="face" style="--c:' + k.c + '" aria-hidden="true">' + k.pic + '</span>';
@@ -717,31 +717,32 @@
   // Four levels. Every stage is open from the start: a child who already reads can go straight to sentences and stories,
   // and the first two levels stay there for revision.
   const LEVELS = [
-    { n: 1, title: 'Dasar', sub: 'Huruf dan suku kata' },
-    { n: 2, title: 'Kata', sub: 'Membaca dan menyusun kata' },
-    { n: 3, title: 'Kalimat', sub: 'Membaca, melengkapi dan menyusun kalimat' },
-    { n: 4, title: 'Cerita', sub: 'Membaca cerita dan menjawab pertanyaan' }
+    { n: 1, title: 'Basics', sub: 'Letters and syllables' },
+    { n: 2, title: 'Words', sub: 'Reading and building words' },
+    { n: 3, title: 'Sentences', sub: 'Reading, completing and building sentences' },
+    { n: 4, title: 'Stories', sub: 'Reading stories and answering questions' }
   ];
   const SENT = C.sentences2.concat(C.sentences3);
+  // Stage ids (vokal, kata1, cerita-…) are the keys of each child's saved stars, so they keep their first names.
   const STAGES = [
-    { lv: 1, id: 'vokal', title: 'Huruf Vokal', icon: 'a', c: 'var(--c-pink)', kind: 'letter', pool: L(C.vowels) },
-    { lv: 1, id: 'abjad1', title: 'Huruf b–m', icon: 'b', c: 'var(--c-orange)', kind: 'letter', pool: L('bcdfghjklm') },
-    { lv: 1, id: 'abjad2', title: 'Huruf n–z', icon: 'n', c: 'var(--c-purple)', kind: 'letter', pool: L('npqrstvwxyz') },
-    { lv: 1, id: 'suku1', title: 'Suku Kata b d k m', icon: 'ba', c: 'var(--c-blue)', kind: 'syl', cons: ['b', 'd', 'k', 'm'] },
-    { lv: 1, id: 'suku2', title: 'Suku Kata l n p r s t', icon: 'la', c: 'var(--c-teal)', kind: 'syl', cons: ['l', 'n', 'p', 'r', 's', 't'] },
-    { lv: 1, id: 'suku3', title: 'Suku Kata c g h j w y', icon: 'ca', c: 'var(--c-green)', kind: 'syl', cons: ['c', 'g', 'h', 'j', 'w', 'y'] },
-    { lv: 2, id: 'kata1', title: 'Kata Pertama', icon: '⚽', c: 'var(--c-orange)', kind: 'word', pool: W2, types: ['readPic', 'pickWord'] },
-    { lv: 2, id: 'susun', title: 'Susun Kata', icon: '🧩', c: 'var(--c-pink)', kind: 'word', pool: W2, types: ['build'] },
-    { lv: 2, id: 'kata2', title: 'Kata Panjang', icon: '🚲', c: 'var(--c-purple)', kind: 'word', pool: W3, types: ['readPic', 'build'] },
-    { lv: 2, id: 'ngny', title: 'Huruf ng ny sy kh', icon: 'nga', c: 'var(--c-pink)', kind: 'syl', cons: C.digraphs },
-    { lv: 2, id: 'kata-ng', title: 'Kata dengan ng dan ny', icon: '🦁', c: 'var(--c-orange)', kind: 'word', pool: W_NG, types: ['readPic', 'build'] },
-    { lv: 2, id: 'tertutup', title: 'Suku Kata Tertutup', icon: '🌙', c: 'var(--c-purple)', kind: 'word', pool: W_CLOSED, types: ['readPic', 'build'] },
-    { lv: 2, id: 'kata4', title: 'Kata Lebih Panjang', icon: '🚁', c: 'var(--c-blue)', kind: 'word', pool: W_LONG, types: ['readPic', 'build'] },
-    { lv: 3, id: 'kalimat', title: 'Kalimat', icon: '📝', c: 'var(--c-blue)', kind: 'sentence', pool: C.sentences },
-    { lv: 3, id: 'kalimat2', title: 'Kalimat Panjang', icon: '📖', c: 'var(--c-teal)', kind: 'sentence', near: true, pool: C.sentences2 },
-    { lv: 3, id: 'kalimat3', title: 'Kalimat Sangat Panjang', icon: '📚', c: 'var(--c-purple)', kind: 'sentence', near: true, pool: C.sentences3 },
-    { lv: 3, id: 'lengkapi', title: 'Lengkapi Kalimat', icon: '✍️', c: 'var(--c-green)', kind: 'fill', pool: SENT },
-    { lv: 3, id: 'urutkan', title: 'Susun Kalimat', icon: '🔀', c: 'var(--c-orange)', kind: 'order', pool: SENT }
+    { lv: 1, id: 'vokal', title: 'Vowels', icon: 'a', c: 'var(--c-pink)', kind: 'letter', pool: L(C.vowels) },
+    { lv: 1, id: 'abjad1', title: 'Letters b–m', icon: 'b', c: 'var(--c-orange)', kind: 'letter', pool: L('bcdfghjklm') },
+    { lv: 1, id: 'abjad2', title: 'Letters n–z', icon: 'n', c: 'var(--c-purple)', kind: 'letter', pool: L('npqrstvwxyz') },
+    { lv: 1, id: 'suku1', title: 'Syllables b d k m', icon: 'ba', c: 'var(--c-blue)', kind: 'syl', cons: ['b', 'd', 'k', 'm'] },
+    { lv: 1, id: 'suku2', title: 'Syllables l n p r s t', icon: 'la', c: 'var(--c-teal)', kind: 'syl', cons: ['l', 'n', 'p', 'r', 's', 't'] },
+    { lv: 1, id: 'suku3', title: 'Syllables c g h j w y', icon: 'ca', c: 'var(--c-green)', kind: 'syl', cons: ['c', 'g', 'h', 'j', 'w', 'y'] },
+    { lv: 2, id: 'kata1', title: 'First words', icon: '⚽', c: 'var(--c-orange)', kind: 'word', pool: W2, types: ['readPic', 'pickWord'] },
+    { lv: 2, id: 'susun', title: 'Build words', icon: '🧩', c: 'var(--c-pink)', kind: 'word', pool: W2, types: ['build'] },
+    { lv: 2, id: 'kata2', title: 'Longer words', icon: '🚲', c: 'var(--c-purple)', kind: 'word', pool: W3, types: ['readPic', 'build'] },
+    { lv: 2, id: 'ngny', title: 'Letters ng ny sy kh', icon: 'nga', c: 'var(--c-pink)', kind: 'syl', cons: C.digraphs },
+    { lv: 2, id: 'kata-ng', title: 'Words with ng and ny', icon: '🦁', c: 'var(--c-orange)', kind: 'word', pool: W_NG, types: ['readPic', 'build'] },
+    { lv: 2, id: 'tertutup', title: 'Closed syllables', icon: '🌙', c: 'var(--c-purple)', kind: 'word', pool: W_CLOSED, types: ['readPic', 'build'] },
+    { lv: 2, id: 'kata4', title: 'Even longer words', icon: '🚁', c: 'var(--c-blue)', kind: 'word', pool: W_LONG, types: ['readPic', 'build'] },
+    { lv: 3, id: 'kalimat', title: 'Sentences', icon: '📝', c: 'var(--c-blue)', kind: 'sentence', pool: C.sentences },
+    { lv: 3, id: 'kalimat2', title: 'Long sentences', icon: '📖', c: 'var(--c-teal)', kind: 'sentence', near: true, pool: C.sentences2 },
+    { lv: 3, id: 'kalimat3', title: 'Very long sentences', icon: '📚', c: 'var(--c-purple)', kind: 'sentence', near: true, pool: C.sentences3 },
+    { lv: 3, id: 'lengkapi', title: 'Fill the gap', icon: '✍️', c: 'var(--c-green)', kind: 'fill', pool: SENT },
+    { lv: 3, id: 'urutkan', title: 'Build sentences', icon: '🔀', c: 'var(--c-orange)', kind: 'order', pool: SENT }
   ].concat(C.stories.map((st, i) => ({ lv: 4, id: 'cerita-' + st.id, title: st.title, icon: st.icon, c: ['var(--c-pink)', 'var(--c-orange)', 'var(--c-purple)'][i % 3], kind: 'story', story: st })));
   // The stage to try next: sentences and stories first, then words, then the basics.
   const nextStage = () => {
@@ -755,9 +756,9 @@
     $('homeDays').textContent = streakNow();
     $('homeStk').textContent = unlocked() + '/' + STICKERS.length;
     const n = nextStage();
-    $('homeNext').textContent = n < 0 ? 'Semua tahap selesai! Kumpulkan 3 bintang' : 'Coba: ' + STAGES[n].title;
+    $('homeNext').textContent = n < 0 ? 'Every stage done! Now collect 3 stars' : 'Try: ' + STAGES[n].title;
     const stories = STAGES.filter((s) => s.kind === 'story'), read = stories.filter((s) => S.best[s.id]).length;
-    $('homeStories').textContent = read ? read + ' dari ' + stories.length + ' cerita sudah dibaca' : stories.length + ' cerita pendek dengan pertanyaan';
+    $('homeStories').textContent = read ? read + ' of ' + stories.length + ' stories read' : stories.length + ' short stories with questions';
   }
 
   // Levels 1 and 2 are folded away so the map opens on sentences and stories; a child who needs them opens them.
@@ -769,7 +770,7 @@
     if (nx >= 0) {
       const go = document.createElement('button');
       go.type = 'button'; go.className = 'btn alt go';
-      go.textContent = '▶ Mulai: ' + STAGES[nx].title;
+      go.textContent = '▶ Start: ' + STAGES[nx].title;
       go.addEventListener('click', () => { backTo = 'map'; startStage(nx); });
       box.appendChild(go);
     }
@@ -778,7 +779,7 @@
       det.open = !foldedLevels.has(lv.n) || (nx >= 0 && STAGES[nx].lv === lv.n);
       const sum = document.createElement('summary');
       sum.innerHTML = '<b></b><small></small>';
-      sum.firstChild.textContent = 'Level ' + lv.n + ': ' + lv.title; sum.lastChild.textContent = lv.sub + (foldedLevels.has(lv.n) ? ' · ketuk untuk membuka' : '');
+      sum.firstChild.textContent = 'Level ' + lv.n + ': ' + lv.title; sum.lastChild.textContent = lv.sub + (foldedLevels.has(lv.n) ? ' · tap to open' : '');
       const grid = document.createElement('div'); grid.className = 'themes';
       STAGES.forEach((s, i) => {
         if (s.lv !== lv.n) return;
@@ -792,7 +793,7 @@
   }
   // Where the back buttons of a round go: the map, or the list of stories when the round started there.
   let backTo = 'map';
-  const backLabel = () => (backTo === 'cerita' ? 'Cerita' : 'Peta');
+  const backLabel = () => (backTo === 'stories' ? 'Stories' : 'Map');
   function stageButton(s, i, nx) {
     const best = S.best[s.id] || 0;
     const b = document.createElement('button');
@@ -801,7 +802,7 @@
     b.innerHTML = '<span class="ico" aria-hidden="true"></span><b></b><span class="st"></span>';
     b.firstChild.textContent = s.icon; b.children[1].textContent = s.title;
     b.lastChild.innerHTML = [1, 2, 3].map((k) => starSvg(k <= best)).join('');
-    b.setAttribute('aria-label', s.title + ', ' + best + ' bintang');
+    b.setAttribute('aria-label', s.title + ', ' + best + (best === 1 ? ' star' : ' stars'));
     return b;
   }
   function renderStories() {
@@ -812,62 +813,62 @@
       if (s.kind !== 'story') return;
       stars += S.best[s.id] || 0;
       const b = stageButton(s, i, next);
-      b.addEventListener('click', () => { backTo = 'cerita'; startStage(i); });
+      b.addEventListener('click', () => { backTo = 'stories'; startStage(i); });
       list.appendChild(b);
     });
     $('storyStars').textContent = stars;
   }
   $('resetMap').addEventListener('click', () => {
-    if (!confirm('Mulai ulang petualangan? Bintang dan stiker tetap tersimpan.')) return;
+    if (!confirm('Start the adventure again? Stars and stickers are kept.')) return;
     S.best = {}; save(); renderMap();
   });
 
   // ---- Explore: alphabet ----
-  let aIdx = 0;
-  function renderAbjad() {
-    const l = C.letters[aIdx];
+  let letterIdx = 0;
+  function renderAlphabet() {
+    const l = C.letters[letterIdx];
     $('aBig').textContent = l.ch.toUpperCase() + l.ch;
-    $('aName').textContent = 'huruf ' + l.say;
+    $('aName').textContent = 'letter ' + l.say;
     $('aPic').textContent = l.pic; $('aWord').textContent = l.word;
-    [...$('aGrid').children].forEach((t, i) => t.classList.toggle('on', i === aIdx));
+    [...$('aGrid').children].forEach((t, i) => t.classList.toggle('on', i === letterIdx));
   }
-  const sayLetter = () => { const l = C.letters[aIdx]; speakSeq([l.say, l.word]); };
+  const sayLetter = () => { const l = C.letters[letterIdx]; speakSeq([l.say, l.word]); };
   C.letters.forEach((l, i) => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'tile';
     b.textContent = l.ch.toUpperCase() + l.ch;
-    b.addEventListener('click', () => { aIdx = i; renderAbjad(); sayLetter(); });
+    b.addEventListener('click', () => { letterIdx = i; renderAlphabet(); sayLetter(); });
     $('aGrid').appendChild(b);
   });
   $('aPlay').addEventListener('click', sayLetter);
-  renderAbjad();
+  renderAlphabet();
 
   // ---- Explore: syllables ----
-  let sCon = 'b';
-  function renderSuku() {
-    [...$('sCons').children].forEach((b) => b.classList.toggle('on', b.textContent === sCon));
+  let sylCon = 'b';
+  function renderSyllables() {
+    [...$('sCons').children].forEach((b) => b.classList.toggle('on', b.textContent === sylCon));
     $('sRow').innerHTML = '';
     C.vowels.forEach((v) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'tile';
       b.innerHTML = '<span class="c"></span><span class="v"></span>';
-      b.firstChild.textContent = sCon; b.lastChild.textContent = v;
+      b.firstChild.textContent = sylCon; b.lastChild.textContent = v;
       b.addEventListener('click', () => {
-        $('fC').textContent = sCon; $('fV').textContent = v; $('fS').textContent = sCon + v;
+        $('fC').textContent = sylCon; $('fV').textContent = v; $('fS').textContent = sylCon + v;
         $('fS').animate([{ transform: 'scale(1.3)' }, { transform: 'none' }], 300);
-        speak(sCon + v);
+        speak(sylCon + v);
       });
       $('sRow').appendChild(b);
     });
-    $('fC').textContent = sCon; $('fV').textContent = 'a'; $('fS').textContent = sCon + 'a';
+    $('fC').textContent = sylCon; $('fV').textContent = 'a'; $('fS').textContent = sylCon + 'a';
   }
   C.consonants.forEach((c) => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'chip'; b.textContent = c;
-    b.addEventListener('click', () => { sCon = c; renderSuku(); speak(C.letters.find((l) => l.ch === c).say); });
+    b.addEventListener('click', () => { sylCon = c; renderSyllables(); speak(C.letters.find((l) => l.ch === c).say); });
     $('sCons').appendChild(b);
   });
-  renderSuku();
+  renderSyllables();
 
   // ---- Explore: picture words ----
   // Shows a word as syllable spans, so reading along can light them up one by one.
@@ -999,7 +1000,7 @@
       line.appendChild(b);
     });
     $('stPrev').hidden = pg === 0;
-    $('stNext').textContent = last ? 'Jawab pertanyaan ▶' : 'Berikutnya ▶';
+    $('stNext').textContent = last ? 'Answer the questions ▶' : 'Next ▶';
     if (read) speak(page.text);
   }
   $('stPlay').addEventListener('click', () => speak(story.pages[pg].text));
@@ -1014,7 +1015,7 @@
   const weakLabel = (q) => q.type === 'pickLetter' ? q.target.ch : q.type === 'pickSyl' ? q.target : q.type === 'story' ? q.q : q.target.text;
   function startStage(i) {
     $('stBack').textContent = $('qBack').textContent = '← ' + backLabel();
-    $('rBack').textContent = backTo === 'cerita' ? 'Ke daftar cerita' : 'Ke peta';
+    $('rBack').textContent = backTo === 'stories' ? 'Back to the stories' : 'Back to the map';
     if (!Cendekia.gate()) return; // the parent's daily time limit
     roundStart = Date.now();
     if (STAGES[i].kind === 'story') { openStory(i); return; }
@@ -1044,7 +1045,7 @@
   function speakerBtn(onClick, label) {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn round'; b.textContent = '🔊';
-    b.setAttribute('aria-label', label || 'Dengarkan lagi');
+    b.setAttribute('aria-label', label || 'Listen again');
     b.addEventListener('click', onClick);
     return b;
   }
@@ -1069,6 +1070,7 @@
     serial++; wrongThis = false; wrongTries = 0; locked = false;
     const ask = $('ask'), ans = $('answers');
     ask.innerHTML = ''; ans.innerHTML = '';
+    // Kiki's instructions stay in Indonesian: they are part of the reading lesson and have recordings.
     if (!first) mood('happy', q.type === 'build' ? 'Susun suku katanya' : q.type === 'readPic' || q.type === 'sentence' ? 'Baca, lalu pilih gambarnya' :
       q.type === 'fill' ? 'Lengkapi kalimatnya' : q.type === 'order' ? 'Susun kalimatnya' : q.type === 'story' ? 'Dengarkan, lalu pilih jawabannya' : 'Dengarkan, lalu pilih');
     const lead = (sound) => { if (first) speakSeq([intro, sound], null, 250); else speak(sound); };
@@ -1159,7 +1161,7 @@
       const w = q.target;
       const word = document.createElement('div'); word.className = 'big';
       word.innerHTML = sylHtml(w); fillSyl(word, w);
-      const help = speakerBtn(() => readWord(w, word), 'Bantu baca');
+      const help = speakerBtn(() => readWord(w, word), 'Help me read');
       help.hidden = true;
       ask.append(word, help);
       q.opts.forEach((o) => grid.appendChild(optButton('pic', o.pic, o === w, (b) => {
@@ -1219,7 +1221,7 @@
     const readAlong = (then) => speakSeq(words.concat(t.text), (k) => {
       [...line.children].forEach((x, j) => x.classList.toggle('lit', k === j || k === words.length));
     }, 150, then);
-    ask.append(line, speakerBtn(() => readAlong(), 'Baca bersama'));
+    ask.append(line, speakerBtn(() => readAlong(), 'Read along'));
     grid.className = 'opts three';
     q.opts.forEach((o) => grid.appendChild(optButton('pic', o.pic, o === t, (b) => answer(b, o === t, grid, null, (go) => readAlong(go)))));
     ans.appendChild(grid);
@@ -1242,7 +1244,7 @@
     if (!wrongThis) combo++;
     $('combo').textContent = combo >= 3 ? '🔥 ' + combo : '';
     const p = sample(C.cheers); // shown in the bubble only, a right answer is not read aloud
-    mood('cheer', combo >= 3 ? p + ' ' + combo + ' kali benar!' : p);
+    mood('cheer', combo >= 3 ? p + ' ' + combo + ' right in a row!' : p);
     if (combo >= 3) confetti(14);
     $('prog').children[qi].classList.add('done');
   }
@@ -1272,13 +1274,13 @@
     markDay(); save();
     const gained = STICKERS.slice(before, unlocked());
     show('result');
-    $('rTitle').textContent = stars === 3 ? 'Luar biasa!' : stars === 2 ? 'Hebat!' : 'Bagus, terus berlatih!';
+    $('rTitle').textContent = stars === 3 ? 'Amazing!' : stars === 2 ? 'Great!' : 'Good, keep practising!';
     $('rStars').innerHTML = [1, 2, 3].map((k) => starSvg(k <= stars, 'star')).join('');
-    $('rText').textContent = (rounds - mistakes) + ' dari ' + rounds + ' benar pada percobaan pertama. ' +
-      'Kamu dapat ' + stars + ' bintang. 🔥 ' + streakNow() + ' hari belajar.';
+    $('rText').textContent = (rounds - mistakes) + ' of ' + rounds + ' right on the first try. ' +
+      'You got ' + stars + (stars === 1 ? ' star' : ' stars') + '. 🔥 ' + streakNow() + (streakNow() === 1 ? ' day' : ' days') + ' in a row.';
     const g = $('rGift');
     g.hidden = !gained.length;
-    if (gained.length) g.innerHTML = '<b>Stiker baru!</b><div class="stk">' + gained.map(face).join('') + '</div><small>' + gained.map((k) => k.name).join(', ') + '</small>';
+    if (gained.length) g.innerHTML = '<b>New sticker!</b><div class="stk">' + gained.map(face).join('') + '</div><small>' + gained.map((k) => k.name).join(', ') + '</small>';
     $('rNext').hidden = stageIdx + 1 >= STAGES.length;
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
   }
@@ -1290,7 +1292,7 @@
   function renderStickers() {
     $('stkStars').textContent = S.stars;
     const nx = STICKERS.find((k) => k.at > S.stars);
-    $('stkNext').textContent = nx ? 'Kumpulkan ' + (nx.at - S.stars) + ' bintang lagi untuk stiker berikutnya.' : 'Semua stiker sudah terkumpul. Hebat!';
+    $('stkNext').textContent = nx ? 'Collect ' + (nx.at - S.stars) + ' more stars for the next sticker.' : 'You have every sticker. Great!';
     $('sgrid').innerHTML = '';
     STICKERS.forEach((k) => {
       const d = document.createElement('div');

@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Untuk Orang Tua</title>
-<meta name="description" content="Ringkasan belajar anak di Cendekia: hari belajar, waktu, bintang, dan hal yang perlu dilatih.">
+<title>For parents</title>
+<meta name="description" content="Each child's learning in Cendekia: days in a row, time played, stars, and what to practise.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#1f9d6b">
 <link rel="icon" type="image/png" sizes="192x192" href="../hijaiyah/icon-192.png">
@@ -67,32 +67,32 @@
 <body>
 <main>
   <section id="gate" class="card gate">
-    <h1>Untuk Orang Tua</h1>
-    <p>Supaya tidak terbuka sendiri oleh anak, jawab dulu:</p>
+    <h1>For parents</h1>
+    <p>So a child does not open this by accident, please answer first:</p>
     <p><b id="q"></b></p>
     <form id="gateForm">
-      <input id="a" type="text" inputmode="numeric" autocomplete="off" aria-label="Jawaban">
+      <input id="a" type="text" inputmode="numeric" autocomplete="off" aria-label="Answer">
       <div class="err" id="err" role="alert"></div>
-      <button class="btn" type="submit">Buka</button>
+      <button class="btn" type="submit">Open</button>
     </form>
-    <p><a href="../">← Kembali ke Cendekia</a></p>
+    <p><a href="../">← Back to Cendekia</a></p>
   </section>
 
   <section id="app" hidden>
     <div class="top">
-      <h1>Untuk Orang Tua</h1>
+      <h1>For parents</h1>
       <a class="btn ghost" href="../" style="text-decoration:none;white-space:nowrap">← Cendekia</a>
     </div>
-    <p class="muted">Data tersimpan di perangkat ini saja dan tidak dikirim ke mana pun.</p>
+    <p class="muted">Everything is kept on this device only and is never sent anywhere.</p>
     <div class="tabs" id="tabs"></div>
     <div id="kid"></div>
     <div class="card" id="newKid" style="margin-top:14px" hidden>
-      <h2 style="margin-top:0">Tambah anak</h2>
-      <div class="row"><input type="text" id="newName" maxlength="16" placeholder="Nama anak" aria-label="Nama anak"></div>
+      <h2 style="margin-top:0">Add a child</h2>
+      <div class="row"><input type="text" id="newName" maxlength="16" placeholder="Child's name" aria-label="Child's name"></div>
       <div class="avs" id="newAvs"></div>
-      <div class="row"><button class="btn" type="button" id="newSave">Simpan</button><button class="btn ghost" type="button" id="newCancel">Batal</button></div>
+      <div class="row"><button class="btn" type="button" id="newSave">Save</button><button class="btn ghost" type="button" id="newCancel">Cancel</button></div>
     </div>
-    <div class="row" style="margin-top:14px"><button class="btn ghost" type="button" id="addKid">＋ Tambah anak</button></div>
+    <div class="row" style="margin-top:14px"><button class="btn ghost" type="button" id="addKid">＋ Add a child</button></div>
   </section>
 </main>
 <script src="../shared/profile.js"></script>
@@ -111,8 +111,8 @@
     { id: 'numeria', name: 'Numeria', base: 'numeria.v1', stages: 48 }
   ];
   const appName = (id) => (APPS.find((a) => a.id === id) || { name: id }).name;
-  const DAYS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-  const LIMITS = [[0, 'Tidak dibatasi'], [15, '15 menit'], [30, '30 menit'], [45, '45 menit'], [60, '1 jam'], [90, '1,5 jam']];
+  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const LIMITS = [[0, 'No limit'], [15, '15 minutes'], [30, '30 minutes'], [45, '45 minutes'], [60, '1 hour'], [90, '1½ hours']];
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
 
   // ---- Gate: a small sum, so a young child cannot open the page by accident ----
@@ -122,7 +122,7 @@
   $('gateForm').addEventListener('submit', (e) => {
     e.preventDefault();
     if (Number($('a').value) === a * b) { open(); return; }
-    $('err').textContent = 'Belum tepat, coba lagi.'; ask(); $('a').focus();
+    $('err').textContent = 'Not quite. Please try again.'; ask(); $('a').focus();
   });
   ask();
   let remembered = false;
@@ -155,17 +155,17 @@
     if (app.id === 'hijaiyah') {
       const prog = C.state('hijaiyah.progress.v1', kidId) || {};
       const known = Object.keys(prog).filter((k) => /^\d+$/.test(k) && prog[k].lv >= 4).length;
-      return { stars: Number(st) || 0, done: known + ' dari 28 huruf dikuasai' };
+      return { stars: Number(st) || 0, done: known + ' of 28 letters mastered' };
     }
     if (app.id === 'logika') {
       const byDiff = (st && st.best) || {}, diff = (st && st.diff) || 'medium';
       const all = (d) => Object.values(byDiff[d] || {}).flat();
       const stars = ['easy', 'medium', 'hard'].reduce((n, d) => n + all(d).reduce((a, x) => a + (x || 0), 0), 0);
       const names = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
-      return { stars, done: all(diff).filter((x) => x > 0).length + ' dari ' + app.levels[diff] + ' level (' + names[diff] + ')' };
+      return { stars, done: all(diff).filter((x) => x > 0).length + ' of ' + app.levels[diff] + ' levels (' + names[diff] + ')' };
     }
     const best = (st && st.best) || {};
-    return { stars: (st && st.stars) || 0, done: Object.keys(best).filter((k) => best[k] > 0).length + ' dari ' + app.stages + ' tahap' };
+    return { stars: (st && st.stars) || 0, done: Object.keys(best).filter((k) => best[k] > 0).length + ' of ' + app.stages + ' stages' };
   }
   const fmtDate = (t) => { const d = new Date(t); return d.getDate() + '/' + (d.getMonth() + 1) + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
 
@@ -189,40 +189,40 @@
     const stars = rows.reduce((s, r) => s + r.stars, 0);
 
     const stats = el('div', 'stats');
-    [['🔥', inARow, 'hari beruntun'], ['⭐', stars, 'bintang'], ['⏱', mins(weekMin), 'menit minggu ini'], ['✅', weekRounds, 'putaran minggu ini']].forEach(([ic, n, label]) => {
+    [['🔥', inARow, inARow === 1 ? 'day in a row' : 'days in a row'], ['⭐', stars, 'stars'], ['⏱', mins(weekMin), 'minutes this week'], ['✅', weekRounds, 'rounds this week']].forEach(([ic, n, label]) => {
       const c = el('div', 'card stat'); c.append(el('b', '', ic + ' ' + n), el('small', '', label)); stats.appendChild(c);
     });
     box.appendChild(stats);
 
-    box.appendChild(el('h2', '', '7 hari terakhir'));
+    box.appendChild(el('h2', '', 'The last 7 days'));
     const chart = el('div', 'card');
     const bars = el('div', 'bars'); bars.setAttribute('role', 'img');
-    bars.setAttribute('aria-label', 'Menit belajar tiap hari: ' + week.map((x) => DAYS[x.d.getDay()] + ' ' + mins(x.min)).join(', '));
+    bars.setAttribute('aria-label', 'Minutes of play each day: ' + week.map((x) => DAYS[x.d.getDay()] + ' ' + mins(x.min)).join(', '));
     const max = Math.max(10, ...week.map((x) => x.min));
     week.forEach((x) => {
       const col = el('div', 'bar'); const bar = el('i'); bar.style.height = Math.max(3, Math.round(x.min / max * 80)) + '%';
       col.append(el('em', '', x.min ? mins(x.min) : ''), bar, el('span', '', DAYS[x.d.getDay()]));
       bars.appendChild(col);
     });
-    chart.append(bars, el('p', 'muted', 'Menit belajar tiap hari, dari putaran yang selesai.'));
+    chart.append(bars, el('p', 'muted', 'Minutes of play each day, from finished rounds.'));
     box.appendChild(chart);
 
-    box.appendChild(el('h2', '', 'Per aplikasi'));
-    const t1 = el('table'); t1.innerHTML = '<thead><tr><th>Aplikasi</th><th>Kemajuan</th><th class="n">Bintang</th></tr></thead>';
+    box.appendChild(el('h2', '', 'Each app'));
+    const t1 = el('table'); t1.innerHTML = '<thead><tr><th>App</th><th>Progress</th><th class="n">Stars</th></tr></thead>';
     const tb = el('tbody');
     rows.forEach((r) => {
       const last = log.filter((e) => e.app === r.app.id).pop();
-      const tr = el('tr'); const name = el('td'); name.append(el('b', '', r.app.name), el('br'), el('small', 'muted', last ? 'Terakhir: ' + fmtDate(last.t) : 'Belum dimainkan'));
+      const tr = el('tr'); const name = el('td'); name.append(el('b', '', r.app.name), el('br'), el('small', 'muted', last ? 'Last played: ' + fmtDate(last.t) : 'Not played yet'));
       tr.append(name, el('td', '', r.done), el('td', 'n', String(r.stars))); tb.appendChild(tr);
     });
     t1.appendChild(tb); const c1 = el('div', 'card'); c1.appendChild(t1); box.appendChild(c1);
 
-    box.appendChild(el('h2', '', 'Perlu dilatih'));
+    box.appendChild(el('h2', '', 'Worth practising'));
     const weak = Object.entries(C.weakItems(kidId)).sort((x, y) => y[1] - x[1]).slice(0, 10);
     const c2 = el('div', 'card');
-    if (!weak.length) c2.appendChild(el('p', 'muted', 'Belum ada. Huruf dan kata yang sering salah pada percobaan pertama akan muncul di sini.'));
+    if (!weak.length) c2.appendChild(el('p', 'muted', 'Nothing yet. Letters and words that are often wrong on the first try show up here.'));
     else {
-      const t2 = el('table'); t2.innerHTML = '<thead><tr><th>Yang dijawab salah</th><th class="n">Kali</th></tr></thead>';
+      const t2 = el('table'); t2.innerHTML = '<thead><tr><th>Answered wrong</th><th class="n">Times</th></tr></thead>';
       const b2 = el('tbody');
       weak.forEach(([k, n]) => {
         const [app, ...rest] = k.split('|'); const tr = el('tr'); const td = el('td');
@@ -233,11 +233,11 @@
     }
     box.appendChild(c2);
 
-    box.appendChild(el('h2', '', 'Putaran terakhir'));
+    box.appendChild(el('h2', '', 'Last rounds'));
     const c3 = el('div', 'card'); const recent = log.slice(-10).reverse();
-    if (!recent.length) c3.appendChild(el('p', 'muted', 'Belum ada putaran yang selesai.'));
+    if (!recent.length) c3.appendChild(el('p', 'muted', 'No finished rounds yet.'));
     else {
-      const t3 = el('table'); t3.innerHTML = '<thead><tr><th>Kapan</th><th>Tahap</th><th class="n">Benar</th><th class="n">⭐</th></tr></thead>';
+      const t3 = el('table'); t3.innerHTML = '<thead><tr><th>When</th><th>Stage</th><th class="n">Right</th><th class="n">⭐</th></tr></thead>';
       const b3 = el('tbody');
       recent.forEach((e) => {
         const tr = el('tr'); const w = el('td'); w.append(el('small', 'muted', fmtDate(e.t)));
@@ -248,26 +248,26 @@
     }
     box.appendChild(c3);
 
-    box.appendChild(el('h2', '', 'Pengaturan'));
+    box.appendChild(el('h2', '', 'Settings'));
     const c4 = el('div', 'card');
-    const r1 = el('div', 'row'); const lab = el('label', '', 'Batas waktu bermain per hari'); lab.setAttribute('for', 'limit');
+    const r1 = el('div', 'row'); const lab = el('label', '', 'Daily play time limit'); lab.setAttribute('for', 'limit');
     const sel = el('select'); sel.id = 'limit';
     LIMITS.forEach(([v, text]) => { const o = el('option', '', text); o.value = String(v); if ((p.limit || 0) === v) o.selected = true; sel.appendChild(o); });
-    sel.addEventListener('change', () => { C.update(kidId, { limit: Number(sel.value) }); note.textContent = Number(sel.value) ? 'Tersimpan. Putaran baru tidak bisa dimulai setelah ' + sel.options[sel.selectedIndex].text + ' hari ini.' : 'Tersimpan. Tidak ada batas.'; });
+    sel.addEventListener('change', () => { C.update(kidId, { limit: Number(sel.value) }); note.textContent = Number(sel.value) ? 'Saved. A new round cannot start after ' + sel.options[sel.selectedIndex].text + ' of play in a day.' : 'Saved. No limit.'; });
     r1.append(lab, sel); c4.appendChild(r1);
     const note = el('p', 'muted'); note.setAttribute('role', 'status'); c4.appendChild(note);
-    const r2 = el('div', 'row'); const nl = el('label', '', 'Nama'); nl.setAttribute('for', 'rename');
+    const r2 = el('div', 'row'); const nl = el('label', '', 'Name'); nl.setAttribute('for', 'rename');
     const inp = el('input'); inp.type = 'text'; inp.id = 'rename'; inp.maxLength = 16; inp.value = p.name;
-    const sv = el('button', 'btn ghost', 'Simpan nama'); sv.type = 'button';
+    const sv = el('button', 'btn ghost', 'Save name'); sv.type = 'button';
     sv.addEventListener('click', () => { if (inp.value.trim()) { C.update(kidId, { name: inp.value.trim().slice(0, 16) }); render(); } });
     r2.append(nl, inp, sv); c4.appendChild(r2);
-    const r3 = el('div', 'avs'); r3.setAttribute('role', 'group'); r3.setAttribute('aria-label', 'Gambar');
-    C.AVATARS.forEach((av) => { const bt = el('button', '', av); bt.type = 'button'; bt.setAttribute('aria-pressed', String(av === p.avatar)); bt.setAttribute('aria-label', 'Gambar ' + av);
+    const r3 = el('div', 'avs'); r3.setAttribute('role', 'group'); r3.setAttribute('aria-label', 'Picture');
+    C.AVATARS.forEach((av) => { const bt = el('button', '', av); bt.type = 'button'; bt.setAttribute('aria-pressed', String(av === p.avatar)); bt.setAttribute('aria-label', 'Picture ' + av);
       bt.addEventListener('click', () => { C.update(kidId, { avatar: av }); render(); }); r3.appendChild(bt); });
     c4.appendChild(r3);
-    const r4 = el('div', 'row'); const del = el('button', 'btn danger', 'Hapus ' + p.name); del.type = 'button';
+    const r4 = el('div', 'row'); const del = el('button', 'btn danger', 'Delete ' + p.name); del.type = 'button';
     del.addEventListener('click', () => {
-      if (!confirm('Hapus ' + p.name + '? Semua bintang, stiker, dan riwayat anak ini ikut terhapus dan tidak bisa dikembalikan.')) return;
+      if (!confirm('Delete ' + p.name + '? All of their stars, stickers and history in every app are deleted too, and cannot be brought back.')) return;
       C.remove(kidId); kidId = C.profile().id; render();
     });
     r4.appendChild(del); c4.appendChild(r4);
@@ -277,7 +277,7 @@
   // ---- Add a child ----
   let chosen = C.AVATARS[0];
   C.AVATARS.forEach((av, i) => {
-    const bt = el('button', '', av); bt.type = 'button'; bt.setAttribute('aria-pressed', String(i === 0)); bt.setAttribute('aria-label', 'Gambar ' + av);
+    const bt = el('button', '', av); bt.type = 'button'; bt.setAttribute('aria-pressed', String(i === 0)); bt.setAttribute('aria-label', 'Picture ' + av);
     bt.addEventListener('click', () => { chosen = av; [...$('newAvs').children].forEach((x) => x.setAttribute('aria-pressed', String(x === bt))); });
     $('newAvs').appendChild(bt);
   });

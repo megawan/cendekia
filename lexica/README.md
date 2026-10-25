@@ -1,26 +1,26 @@
 # Lexica
 
-An Indonesian–English vocabulary game. Children learn about 300 English words in 24 themes, hearing every word in both languages. The UI and spoken prompts are in Indonesian, the words being learned are in English.
+An Indonesian–English vocabulary game. Children learn about 300 English words in 24 themes, hearing every word in both languages. Buttons, headings, theme names and messages are in English; Kiki's spoken instructions stay in Indonesian, the children's own language, and every word is shown and read in both languages.
 
 ## Themes
 
-Hewan Ternak, Hewan Liar, Hewan Laut, Serangga & Reptil, Burung, Buah, Sayuran, Makanan & Minuman, **Wajah** (12 parts, from hair to chin), **Anggota Badan** (19 parts, from head to toe), **Organ Dalam** (brain, heart, lungs, liver, stomach, kidneys, intestines ...), Rumah, Dapur, Sekolah, Pakaian, Kendaraan, **Di Jalan Raya** (zebra crossing, bollard, traffic cone, speed bump, sidewalk, crossroads, manhole, traffic light, bus stop ...), Cuaca, Alam, Warna, Keluarga, Pekerjaan, Tempat Umum, Mainan & Musik.
+Farm animals, Wild animals, Sea animals, Insects & reptiles, Birds, Fruit, Vegetables, Food & drinks, **The face** (12 parts, from hair to chin), **The body** (19 parts, from head to toe), **Inside the body** (brain, heart, lungs, liver, stomach, kidneys, intestines ...), The house, The kitchen, School, Clothes, Vehicles, **On the street** (zebra crossing, bollard, traffic cone, speed bump, sidewalk, crossroads, manhole, traffic light, bus stop ...), Weather, Nature, Colors, Family, Jobs, Places in town, Toys & music.
 
 ## Modes
 
-- Petualangan: pick a theme from the grid (all open, so a child can start with what interests them). Each theme is a round of eight questions and gives one to three stars. Three more stages mix every theme.
+- Adventure: pick a theme from the grid (all open, so a child can start with what interests them). Each theme is a round of eight questions and gives one to three stars. Three more stages mix every theme.
 
   | Stage | Question |
   | --- | --- |
   | Each theme | Hear an English word and pick its picture, or see a picture with its Indonesian word and pick the English word. Wrong options come from the same theme first |
-  | Wajah, Anggota Badan, Organ Dalam | The picture is a figure with the part marked. Word options only, since marked pictures look too alike to choose between |
-  | Tebak Arti | See an Indonesian word and pick the English word, or hear and read an English word and pick the Indonesian one. Words from every theme |
-  | Eja Kata | See a picture and tap the letters of the English word in order. Words of three to five letters |
-  | Juara Kosakata | All the question types, words from every theme |
+  | The face, The body, Inside the body | The picture is a figure with the part marked. Word options only, since marked pictures look too alike to choose between |
+  | Guess the meaning | See an Indonesian word and pick the English word, or hear and read an English word and pick the Indonesian one. Words from every theme |
+  | Spell it | See a picture and tap the letters of the English word in order. Words of three to five letters |
+  | Word champion | All the question types, words from every theme |
 
   After a right answer, the English word and then the Indonesian word are played, so both sounds stay tied to the same picture.
-- Kartu Kata: pick a theme, tap a card to see the picture and hear the English and Indonesian word. The two buttons play each language again.
-- Stiker-ku: twelve birds that unlock as the total star count grows (`STICKERS` in `index.html`).
+- Word cards: pick a theme, tap a card to see the picture and hear the English and Indonesian word. The two buttons play each language again.
+- My stickers: twelve birds that unlock as the total star count grows (`STICKERS` in `index.html`).
 
 Wrong options never repeat the English text, the Indonesian text or the picture of the answer, so "orange" the fruit and "orange" the colour are never offered together.
 
