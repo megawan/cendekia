@@ -561,12 +561,12 @@
     b.type = 'button'; b.className = 'tile';
     b.innerHTML = '<span class="ar" lang="ar"></span><small></small>';
     b.firstChild.textContent = l.ch; b.setAttribute('aria-label', l.name);
-    b.addEventListener('click', () => { trIdx = i; renderTrace(); });
+    b.addEventListener('click', () => { if (Cendekia.gate()) { trIdx = i; renderTrace(); } });
     $('trGrid').appendChild(b);
   });
   $('trPlay').addEventListener('click', () => speak(LETTERS[trIdx]));
-  $('trNext').addEventListener('click', () => { trIdx = (trIdx + 1) % LETTERS.length; renderTrace(); });
-  $('goTrace').addEventListener('click', () => { audioCtx(); show('trace'); renderTrace(); });
+  $('trNext').addEventListener('click', () => { if (Cendekia.gate()) { trIdx = (trIdx + 1) % LETTERS.length; renderTrace(); } });
+  $('goTrace').addEventListener('click', () => { if (!Cendekia.gate()) return; audioCtx(); show('trace'); renderTrace(); });
 
   // ---- Quiz ----
   const ROUNDS = 10;

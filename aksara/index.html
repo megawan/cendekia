@@ -625,6 +625,7 @@
   }
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-go]');
+    if (b && b.dataset.go === 'trace' && !Cendekia.gate()) return; // the parent's daily time limit
     if (b) show(b.dataset.go);
   });
 
@@ -911,13 +912,13 @@
     b.type = 'button'; b.className = 'tile';
     b.innerHTML = '<span></span><small></small>';
     b.firstChild.textContent = l.ch.toUpperCase() + l.ch;
-    b.addEventListener('click', () => { trIdx = i; renderTrace(); });
+    b.addEventListener('click', () => { if (Cendekia.gate()) { trIdx = i; renderTrace(); } });
     $('trGrid').appendChild(b);
   });
-  $('trUp').addEventListener('click', () => { trUpper = true; renderTrace(); });
-  $('trLow').addEventListener('click', () => { trUpper = false; renderTrace(); });
+  $('trUp').addEventListener('click', () => { if (Cendekia.gate()) { trUpper = true; renderTrace(); } });
+  $('trLow').addEventListener('click', () => { if (Cendekia.gate()) { trUpper = false; renderTrace(); } });
   $('trPlay').addEventListener('click', sayTraced);
-  $('trNext').addEventListener('click', () => { trIdx = (trIdx + 1) % C.letters.length; renderTrace(); });
+  $('trNext').addEventListener('click', () => { if (Cendekia.gate()) { trIdx = (trIdx + 1) % C.letters.length; renderTrace(); } });
 
   // ---- Explore: syllables ----
   let sylCon = 'b';

@@ -94,3 +94,19 @@ test.describe('Hijaiyah: trace letters', () => {
     await expect(page.locator('#trName')).toHaveText('Ba');
   });
 });
+
+test.describe('the daily time limit', () => {
+  for (const dir of ['aksara', 'hijaiyah']) {
+    test(`${dir}: tracing does not open once the time is used up`, async ({ page }) => {
+      await app(page, dir);
+      await page.evaluate(() => {
+        const C = window.Cendekia;
+        C.update(C.profile().id, { limit: 15 });
+        C.round({ app: 'numeria', stage: 'test', stars: 3, right: 5, total: 5, ms: 16 * 60000 });
+      });
+      await page.getByRole('button', { name: /Trace letters/ }).click();
+      await expect(page.getByRole('dialog')).toContainText('That is all the play time for today');
+      await expect(page.locator('#trace')).toBeHidden();
+    });
+  }
+});
