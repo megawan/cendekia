@@ -1,5 +1,5 @@
 // Offline support for the hijaiyah game. Bump CACHE when the precached files change.
-const CACHE = 'hijaiyah-v7';
+const CACHE = 'hijaiyah-v8';
 const FONTS = 'hijaiyah-fonts-v1';
 
 const BASES = ['alif', 'ba', 'ta', 'tsa', 'jim', 'ha', 'kho', 'dal', 'dzal', 'ra', 'zai', 'sin', 'syin', 'shad',
