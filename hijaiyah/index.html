@@ -341,13 +341,13 @@
       <button class="btn ghost" data-home type="button">Back</button>
       <div class="mstat" id="mStat" aria-live="polite"></div>
     </div>
-    <div class="tabs" id="mTabs">
+    <div class="tabs" id="memTabs">
       <button class="tab" type="button" data-m="4">Easy</button>
       <button class="tab on" type="button" data-m="6">Medium</button>
       <button class="tab" type="button" data-m="8">Hard</button>
     </div>
     <p class="sub">Match each letter with its name.</p>
-    <div class="mgrid" id="mGrid"></div>
+    <div class="mgrid" id="memGrid"></div>
   </section>
 
   <section id="similar" hidden>
@@ -1105,14 +1105,14 @@
     // Letters the child knows least are likelier to appear.
     const picks = weightedPick(LETTERS.map((_, i) => i), (i) => weightFor(level(String(i))), pairs);
     mem.cards = shuffle(picks.reduce((a, i) => a.concat([{ i, kind: 'ch' }, { i, kind: 'name' }]), []));
-    const grid = $('mGrid'); grid.innerHTML = '';
+    const grid = $('memGrid'); grid.innerHTML = '';
     mem.cards.forEach((c) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'mcard'; b.setAttribute('aria-label', 'Hidden card');
       b.addEventListener('click', () => flip(c, b));
       c.el = b; grid.appendChild(b);
     });
-    [...$('mTabs').children].forEach((t) => t.classList.toggle('on', Number(t.dataset.m) === pairs));
+    [...$('memTabs').children].forEach((t) => t.classList.toggle('on', Number(t.dataset.m) === pairs));
     memStat(); show('memory');
   }
   function flip(c, b) {
@@ -1148,7 +1148,7 @@
     showResult(n, n === 3 ? 'Amazing memory!' : n === 2 ? 'Great job!' : 'Well done!',
       'All ' + p + ' pairs found in ' + mem.moves + ' moves');
   }
-  $('mTabs').addEventListener('click', (e) => {
+  $('memTabs').addEventListener('click', (e) => {
     const b = e.target.closest('[data-m]'); if (b) startMemory(Number(b.dataset.m));
   });
 
