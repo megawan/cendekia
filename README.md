@@ -17,6 +17,10 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 
 Each app keeps its own README with details.
 
+## Support
+
+If Cendekia is useful to your family, you can [buy me a coffee](https://buymeacoffee.com/megawan). The same link is in the footer of the home page.
+
 ## Children and the parent page
 
 Several children can share one device. `shared/profile.js` is loaded by every app and by the landing page. `shared/trace.js` (letter tracing, used by Aksara and Hijaiyah) is loaded after it and must be in those apps' service worker `CORE` list too.
