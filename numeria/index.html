@@ -280,20 +280,21 @@
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="octopus" viewBox="0 0 100 100">
-      <g fill="none" stroke="#7a58ee" stroke-width="11" stroke-linecap="round">
-        <path d="M27 60 C8 62 4 82 17 87 C24 89 28 82 23 79"/><path d="M73 60 C92 62 96 82 83 87 C76 89 72 82 77 79"/>
-        <path d="M37 70 C26 82 26 94 38 95 C43 95 45 89 41 88"/><path d="M63 70 C74 82 74 94 62 95 C57 95 55 89 59 88"/>
-        <path d="M50 74 L50 93"/>
-      </g>
-      <g fill="#e4d9ff"><circle cx="31" cy="83" r="1.8"/><circle cx="32" cy="90" r="1.8"/><circle cx="69" cy="83" r="1.8"/><circle cx="68" cy="90" r="1.8"/><circle cx="50" cy="84" r="1.8"/></g>
-      <ellipse fill="#8b6cf6" cx="50" cy="42" rx="35" ry="35"/>
-      <g fill="#6f4fe0" opacity=".55"><circle cx="30" cy="27" r="4"/><circle cx="68" cy="22" r="3"/><circle cx="75" cy="34" r="2.4"/><circle cx="22" cy="38" r="2.4"/></g>
-      <ellipse fill="#fff" opacity=".25" cx="40" cy="20" rx="13" ry="6" transform="rotate(-18 40 20)"/>
-      <circle fill="#fff" cx="37" cy="46" r="10"/><circle fill="#fff" cx="63" cy="46" r="10"/>
-      <circle fill="#1c2038" cx="38.5" cy="48" r="5.8"/><circle fill="#1c2038" cx="61.5" cy="48" r="5.8"/>
-      <circle fill="#fff" cx="40.5" cy="45.5" r="2.2"/><circle fill="#fff" cx="63.5" cy="45.5" r="2.2"/>
-      <circle fill="#ff8fb8" opacity=".6" cx="24" cy="58" r="5"/><circle fill="#ff8fb8" opacity=".6" cx="76" cy="58" r="5"/>
+    <symbol id="squirrel" viewBox="0 0 100 100">
+      <path fill="#e08a45" stroke="#e08a45" stroke-width="4" stroke-linejoin="round" d="M62 88 C96 88 100 52 90 26 C86 12 72 10 70 22 C79 26 82 40 79 54 C76 68 66 72 54 72Z"/>
+      <path fill="none" stroke="#b9622c" stroke-width="3" stroke-linecap="round" d="M86 34 C92 52 86 74 64 80"/>
+      <ellipse fill="#c9733a" cx="50" cy="88" rx="24" ry="11"/>
+      <ellipse fill="#fbe6c8" cx="50" cy="90" rx="13" ry="7"/>
+      <path fill="#c9733a" stroke="#c9733a" stroke-width="6" stroke-linejoin="round" d="M20 34 L24 10 L42 22Z"/><path fill="#c9733a" stroke="#c9733a" stroke-width="6" stroke-linejoin="round" d="M80 34 L76 10 L58 22Z"/>
+      <path fill="#f3b58a" d="M25 29 L27 17 L35 23Z"/><path fill="#f3b58a" d="M75 29 L73 17 L65 23Z"/>
+      <path fill="none" stroke="#7a3f1a" stroke-width="3" stroke-linecap="round" d="M24 8 L22 2M76 8 L78 2"/>
+      <ellipse fill="#d98443" cx="50" cy="48" rx="34" ry="31"/>
+      <ellipse fill="#fff" opacity=".2" cx="38" cy="29" rx="12" ry="5" transform="rotate(-15 38 29)"/>
+      <ellipse fill="#fbe6c8" cx="50" cy="61" rx="20" ry="14"/>
+      <circle fill="#1c2038" cx="36" cy="44" r="5.6"/><circle fill="#1c2038" cx="64" cy="44" r="5.6"/>
+      <circle fill="#fff" cx="38" cy="42" r="2"/><circle fill="#fff" cx="66" cy="42" r="2"/>
+      <circle fill="#ff8fb8" opacity=".55" cx="26" cy="58" r="5"/><circle fill="#ff8fb8" opacity=".55" cx="74" cy="58" r="5"/>
+      <ellipse fill="#5a2d17" cx="50" cy="55" rx="4.5" ry="3.4"/>
     </symbol>
   </defs>
 </svg>
@@ -305,10 +306,10 @@
   <section id="home">
     <div class="homeTop"><a class="btn ghost back" href="../">← Cendekia</a><div id="who"></div></div>
     <div class="hero" data-mascot="numeria">
-      <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#octopus"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
+      <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#squirrel"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
       <div>
         <h1>Numeria</h1>
-        <p class="sub">Math for everyday life, with Myria the octopus</p>
+        <p class="sub">Math for everyday life, with Myria the squirrel</p>
       </div>
     </div>
     <div class="pills">
@@ -339,7 +340,7 @@
       <span class="spacer"></span>
     </div>
     <div class="coach">
-      <svg class="mascot" id="coach" viewBox="0 0 100 100" aria-hidden="true"><use href="#octopus"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
+      <svg class="mascot" id="coach" viewBox="0 0 100 100" aria-hidden="true"><use href="#squirrel"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
       <div class="bubble" id="say" aria-live="polite"></div>
     </div>
     <div class="scene" id="scene"></div>
@@ -353,7 +354,7 @@
   <!-- Result -->
   <section id="result" class="result" hidden>
     <div class="stack">
-      <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#octopus"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
+      <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#squirrel"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
       <h2 id="resTitle">Great!</h2>
       <div class="stars" id="resStars"></div>
       <p class="summary" id="resText"></p>
