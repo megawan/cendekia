@@ -66,3 +66,20 @@ body::before { display: none; }
 /* Speech bubble */
 .bubble { border-radius: 18px; }
 .bubble::before { background: #fff; border-left: 1px solid var(--arc-hair); border-bottom: 1px solid var(--arc-hair); }
+
+/* "Meet <mascot>" button (shared/mascot.js): a small pill under the home subtitle and the card it opens. */
+.mascot-chip {
+  margin-top: 8px; padding: 5px 12px; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: .8rem; font-weight: 700; color: var(--accent, #6d5ef5);
+  background: color-mix(in srgb, var(--accent, #6d5ef5) 10%, #fff);
+  border: 1px solid color-mix(in srgb, var(--accent, #6d5ef5) 35%, transparent);
+}
+.mascot-chip:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent, #6d5ef5) 45%, transparent); outline-offset: 2px; }
+.mascot-tip {
+  position: fixed; z-index: 50; box-sizing: border-box; padding: 12px 14px; border-radius: 16px;
+  background: #fff; color: var(--ink); border: 1px solid var(--arc-hair); box-shadow: 0 6px 18px -6px rgba(28, 32, 56, .28);
+  font-size: .88rem; line-height: 1.45; text-align: left;
+}
+.mascot-tip[hidden] { display: none; }
+.mascot-tip b { display: block; margin-bottom: 4px; font-size: 1rem; }
+.mascot-tip p { margin: 0; }
