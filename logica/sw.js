@@ -1,5 +1,5 @@
 // Offline support for Logica. Bump CACHE when the precached files change.
-const CACHE = 'logica-v27';
+const CACHE = 'logica-v28';
 const FONTS = 'logica-fonts-v1';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', 'ui-dist/logica-ui.js', 'ui-dist/logica-ui.css'];
 

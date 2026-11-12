@@ -55,7 +55,7 @@ test.describe('Mini Sudoku', () => {
         await page.locator('.sdkPal button').nth(v).click();
       }
       await page.getByRole('button', { name: '✓ Check' }).click();
-      await expect(page.locator('#prog i.done')).toHaveCount(1);
+      await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(1);
     });
   }
 
@@ -72,7 +72,7 @@ test.describe('Mini Sudoku', () => {
     }
     await page.getByRole('button', { name: '✓ Check' }).click();
     await expect(page.locator('#sdk button.no')).toHaveCount(1);
-    await expect(page.locator('#prog i.done')).toHaveCount(0);
+    await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(0);
   });
 });
 
@@ -94,7 +94,7 @@ test.describe('Secret Code', () => {
       if (target & Number(await b.getAttribute('data-v'))) await b.click();
     }
     await page.getByRole('button', { name: '✓ Check' }).click();
-    await expect(page.locator('#prog i.done')).toHaveCount(1);
+    await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(1);
   });
 
   test('a secret message can be read', async ({ page }) => {
@@ -104,7 +104,7 @@ test.describe('Secret Code', () => {
     const k = Number((await page.locator('.shift').textContent()).match(/\d+/)[0]);
     const word = coded.replace(/[A-Z]/g, (ch) => String.fromCharCode((ch.charCodeAt(0) - 65 - k + 26) % 26 + 65));
     await page.getByRole('button', { name: word.toLowerCase(), exact: true }).click();
-    await expect(page.locator('#prog i.done')).toHaveCount(1);
+    await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(1);
   });
 
   test('painting the code fills in the picture', async ({ page }) => {
@@ -114,7 +114,7 @@ test.describe('Secret Code', () => {
     const cells = page.locator('#paint button');
     for (let k = 0; k < bits.length; k++) if (bits[k] === '1') await cells.nth(k).click();
     await page.getByRole('button', { name: '✓ Check' }).click();
-    await expect(page.locator('#prog i.done')).toHaveCount(1);
+    await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(1);
   });
 });
 
