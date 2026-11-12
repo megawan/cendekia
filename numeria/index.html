@@ -63,7 +63,11 @@
   /* Home */
   .homeTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .hero { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 8px 0 12px; }
-  .owl { font-size: 4.2rem; line-height: 1; display: inline-block; animation: bob 3s ease-in-out infinite; }
+  .mascot { display: block; width: 84px; height: 84px; animation: bob 3s ease-in-out infinite; }
+  .mascot .m { display: none; fill: none; stroke: #1c2038; stroke-width: 3.5; stroke-linecap: round; }
+  .mascot .m-cheer { fill: #1c2038; }
+  .mascot .m-happy, .mascot.cheer .m-cheer, .mascot.oops .m-oops { display: block; }
+  .mascot.cheer .m-happy, .mascot.oops .m-happy { display: none; }
   .pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   .scale { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: .9rem; margin: 0 4px 10px; }
   .scale i { flex: 1; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #8fd6a8, #f2c14e, #f2891f, #e5484d); }
@@ -115,9 +119,9 @@
   .prog i.miss { background: var(--warm); }
   .prog i.now { background: var(--accent); transform: scale(1.25); }
   .coach { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .coach .owl { font-size: 3rem; animation: none; flex: none; }
-  .coach .owl.cheer { animation: hop .5s ease-out; }
-  .coach .owl.oops { animation: shake .35s; }
+  .coach .mascot { width: 56px; height: 56px; animation: none; flex: none; }
+  .coach .mascot.cheer { animation: hop .5s ease-out; }
+  .coach .mascot.oops { animation: shake .35s; }
   .bubble { position: relative; flex: 1; background: #fff; border: 2px solid var(--line); border-radius: 16px;
     padding: 8px 14px; font-weight: 700; font-size: 1.15rem; line-height: 1.3; }
   .bubble::before { content: ""; position: absolute; left: -9px; top: 50%; margin-top: -8px; width: 14px; height: 14px;
@@ -204,7 +208,7 @@
 
   /* Result */
   .result { text-align: center; }
-  .result .owl { font-size: 5rem; animation: hop .6s ease-out; }
+  .result .mascot { width: 96px; height: 96px; margin: 0 auto; animation: hop .6s ease-out; }
   .stars { display: flex; justify-content: center; gap: 8px; }
   .stars svg { width: 60px; height: 60px; fill: var(--line); }
   .stars svg.on { fill: var(--warm); animation: popIn .5s both; }
@@ -275,6 +279,22 @@
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="octopus" viewBox="0 0 100 100">
+      <g fill="none" stroke="#6a4de0" stroke-width="10" stroke-linecap="round">
+        <path d="M24 56 Q6 64 10 78"/><path d="M30 68 Q16 82 22 94"/><path d="M39 74 Q31 92 39 96"/><path d="M47 76 Q45 94 51 96"/>
+        <path d="M53 76 Q55 94 61 96"/><path d="M61 74 Q69 92 61 96"/><path d="M70 68 Q84 82 78 94"/><path d="M76 56 Q94 64 90 78"/>
+      </g>
+      <ellipse fill="#8b6cf6" cx="50" cy="44" rx="34" ry="36"/>
+      <ellipse fill="#fff" opacity=".22" cx="38" cy="22" rx="14" ry="7"/>
+      <circle fill="#fff" cx="38" cy="46" r="9"/><circle fill="#fff" cx="62" cy="46" r="9"/>
+      <circle fill="#1c2038" cx="39.5" cy="47.5" r="5"/><circle fill="#1c2038" cx="60.5" cy="47.5" r="5"/>
+      <circle fill="#fff" cx="41" cy="45.5" r="1.8"/><circle fill="#fff" cx="62" cy="45.5" r="1.8"/>
+      <circle fill="#ff8fb8" opacity=".6" cx="27" cy="58" r="5"/><circle fill="#ff8fb8" opacity=".6" cx="73" cy="58" r="5"/>
+    </symbol>
+  </defs>
+</svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs><path id="starPath" d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></defs>
 </svg>
 <main>
@@ -282,10 +302,10 @@
   <section id="home">
     <div class="homeTop"><div id="who"></div><span class="pill" title="Days in a row"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span></div>
     <div class="hero" data-mascot="numeria">
-      <span class="owl" aria-hidden="true">🦉</span>
+      <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#octopus"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
       <div>
         <h1>Numeria</h1>
-        <p class="sub">Math for everyday life, with Myria the owl</p>
+        <p class="sub">Math for everyday life, with Myria the octopus</p>
       </div>
     </div>
     <div class="pills">
@@ -315,7 +335,7 @@
       <span class="spacer"></span>
     </div>
     <div class="coach">
-      <span class="owl" id="coach" aria-hidden="true">🦉</span>
+      <svg class="mascot" id="coach" viewBox="0 0 100 100" aria-hidden="true"><use href="#octopus"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
       <div class="bubble" id="say" aria-live="polite"></div>
     </div>
     <div class="scene" id="scene"></div>
@@ -329,7 +349,7 @@
   <!-- Result -->
   <section id="result" class="result" hidden>
     <div class="stack">
-      <span class="owl" aria-hidden="true">🦉</span>
+      <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#octopus"/><path class="m m-happy" d="M43 62 Q50 68 57 62"/><path class="m m-cheer" d="M41 60 Q50 75 59 60Z"/><path class="m m-oops" d="M43 67 Q46.5 62 50 67 T57 67"/></svg>
       <h2 id="resTitle">Great!</h2>
       <div class="stars" id="resStars"></div>
       <p class="summary" id="resText"></p>
@@ -1053,7 +1073,7 @@
     $('prog').innerHTML = qs.map((_, k) => '<i class="' + (k < results.length ? (results[k] ? 'ok' : 'miss') : k === qi ? 'now' : '') + '"></i>').join('');
     $('prog').setAttribute('aria-label', 'Question ' + (qi + 1) + ' of ' + qs.length);
   }
-  const mood = (m) => { const c = $('coach'); c.className = 'owl'; void c.offsetWidth; if (m) c.classList.add(m); };
+  const mood = (m) => { const c = $('coach'); c.setAttribute('class', 'mascot'); void c.getBoundingClientRect(); if (m) c.classList.add(m); };
   const label = (s) => (/^\d+\/\d+$/.test(s) ? frac(...s.split('/')) : esc(s));
 
   // The three hands-on tools of the Number Lab. Each returns { box, reveal }; the child's value is read when Check is pressed.
