@@ -56,17 +56,14 @@
     border-radius: 999px; padding: 4px 14px 4px 10px; font-weight: 700; white-space: nowrap; }
   .pill .ic { font-size: 1.2rem; line-height: 1; }
 
-  /* Poka the robot. Built from parts so its eyes, antenna and mouth can move. */
+  /* Poka the beaver. Built from parts so its eyes and mouth can move. */
   .poka { display: block; overflow: visible; }
-  .poka .ant { fill: var(--accent); animation: glow 1.6s ease-in-out infinite; }
-  .poka .eye { fill: var(--glow); transform-box: fill-box; transform-origin: center; animation: blinkEye 4s infinite; }
-  .poka .mouth { fill: none; stroke: var(--glow); stroke-width: 3.5; stroke-linecap: round; display: none; }
+  .poka .eye { fill: #1f2a44; transform-box: fill-box; transform-origin: center; animation: blinkEye 4s infinite; }
+  .poka .mouth { fill: none; stroke: #3b2a1a; stroke-width: 3.5; stroke-linecap: round; display: none; }
   .poka[data-mood="happy"] .m-happy, .poka[data-mood="cheer"] .m-cheer, .poka[data-mood="oops"] .m-oops,
   .poka:not([data-mood]) .m-happy { display: block; }
   .poka[data-mood="cheer"] { animation: hop .5s ease-out; }
   .poka[data-mood="oops"] { animation: shake .35s; }
-  .poka[data-mood="oops"] .eye { fill: #ffb4a8; }
-  @keyframes glow { 50% { fill: #ffd27a; } }
   @keyframes blinkEye { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
   @keyframes hop { 30% { transform: translateY(-14px) scale(1.08); } }
   @keyframes bob { 50% { transform: translateY(-6px); } }
@@ -1001,14 +998,16 @@
   const clone = (x) => JSON.parse(JSON.stringify(x));
 
   // ---- Poka ----
-  const POKA = '<rect x="47" y="6" width="6" height="14" rx="3" fill="#8a94a8"/><circle class="ant" cx="50" cy="7" r="6"/>'
-    + '<rect x="11" y="32" width="10" height="20" rx="5" fill="#8a94a8"/><rect x="79" y="32" width="10" height="20" rx="5" fill="#8a94a8"/>'
-    + '<rect x="17" y="17" width="66" height="50" rx="16" fill="#e6ecf6" stroke="#c3cde0" stroke-width="3"/>'
-    + '<rect x="25" y="25" width="50" height="34" rx="11" fill="#1f2a44"/>'
-    + '<rect class="eye" x="35" y="33" width="9" height="12" rx="4.5"/><rect class="eye" x="56" y="33" width="9" height="12" rx="4.5"/>'
-    + '<path class="mouth m-happy" d="M43 50 Q50 55 57 50"/><path class="mouth m-cheer" d="M41 48 Q50 58 59 48"/><path class="mouth m-oops" d="M43 53 Q46.5 49 50 53 T57 53"/>'
-    + '<rect x="30" y="68" width="40" height="20" rx="8" fill="#f2891f"/><circle cx="50" cy="78" r="4" fill="#ffd27a"/>'
-    + '<circle cx="36" cy="92" r="6" fill="#1f2a44"/><circle cx="64" cy="92" r="6" fill="#1f2a44"/>';
+  const POKA = '<ellipse cx="50" cy="90" rx="26" ry="11" fill="#8a5329"/>'
+    + '<circle cx="21" cy="36" r="11" fill="#8a5329"/><circle cx="79" cy="36" r="11" fill="#8a5329"/>'
+    + '<circle cx="21" cy="36" r="5.5" fill="#e9b98a"/><circle cx="79" cy="36" r="5.5" fill="#e9b98a"/>'
+    + '<ellipse cx="50" cy="58" rx="35" ry="32" fill="#b5733c"/>'
+    + '<ellipse cx="50" cy="66" rx="21" ry="15" fill="#f0d3ac"/>'
+    + '<rect x="44" y="66" width="12" height="11" rx="2.5" fill="#fff" stroke="#d9c3a6" stroke-width="1.5"/><path d="M50 66 V77" stroke="#d9c3a6" stroke-width="1.5"/>'
+    + '<ellipse cx="50" cy="55" rx="7" ry="5" fill="#3b2a1a"/>'
+    + '<circle class="eye" cx="36" cy="44" r="6"/><circle class="eye" cx="64" cy="44" r="6"/>'
+    + '<path class="mouth m-happy" d="M42 63 Q50 68 58 63"/><path class="mouth m-cheer" d="M40 62 Q50 72 60 62"/><path class="mouth m-oops" d="M43 67 Q46.5 63 50 67 T57 67"/>'
+    + '<path d="M26 32 Q50 2 74 32z" fill="#f2c230"/><rect x="22" y="30" width="56" height="7" rx="3.5" fill="#e3a91b"/>';
   const pokaSvg = (mood) => '<svg class="poka" data-mood="' + (mood || 'happy') + '" viewBox="0 0 100 100" aria-hidden="true">' + POKA + '</svg>';
   function fillPokas(root) { root.querySelectorAll('svg.poka:empty').forEach((s) => { s.innerHTML = POKA; }); }
   fillPokas(document);

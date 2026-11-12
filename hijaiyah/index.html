@@ -104,9 +104,6 @@
     background: #fff8e1; border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); transform: rotate(45deg); }
 
   .mascot { display: block; }
-  .mascot .body { fill: var(--c-green); }
-  .mascot .belly { fill: #bff0d8; }
-  .mascot .eye { fill: #fff; } .mascot .pupil { fill: var(--ink); }
   .mascot .m { display: none; fill: none; stroke: var(--ink); stroke-width: 4; stroke-linecap: round; }
   .mascot .m.big { fill: var(--ink); }
   .mascot[data-mood="happy"] .m.smile, .mascot[data-mood="cheer"] .m.big, .mascot[data-mood="oops"] .m.oops { display: block; }
@@ -223,16 +220,26 @@
 <link rel="stylesheet" href="../shared/arc.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="lion" viewBox="0 0 100 100">
+      <g fill="#d9731a"><circle cx="50" cy="13" r="12"/><circle cx="21" cy="25" r="12"/><circle cx="79" cy="25" r="12"/><circle cx="9" cy="54" r="12"/><circle cx="91" cy="54" r="12"/><circle cx="20" cy="83" r="12"/><circle cx="80" cy="83" r="12"/><circle cx="50" cy="94" r="5"/><circle cx="50" cy="54" r="40"/></g>
+      <circle fill="#f6c453" cx="50" cy="56" r="31"/>
+      <circle fill="#d9731a" cx="27" cy="32" r="9"/><circle fill="#d9731a" cx="73" cy="32" r="9"/>
+      <circle fill="#fbe0a0" cx="27" cy="32" r="4.5"/><circle fill="#fbe0a0" cx="73" cy="32" r="4.5"/>
+      <ellipse fill="#fdebc4" cx="50" cy="69" rx="17" ry="13"/>
+      <circle fill="#fff" cx="37" cy="48" r="7.5"/><circle fill="#fff" cx="63" cy="48" r="7.5"/>
+      <circle fill="#1c2038" cx="38.5" cy="49" r="4.5"/><circle fill="#1c2038" cx="61.5" cy="49" r="4.5"/>
+      <path fill="#7a3b1d" d="M43 58 Q50 54 57 58 Q54 66 50 66 Q46 66 43 58z"/>
+    </symbol>
+  </defs>
+</svg>
 <main>
   <section id="home">
     <div class="homeTop"><a class="btn ghost back" href="../">← All apps</a><div class="who" id="who"></div></div>
     <div class="hero" data-mascot="hijaiyah">
-      <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true">
-        <ellipse class="body" cx="50" cy="56" rx="38" ry="36"/>
-        <ellipse class="belly" cx="50" cy="68" rx="24" ry="20"/>
-        <circle class="eye" cx="36" cy="46" r="10"/><circle class="eye" cx="64" cy="46" r="10"/>
-        <circle class="pupil" cx="38" cy="47" r="5"/><circle class="pupil" cx="62" cy="47" r="5"/>
-        <path class="m smile" d="M36 62 Q50 76 64 62"/>
+      <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#lion"/>
+        <path class="m smile" d="M41 70 Q50 78 59 70"/>
       </svg>
       <div>
         <h1>Hijaiyah</h1>
@@ -377,14 +384,10 @@
       <div class="streak" id="streak" aria-live="polite"></div>
     </div>
     <div class="coach">
-      <svg class="mascot" id="coachMascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true">
-        <ellipse class="body" cx="50" cy="56" rx="38" ry="36"/>
-        <ellipse class="belly" cx="50" cy="68" rx="24" ry="20"/>
-        <circle class="eye" cx="36" cy="46" r="10"/><circle class="eye" cx="64" cy="46" r="10"/>
-        <circle class="pupil" cx="38" cy="47" r="5"/><circle class="pupil" cx="62" cy="47" r="5"/>
-        <path class="m smile" d="M36 62 Q50 76 64 62"/>
-        <path class="m big" d="M34 60 Q50 84 66 60 Z"/>
-        <path class="m oops" d="M38 72 Q50 60 62 72"/>
+      <svg class="mascot" id="coachMascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#lion"/>
+        <path class="m smile" d="M41 70 Q50 78 59 70"/>
+        <path class="m big" d="M40 69 Q50 86 60 69 Z"/>
+        <path class="m oops" d="M42 77 Q50 69 58 77"/>
       </svg>
       <div class="bubble" id="say" aria-live="polite">Let's start!</div>
     </div>
