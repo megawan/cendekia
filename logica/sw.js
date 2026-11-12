@@ -1,7 +1,8 @@
 // Offline support for Logica. Bump CACHE when the precached files change.
-const CACHE = 'logica-v29';
+const CACHE = 'logica-v31';
 const FONTS = 'logica-fonts-v1';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', 'ui-dist/logica-ui.js', 'ui-dist/logica-ui.css'];
+// The Arc bundle (ui-dist) is not precached: it is fetched on first use, and the fetch handler below keeps it for offline.
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));

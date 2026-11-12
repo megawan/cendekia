@@ -491,8 +491,8 @@
   .who .av { font-size: 1.6rem; line-height: 1; }
   .who .lvl { font-size: .75rem; color: #fff; background: var(--c-teal); border-radius: 999px; padding: 0 8px; }
   .homeTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .diffBadge { display: flex; align-items: center; margin: 0 auto 16px; font: inherit; font-weight: 800; color: #fff; background: var(--c-teal);
-    border: 0; border-radius: 999px; padding: 6px 14px; min-height: 44px; cursor: pointer; box-shadow: 0 3px 0 #0a7680; }
+  /* The difficulty is a pill like the others, tinted so it reads as a button. */
+  .diffPill { font: inherit; font-weight: 800; color: #0a6670; background: #e3f4f5; border-color: #9fd6da; min-height: 44px; cursor: pointer; }
   .plist { display: grid; gap: 12px; margin-bottom: 16px; }
   .pcard { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-bottom-width: 5px;
     border-radius: var(--radius); padding: 10px 12px; }
@@ -658,7 +658,6 @@
   [hidden] { display: none !important; }
 </style>
 <link rel="stylesheet" href="../shared/arc.css">
-<link rel="stylesheet" href="ui-dist/logica-ui.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -683,8 +682,8 @@
       <span class="pill" title="Stars"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
       <span class="pill" title="Stickers"><span class="ic" aria-hidden="true">🚀</span><span id="homeStk">0/12</span> stickers</span>
+      <button type="button" class="pill diffPill" id="diffBadge" aria-label="Change difficulty"></button>
     </div>
-    <button type="button" class="diffBadge" id="diffBadge" aria-label="Change difficulty"></button>
     <div class="worlds" id="worlds"></div>
     <p class="note"><button type="button" class="parentLink" id="toParents">👪 For parents</button> · <a href="../">← More apps in Cendekia</a></p>
   </section>
@@ -972,7 +971,6 @@
 
 <script src="../shared/profile.js"></script>
 <script src="../shared/mascot.js"></script>
-<script src="ui-dist/logica-ui.js" defer></script>
 <script>
 (() => {
   'use strict';
@@ -1230,7 +1228,22 @@
   function paintStars(stars) {
     UI.count($('homeStars'), stars, stars === 1 ? '\u00a0star' : '\u00a0stars');
   }
-  window.addEventListener('load', () => { paintStars(totalStars()); renderStickers(); });
+  // The bundle is fetched on first use, so its size never delays the first paint. Resolves true when it is there.
+  let uiLoad = null;
+  function loadUI() {
+    if (!uiLoad) uiLoad = new Promise((done) => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet'; css.href = 'ui-dist/logica-ui.css';
+      const js = document.createElement('script');
+      js.src = 'ui-dist/logica-ui.js';
+      js.onload = () => { paintStars(totalStars()); renderStickers(); done(true); };
+      js.onerror = () => done(false);
+      document.head.append(css, js);
+    });
+    return uiLoad;
+  }
+  // Started by the first touch or key, so a page that is only looked at never pays for it.
+  ['pointerdown', 'keydown'].forEach((ev) => window.addEventListener(ev, loadUI, { once: true, passive: true }));
 
   function renderHome() {
     const stars = totalStars();
@@ -1327,15 +1340,25 @@
     $('dfTitle').textContent = first ? 'Hi ' + me().name + '! How hard should it be?' : 'How hard should it be?';
     $('dfList').innerHTML = diffButtons(S.diff);
     $('dfNote').textContent = 'Stars are kept for each difficulty, so you can switch any time.';
-    $('diffPick').hidden = false;
-    $('dfList').querySelector('[aria-pressed="true"], button').focus();
+    // The Arc bottom sheet when the bundle is loaded; the plain dialog otherwise.
+    const html = '<div class="diffs">' + $('dfList').innerHTML + '</div><p class="note">' + $('dfNote').textContent + '</p>';
+    // A child's very first visit uses the plain dialog, so the page does not wait for the bundle before it can be used.
+    const plain = () => { $('diffPick').hidden = false; $('dfList').querySelector('[aria-pressed="true"], button').focus(); };
+    if (first) { plain(); return; }
+    loadUI().then((ok) => {
+      if (ok) window.LogicaUI.sheet({ title: $('dfTitle').textContent, html, closeText: 'Not now' });
+      else plain();
+    });
   }
-  $('dfList').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-diff]'); if (!b) return;
+  function pickDiff(b) {
     S.diff = b.dataset.diff; save(); sfx.good();
     $('diffPick').hidden = true;
+    if (window.LogicaUI) window.LogicaUI.sheet(null);
     show('home');
-  });
+  }
+  $('dfList').addEventListener('click', (e) => { const b = e.target.closest('[data-diff]'); if (b) pickDiff(b); });
+  // The sheet's buttons live in the React tree, outside #dfList.
+  document.addEventListener('click', (e) => { const b = e.target.closest('#arc-ui-host [data-diff]'); if (b) pickDiff(b); });
   $('diffBadge').addEventListener('click', () => chooseDiff(false));
   $('diffPick').addEventListener('click', (e) => { if (e.target === $('diffPick')) $('diffPick').hidden = true; });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $('diffPick').hidden = true; $('tutor').hidden = true; } });
@@ -1584,13 +1607,15 @@
     const steps = TUTOR()[w.id].filter((st, k) => !(w.id === 'robot' && k === 3 && S.diff === 'easy'));
     const list = steps.map(([demo, text], k) => '<li><span class="n">' + (k + 1) + '</span>' + demo + '<p>' + text + '</p></li>').join('');
     // The Arc bottom sheet when the bundle is loaded; the plain dialog otherwise.
-    if (window.LogicaUI) {
-      window.LogicaUI.sheet({ title: 'How to play: ' + w.name, html: '<ol class="tsteps">' + list + '</ol>', closeText: "Let's play!", onClose: () => sfx.tap() });
-      return;
-    }
-    $('tuSteps').innerHTML = list;
-    $('tutor').hidden = false;
-    $('tuGo').focus();
+    loadUI().then((ok) => {
+      if (ok) {
+        window.LogicaUI.sheet({ title: 'How to play: ' + w.name, html: '<ol class="tsteps">' + list + '</ol>', closeText: "Let's play!", onClose: () => sfx.tap() });
+        return;
+      }
+      $('tuSteps').innerHTML = list;
+      $('tutor').hidden = false;
+      $('tuGo').focus();
+    });
   }
   $('tuGo').addEventListener('click', () => { $('tutor').hidden = true; sfx.tap(); });
 

@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { createRoot } from "react-dom/client";
 import { ReorderableList } from "./components/arc/reorderable-list/reorderable-list";
 import { Stepper } from "./components/arc/stepper/stepper";
@@ -40,11 +40,15 @@ function detentsFor(html: string) {
 }
 
 function SheetBridge() {
-  const current = useSyncExternalStore((cb) => { listeners.add(cb); return () => listeners.delete(cb); }, () => sheet);
+  const now = useSyncExternalStore((cb) => { listeners.add(cb); return () => listeners.delete(cb); }, () => sheet);
+  // Keep the last content while the sheet slides away, so closing it animates instead of vanishing.
+  const shown = useRef<SheetOptions | null>(null);
+  if (now) shown.current = now;
+  const current = shown.current;
   if (!current) return null;
   const close = () => { current.onClose?.(); setSheet(null); };
   return (
-    <BottomSheet open title={current.title} detents={detents} onOpenChange={(open) => { if (!open) close(); }}>
+    <BottomSheet open={!!now} title={current.title} detents={detents} onOpenChange={(open) => { if (!open && now) close(); }}>
       <div dangerouslySetInnerHTML={{ __html: current.html }} />
       <BottomSheetClose asChild><button type="button" className="btn go" style={{ width: "100%" }}>{current.closeText}</button></BottomSheetClose>
     </BottomSheet>
