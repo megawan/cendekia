@@ -1581,7 +1581,13 @@
     S.seen[w.id] = true; save();
     $('tuTitle').textContent = 'How to play: ' + w.name;
     const steps = TUTOR()[w.id].filter((st, k) => !(w.id === 'robot' && k === 3 && S.diff === 'easy'));
-    $('tuSteps').innerHTML = steps.map(([demo, text], k) => '<li><span class="n">' + (k + 1) + '</span>' + demo + '<p>' + text + '</p></li>').join('');
+    const list = steps.map(([demo, text], k) => '<li><span class="n">' + (k + 1) + '</span>' + demo + '<p>' + text + '</p></li>').join('');
+    // The Arc bottom sheet when the bundle is loaded; the plain dialog otherwise.
+    if (window.LogicaUI) {
+      window.LogicaUI.sheet({ title: 'How to play: ' + w.name, html: '<ol class="tsteps">' + list + '</ol>', closeText: "Let's play!", onClose: () => sfx.tap() });
+      return;
+    }
+    $('tuSteps').innerHTML = list;
     $('tutor').hidden = false;
     $('tuGo').focus();
   }
