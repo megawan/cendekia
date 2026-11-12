@@ -62,13 +62,13 @@ Every finished level also goes to the shared log (`Cendekia.round`), and the fir
 
 ## Arc UI components
 
-The star counts roll like an odometer and a toast announces a new sticker or a used hint, using the real [Arc UI](https://uiarc.dev) `animated-counter` and `toast-stack` components (React 19, copied into `ui/src/components/arc/` as Arc intends). Logica itself stays a static page: only the small bundle in `ui-dist/` is built, from `ui/`, and committed.
+The star counts roll like an odometer, a toast announces a new sticker or a used hint, and ❓ How opens as a draggable bottom sheet, using the real [Arc UI](https://uiarc.dev) `animated-counter`, `toast-stack` and `bottom-sheet` components (React 19, copied into `ui/src/components/arc/` as Arc intends). Logica itself stays a static page: only the small bundle in `ui-dist/` is built, from `ui/`, and committed.
 
 ```bash
 cd logica/ui && npm install && npm run build
 ```
 
-`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })`; `index.html` falls back to plain text if the bundle is missing. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
+`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })` and `window.LogicaUI.sheet({ title, html, closeText })`; `index.html` falls back to plain text and the old dialog if the bundle is missing. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
 
 ## Animations
 
