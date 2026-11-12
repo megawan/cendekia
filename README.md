@@ -17,6 +17,8 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 
 Each app keeps its own README with details.
 
+The look comes from `shared/arc.css` (an Arc-style theme: soft accent-tinted gradient, frosted surfaces, hairline borders, pill buttons). Every page loads it after its own styles, and each app's service worker caches it, so add it to the `CORE` list of a new app.
+
 ## Support
 
 If Cendekia is useful to your family, you can [buy me a coffee](https://buymeacoffee.com/megawan). The same link is in the footer of the home page.

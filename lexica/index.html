@@ -12,7 +12,7 @@
 <meta name="description" content="A simple game for Indonesian-speaking children to learn English words: animals, fruit, the body, colors and more, all read aloud in both languages.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #eefaf6; --ink: #1f2a44; --card: #ffffff; --line: #c9e8e0;
@@ -24,7 +24,7 @@
   html { background: var(--bg); }
   .who { display: flex; justify-content: flex-end; }
   html, body { margin: 0; min-height: 100%; color: var(--ink);
-    font-family: "Baloo 2", system-ui, sans-serif; touch-action: manipulation; }
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif; touch-action: manipulation; }
   /* The glow sits on a fixed layer instead of a fixed background, which repaints with visible bands on overscroll. */
   body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background: radial-gradient(circle at 10% 6%, #fff1c2 0, transparent 36%),
@@ -208,6 +208,7 @@
   }
   [hidden] { display: none !important; }
 </style>
+<link rel="stylesheet" href="../shared/arc.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
