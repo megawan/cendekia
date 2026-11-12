@@ -5,7 +5,7 @@ Each app has a mascot with a name borrowed from a word in another language.
 | App | Mascot | Word |
 | --- | --- | --- |
 | [`hijaiyah/`](hijaiyah) | Sada | Arabic, "echo" |
-| [`aksara/`](aksara) | Jola | Icelandic, from *Jólabókaflóð* |
+| [`aksara/`](aksara) | Renjana | Indonesian, "a deep, heartfelt longing" |
 | [`logica/`](logica) | Poka | Japanese, from *poka-yoke* |
 | [`lexica/`](lexica) | Pochi | Russian, from *pochemuchka* |
 | [`numeria/`](numeria) | Ollie | the owl |
@@ -14,9 +14,9 @@ Each app has a mascot with a name borrowed from a word in another language.
 
 Sada comes from the Arabic word *ṣadā* (صدى), meaning "echo". Just like an echo, Sada repeats every letter sound back to you, so you can listen, say it, and hear it again until it feels easy.
 
-## Jola (Aksara)
+## Renjana (Aksara)
 
-Jola is short for *Jólabókaflóð*, the Icelandic "Christmas book flood". On Christmas Eve, Icelandic families give each other books and spend the evening reading together. *Jóla* is the first part of that word, from *jól* ("Yule", Christmas). Jola brings the same cosy feeling of a good book and a good story.
+Renjana is an Indonesian word for a strong feeling of the heart: a deep passion, a longing for something you love. For Renjana, that something is stories. Renjana is the little reader who cannot wait to turn the next page, and who cheers you on as the letters turn into words and the words into stories.
 
 ## Poka (Logica)
 
