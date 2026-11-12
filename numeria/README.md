@@ -1,6 +1,6 @@
 # Numeria
 
-Everyday math for children, in English, with Myria the octopus. Every question comes from daily life: eggs in a basket, coins at the shop, the bus timetable, a pizza to share, a recipe to change, a sale price to work out.
+Everyday math for children, in English, with Myria the squirrel. Every question comes from daily life: eggs in a basket, coins at the shop, the bus timetable, a pizza to share, a recipe to change, a sale price to work out.
 
 ## Places and levels
 

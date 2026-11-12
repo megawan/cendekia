@@ -28,7 +28,7 @@ Pochi is short for *pochemuchka* (почемучка), a Russian word for a pers
 
 ## Myria (Numeria)
 
-Myria is a little purple octopus with eight arms for counting. The name comes from the Greek word *myrias* (μυριάς), which means "ten thousand", the biggest number the ancient Greeks had a single word for. It later gave English the word "myriad", meaning too many to count. Myria is friendly and loves numbers of every size, from counting apples in the kitchen to working out discounts in the shop.
+Myria is a little orange squirrel with a big bushy tail, who counts every nut in the pantry. The name comes from the Greek word *myrias* (μυριάς), which means "ten thousand", the biggest number the ancient Greeks had a single word for. It later gave English the word "myriad", meaning too many to count. Myria is friendly and loves numbers of every size, from counting apples in the kitchen to working out discounts in the shop.
 
 
 Each app's home screen shows a one-line note under the subtitle (for example "Sada · Arabic for “echo” ›"). Tapping it, or the mascot, opens a bottom sheet (text only, no picture) with a shorter version of the text above, written in the mascot's own voice. Those texts live in [`shared/mascot.js`](shared/mascot.js).

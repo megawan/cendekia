@@ -26,7 +26,7 @@
     numeria: {
       name: 'Myria',
       origin: 'Greek for “ten thousand”',
-      story: 'I am a little octopus with eight arms for counting, and my name comes from the Greek word myrias (μυριάς), “ten thousand”, the biggest number the ancient Greeks had a word for. It gave English “myriad”: too many to count. I love numbers of every size, from apples in the kitchen to discounts in the shop.'
+      story: 'I am a little squirrel who counts every nut I save, and my name comes from the Greek word myrias (μυριάς), “ten thousand”, the biggest number the ancient Greeks had a word for. It gave English “myriad”: too many to count. I love numbers of every size, from apples in the kitchen to discounts in the shop.'
     }
   };
 
