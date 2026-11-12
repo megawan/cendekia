@@ -491,8 +491,8 @@
   .who .av { font-size: 1.6rem; line-height: 1; }
   .who .lvl { font-size: .75rem; color: #fff; background: var(--c-teal); border-radius: 999px; padding: 0 8px; }
   .homeTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .diffBadge { display: flex; align-items: center; margin: 0 auto 16px; font: inherit; font-weight: 800; color: #fff; background: var(--c-teal);
-    border: 0; border-radius: 999px; padding: 6px 14px; min-height: 44px; cursor: pointer; box-shadow: 0 3px 0 #0a7680; }
+  /* The difficulty is a pill like the others, tinted so it reads as a button. */
+  .diffPill { font: inherit; font-weight: 800; color: #0a6670; background: #e3f4f5; border-color: #9fd6da; min-height: 44px; cursor: pointer; }
   .plist { display: grid; gap: 12px; margin-bottom: 16px; }
   .pcard { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-bottom-width: 5px;
     border-radius: var(--radius); padding: 10px 12px; }
@@ -683,8 +683,8 @@
       <span class="pill" title="Stars"><span class="ic" aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span class="ic" aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
       <span class="pill" title="Stickers"><span class="ic" aria-hidden="true">🚀</span><span id="homeStk">0/12</span> stickers</span>
+      <button type="button" class="pill diffPill" id="diffBadge" aria-label="Change difficulty"></button>
     </div>
-    <button type="button" class="diffBadge" id="diffBadge" aria-label="Change difficulty"></button>
     <div class="worlds" id="worlds"></div>
     <p class="note"><button type="button" class="parentLink" id="toParents">👪 For parents</button> · <a href="../">← More apps in Cendekia</a></p>
   </section>
@@ -1327,15 +1327,23 @@
     $('dfTitle').textContent = first ? 'Hi ' + me().name + '! How hard should it be?' : 'How hard should it be?';
     $('dfList').innerHTML = diffButtons(S.diff);
     $('dfNote').textContent = 'Stars are kept for each difficulty, so you can switch any time.';
+    // The Arc bottom sheet when the bundle is loaded; the plain dialog otherwise.
+    if (window.LogicaUI) {
+      window.LogicaUI.sheet({ title: $('dfTitle').textContent, html: '<div class="diffs">' + $('dfList').innerHTML + '</div><p class="note">' + $('dfNote').textContent + '</p>', closeText: 'Not now' });
+      return;
+    }
     $('diffPick').hidden = false;
     $('dfList').querySelector('[aria-pressed="true"], button').focus();
   }
-  $('dfList').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-diff]'); if (!b) return;
+  function pickDiff(b) {
     S.diff = b.dataset.diff; save(); sfx.good();
     $('diffPick').hidden = true;
+    if (window.LogicaUI) window.LogicaUI.sheet(null);
     show('home');
-  });
+  }
+  $('dfList').addEventListener('click', (e) => { const b = e.target.closest('[data-diff]'); if (b) pickDiff(b); });
+  // The sheet's buttons live in the React tree, outside #dfList.
+  document.addEventListener('click', (e) => { const b = e.target.closest('#arc-ui-host [data-diff]'); if (b) pickDiff(b); });
   $('diffBadge').addEventListener('click', () => chooseDiff(false));
   $('diffPick').addEventListener('click', (e) => { if (e.target === $('diffPick')) $('diffPick').hidden = true; });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $('diffPick').hidden = true; $('tutor').hidden = true; } });
