@@ -21,7 +21,7 @@
     lexica: {
       name: 'Pochi',
       origin: 'from the Russian “pochemuchka”',
-      story: 'I am short for pochemuchka (почемучка), a Russian word for a person who keeps asking “why?” (почему). I am curious about every word: what it means, how it sounds and where it comes from.'
+      story: 'I am a little parrot, and my name is short for pochemuchka (почемучка), a Russian word for a person who keeps asking “why?” (почему). I love every word: what it means, how it sounds and where it comes from.'
     },
     numeria: {
       name: 'Myria',
@@ -50,9 +50,6 @@
   var sheet = document.createElement('dialog');
   sheet.className = 'mascot-sheet';
   sheet.setAttribute('aria-labelledby', 'mascotSheetTitle');
-  var pic = document.createElement('div');
-  pic.className = 'mascot-sheet-pic';
-  pic.setAttribute('aria-hidden', 'true');
   var title = document.createElement('h2');
   title.id = 'mascotSheetTitle';
   title.textContent = 'Hi, I’m ' + info.name + '!';
@@ -66,18 +63,13 @@
   close.type = 'button';
   close.className = 'mascot-sheet-close';
   close.textContent = 'Close';
-  sheet.appendChild(pic);
   sheet.appendChild(title);
   sheet.appendChild(from);
   sheet.appendChild(story);
   sheet.appendChild(close);
   document.body.appendChild(sheet);
 
-  function open() {
-    pic.textContent = '';
-    if (picture) pic.appendChild(picture.cloneNode(true));
-    sheet.showModal();
-  }
+  function open() { sheet.showModal(); }
   line.addEventListener('click', open);
   if (picture) {
     picture.classList.add('mascot-tap');

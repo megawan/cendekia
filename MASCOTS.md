@@ -24,7 +24,7 @@ Poka is short for *poka-yoke* (ポカヨケ), a Japanese idea meaning "mistake-p
 
 ## Pochi (Lexica)
 
-Pochi is short for *pochemuchka* (почемучка), a Russian word for a person who keeps asking "why?" (*почему*). Pochi is curious about every word: what it means, how it sounds, and where it comes from.
+Pochi is short for *pochemuchka* (почемучка), a Russian word for a person who keeps asking "why?" (*почему*). Pochi is a little parrot, curious about every word: what it means, how it sounds, and where it comes from.
 
 ## Myria (Numeria)
 
@@ -32,4 +32,4 @@ Myria comes from the Greek word *myrias* (μυριάς), which means "ten thousa
 
 Only Poka and Myria are named on screen so far. The mascots of the other apps are described here for when they are named in the apps.
 
-Each app's home screen shows a one-line note under the subtitle (for example "Sada · Arabic for “echo” ›"). Tapping it, or the mascot, opens a bottom sheet with a shorter version of the text above, written in the mascot's own voice. Those texts live in [`shared/mascot.js`](shared/mascot.js).
+Each app's home screen shows a one-line note under the subtitle (for example "Sada · Arabic for “echo” ›"). Tapping it, or the mascot, opens a bottom sheet (text only, no picture) with a shorter version of the text above, written in the mascot's own voice. Those texts live in [`shared/mascot.js`](shared/mascot.js).
