@@ -56,16 +56,16 @@
     border-radius: 999px; padding: 4px 14px 4px 10px; font-weight: 700; white-space: nowrap; }
   .pill .ic { font-size: 1.2rem; line-height: 1; }
 
-  /* Gbot the robot. Built from parts so its eyes, antenna and mouth can move. */
-  .gbot { display: block; overflow: visible; }
-  .gbot .ant { fill: var(--accent); animation: glow 1.6s ease-in-out infinite; }
-  .gbot .eye { fill: var(--glow); transform-box: fill-box; transform-origin: center; animation: blinkEye 4s infinite; }
-  .gbot .mouth { fill: none; stroke: var(--glow); stroke-width: 3.5; stroke-linecap: round; display: none; }
-  .gbot[data-mood="happy"] .m-happy, .gbot[data-mood="cheer"] .m-cheer, .gbot[data-mood="oops"] .m-oops,
-  .gbot:not([data-mood]) .m-happy { display: block; }
-  .gbot[data-mood="cheer"] { animation: hop .5s ease-out; }
-  .gbot[data-mood="oops"] { animation: shake .35s; }
-  .gbot[data-mood="oops"] .eye { fill: #ffb4a8; }
+  /* Poka the robot. Built from parts so its eyes, antenna and mouth can move. */
+  .poka { display: block; overflow: visible; }
+  .poka .ant { fill: var(--accent); animation: glow 1.6s ease-in-out infinite; }
+  .poka .eye { fill: var(--glow); transform-box: fill-box; transform-origin: center; animation: blinkEye 4s infinite; }
+  .poka .mouth { fill: none; stroke: var(--glow); stroke-width: 3.5; stroke-linecap: round; display: none; }
+  .poka[data-mood="happy"] .m-happy, .poka[data-mood="cheer"] .m-cheer, .poka[data-mood="oops"] .m-oops,
+  .poka:not([data-mood]) .m-happy { display: block; }
+  .poka[data-mood="cheer"] { animation: hop .5s ease-out; }
+  .poka[data-mood="oops"] { animation: shake .35s; }
+  .poka[data-mood="oops"] .eye { fill: #ffb4a8; }
   @keyframes glow { 50% { fill: #ffd27a; } }
   @keyframes blinkEye { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
   @keyframes hop { 30% { transform: translateY(-14px) scale(1.08); } }
@@ -82,7 +82,7 @@
 
   /* Home */
   .hero { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 4px 0 10px; }
-  .hero .gbot { width: 110px; height: 110px; animation: bob 3s ease-in-out infinite; }
+  .hero .poka { width: 110px; height: 110px; animation: bob 3s ease-in-out infinite; }
   .pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
   .floaters { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
   .floaters svg { position: absolute; width: 46px; height: 46px; opacity: .22; animation: floaty 7s ease-in-out infinite; }
@@ -125,9 +125,9 @@
   .st svg { width: 20px; height: 20px; fill: var(--line); }
   .st svg.on { fill: var(--warm); }
 
-  /* Coach: Gbot with a speech bubble */
+  /* Coach: Poka with a speech bubble */
   .coach { display: flex; align-items: center; gap: 10px; text-align: left; margin-bottom: 10px; min-height: 64px; }
-  .coach .gbot { width: 60px; height: 60px; flex: none; }
+  .coach .poka { width: 60px; height: 60px; flex: none; }
   .bubble { position: relative; flex: 1; background: #fff8e1; border: 2px solid #f1dfb2; border-radius: 16px;
     padding: 6px 12px; font-weight: 700; font-size: 1.05rem; line-height: 1.3; }
   .bubble::before { content: ""; position: absolute; left: -9px; top: 50%; margin-top: -8px; width: 14px; height: 14px;
@@ -156,11 +156,11 @@
     background: rgba(255,255,255,.7); animation: popIn .3s both; }
   .bot { position: absolute; left: 0; top: 0; width: calc(100% / var(--w)); aspect-ratio: 1; z-index: 2; pointer-events: none;
     transform: translate(calc(var(--x) * 100%), calc(var(--y) * 100%)); transition: transform .34s cubic-bezier(.45,.05,.4,1.3); }
-  .bot .gbot { width: 92%; height: 92%; margin: 4%; transition: transform .2s; }
-  .bot.walk .gbot { animation: wobble .34s; }
-  .bot.bump .gbot { animation: bonk .45s; }
-  .bot.dance .gbot { animation: dance .9s ease-in-out 2; }
-  .bot.face-L .gbot { transform: scaleX(-1); }
+  .bot .poka { width: 92%; height: 92%; margin: 4%; transition: transform .2s; }
+  .bot.walk .poka { animation: wobble .34s; }
+  .bot.bump .poka { animation: bonk .45s; }
+  .bot.dance .poka { animation: dance .9s ease-in-out 2; }
+  .bot.face-L .poka { transform: scaleX(-1); }
   @keyframes wobble { 30% { transform: rotate(-8deg) translateY(-6%); } 70% { transform: rotate(6deg); } }
   @keyframes bonk { 30% { transform: translate(var(--bx), var(--by)) rotate(10deg); } 60% { transform: translate(0,0) rotate(-6deg); } }
   @keyframes dance { 25% { transform: translateY(-22%) rotate(-12deg); } 50% { transform: translateY(0) rotate(0); }
@@ -404,7 +404,7 @@
   .mkTools .sw.grass { background: #c9eeb3; } .mkTools .sw.water { background: #7cc8f2; }
   @media (max-width: 420px) { .mkTools { gap: 6px; } .mkTools button { width: 51px; height: 58px; } .mkTools svg { width: 28px; height: 28px; } .mkTools .sw { width: 26px; height: 26px; } }
   .mkBoard .cell { border: 0; padding: 0; cursor: pointer; font: inherit; }
-  .mkBoard .cell .gbot { width: 86%; height: 86%; }
+  .mkBoard .cell .poka { width: 86%; height: 86%; }
   .mkBoard .cell.put { animation: pop .3s; }
   .mkActions .btn { padding: 10px 16px; min-height: 48px; font-size: 1.05rem; }
   .mkLink { word-break: break-all; user-select: all; background: #fff; border: 2px dashed var(--line); border-radius: 12px; padding: 8px; opacity: 1; }
@@ -459,7 +459,7 @@
   .gift { text-align: center; background: #fff8e1; border: 2px solid #f1dfb2; border-radius: var(--radius); padding: 10px; margin: 8px 0; }
   .gift .stk { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .gift .face { width: 96px; height: 96px; font-size: 3.4rem; animation: pop .6s both; }
-  .result .hero .gbot { animation: hop .6s ease-out 3; }
+  .result .hero .poka { animation: hop .6s ease-out 3; }
   .sgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   @media (min-width: 560px) { .sgrid { grid-template-columns: repeat(4, 1fr); } }
   .sticker { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 10px 6px; text-align: center; }
@@ -572,14 +572,14 @@
   .demo .blk { width: 30px; height: 30px; border-radius: 9px; animation: none; box-shadow: none; cursor: default; }
   .demo .blk svg { width: 20px; height: 20px; }
   .demo svg.it { width: 26px; height: 26px; }
-  .demo .gbot { width: 34px; height: 34px; }
+  .demo .poka { width: 34px; height: 34px; }
   .demo .seqd { display: flex; gap: 3px; }
   .demo .q { width: 26px; height: 26px; border: 2px dashed var(--accent); border-radius: 7px; color: var(--accent); font-weight: 800; display: grid; place-items: center; }
   .d-pop > * { animation: dpop 2.4s infinite both; }
   .d-pop > *:nth-child(2) { animation-delay: .4s; } .d-pop > *:nth-child(3) { animation-delay: .8s; } .d-pop > *:nth-child(4) { animation-delay: 1.2s; }
   @keyframes dpop { 0% { transform: scale(0); } 15%, 85% { transform: scale(1); } 100% { transform: scale(0); } }
   .d-walk .track { position: absolute; left: 6px; right: 6px; top: 50%; height: 4px; margin-top: 14px; background: var(--line); border-radius: 2px; }
-  .d-walk .gbot { position: absolute; left: 4px; top: 12px; animation: dwalk 3s ease-in-out infinite; }
+  .d-walk .poka { position: absolute; left: 4px; top: 12px; animation: dwalk 3s ease-in-out infinite; }
   .d-walk .flagd { position: absolute; right: 8px; top: 14px; font-size: 1.6rem; }
   @keyframes dwalk { 0%, 10% { transform: translateX(0); } 80%, 100% { transform: translateX(72px); } }
   .d-tap .btn { min-height: 34px; padding: 4px 12px; font-size: .9rem; box-shadow: 0 3px 0 #13714c; animation: dpress 1.6s infinite; }
@@ -675,10 +675,10 @@
     <div class="homeTop"><button type="button" class="who" id="who" aria-label="Change player"></button>
       <button type="button" class="diffBadge" id="diffBadge" aria-label="Change difficulty"></button></div>
     <div class="hero">
-      <svg class="gbot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <svg class="poka" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div>
         <h1>Logica</h1>
-        <p class="sub">Think smart with Gbot</p>
+        <p class="sub">Think smart with Poka</p>
       </div>
     </div>
     <div class="pills">
@@ -752,7 +752,7 @@
       <span class="pill" id="rLevel"></span>
     </div>
     <div class="coach">
-      <svg class="gbot" id="rCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <svg class="poka" id="rCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div class="bubble" id="rSay" aria-live="polite"></div>
     </div>
     <div class="board" id="board"></div>
@@ -782,7 +782,7 @@
       <div class="combo" id="combo" aria-live="polite"></div>
     </div>
     <div class="coach">
-      <svg class="gbot" id="qCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <svg class="poka" id="qCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div class="bubble" id="qSay" aria-live="polite"></div>
     </div>
     <div class="stage" id="ask"></div>
@@ -792,7 +792,7 @@
   <!-- Result -->
   <section id="result" class="result" hidden>
     <div class="stack">
-      <div class="hero"><svg class="gbot" data-mood="cheer" viewBox="0 0 100 100" aria-hidden="true"></svg></div>
+      <div class="hero"><svg class="poka" data-mood="cheer" viewBox="0 0 100 100" aria-hidden="true"></svg></div>
       <h2 id="resTitle">Great!</h2>
       <div class="stars" id="resStars"></div>
       <p class="summary" id="resText"></p>
@@ -814,14 +814,14 @@
     <div class="sgrid" id="sgrid"></div>
   </section>
 
-  <!-- Map Maker: build a robot map, Gbot checks that it can be done, then play it, save it or share it -->
+  <!-- Map Maker: build a robot map, Poka checks that it can be done, then play it, save it or share it -->
   <section id="maker" hidden>
     <div class="bar">
       <button type="button" class="btn ghost" data-go="home">← Back</button>
       <h2>Map Maker</h2><span class="spacer"></span>
     </div>
     <div class="coach">
-      <svg class="gbot" id="mkCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <svg class="poka" id="mkCoach" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"></svg>
       <div class="bubble" id="mkSay" aria-live="polite"></div>
     </div>
     <div class="mkSizes" id="mkSizes" role="group" aria-label="Map size"></div>
@@ -855,7 +855,7 @@
 </div>
 
 <!-- Content.
-     Levels are listed for each difficulty. Maps: . grass, # rock, ~ water, * gem, y yellow tile, R Gbot's start, F flag.
+     Levels are listed for each difficulty. Maps: . grass, # rock, ~ water, * gem, y yellow tile, R Poka's start, F flag.
      Programs: U D L R are up, down, left, right; 4(RD) repeats R D four times; ?DR goes down on a yellow tile and
      right anywhere else; F calls the function, written after | (FFF|RRU). `tools` lists the blocks a level offers
      besides the arrows (loop, if, fn), and `max` is the most blocks a program may use. -->
@@ -939,11 +939,11 @@
     ]
   },
   "phrases": {
-    "robot": "Line up the commands, then press Run. Take Gbot to the flag.",
-    "robotGem": "Collect every gem, then take Gbot to the flag.",
+    "robot": "Line up the commands, then press Run. Take Poka to the flag.",
+    "robotGem": "Collect every gem, then take Poka to the flag.",
     "robotLoop": "Use the repeat block to keep the program short.",
-    "bump": "Oops, Gbot bumped into something!",
-    "short": "Gbot has not reached the flag yet.",
+    "bump": "Oops, Poka bumped into something!",
+    "short": "Poka has not reached the flag yet.",
     "gems": "Some gems are still left.",
     "full": "No more room for blocks. Try a repeat block.",
     "debug": "One command is wrong. Run it first, then tap the wrong command.",
@@ -958,15 +958,15 @@
     "count": "How many make the scale balance?",
     "again": "Try again.",
     "robotFn": "Build the ★ function once, then use ★ as many times as you like.",
-    "robotIf": "The if block looks at the tile: on yellow Gbot takes the first arrow, anywhere else the second.",
+    "robotIf": "The if block looks at the tile: on yellow Poka takes the first arrow, anywhere else the second.",
     "noFnInFn": "The function cannot use ★ inside itself.",
     "noLoopInLoop": "A repeat block cannot go inside another one.",
     "hintFoot": "Follow the footprints!",
     "hintProg": "Here is a program that works. Try it!",
     "hintBug": "Look closely at the glowing block.",
-    "random": "A brand new map! Take Gbot to the flag.",
-    "robotUntil": "The teal 🔁 block repeats until Gbot is at the flag. Tap its 🚩 to make it count gems instead.",
-    "custom": "Your own map! Take Gbot to the flag."
+    "random": "A brand new map! Take Poka to the flag.",
+    "robotUntil": "The teal 🔁 block repeats until Poka is at the flag. Tap its 🚩 to make it count gems instead.",
+    "custom": "Your own map! Take Poka to the flag."
   }
 }
 </script>
@@ -999,8 +999,8 @@
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const clone = (x) => JSON.parse(JSON.stringify(x));
 
-  // ---- Gbot ----
-  const GBOT = '<rect x="47" y="6" width="6" height="14" rx="3" fill="#8a94a8"/><circle class="ant" cx="50" cy="7" r="6"/>'
+  // ---- Poka ----
+  const POKA = '<rect x="47" y="6" width="6" height="14" rx="3" fill="#8a94a8"/><circle class="ant" cx="50" cy="7" r="6"/>'
     + '<rect x="11" y="32" width="10" height="20" rx="5" fill="#8a94a8"/><rect x="79" y="32" width="10" height="20" rx="5" fill="#8a94a8"/>'
     + '<rect x="17" y="17" width="66" height="50" rx="16" fill="#e6ecf6" stroke="#c3cde0" stroke-width="3"/>'
     + '<rect x="25" y="25" width="50" height="34" rx="11" fill="#1f2a44"/>'
@@ -1008,9 +1008,9 @@
     + '<path class="mouth m-happy" d="M43 50 Q50 55 57 50"/><path class="mouth m-cheer" d="M41 48 Q50 58 59 48"/><path class="mouth m-oops" d="M43 53 Q46.5 49 50 53 T57 53"/>'
     + '<rect x="30" y="68" width="40" height="20" rx="8" fill="#f2891f"/><circle cx="50" cy="78" r="4" fill="#ffd27a"/>'
     + '<circle cx="36" cy="92" r="6" fill="#1f2a44"/><circle cx="64" cy="92" r="6" fill="#1f2a44"/>';
-  const gbotSvg = (mood) => '<svg class="gbot" data-mood="' + (mood || 'happy') + '" viewBox="0 0 100 100" aria-hidden="true">' + GBOT + '</svg>';
-  function fillGbots(root) { root.querySelectorAll('svg.gbot:empty').forEach((s) => { s.innerHTML = GBOT; }); }
-  fillGbots(document);
+  const pokaSvg = (mood) => '<svg class="poka" data-mood="' + (mood || 'happy') + '" viewBox="0 0 100 100" aria-hidden="true">' + POKA + '</svg>';
+  function fillPokas(root) { root.querySelectorAll('svg.poka:empty').forEach((s) => { s.innerHTML = POKA; }); }
+  fillPokas(document);
 
   // ---- Shapes, drawn as small SVGs ----
   const COLORS = { red: '#ef4444', blue: '#3b82f6', yellow: '#facc15', green: '#22c55e', purple: '#a855f7', gray: '#94a3b8' };
@@ -1164,7 +1164,7 @@
   // ---- Worlds ----
   const WORLDS = [
     { id: 'robot', name: 'Robot Path', skill: 'Algorithms', icon: '🤖', c: 'var(--c-orange)', kind: 'robot',
-      desc: 'Line up commands step by step to get Gbot to the flag. Later come repeat, function and if blocks.' },
+      desc: 'Line up commands step by step to get Poka to the flag. Later come repeat, function and if blocks.' },
     { id: 'patterns', name: 'Patterns', skill: 'Pattern recognition', icon: '🔷', c: 'var(--c-blue)', kind: 'quiz', total: 5,
       desc: 'Spot the rule that repeats, then find what comes next or what is missing.',
       levels: ['Colors', 'Shapes', 'Repeats', 'Colors and shapes', 'Growing', 'Turning', 'Two rules', 'Mixed'] },
@@ -1175,7 +1175,7 @@
       desc: 'Read the scales, then find the heaviest or the lightest ball.',
       levels: ['Heavier', 'Lighter', 'Heaviest', 'Lightest', 'Many balls', 'Balanced'] },
     { id: 'debug', name: 'Fix the Code', skill: 'Debugging', icon: '🐞', c: 'var(--c-pink)', kind: 'robot',
-      desc: 'Gbot\'s program has one mistake. Run it, find the wrong block and fix it.' },
+      desc: 'Poka\'s program has one mistake. Run it, find the wrong block and fix it.' },
     { id: 'filter', name: 'Logic Filter', skill: 'AND, OR, NOT logic', icon: '🔍', c: 'var(--c-green)', kind: 'quiz', total: 4,
       desc: 'Pick every item that fits the rule. Watch out for AND, OR and NOT.',
       levels: ['Colors', 'Shapes', 'AND', 'NOT', 'OR', 'But not', 'Mixed'] },
@@ -1241,7 +1241,7 @@
     const mk = document.createElement('button');
     mk.type = 'button'; mk.className = 'card wide'; mk.style.setProperty('--c', 'var(--c-orange)');
     mk.style.animationDelay = '.25s';
-    mk.innerHTML = '<span class="badge" aria-hidden="true">🛠️</span><span><b>Map Maker</b><br><small>Build a map for Gbot and share it</small></span>';
+    mk.innerHTML = '<span class="badge" aria-hidden="true">🛠️</span><span><b>Map Maker</b><br><small>Build a map for Poka and share it</small></span>';
     mk.addEventListener('click', () => { sfx.tap(); show('maker'); });
     box.appendChild(mk);
     const s = document.createElement('button');
@@ -1512,7 +1512,7 @@
     robot: [
       ['<div class="demo d-pop">' + blkD('R') + blkD('R') + blkD('D') + '</div>', 'Tap the arrows to build a program.'],
       ['<div class="demo d-tap"><span class="btn go">▶ Run</span><span class="hand">👆</span></div>', 'Press ▶ Run.'],
-      ['<div class="demo d-walk"><span class="track"></span>' + gbotSvg('happy') + '<span class="flagd">🚩</span></div>', 'Gbot follows your program. Reach the flag!'],
+      ['<div class="demo d-walk"><span class="track"></span>' + pokaSvg('happy') + '<span class="flagd">🚩</span></div>', 'Poka follows your program. Reach the flag!'],
       ['<div class="demo d-pop"><span class="blk loopBtn" style="--c:var(--loop)">🔁</span><span class="blk F">★</span><span class="blk ifBtn" style="--c:#f59e0b"><span class="ytile"></span></span></div>',
         'Later: 🔁 repeats blocks, the teal 🔁 repeats until the flag or a number of gems, ★ is a function you build once and use again, and the yellow block checks the tile.']
     ],
@@ -1532,7 +1532,7 @@
     ],
     debug: [
       ['<div class="demo">' + blkD('R') + '<span class="blk R bad">' + arrowSvg + '</span>' + blkD('D') + '</div>', 'One block in the program is wrong.'],
-      ['<div class="demo d-tap"><span class="btn go">▶ Run</span><span class="hand">👆</span></div>', 'Run it and see where Gbot goes wrong.'],
+      ['<div class="demo d-tap"><span class="btn go">▶ Run</span><span class="hand">👆</span></div>', 'Run it and see where Poka goes wrong.'],
       ['<div class="demo d-pop">' + blkD('U') + blkD('L') + blkD('R') + blkD('D') + '</div>', 'Tap the wrong block, then pick the right one.']
     ],
     filter: [
@@ -1599,7 +1599,7 @@
   // Robot: programs on a grid
   // =====================================================================
   // A program is a list of blocks: an arrow {t: 'U'}, a repeat {t: 'loop', n, body}, an if {t: 'if', a, b}
-  // (Gbot goes a on a yellow tile and b anywhere else) or a call of the function {t: 'F'}. The function is a
+  // (Poka goes a on a yellow tile and b anywhere else) or a call of the function {t: 'F'}. The function is a
   // second list. A repeat cannot hold another repeat, and the function cannot call itself.
   const DIR = { U: [0, -1], D: [0, 1], L: [-1, 0], R: [1, 0] };
   const ARROWS = ['U', 'L', 'R', 'D'], COUNTS = [2, 3, 4, 5, 6, 7, 8, 9];
@@ -1621,7 +1621,7 @@
         out.push({ t: 'loop', n: +ch, body: parseList(s.slice(i + 2, end)) });
         i = end + 1;
       } else if (ch === '{') {
-        // {F}(RD) repeats R D until Gbot is at the flag; {2}(R) repeats R until two gems are collected.
+        // {F}(RD) repeats R D until Poka is at the flag; {2}(R) repeats R until two gems are collected.
         const close = s.indexOf('}', i), cond = s.slice(i + 1, close), end = s.indexOf(')', close);
         out.push({ t: 'until', c: cond === 'F' ? 'F' : +cond, body: parseList(s.slice(close + 2, end)) });
         i = end + 1;
@@ -1786,7 +1786,7 @@
     }
     botEl = document.createElement('div');
     botEl.className = 'bot';
-    botEl.innerHTML = gbotSvg('happy');
+    botEl.innerHTML = pokaSvg('happy');
     b.appendChild(botEl);
     resetBot();
   }
@@ -1812,14 +1812,14 @@
   // =====================================================================
   // Map Maker
   // =====================================================================
-  // The child places Gbot, the flag, rocks, water and gems. Gbot checks the map with the same search the levels
+  // The child places Poka, the flag, rocks, water and gems. Poka checks the map with the same search the levels
   // use, so only a map that can be done can be played, saved or shared. Saved maps belong to the child (S.maps,
   // twelve at most). A shared link carries the map in the address: #map=40010-01105 is one digit per square
-  // (0 grass, 1 rock, 2 water, 3 gem, 4 Gbot, 5 flag) and a dash between rows.
+  // (0 grass, 1 rock, 2 water, 3 gem, 4 Poka, 5 flag) and a dash between rows.
   const MK_SIZES = { small: [4, 3], medium: [5, 4], big: [6, 5] };
   const MK_CODE = '.#~*RF', MK_GEMS = 3, MK_MAX = 12;
   const MK_TOOLS = [
-    { ch: 'R', name: 'Gbot', pic: () => gbotSvg('happy') }, { ch: 'F', name: 'Flag', pic: () => TILE.flag },
+    { ch: 'R', name: 'Poka', pic: () => pokaSvg('happy') }, { ch: 'F', name: 'Flag', pic: () => TILE.flag },
     { ch: '#', name: 'Rock', pic: () => TILE.rock }, { ch: '~', name: 'Water', pic: () => '<span class="sw water"></span>' },
     { ch: '*', name: 'Gem', pic: () => TILE.gem }, { ch: '.', name: 'Grass', pic: () => '<span class="sw grass"></span>' }
   ];
@@ -1836,10 +1836,10 @@
   function mkStatus() {
     const sol = mkCheck();
     ['mkPlay', 'mkSave', 'mkShare'].forEach((id) => { $(id).disabled = !sol; });
-    if (!mkCount('R')) mkSay('Pick 🤖 Gbot, then tap a square to put Gbot on the map.');
+    if (!mkCount('R')) mkSay('Pick 🤖 Poka, then tap a square to put Poka on the map.');
     else if (!mkCount('F')) mkSay('Now pick 🚩 the flag and put it somewhere.');
-    else if (!sol) mkSay(mkCount('*') ? 'Gbot cannot reach the flag and every gem. Clear a way!' : 'Gbot cannot reach the flag. Clear a way!', 'oops');
-    else mkSay('Gbot can do it in ' + sol.length + (sol.length === 1 ? ' move' : ' moves') + '! Press ▶ Play, or keep building.', 'happy');
+    else if (!sol) mkSay(mkCount('*') ? 'Poka cannot reach the flag and every gem. Clear a way!' : 'Poka cannot reach the flag. Clear a way!', 'oops');
+    else mkSay('Poka can do it in ' + sol.length + (sol.length === 1 ? ' move' : ' moves') + '! Press ▶ Play, or keep building.', 'happy');
     return sol;
   }
   function renderMaker() {
@@ -1862,7 +1862,7 @@
       c.type = 'button';
       c.className = 'cell' + ((x + y) % 2 ? ' alt' : '') + (ch === '~' ? ' water' : '');
       c.dataset.x = x; c.dataset.y = y;
-      c.innerHTML = ch === 'R' ? gbotSvg('happy') : ch === '#' ? TILE.rock : ch === '*' ? TILE.gem : ch === 'F' ? TILE.flag : '';
+      c.innerHTML = ch === 'R' ? pokaSvg('happy') : ch === '#' ? TILE.rock : ch === '*' ? TILE.gem : ch === 'F' ? TILE.flag : '';
       c.setAttribute('aria-label', 'Row ' + (y + 1) + ', square ' + (x + 1) + ': ' + MK_TOOLS.find((t) => t.ch === ch).name);
       b.appendChild(c);
     }));
@@ -1883,7 +1883,7 @@
     const c = e.target.closest('.cell'); if (!c) return;
     const x = +c.dataset.x, y = +c.dataset.y, t = M.tool;
     if (t === '*' && M.cells[y][x] !== '*' && mkCount('*') >= MK_GEMS) { mkSay('Three gems at most. Take one away first.', 'oops'); sfx.bad(); return; }
-    // There is one Gbot and one flag: putting one down moves it.
+    // There is one Poka and one flag: putting one down moves it.
     if (t === 'R' || t === 'F') M.cells.forEach((row) => row.forEach((ch, xx) => { if (ch === t) row[xx] = '.'; }));
     M.cells[y][x] = M.cells[y][x] === t && t !== '.' ? '.' : t;
     $('mkLink').hidden = true;
@@ -1923,7 +1923,7 @@
     box.textContent = url; box.hidden = false;
     sfx.tap();
     if (navigator.share) {
-      try { await navigator.share({ title: 'A Logica map', text: 'Can you get Gbot to the flag?', url }); return; } catch (e) { /* closed, or not allowed */ }
+      try { await navigator.share({ title: 'A Logica map', text: 'Can you get Poka to the flag?', url }); return; } catch (e) { /* closed, or not allowed */ }
     }
     try { await navigator.clipboard.writeText(url); mkSay('Link copied! Send it to a friend.', 'cheer'); } catch (e) { mkSay('Here is the link. Send it to a friend.', 'happy'); }
   });
@@ -2203,7 +2203,7 @@
     const ctl = ['rRun', 'rUndo', 'rClear', 'rReset', 'rHint'];
     ctl.forEach((id) => { $(id).disabled = true; });
     $('palette').querySelectorAll('button').forEach((b) => { b.disabled = true; });
-    rSay('Gbot is on the move…', 'happy');
+    rSay('Poka is on the move…', 'happy');
     await sleep(250);
     const res = execute(R.lv, R.prog, R.fn);
     const sec = $('robot');
@@ -2238,7 +2238,7 @@
     save();
     if (res.end === 'win') {
       botEl.classList.add('dance'); mood(botEl.firstChild, 'cheer'); mood($('rCoach'), 'cheer');
-      rSay('Hooray, Gbot made it!'); sfx.win(); confetti(40);
+      rSay('Hooray, Poka made it!'); sfx.win(); confetti(40);
       let stars;
       if (R.debug) stars = 3 - (R.edits > 1 ? 1 : 0) - (R.fails >= 2 ? 1 : 0);
       else stars = 3 - (blocks() > R.par ? 1 : 0) - (R.fails >= 2 ? 1 : 0);

@@ -1,6 +1,6 @@
 // Checks every robot and fixing level in the content block of index.html, for every difficulty:
 //   - the map has one start, one flag and only known tiles, and all rows are the same width
-//   - the solution `sol` brings Gbot to the flag with every gem, within `max` blocks
+//   - the solution `sol` brings Poka to the flag with every gem, within `max` blocks
 //   - the solution only uses the blocks the level offers (`tools`)
 //   - for levels without loops, until blocks, ifs or functions, no shorter path exists than the solution
 //   - a block limit is too small to reach the flag with arrows alone

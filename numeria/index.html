@@ -285,7 +285,7 @@
       <span class="owl" aria-hidden="true">🦉</span>
       <div>
         <h1>Numeria</h1>
-        <p class="sub">Math for everyday life, with Ollie the owl</p>
+        <p class="sub">Math for everyday life, with Myria the owl</p>
       </div>
     </div>
     <div class="pills">
@@ -393,7 +393,7 @@
   // Fill a set of wrong options up to n, keeping the answer, and shuffle.
   const options = (ans, others, n) => shuffle([ans, ...shuffle([...new Set(others.filter((o) => o !== ans))]).slice(0, n - 1)]);
 
-  // A question: what Ollie says, a picture, and either buttons to choose from or a number pad.
+  // A question: what Myria says, a picture, and either buttons to choose from or a number pad.
   // `why` explains the answer after a second miss.
   const choose = (say, scene, ans, opts, why) => ({ say, scene, kind: 'choice', ans: String(ans), opts: opts.map(String), why });
   const typed = (say, scene, ans, why, unit) => ({ say, scene, kind: 'pad', ans, why, pre: (unit && unit.pre) || '', post: (unit && unit.post) || '', dec: !!(unit && unit.dec) });

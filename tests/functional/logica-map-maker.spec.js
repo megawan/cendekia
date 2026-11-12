@@ -17,10 +17,10 @@ async function openMaker(page) {
 const tool = (page, name) => page.locator('#mkTools button', { hasText: name }).click();
 const square = (page, x, y) => page.locator(`#mkBoard .cell[data-x="${x}"][data-y="${y}"]`).click();
 
-test('a map needs Gbot, a flag and a way through before it can be played', async ({ page }) => {
+test('a map needs Poka, a flag and a way through before it can be played', async ({ page }) => {
   await openMaker(page);
   await expect(page.locator('#mkPlay')).toBeDisabled();
-  await tool(page, 'Gbot'); await square(page, 0, 0);
+  await tool(page, 'Poka'); await square(page, 0, 0);
   await expect(page.locator('#mkSay')).toContainText('flag');
   await tool(page, 'Flag'); await square(page, 2, 0);
   await expect(page.locator('#mkSay')).toContainText('2 moves');
@@ -42,7 +42,7 @@ test('only three gems fit on a map', async ({ page }) => {
 
 test('playing your own map and winning leads back to Map Maker', async ({ page }) => {
   await openMaker(page);
-  await tool(page, 'Gbot'); await square(page, 0, 0);
+  await tool(page, 'Poka'); await square(page, 0, 0);
   await tool(page, 'Flag'); await square(page, 2, 0);
   await page.locator('#mkPlay').click();
   await expect(page.locator('#robot')).toBeVisible();
@@ -59,7 +59,7 @@ test('playing your own map and winning leads back to Map Maker', async ({ page }
 
 test('a saved map stays after a reload and can be deleted', async ({ page }) => {
   await openMaker(page);
-  await tool(page, 'Gbot'); await square(page, 0, 0);
+  await tool(page, 'Poka'); await square(page, 0, 0);
   await tool(page, 'Flag'); await square(page, 3, 2);
   await page.locator('#mkSave').click();
   await expect(page.locator('#mkList .mkItem')).toHaveCount(1);
@@ -73,7 +73,7 @@ test('a saved map stays after a reload and can be deleted', async ({ page }) => 
 
 test('a shared link opens the same map', async ({ page }) => {
   await openMaker(page);
-  await tool(page, 'Gbot'); await square(page, 1, 1);
+  await tool(page, 'Poka'); await square(page, 1, 1);
   await tool(page, 'Rock'); await square(page, 2, 1);
   await tool(page, 'Gem'); await square(page, 2, 0);
   await tool(page, 'Flag'); await square(page, 3, 1);
@@ -85,7 +85,7 @@ test('a shared link opens the same map', async ({ page }) => {
   await expect(page.locator('#maker')).toBeVisible();
   await expect(page.locator('#mkSay')).toContainText('A friend made this map');
   await expect(page).not.toHaveURL(/#map=/);
-  await expect(page.locator('#mkBoard .cell').nth(6).locator('.gbot')).toHaveCount(1);
+  await expect(page.locator('#mkBoard .cell').nth(6).locator('.poka')).toHaveCount(1);
   await expect(page.locator('#mkBoard .gem')).toHaveCount(1);
 });
 
