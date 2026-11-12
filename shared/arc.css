@@ -6,9 +6,9 @@
   --radius: 22px;
   --ink: #1c2038;
   --arc-hair: rgba(28, 32, 56, .09);
-  --arc-glass: rgba(255, 255, 255, .72);
-  --arc-lift: 0 1px 2px rgba(28, 32, 56, .06), 0 8px 24px -10px rgba(28, 32, 56, .16);
-  --arc-lift-hi: 0 2px 4px rgba(28, 32, 56, .07), 0 16px 32px -12px rgba(28, 32, 56, .24);
+  --arc-glass: rgba(255, 255, 255, .86);
+  --arc-lift: 0 1px 2px rgba(28, 32, 56, .06), 0 4px 12px -6px rgba(28, 32, 56, .16);
+  --arc-lift-hi: 0 2px 4px rgba(28, 32, 56, .07), 0 8px 18px -8px rgba(28, 32, 56, .24);
   --arc-ring: 0 0 0 1px var(--arc-hair);
 }
 
@@ -30,8 +30,6 @@ body::before {
 /* Frosted surfaces */
 .card, .tile, .tab, .stage, .mbtn, .mcard, .fcard, .pcard, .app, .total, .bubble, .box, .panel {
   background-color: var(--arc-glass);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  backdrop-filter: blur(14px) saturate(1.4);
 }
 .card, .tile, .tab, .stage, .mbtn, .mcard, .fcard, .pcard, .app, .total {
   border: 1px solid var(--arc-hair);
@@ -78,7 +76,7 @@ body::before {
 
 /* Tabs as a segmented control */
 .tabs { background: rgba(28, 32, 56, .05); border-radius: 999px; padding: 4px; gap: 4px; }
-.tab { border: 0; border-radius: 999px; box-shadow: none; background-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.tab { border: 0; border-radius: 999px; box-shadow: none; background-color: transparent; }
 .tab.on { background: #fff; color: var(--ink); border: 0; box-shadow: var(--arc-lift); }
 
 /* Answer options: keep their state colours, drop the chunky edge */
@@ -107,7 +105,4 @@ progress, .meter, .progress { border-radius: 999px; }
 @media (prefers-reduced-motion: reduce) {
   .card, .app, .btn, .opt, .key { transition: none; }
   .card:hover, .app:hover, .btn:hover { transform: none; }
-}
-@media (prefers-reduced-transparency: reduce) {
-  .card, .tile, .tab, .stage, .mbtn, .mcard, .fcard, .pcard, .app, .total, .bubble { -webkit-backdrop-filter: none; backdrop-filter: none; background-color: #fff; }
 }
