@@ -658,7 +658,6 @@
   [hidden] { display: none !important; }
 </style>
 <link rel="stylesheet" href="../shared/arc.css">
-<link rel="stylesheet" href="ui-dist/logica-ui.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -972,7 +971,6 @@
 
 <script src="../shared/profile.js"></script>
 <script src="../shared/mascot.js"></script>
-<script src="ui-dist/logica-ui.js" defer></script>
 <script>
 (() => {
   'use strict';
@@ -1230,7 +1228,22 @@
   function paintStars(stars) {
     UI.count($('homeStars'), stars, stars === 1 ? '\u00a0star' : '\u00a0stars');
   }
-  window.addEventListener('load', () => { paintStars(totalStars()); renderStickers(); });
+  // The bundle is fetched on first use, so its size never delays the first paint. Resolves true when it is there.
+  let uiLoad = null;
+  function loadUI() {
+    if (!uiLoad) uiLoad = new Promise((done) => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet'; css.href = 'ui-dist/logica-ui.css';
+      const js = document.createElement('script');
+      js.src = 'ui-dist/logica-ui.js';
+      js.onload = () => { paintStars(totalStars()); renderStickers(); done(true); };
+      js.onerror = () => done(false);
+      document.head.append(css, js);
+    });
+    return uiLoad;
+  }
+  // Started by the first touch or key, so a page that is only looked at never pays for it.
+  ['pointerdown', 'keydown'].forEach((ev) => window.addEventListener(ev, loadUI, { once: true, passive: true }));
 
   function renderHome() {
     const stars = totalStars();
@@ -1328,12 +1341,14 @@
     $('dfList').innerHTML = diffButtons(S.diff);
     $('dfNote').textContent = 'Stars are kept for each difficulty, so you can switch any time.';
     // The Arc bottom sheet when the bundle is loaded; the plain dialog otherwise.
-    if (window.LogicaUI) {
-      window.LogicaUI.sheet({ title: $('dfTitle').textContent, html: '<div class="diffs">' + $('dfList').innerHTML + '</div><p class="note">' + $('dfNote').textContent + '</p>', closeText: 'Not now' });
-      return;
-    }
-    $('diffPick').hidden = false;
-    $('dfList').querySelector('[aria-pressed="true"], button').focus();
+    const html = '<div class="diffs">' + $('dfList').innerHTML + '</div><p class="note">' + $('dfNote').textContent + '</p>';
+    // A child's very first visit uses the plain dialog, so the page does not wait for the bundle before it can be used.
+    const plain = () => { $('diffPick').hidden = false; $('dfList').querySelector('[aria-pressed="true"], button').focus(); };
+    if (first) { plain(); return; }
+    loadUI().then((ok) => {
+      if (ok) window.LogicaUI.sheet({ title: $('dfTitle').textContent, html, closeText: 'Not now' });
+      else plain();
+    });
   }
   function pickDiff(b) {
     S.diff = b.dataset.diff; save(); sfx.good();
@@ -1592,13 +1607,15 @@
     const steps = TUTOR()[w.id].filter((st, k) => !(w.id === 'robot' && k === 3 && S.diff === 'easy'));
     const list = steps.map(([demo, text], k) => '<li><span class="n">' + (k + 1) + '</span>' + demo + '<p>' + text + '</p></li>').join('');
     // The Arc bottom sheet when the bundle is loaded; the plain dialog otherwise.
-    if (window.LogicaUI) {
-      window.LogicaUI.sheet({ title: 'How to play: ' + w.name, html: '<ol class="tsteps">' + list + '</ol>', closeText: "Let's play!", onClose: () => sfx.tap() });
-      return;
-    }
-    $('tuSteps').innerHTML = list;
-    $('tutor').hidden = false;
-    $('tuGo').focus();
+    loadUI().then((ok) => {
+      if (ok) {
+        window.LogicaUI.sheet({ title: 'How to play: ' + w.name, html: '<ol class="tsteps">' + list + '</ol>', closeText: "Let's play!", onClose: () => sfx.tap() });
+        return;
+      }
+      $('tuSteps').innerHTML = list;
+      $('tutor').hidden = false;
+      $('tuGo').focus();
+    });
   }
   $('tuGo').addEventListener('click', () => { $('tutor').hidden = true; sfx.tap(); });
 

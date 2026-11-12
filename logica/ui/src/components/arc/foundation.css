@@ -181,13 +181,13 @@
 .arc-ui { --series-1: #1f7dcf; --series-2: #7128a5; --series-3: #e58f00; --series-4: #009e84; }
 .arc-ui[data-theme="dark"] { --series-1: #55adff; --series-2: #9c37be; --series-3: #e66e00; --series-4: #00a861; }
 @supports (color: oklch(from red clamp(.4, l * sign(max(c - .02, 0)) + .5, .8) c h)) {
-  :root {
+  .arc-ui {
     --series-1: oklch(from var(--accent) calc(l * sign(max(c - .02, 0)) + .58 * (1 - sign(max(c - .02, 0)))) calc(c * sign(max(c - .02, 0)) + .15 * (1 - sign(max(c - .02, 0)))) calc(h * sign(max(c - .02, 0)) + 250 * (1 - sign(max(c - .02, 0)))));
     --series-2: oklch(from var(--accent) clamp(.45, l * sign(max(c - .02, 0)) + .58 * (1 - sign(max(c - .02, 0))) - 0.25, .76) .19 calc(h * sign(max(c - .02, 0)) + 250 * (1 - sign(max(c - .02, 0))) + 57));
     --series-3: oklch(from var(--accent) clamp(.45, l * sign(max(c - .02, 0)) + .58 * (1 - sign(max(c - .02, 0))) + 0.14, .76) .18 calc(h * sign(max(c - .02, 0)) + 250 * (1 - sign(max(c - .02, 0))) + 184));
     --series-4: oklch(from var(--accent) clamp(.45, l * sign(max(c - .02, 0)) + .58 * (1 - sign(max(c - .02, 0))), .76) .21 calc(h * sign(max(c - .02, 0)) + 250 * (1 - sign(max(c - .02, 0))) + 292));
   }
-  :root[data-theme="dark"] {
+  .arc-ui[data-theme="dark"] {
     --series-1: oklch(from var(--accent) calc(l * sign(max(c - .02, 0)) + .73 * (1 - sign(max(c - .02, 0)))) calc(c * sign(max(c - .02, 0)) + .15 * (1 - sign(max(c - .02, 0)))) calc(h * sign(max(c - .02, 0)) + 250 * (1 - sign(max(c - .02, 0)))));
     --series-2: oklch(from var(--accent) clamp(.485, l * sign(max(c - .02, 0)) + .73 * (1 - sign(max(c - .02, 0))) - 0.19, .665) .21 calc(h * sign(max(c - .02, 0)) + 250 * (1 - sign(max(c - .02, 0))) + 66));
     --series-3: oklch(from var(--accent) clamp(.485, l * sign(max(c - .02, 0)) + .73 * (1 - sign(max(c - .02, 0))) + 0.02, .665) .21 calc(h * sign(max(c - .02, 0)) + 250 * (1 - sign(max(c - .02, 0))) + 175));
@@ -199,7 +199,7 @@
    can always see where they are (WCAG 2.4.7). Left out of the outline: text fields, which match :focus-visible on a mouse click too and show
    focus with their border and caret; menu items and listbox options, whose highlight fill marks the keyboard position; and tabindex="-1"
    targets (dialog panels, regions) that only receive focus from script.
-   Tune it on :root or any element, no !important needed:
+   Tune it on .arc-ui or any element, no !important needed:
      --focus-outline           color (default: the accent, softened); set transparent to hide it
      --focus-outline-width     default 2px
      --focus-outline-offset    default 2px; components inside clipped containers set a negative offset */

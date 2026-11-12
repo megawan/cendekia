@@ -9,6 +9,9 @@ async function openLogica(page, diff) {
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { robot: true, code: true, sudoku: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
+  // The Arc bundle loads on the first touch; its stepper and list are what these tests drive.
+  await page.evaluate(() => window.dispatchEvent(new Event('pointerdown')));
+  await page.waitForFunction(() => window.LogicaUI);
 }
 
 async function openLevel(page, world, n) {

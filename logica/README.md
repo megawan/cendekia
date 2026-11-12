@@ -68,7 +68,7 @@ The star counts roll like an odometer, a toast announces a new sticker or a used
 cd logica/ui && npm install && npm run build
 ```
 
-`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })` and `window.LogicaUI.sheet({ title, html, closeText })`, `window.LogicaUI.progress(el, total, done)` and `window.LogicaUI.reorder(el, { items, hinted, onReorder })`; `index.html` falls back to plain text, the old dialog, pips and tap-to-swap wagons if the bundle is missing. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
+`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })` and `window.LogicaUI.sheet({ title, html, closeText })`, `window.LogicaUI.progress(el, total, done)` and `window.LogicaUI.reorder(el, { items, hinted, onReorder })`; `index.html` falls back to plain text, the old dialog, pips and tap-to-swap wagons if the bundle is missing. The bundle is not in the page's first load: it is fetched on the first touch or key (and when the difficulty or How to play sheet opens), so it never delays the first paint, and `sw.js` keeps it for offline once fetched. A child's very first visit uses the plain difficulty dialog for the same reason. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
 
 ## Animations
 
