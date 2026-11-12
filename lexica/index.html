@@ -72,7 +72,7 @@
   .card.hero-card b { font-size: 1.5rem; }
   .card.hero-card span:last-child { text-align: left; }
 
-  /* Mascot: Kiki the owl */
+  /* Mascot: Pochi the owl */
   .mascot { display: block; }
   .mascot .m { display: none; fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
   .mascot[data-mood="happy"] .m.smile, .mascot[data-mood="cheer"] .m.smile, .mascot[data-mood="oops"] .m.oops { display: block; }
@@ -229,11 +229,11 @@
   <!-- Home -->
   <section id="home">
     <div class="who" id="who"></div>
-    <div class="hero">
+    <div class="hero" data-mascot="lexica">
       <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg>
       <div>
         <h1>Lexica</h1>
-        <p class="sub">Indonesian ↔ English with Kiki</p>
+        <p class="sub">Indonesian ↔ English with Pochi</p>
       </div>
     </div>
     <div class="pills">
@@ -700,6 +700,7 @@
 </script>
 
 <script src="../shared/profile.js"></script>
+<script src="../shared/mascot.js"></script>
 <script>
 (() => {
   'use strict';
@@ -1070,7 +1071,7 @@
     return go;
   }
 
-  // Kiki's instructions stay in Indonesian, the children's own language: they have recordings, like the words.
+  // Pochi's instructions stay in Indonesian, the children's own language: they have recordings, like the words.
   const HINTS = { hearEn: 'Dengarkan, lalu pilih', picEn: 'Apa bahasa Inggrisnya?', idEn: 'Apa bahasa Inggrisnya?',
     enId: 'Apa artinya?', spell: 'Susun hurufnya' };
 
