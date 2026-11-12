@@ -80,7 +80,7 @@
     if (styled) return; styled = true;
     var css = document.createElement('style');
     css.textContent =
-      '.cd-chip{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:700;color:inherit;background:rgba(255,255,255,.75);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(28,32,56,.1);box-shadow:0 1px 2px rgba(28,32,56,.06),0 8px 24px -10px rgba(28,32,56,.16);border-radius:999px;padding:4px 12px 4px 6px;cursor:pointer;min-height:44px}' +
+      '.cd-chip{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:700;color:inherit;background:rgba(255,255,255,.75);border:1px solid rgba(28,32,56,.1);box-shadow:0 1px 2px rgba(28,32,56,.06),0 8px 24px -10px rgba(28,32,56,.16);border-radius:999px;padding:4px 12px 4px 6px;cursor:pointer;min-height:44px}' +
       '.cd-chip .cd-av{font-size:1.5rem;line-height:1}' +
       '.cd-modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(20,24,40,.4);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-family:inherit;color:#1c2038}' +
       '.cd-card{background:#fff;border-radius:26px;padding:20px;width:min(420px,100%);max-height:90vh;overflow:auto;box-shadow:0 30px 60px -20px rgba(20,24,40,.45)}' +
