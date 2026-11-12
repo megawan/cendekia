@@ -1,6 +1,6 @@
 # Lexica
 
-An Indonesian–English vocabulary game. Children learn about 300 English words in 24 themes, hearing every word in both languages. Buttons, headings, theme names and messages are in English; Pochi's spoken instructions stay in Indonesian, the children's own language, and every word is shown and read in both languages.
+An Indonesian–English vocabulary game. Children learn about 300 English words in 24 themes, hearing every word in both languages. Buttons, headings, theme names and messages are in English; Kiki's spoken instructions stay in Indonesian, the children's own language, and every word is shown and read in both languages.
 
 ## Themes
 
@@ -36,7 +36,7 @@ A word's third value is its picture:
 
 ## Rewards
 
-Same as the other apps: one to three stars per round, a combo counter with confetti for three or more first-try answers in a row, and a count of learning days in a row. A right answer gets a cheer in Pochi's speech bubble, a wrong answer gets "Ayo coba lagi" there and the word is played again, and after two misses the right answer blinks. Nothing is said or sounded to praise the child: no chime on a right answer, no fanfare at the end of a round or when a sticker is won, only confetti.
+Same as the other apps: one to three stars per round, a combo counter with confetti for three or more first-try answers in a row, and a count of learning days in a row. A right answer gets a cheer in Kiki's speech bubble, a wrong answer gets "Ayo coba lagi" there and the word is played again, and after two misses the right answer blinks. Nothing is said or sounded to praise the child: no chime on a right answer, no fanfare at the end of a round or when a sticker is won, only confetti.
 
 Progress is kept in `localStorage` under `kosakata.v1.<child>`, one save per child (see the main README).
 
