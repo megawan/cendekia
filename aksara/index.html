@@ -22,6 +22,7 @@
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { background: var(--bg); }
+  .homeTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .who { display: flex; justify-content: flex-end; }
   html, body { margin: 0; min-height: 100%; color: var(--ink);
     font-family: "Plus Jakarta Sans", system-ui, sans-serif; touch-action: manipulation; }
@@ -240,7 +241,7 @@
 <main>
   <!-- Home -->
   <section id="home">
-    <div class="who" id="who"></div>
+    <div class="homeTop"><a class="btn ghost back" href="../">← Cendekia</a><div class="who" id="who"></div></div>
     <div class="hero" data-mascot="aksara">
       <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg>
       <div>

@@ -27,6 +27,17 @@ for (const [dir, title] of APPS) {
       await expect(page.locator('body')).not.toBeEmpty();
     });
 
+    test('home screen has a way back to Cendekia at the top left', async ({ page }) => {
+      await page.goto(`/${dir}/`);
+      const back = page.locator('#home a.back');
+      await expect(back).toHaveAttribute('href', '../');
+      const box = await back.boundingBox();
+      expect(box.height).toBeGreaterThanOrEqual(44);
+      const column = await page.locator('main').boundingBox();
+      expect(box.x - column.x).toBeLessThan(40);
+      expect(box.y - column.y).toBeLessThan(40);
+    });
+
     test('has a valid manifest whose icons exist', async ({ request }) => {
       const res = await request.get(`/${dir}/manifest.webmanifest`);
       expect(res.status()).toBe(200);
