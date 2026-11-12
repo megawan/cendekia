@@ -12,7 +12,7 @@
 <meta name="description" content="Everyday math for children, from counting apples to sale prices and train timetables: counting, adding, money, time, sharing and fractions, measuring, percent and trip planning.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #fff5f3; --ink: #1f2a44; --card: #ffffff; --line: #f1d8d6;
@@ -24,7 +24,7 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { background: var(--bg); }
   html, body { margin: 0; min-height: 100%; color: var(--ink);
-    font-family: "Baloo 2", system-ui, sans-serif; touch-action: manipulation; }
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif; touch-action: manipulation; }
   body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background: radial-gradient(circle at 8% 6%, #ffe0ea 0, transparent 36%),
                 radial-gradient(circle at 94% 20%, #d6ebff 0, transparent 34%),
@@ -157,7 +157,7 @@
   .clock .face { fill: #fff; stroke: var(--ink); stroke-width: 3; }
   .clock .tk { stroke: #9aa3b5; stroke-width: 1; }
   .clock .tk5 { stroke: var(--ink); stroke-width: 2.2; }
-  .clock text { font: 700 9.5px "Baloo 2", system-ui, sans-serif; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+  .clock text { font: 700 9.5px "Plus Jakarta Sans", system-ui, sans-serif; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
   .clock .hh { stroke: var(--ink); stroke-width: 4.5; stroke-linecap: round; }
   .clock .mh { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
   .digital { display: inline-block; background: var(--ink); color: #7ef0c4; border-radius: 10px; padding: 2px 12px;
@@ -167,7 +167,7 @@
   .pie .sl.on { fill: #f6b74a; }
   .pie .crust { fill: none; stroke: #c98a3f; stroke-width: 5; }
   .svgbox { width: 100%; max-width: 440px; height: auto; display: block; }
-  .svgbox text { font: 700 11px "Baloo 2", system-ui, sans-serif; fill: var(--ink); }
+  .svgbox text { font: 700 11px "Plus Jakarta Sans", system-ui, sans-serif; fill: var(--ink); }
   table.tt { border-collapse: collapse; font-weight: 700; font-size: 1.1rem; background: #fff; }
   table.tt th, table.tt td { border: 2px solid var(--line); padding: 4px 14px; text-align: center; }
   table.tt th { background: #fff0f5; }
@@ -271,6 +271,7 @@
   .ttile.on { border-color: var(--accent); background: #ffe9f1; }
   .ttile small { display: block; font-size: .8rem; opacity: .75; }
 </style>
+<link rel="stylesheet" href="../shared/arc.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1257,7 +1258,7 @@
   let trIdx = 0;
   const traceStars = () => Object.values(S.traced).reduce((a, v) => a + v, 0);
   const tracer = CD.trace($('trBox'), {
-    font: '"Andika", "Baloo 2", system-ui, sans-serif', weight: 700, label: 'Tracing area for the number',
+    font: '"Andika", "Plus Jakarta Sans", system-ui, sans-serif', weight: 700, label: 'Tracing area for the number',
     onDone(r) {
       S.traced[trIdx] = Math.max(S.traced[trIdx] || 0, r.stars);
       markDay(); save();

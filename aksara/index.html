@@ -12,7 +12,7 @@
 <meta name="description" content="A simple game for children learning to read in Indonesian: letters, syllables, words, sentences and short stories, all read aloud.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #eef7ff; --ink: #1f2a44; --card: #ffffff; --line: #cfe0f5;
@@ -24,7 +24,7 @@
   html { background: var(--bg); }
   .who { display: flex; justify-content: flex-end; }
   html, body { margin: 0; min-height: 100%; color: var(--ink);
-    font-family: "Baloo 2", system-ui, sans-serif; touch-action: manipulation; }
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif; touch-action: manipulation; }
   /* The glow sits on a fixed layer instead of a fixed background, which repaints with visible bands on overscroll. */
   body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background: radial-gradient(circle at 10% 6%, #fff1c2 0, transparent 36%),
@@ -220,6 +220,7 @@
   }
   [hidden] { display: none !important; }
 </style>
+<link rel="stylesheet" href="../shared/arc.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -875,7 +876,7 @@
   let trIdx = 0, trUpper = true;
   const trGlyph = (i, upper) => (upper ? C.letters[i].ch.toUpperCase() : C.letters[i].ch);
   const tracer = Cendekia.trace($('trBox'), {
-    font: '"Andika", "Baloo 2", system-ui, sans-serif', weight: 700, label: 'Tracing area for',
+    font: '"Andika", "Plus Jakarta Sans", system-ui, sans-serif', weight: 700, label: 'Tracing area for',
     onDone(r) {
       const g = trGlyph(trIdx, trUpper), before = unlocked(), gain = Math.max(0, r.stars - (S.traced[g] || 0));
       S.traced[g] = Math.max(S.traced[g] || 0, r.stars);

@@ -12,7 +12,7 @@
 <meta name="description" content="Logical and computational thinking games for children: program a robot, find patterns, crack the magic machine, read balances, fix buggy code and sort with AND, OR and NOT.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #fff6ec; --ink: #1f2a44; --card: #ffffff; --line: #f0dcc4;
@@ -26,7 +26,7 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { background: var(--bg); }
   html, body { margin: 0; min-height: 100%; color: var(--ink);
-    font-family: "Baloo 2", system-ui, sans-serif; touch-action: manipulation; }
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif; touch-action: manipulation; }
   /* The glow sits on a fixed layer instead of a fixed background, which repaints with visible bands on overscroll. */
   body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background: radial-gradient(circle at 8% 6%, #ffe3c2 0, transparent 36%),
@@ -659,6 +659,7 @@
 
   [hidden] { display: none !important; }
 </style>
+<link rel="stylesheet" href="../shared/arc.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1042,7 +1043,7 @@
         + DOTS[x.n].map(([cx, cy]) => '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fill + '"/>').join('');
     } else if (x.s === 'number') {
       body = '<rect x="6" y="6" width="88" height="88" rx="18" fill="' + fill + '"/>'
-        + '<text x="50" y="52" text-anchor="middle" dominant-baseline="central" font-family="Baloo 2, system-ui, sans-serif" font-weight="800" font-size="' + (x.v > 9 ? 46 : 58) + '" fill="#fff">' + x.v + '</text>';
+        + '<text x="50" y="52" text-anchor="middle" dominant-baseline="central" font-family="Plus Jakarta Sans, system-ui, sans-serif" font-weight="800" font-size="' + (x.v > 9 ? 46 : 58) + '" fill="#fff">' + x.v + '</text>';
     } else {
       const z = x.z || 1, r = x.r || 0;
       body = '<g transform="translate(50 50) scale(' + z + ') rotate(' + r + ') translate(-50 -50)">'
@@ -2408,7 +2409,7 @@
     + '<g class="gear g2"><circle cx="82" cy="70" r="11" fill="#5ef2d6"/>'
     + [0, 60, 120].map((a) => '<rect x="79" y="56" width="6" height="28" rx="2" fill="#5ef2d6" transform="rotate(' + a + ' 82 70)"/>').join('')
     + '<circle cx="82" cy="70" r="4" fill="#2a2150"/></g>'
-    + '<rect x="40" y="10" width="50" height="18" rx="6" fill="#5b3fd6"/><text x="65" y="23" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Baloo 2, system-ui, sans-serif">?</text></g></svg>';
+    + '<rect x="40" y="10" width="50" height="18" rx="6" fill="#5b3fd6"/><text x="65" y="23" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Plus Jakarta Sans, system-ui, sans-serif">?</text></g></svg>';
   // Easy: three examples and three choices. Hard: two examples, four choices and harder number rules.
   function genMachine(lvl) {
     const d = S.diff, T = pick(CK), Sh = pick(SK);
@@ -2484,7 +2485,7 @@
         const row = Math.floor(k / 3), col = k % 3, inRow = Math.min(per, items.length - row * 3);
         const px = cx - (inRow * size) / 2 + col * size, py = 92 - size - row * (size - 6);
         return typeof x === 'string'
-          ? '<text x="' + cx + '" y="78" text-anchor="middle" font-size="36" font-weight="800" fill="#f2891f" font-family="Baloo 2, system-ui, sans-serif">' + x + '</text>'
+          ? '<text x="' + cx + '" y="78" text-anchor="middle" font-size="36" font-weight="800" fill="#f2891f" font-family="Plus Jakarta Sans, system-ui, sans-serif">' + x + '</text>'
           : itemSvg(x).replace('<svg class="it"', '<svg x="' + px + '" y="' + py + '" width="' + size + '" height="' + size + '"');
       }).join('');
       return '<g class="pan"><line x1="' + cx + '" y1="40" x2="' + (cx - 30) + '" y2="92" stroke="#8a94a8" stroke-width="2"/>'

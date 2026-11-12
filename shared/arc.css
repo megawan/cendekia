@@ -1,0 +1,113 @@
+/* Arc theme for Cendekia: soft gradient wash, frosted surfaces, hairline borders, layered shadows, pill controls.
+   Loaded by every page after its own <style>, so it restyles the shared components without touching markup.
+   Each app keeps its own --accent, which tints the background and the primary controls. */
+
+:root {
+  --radius: 22px;
+  --ink: #1c2038;
+  --arc-hair: rgba(28, 32, 56, .09);
+  --arc-glass: rgba(255, 255, 255, .72);
+  --arc-lift: 0 1px 2px rgba(28, 32, 56, .06), 0 8px 24px -10px rgba(28, 32, 56, .16);
+  --arc-lift-hi: 0 2px 4px rgba(28, 32, 56, .07), 0 16px 32px -12px rgba(28, 32, 56, .24);
+  --arc-ring: 0 0 0 1px var(--arc-hair);
+}
+
+html, body, button, input, select, textarea {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: -.005em;
+}
+.ar, .tile .ar, .opt .ar, .mbtn .ar { font-family: "Amiri", "Noto Naskh Arabic", "Geeza Pro", serif; letter-spacing: 0; }
+h1, h2, h3 { letter-spacing: -.02em; font-weight: 800; }
+
+/* Background: a faint two-colour wash from the app accent, like Arc's space gradients. */
+body::before {
+  background:
+    radial-gradient(60% 45% at 8% 0%, color-mix(in srgb, var(--accent, #6d5ef5) 20%, transparent), transparent 70%),
+    radial-gradient(50% 40% at 100% 12%, color-mix(in srgb, var(--c-purple, #7a5af8) 14%, transparent), transparent 72%),
+    radial-gradient(45% 40% at 70% 100%, color-mix(in srgb, var(--c-teal, #0e9aa7) 10%, transparent), transparent 70%);
+}
+
+/* Frosted surfaces */
+.card, .tile, .tab, .stage, .mbtn, .mcard, .fcard, .pcard, .app, .total, .bubble, .box, .panel {
+  background-color: var(--arc-glass);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+}
+.card, .tile, .tab, .stage, .mbtn, .mcard, .fcard, .pcard, .app, .total {
+  border: 1px solid var(--arc-hair);
+  box-shadow: var(--arc-lift);
+}
+.card, .app, .pcard, .mcard, .fcard {
+  border-bottom: 1px solid var(--arc-hair);
+  transition: transform .18s cubic-bezier(.2, .8, .2, 1), box-shadow .18s;
+}
+@media (hover: hover) {
+  .card:hover, .app:hover, .pcard:hover, .mcard:hover, .fcard:hover, .tile:hover:not(:disabled) {
+    transform: translateY(-2px); box-shadow: var(--arc-lift-hi);
+  }
+}
+.card:active, .app:active, .pcard:active, .mcard:active, .fcard:active { transform: scale(.985); box-shadow: var(--arc-lift); }
+.tile { border-radius: 18px; }
+.tile:active { transform: scale(.96); }
+.tile.on { background-color: color-mix(in srgb, var(--accent, #6d5ef5) 12%, #fff); border-color: var(--accent, #6d5ef5); }
+
+/* Badges: soft tinted discs instead of flat saturated circles */
+.card .badge, .app .badge {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--c) 82%, #fff), var(--c));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 6px 14px -6px var(--c);
+}
+
+/* Buttons: gradient pills, no chunky bottom edge */
+.btn {
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent, #6d5ef5) 88%, #fff), var(--accent, #6d5ef5));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 2px rgba(28, 32, 56, .2), 0 8px 18px -8px var(--accent, #6d5ef5);
+  font-weight: 700;
+  transition: transform .15s cubic-bezier(.2, .8, .2, 1), box-shadow .15s, filter .15s;
+}
+@media (hover: hover) { .btn:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); } }
+.btn:active { transform: scale(.97); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 2px rgba(28, 32, 56, .2); }
+.btn.alt { background: linear-gradient(180deg, color-mix(in srgb, var(--warm, #f2a33a) 85%, #fff), var(--warm, #f2a33a)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 1px 2px rgba(28, 32, 56, .15), 0 8px 18px -8px var(--warm, #f2a33a); }
+.btn.go { background: linear-gradient(180deg, color-mix(in srgb, var(--good, #1f9d6b) 85%, #fff), var(--good, #1f9d6b)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 2px rgba(28, 32, 56, .2), 0 8px 18px -8px var(--good, #1f9d6b); }
+.btn.blue { background: linear-gradient(180deg, color-mix(in srgb, var(--c-blue, #2e90fa) 85%, #fff), var(--c-blue, #2e90fa)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 2px rgba(28, 32, 56, .2), 0 8px 18px -8px var(--c-blue, #2e90fa); }
+.btn.ghost { background: var(--arc-glass); color: var(--ink); border: 1px solid var(--arc-hair); box-shadow: var(--arc-lift); }
+.btn:disabled { filter: grayscale(.4); opacity: .5; box-shadow: none; }
+.btn:focus-visible, .fcard:focus-visible, .mcard:focus-visible, .tile:focus-visible, .tab:focus-visible, .opt:focus-visible, .card:focus-visible, .app:focus-visible, .key:focus-visible {
+  outline: 2px solid var(--accent, #6d5ef5); outline-offset: 3px;
+}
+
+/* Tabs as a segmented control */
+.tabs { background: rgba(28, 32, 56, .05); border-radius: 999px; padding: 4px; gap: 4px; }
+.tab { border: 0; border-radius: 999px; box-shadow: none; background-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.tab.on { background: #fff; color: var(--ink); border: 0; box-shadow: var(--arc-lift); }
+
+/* Answer options: keep their state colours, drop the chunky edge */
+.opt, .key, .sdkPal button {
+  background-color: var(--arc-glass);
+  border: 1px solid var(--arc-hair);
+  border-bottom-width: 1px;
+  box-shadow: var(--arc-lift);
+  border-radius: var(--radius);
+  transition: transform .15s cubic-bezier(.2, .8, .2, 1), box-shadow .15s, border-color .15s, background-color .15s;
+}
+.opt:active, .key:active { transform: scale(.97); }
+.opt.ok, .opt.no, .opt.hint { border-width: 2px; }
+.opt.ok { box-shadow: 0 0 0 4px color-mix(in srgb, var(--good, var(--accent, #1f9d6b)) 18%, transparent), var(--arc-lift); }
+.opt.no { box-shadow: 0 0 0 4px color-mix(in srgb, var(--bad, #d9534f) 16%, transparent), var(--arc-lift); }
+.key.check { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 8px 18px -8px var(--good, #1f9d6b); }
+
+/* Speech bubble, pills and small chrome */
+.bubble { border: 1px solid var(--arc-hair); border-radius: 18px; box-shadow: var(--arc-lift); }
+.bubble::before { background: #fff; border-left: 1px solid var(--arc-hair); border-bottom: 1px solid var(--arc-hair); }
+.total { border: 1px solid var(--arc-hair); box-shadow: var(--arc-lift); background: var(--arc-glass); }
+
+/* Progress bars */
+progress, .meter, .progress { border-radius: 999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .app, .btn, .opt, .key { transition: none; }
+  .card:hover, .app:hover, .btn:hover { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .card, .tile, .tab, .stage, .mbtn, .mcard, .fcard, .pcard, .app, .total, .bubble { -webkit-backdrop-filter: none; backdrop-filter: none; background-color: #fff; }
+}
