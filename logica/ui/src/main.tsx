@@ -23,14 +23,28 @@ function ToastBridge() {
 type SheetOptions = { title: string; html: string; closeText: string; onClose?: () => void };
 let sheet: SheetOptions | null = null;
 const listeners = new Set<() => void>();
-const setSheet = (next: SheetOptions | null) => { sheet = next; listeners.forEach((l) => l()); };
+const setSheet = (next: SheetOptions | null) => { sheet = next; detents = next ? detentsFor(next.html) : detents; listeners.forEach((l) => l()); };
+
+// The sheet is as tall as its largest detent, so a short tutorial on a tall screen would sit in a sea of white.
+// Measure the content at the sheet's width and size the sheet to it; only content taller than the screen gets two detents.
+let detents = [0.94];
+function detentsFor(html: string) {
+  const probe = document.createElement("div");
+  probe.style.cssText = `position:fixed;left:0;top:0;visibility:hidden;box-sizing:border-box;padding:0 20px;width:${Math.min(window.innerWidth, 576)}px`;
+  probe.innerHTML = `${html}<div style="height:64px"></div>`;
+  document.body.appendChild(probe);
+  const content = probe.offsetHeight;
+  probe.remove();
+  const fraction = (content + 120) / window.innerHeight; // 120px: grabber, title and padding
+  return fraction >= 0.94 ? [0.6, 0.94] : [Math.max(fraction, 0.3)];
+}
 
 function SheetBridge() {
   const current = useSyncExternalStore((cb) => { listeners.add(cb); return () => listeners.delete(cb); }, () => sheet);
   if (!current) return null;
   const close = () => { current.onClose?.(); setSheet(null); };
   return (
-    <BottomSheet open title={current.title} detents={[0.78, 0.94]} onOpenChange={(open) => { if (!open) close(); }}>
+    <BottomSheet open title={current.title} detents={detents} onOpenChange={(open) => { if (!open) close(); }}>
       <div dangerouslySetInnerHTML={{ __html: current.html }} />
       <BottomSheetClose asChild><button type="button" className="btn go" style={{ width: "100%" }}>{current.closeText}</button></BottomSheetClose>
     </BottomSheet>
