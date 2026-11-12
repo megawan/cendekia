@@ -43,6 +43,8 @@ body::before { display: none; }
 .btn.alt, .btn.go, .btn.blue { box-shadow: none; }
 .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--arc-hair); }
 .btn:disabled { opacity: .5; }
+/* The way back to the app list, top left of every app's home screen. Small and quiet so a child does not leave by accident. */
+.btn.back { text-decoration: none; padding: 8px 14px; min-height: 44px; display: inline-flex; align-items: center; font-size: .95rem; }
 .btn:focus-visible, .fcard:focus-visible, .mcard:focus-visible, .tile:focus-visible, .tab:focus-visible, .opt:focus-visible, .card:focus-visible, .app:focus-visible, .key:focus-visible {
   outline: 2px solid var(--accent, #6d5ef5); outline-offset: 3px;
 }
