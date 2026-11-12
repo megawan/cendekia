@@ -1,6 +1,6 @@
 # Aksara
 
-An early reading game in Indonesian. Children go from vowels to letters, syllables, words and short sentences, then on to closed syllables, long words, gap-filling and short stories with questions, with every item read aloud. The reading content and Kiki's spoken instructions are in Indonesian; buttons, headings, stage names, messages and stickers are in English.
+An early reading game in Indonesian. Children go from vowels to letters, syllables, words and short sentences, then on to closed syllables, long words, gap-filling and short stories with questions, with every item read aloud. The reading content and Renjana's spoken instructions are in Indonesian; buttons, headings, stage names, messages and stickers are in English.
 
 ## Modes
 
@@ -48,7 +48,7 @@ The letter is drawn faintly from the Andika font (made for early readers, with a
 - Stars: three for at most one question missed on the first try, two for at most three, one otherwise. Stars add up across rounds.
 - Combo: three or more first-try answers in a row show a flame counter and confetti.
 - Learning days: the home screen counts consecutive days with at least one finished round.
-- Kiki the owl coaches. A right answer gets a cheer in the speech bubble (the `cheers` list), a wrong answer gets "Ayo coba lagi" there and the question is played again, and after two misses the right answer blinks. Nothing is said or sounded to praise the child: no chime on a right answer, no fanfare at the end of a round or when a sticker is won, only confetti and the pictures. The recordings are only questions, instructions and the words themselves.
+- Renjana the owl coaches. A right answer gets a cheer in the speech bubble (the `cheers` list), a wrong answer gets "Ayo coba lagi" there and the question is played again, and after two misses the right answer blinks. Nothing is said or sounded to praise the child: no chime on a right answer, no fanfare at the end of a round or when a sticker is won, only confetti and the pictures. The recordings are only questions, instructions and the words themselves.
 
 Progress is kept in `localStorage` under `baca.v1.<child>`, one save per child (see the main README). "Mulai ulang petualangan" on the map clears the stage stars but keeps the total and the stickers.
 

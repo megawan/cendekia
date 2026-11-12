@@ -15,7 +15,7 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 
 `phonics/` (Phonics Fun) is paused: it is no longer linked from the home page or the parent page, and its address shows a closed notice. The full app is in git history (before the commit that closed it) and saved progress is kept.
 
-Each app keeps its own README with details. The mascots and where their names come from are in [`MASCOTS.md`](MASCOTS.md).
+Each app keeps its own README with details. The mascots and where their names come from are in [`MASCOTS.md`](MASCOTS.md). `shared/mascot.js` adds a one-line note about the mascot's name under the subtitle of a home screen whose `.hero` has `data-mascot="<app>"`; tapping it opens a bottom sheet with the story. A new app's service worker `CORE` list needs the script too.
 
 The look comes from `shared/arc.css` (an Arc-style theme: soft accent-tinted gradient, frosted surfaces, hairline borders, pill buttons). Every page loads it after its own styles, and each app's service worker caches it, so add it to the `CORE` list of a new app.
 

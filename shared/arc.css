@@ -66,3 +66,29 @@ body::before { display: none; }
 /* Speech bubble */
 .bubble { border-radius: 18px; }
 .bubble::before { background: #fff; border-left: 1px solid var(--arc-hair); border-bottom: 1px solid var(--arc-hair); }
+
+/* Mascot name (shared/mascot.js): a one-line note under the home subtitle and the bottom sheet it opens. */
+.mascot-line {
+  display: block; margin: 6px 0 0; padding: 4px 0; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: .88rem; line-height: 1.3; text-align: inherit; color: var(--accent, #6d5ef5);
+}
+.mascot-line b { font-weight: 800; }
+.mascot-line:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent, #6d5ef5) 45%, transparent); outline-offset: 2px; border-radius: 6px; }
+.mascot-tap { cursor: pointer; }
+.mascot-sheet {
+  box-sizing: border-box; width: min(100%, 480px); max-width: 100%; margin: auto auto 0; padding: 22px 22px 26px;
+  border: 0; border-radius: 26px 26px 0 0; background: #fff; color: var(--ink); text-align: center;
+  box-shadow: 0 -8px 28px -10px rgba(28, 32, 56, .35);
+}
+.mascot-sheet::backdrop { background: rgba(28, 32, 56, .45); }
+.mascot-sheet-pic { display: flex; justify-content: center; margin-bottom: 6px; }
+.mascot-sheet-pic > * { width: 96px; height: 96px; font-size: 80px; line-height: 96px; }
+.mascot-sheet h2 { margin: 0 0 4px; font-size: 1.5rem; }
+.mascot-sheet-from { margin: 0 0 12px; font-size: .95rem; font-weight: 700; color: var(--accent, #6d5ef5); }
+.mascot-sheet-story { margin: 0 0 20px; font-size: 1.08rem; line-height: 1.6; text-align: left; }
+.mascot-sheet-close {
+  width: 100%; padding: 12px; border: 0; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 1.05rem; font-weight: 800; color: #fff; background: var(--accent, #6d5ef5);
+}
+.mascot-sheet-close:focus { outline: none; }
+.mascot-sheet-close:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent, #6d5ef5) 45%, transparent); outline-offset: 3px; }
