@@ -657,6 +657,7 @@
   [hidden] { display: none !important; }
 </style>
 <link rel="stylesheet" href="../shared/arc.css">
+<link rel="stylesheet" href="ui-dist/logica-ui.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -970,6 +971,7 @@
 
 <script src="../shared/profile.js"></script>
 <script src="../shared/mascot.js"></script>
+<script src="ui-dist/logica-ui.js" defer></script>
 <script>
 (() => {
   'use strict';
@@ -1218,12 +1220,23 @@
       .replace('<svg class="it"', '<svg style="left:' + x + '%;top:' + y + '%;animation-delay:-' + k * 0.9 + 's"')).join('');
   })();
 
+  // Arc UI (logica/ui) gives the star counts a rolling counter and shows toasts. The bundle loads deferred, so
+  // plain text stands in until it is there; if it never loads, the text stays.
+  const UI = {
+    count(el, n, suffix) { if (window.LogicaUI) window.LogicaUI.counter(el, n, suffix); else el.textContent = n + suffix; },
+    toast(o) { if (window.LogicaUI) window.LogicaUI.toast(o); },
+  };
+  function paintStars(stars) {
+    UI.count($('homeStars'), stars, stars === 1 ? '\u00a0star' : '\u00a0stars');
+  }
+  window.addEventListener('load', () => { paintStars(totalStars()); renderStickers(); });
+
   function renderHome() {
     const stars = totalStars();
     const days = streakNow();
     $('who').innerHTML = '<span class="av" aria-hidden="true">' + me().avatar + '</span>' + esc(me().name) + ' <span aria-hidden="true">▾</span>';
     $('diffBadge').innerHTML = DIFFS[S.diff].icon + ' ' + DIFFS[S.diff].name + ' <span aria-hidden="true">▾</span>';
-    $('homeStars').textContent = stars + (stars === 1 ? ' star' : ' stars');
+    paintStars(stars);
     $('homeDays').textContent = days + (days === 1 ? ' day' : ' days');
     $('homeStk').textContent = unlocked(stars) + '/' + STICKERS.length;
     const box = $('worlds');
@@ -2169,6 +2182,7 @@
   $('rHint').addEventListener('click', () => {
     if (R.running) return;
     R.hints++; sfx.tap();
+    if (R.hints === 1) UI.toast({ type: 'info', title: 'Hint used', description: 'With a hint you can earn two stars at most.' });
     if (R.i >= 0) { logOf(R.w.id, R.i).hints++; save(); }
     if (R.debug) { R.showBug = true; renderTray(); rSay(P.hintBug, 'happy'); return; }
     if (R.hints === 1) {
@@ -3142,6 +3156,7 @@
     $('resNext').textContent = last.def && last.def.custom ? '✎ Change the map' : i < 0 ? 'New map' : 'Next level';
     show('result');
     sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
+    if (gained.length) UI.toast({ type: 'success', title: 'New sticker!', description: gained.map((k) => k.name).join(', ') });
   }
   $('resNext').addEventListener('click', () => {
     if (last.def && last.def.custom) show('maker');
@@ -3153,7 +3168,7 @@
 
   function renderStickers() {
     const stars = totalStars();
-    $('stkStars').textContent = stars;
+    UI.count($('stkStars'), stars, '');
     const nx = STICKERS.find((k) => k.at > stars);
     $('stkNext').textContent = nx ? 'Next sticker at ' + nx.at + ' stars.' : 'You have every sticker!';
     $('sgrid').innerHTML = STICKERS.map((k) => '<div class="sticker' + (k.at <= stars ? '' : ' locked') + '">' + face(k)

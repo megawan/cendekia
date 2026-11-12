@@ -60,6 +60,16 @@ For the summary, every child keeps `log` (per difficulty, world and level: quest
 
 Every finished level also goes to the shared log (`Cendekia.round`), and the first mistake of a question or the first failed run of a level to the shared list of things that went wrong (`Cendekia.weak`), so Logica shows on the [parents' page for all apps](../parents/) with time played, progress, mistakes and last rounds.
 
+## Arc UI components
+
+The star counts roll like an odometer and a toast announces a new sticker or a used hint, using the real [Arc UI](https://uiarc.dev) `animated-counter` and `toast-stack` components (React 19, copied into `ui/src/components/arc/` as Arc intends). Logica itself stays a static page: only the small bundle in `ui-dist/` is built, from `ui/`, and committed.
+
+```bash
+cd logica/ui && npm install && npm run build
+```
+
+`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })`; `index.html` falls back to plain text if the bundle is missing. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
+
 ## Animations
 
 Poka walks, wobbles, bumps into rocks and dances at the flag, gems fly up when collected, the blocks light up as they run (inside repeats and the function too), the machine's gears spin while items feed in and shoot out, the balances tilt with a bounce, answers fly into place and matching items drop through the filter. With "reduce motion" turned on in the device settings, all animation is off.
