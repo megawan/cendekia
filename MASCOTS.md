@@ -8,7 +8,7 @@ Each app has a mascot with a name borrowed from a word in another language.
 | [`aksara/`](aksara) | Renjana | Indonesian, "a deep, heartfelt longing" |
 | [`logica/`](logica) | Poka | Japanese, from *poka-yoke* |
 | [`lexica/`](lexica) | Pochi | Russian, from *pochemuchka* |
-| [`numeria/`](numeria) | Ollie | the owl |
+| [`numeria/`](numeria) | Myria | Greek, "ten thousand" |
 
 ## Sada (Hijaiyah)
 
@@ -26,8 +26,8 @@ Poka is short for *poka-yoke* (ポカヨケ), a Japanese idea meaning "mistake-p
 
 Pochi is short for *pochemuchka* (почемучка), a Russian word for a person who keeps asking "why?" (*почему*). Pochi is curious about every word: what it means, how it sounds, and where it comes from.
 
-## Ollie (Numeria)
+## Myria (Numeria)
 
-Ollie is a friendly owl who helps with everyday math, from counting apples in the kitchen to working out discounts in the shop.
+Myria comes from the Greek word *myrias* (μυριάς), which means "ten thousand", the biggest number the ancient Greeks had a single word for. It later gave English the word "myriad", meaning too many to count. Myria is the friendly owl who loves numbers of every size, from counting apples in the kitchen to working out discounts in the shop.
 
-Only Poka and Ollie are named on screen so far. The mascots of the other apps are described here for when they are named in the apps.
+Only Poka and Myria are named on screen so far. The mascots of the other apps are described here for when they are named in the apps.
