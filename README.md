@@ -10,12 +10,12 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 | [`hijaiyah/`](hijaiyah) | Learn the 28 hijaiyah letters, their harakat and sounds. Moved here from `megawan.github.io/games/hijaiyah/`. |
 | [`aksara/`](aksara) | Aksara: early reading in Indonesian, from letters and syllables to words, sentences and short stories with questions, in four levels, with stars and stickers. |
 | [`lexica/`](lexica) | Lexica: English vocabulary for Indonesian speakers, in 24 themes (including body parts, organs and street furniture), with sound in both languages and the same stars, stickers and streaks. |
-| [`logica/`](logica) | Logica: logical and computational thinking games in English, with Gbot the robot. Program a robot (with loops), find patterns, work out a machine's rule, read balances, fix a buggy program, pick items with AND, OR and NOT, crack codes in binary and letters, solve mini sudokus, work out who has which pet from clues, sort a train, and build robot maps to share. With animations, stars and stickers. |
+| [`logica/`](logica) | Logica: logical and computational thinking games in English, with Poka the robot. Program a robot (with loops), find patterns, work out a machine's rule, read balances, fix a buggy program, pick items with AND, OR and NOT, crack codes in binary and letters, solve mini sudokus, work out who has which pet from clues, sort a train, and build robot maps to share. With animations, stars and stickers. |
 | [`numeria/`](numeria) | Numeria: everyday math in English with Ollie the owl, in nine places around town ordered from the easiest to the hardest: counting in the kitchen, a hands-on Number Lab (ten-frames, number lines, tens and ones blocks), adding at the market, money, the clock, sharing pizza and fractions, measuring and baking, sale prices and percent, and planning a trip. Six levels each, from counting five apples to discounts, speed and timetables. |
 
 `phonics/` (Phonics Fun) is paused: it is no longer linked from the home page or the parent page, and its address shows a closed notice. The full app is in git history (before the commit that closed it) and saved progress is kept.
 
-Each app keeps its own README with details.
+Each app keeps its own README with details. The mascots and where their names come from are in [`MASCOTS.md`](MASCOTS.md).
 
 The look comes from `shared/arc.css` (an Arc-style theme: soft accent-tinted gradient, frosted surfaces, hairline borders, pill buttons). Every page loads it after its own styles, and each app's service worker caches it, so add it to the `CORE` list of a new app.
 

@@ -50,7 +50,7 @@ for (const [diff, level, name, sol] of LEVELS) {
   });
 }
 
-test('the gem counter counts while Gbot runs', async ({ page }) => {
+test('the gem counter counts while Poka runs', async ({ page }) => {
   await openRobot(page, 'medium', 16);
   await expect(page.locator('#gemCount')).toHaveText('💎 0 / 2');
   await build(page, '{2}(R)');
