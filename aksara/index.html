@@ -72,7 +72,7 @@
   .card.hero-card b { font-size: 1.5rem; }
   .card.hero-card span:last-child { text-align: left; }
 
-  /* Mascot: Renjana the owl */
+  /* Mascot: Kiki the owl */
   .mascot { display: block; }
   .mascot .m { display: none; fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
   .mascot[data-mood="happy"] .m.smile, .mascot[data-mood="cheer"] .m.smile, .mascot[data-mood="oops"] .m.oops { display: block; }
@@ -241,11 +241,11 @@
   <!-- Home -->
   <section id="home">
     <div class="who" id="who"></div>
-    <div class="hero" data-mascot="aksara">
+    <div class="hero">
       <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg>
       <div>
         <h1>Aksara</h1>
-        <p class="sub">Learn to read Indonesian with Renjana</p>
+        <p class="sub">Learn to read Indonesian with Kiki</p>
       </div>
     </div>
     <div class="pills">
@@ -353,7 +353,7 @@
       <button type="button" class="btn ghost" data-go="home">← Back</button>
       <h2>Picture words</h2><span class="spacer"></span>
     </div>
-    <p class="note">Tap a card: Renjana reads it syllable by syllable, then the whole word.</p>
+    <p class="note">Tap a card: Kiki reads it syllable by syllable, then the whole word.</p>
     <div class="wgrid" id="wGrid"></div>
   </section>
 
@@ -608,7 +608,6 @@
 </script>
 
 <script src="../shared/profile.js"></script>
-<script src="../shared/mascot.js"></script>
 <script src="../shared/trace.js"></script>
 <script>
 (() => {
@@ -1149,7 +1148,7 @@
     serial++; wrongThis = false; wrongTries = 0; locked = false;
     const ask = $('ask'), ans = $('answers');
     ask.innerHTML = ''; ans.innerHTML = '';
-    // Renjana's instructions stay in Indonesian: they are part of the reading lesson and have recordings.
+    // Kiki's instructions stay in Indonesian: they are part of the reading lesson and have recordings.
     if (!first) mood('happy', q.type === 'build' ? 'Susun suku katanya' : q.type === 'readPic' || q.type === 'sentence' ? 'Baca, lalu pilih gambarnya' :
       q.type === 'fill' ? 'Lengkapi kalimatnya' : q.type === 'order' ? 'Susun kalimatnya' : q.type === 'story' ? 'Dengarkan, lalu pilih jawabannya' : 'Dengarkan, lalu pilih');
     const lead = (sound) => { if (first) speakSeq([intro, sound], null, 250); else speak(sound); };

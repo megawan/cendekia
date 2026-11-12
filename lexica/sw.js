@@ -1,7 +1,7 @@
 // Offline support for Lexica. Bump CACHE when the precached files change.
-const CACHE = 'lexica-v12';
+const CACHE = 'lexica-v13';
 const FONTS = 'lexica-fonts-v1';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js'];
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css'];
 
 // The audio list comes from audio/index.json, which tools/make-audio.mjs writes.
 self.addEventListener('install', (event) => {
