@@ -81,8 +81,6 @@ body::before { display: none; }
   box-shadow: 0 -8px 28px -10px rgba(28, 32, 56, .35);
 }
 .mascot-sheet::backdrop { background: rgba(28, 32, 56, .45); }
-.mascot-sheet-pic { display: flex; justify-content: center; margin-bottom: 6px; }
-.mascot-sheet-pic > * { width: 96px; height: 96px; font-size: 80px; line-height: 96px; }
 .mascot-sheet h2 { margin: 0 0 4px; font-size: 1.5rem; }
 .mascot-sheet-from { margin: 0 0 12px; font-size: .95rem; font-weight: 700; color: var(--accent, #6d5ef5); }
 .mascot-sheet-story { margin: 0 0 20px; font-size: 1.08rem; line-height: 1.6; text-align: left; }

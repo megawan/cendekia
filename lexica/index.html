@@ -72,7 +72,7 @@
   .card.hero-card b { font-size: 1.5rem; }
   .card.hero-card span:last-child { text-align: left; }
 
-  /* Mascot: Pochi the owl */
+  /* Mascot: Pochi the parrot */
   .mascot { display: block; }
   .mascot .m { display: none; fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
   .mascot[data-mood="happy"] .m.smile, .mascot[data-mood="cheer"] .m.smile, .mascot[data-mood="oops"] .m.oops { display: block; }
@@ -214,14 +214,16 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <path id="starPath" d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/>
-    <symbol id="owl" viewBox="0 0 100 100">
-      <path fill="#b7793f" d="M22 30 L26 10 L40 22 Q50 18 60 22 L74 10 L78 30 Q90 48 86 68 Q80 94 50 94 Q20 94 14 68 Q10 48 22 30z"/>
-      <path fill="#95602f" d="M16 52 Q6 70 20 84 Q22 66 26 56z M84 52 Q94 70 80 84 Q78 66 74 56z"/>
-      <ellipse fill="#f6dcb4" cx="50" cy="70" rx="22" ry="20"/>
-      <circle fill="#fff" cx="37" cy="42" r="13"/><circle fill="#fff" cx="63" cy="42" r="13"/>
-      <circle fill="#1f2a44" cx="39" cy="43" r="6"/><circle fill="#1f2a44" cx="61" cy="43" r="6"/>
-      <circle cx="41" cy="40" r="2" fill="#fff"/><circle cx="63" cy="40" r="2" fill="#fff"/>
-      <path fill="#f2a33a" d="M45 54 L55 54 L50 62z"/>
+    <symbol id="parrot" viewBox="0 0 100 100">
+      <path fill="#e0558a" d="M42 26 Q34 8 44 4 Q47 14 50 22 Q55 6 64 8 Q63 18 58 28z"/>
+      <path fill="#1f9d6b" d="M50 20 Q82 20 88 54 Q90 90 50 94 Q10 90 12 54 Q18 20 50 20z"/>
+      <path fill="#167a53" d="M14 52 Q4 70 18 86 Q22 68 26 58z M86 52 Q96 70 82 86 Q78 68 74 58z"/>
+      <ellipse fill="#c8f0d8" cx="50" cy="76" rx="22" ry="17"/>
+      <circle fill="#fff" cx="36" cy="42" r="12"/><circle fill="#fff" cx="64" cy="42" r="12"/>
+      <circle fill="#1f2a44" cx="38" cy="43" r="6"/><circle fill="#1f2a44" cx="62" cy="43" r="6"/>
+      <circle cx="40" cy="40" r="2" fill="#fff"/><circle cx="64" cy="40" r="2" fill="#fff"/>
+      <circle fill="#e0558a" opacity=".35" cx="24" cy="58" r="6"/><circle fill="#e0558a" opacity=".35" cx="76" cy="58" r="6"/>
+      <path fill="#f2a33a" d="M43 52 Q50 46 57 52 Q56 62 50 63 Q44 62 43 52z"/>
     </symbol>
   </defs>
 </svg>
@@ -230,7 +232,7 @@
   <section id="home">
     <div class="who" id="who"></div>
     <div class="hero" data-mascot="lexica">
-      <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg>
+      <svg class="mascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#parrot"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg>
       <div>
         <h1>Lexica</h1>
         <p class="sub">Indonesian ↔ English with Pochi</p>
@@ -291,7 +293,7 @@
       <div class="combo" id="combo" aria-live="polite"></div>
     </div>
     <div class="coach">
-      <svg class="mascot" id="coachMascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/><path class="m oops" d="M43 70 Q50 64 57 70"/></svg>
+      <svg class="mascot" id="coachMascot" data-mood="happy" viewBox="0 0 100 100" aria-hidden="true"><use href="#parrot"/><path class="m smile" d="M42 66 Q50 74 58 66"/><path class="m oops" d="M43 70 Q50 64 57 70"/></svg>
       <div class="bubble" id="say" aria-live="polite"></div>
     </div>
     <div class="stage">
@@ -303,7 +305,7 @@
   <!-- Result -->
   <section id="result" hidden>
     <div class="stack">
-      <div class="hero"><svg class="mascot" data-mood="cheer" viewBox="0 0 100 100" aria-hidden="true"><use href="#owl"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg></div>
+      <div class="hero"><svg class="mascot" data-mood="cheer" viewBox="0 0 100 100" aria-hidden="true"><use href="#parrot"/><path class="m smile" d="M42 66 Q50 74 58 66"/></svg></div>
       <h2 id="rTitle">Great!</h2>
       <div class="stars" id="rStars"></div>
       <p class="summary" id="rText"></p>
