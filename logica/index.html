@@ -378,6 +378,7 @@
     transition: transform .2s; }
   .wagon::before, .wagon::after { content: ""; position: absolute; bottom: -9px; width: 14px; height: 14px; border-radius: 50%; background: #334155; border: 3px solid #94a3b8; }
   .wagon::before { left: 12%; } .wagon::after { right: 12%; }
+  .trainlist { display: grid; gap: 8px; width: min(100%, 420px); margin: 6px auto; text-align: left; }
   .wagon.sel { background: var(--c-blue); transform: translateY(-8px); }
   .wagon.swap { animation: pop .3s; }
   .wagon.hint { animation: blink .8s ease-in-out infinite; }
@@ -2283,10 +2284,16 @@
   let Q = null;
   function startQuiz(w, i) {
     Q = { t0: Date.now(), w, i, n: 0, total: w.total - (S.diff === 'easy' ? 1 : 0), missedQ: 0, combo: 0, missed: false, tries: 0 };
-    $('prog').innerHTML = '<i></i>'.repeat(Q.total);
+    paintProg();
     $('combo').textContent = '';
     show('quiz');
     nextQ();
+  }
+  // Progress through the questions: the Arc stepper, or plain pips if the bundle did not load.
+  function paintProg() {
+    if (window.LogicaUI) { window.LogicaUI.progress($('prog'), Q.total, Q.n); return; }
+    $('prog').innerHTML = '<i></i>'.repeat(Q.total);
+    [...$('prog').children].forEach((pip, k) => pip.classList.toggle('done', k < Q.n));
   }
   $('qBack').addEventListener('click', () => show('world'));
   function qSay(text, m) { $('qSay').textContent = text; if (m) mood($('qCoach'), m); }
@@ -2306,13 +2313,11 @@
     const L = logOf(Q.w.id, Q.i);
     L.q++; if (!Q.missed) L.ok++;
     solvedOne(); save();
-    const pips = $('prog').children;
-    pips[Q.n].classList.add('done');
     if (!Q.missed) { Q.combo++; } else { Q.combo = 0; Q.missedQ++; }
     $('combo').textContent = Q.combo >= 2 ? '×' + Q.combo + ' 🔥' : '';
     if (Q.combo >= 3) confetti(14);
     sfx.good(); qSay(pick(CHEERS), 'cheer');
-    Q.n++;
+    Q.n++; paintProg();
     const my = runToken;
     setTimeout(() => { if (my === runToken) nextQ(); }, delay || 1300);
   }
@@ -3091,42 +3096,75 @@
     do shuffle(vals); while (inversions(vals, before) < Math.min(2, n - 1));
     const par = inversions(vals, before);
     let swaps = 0, sel = -1;
-    qSay(kind === 'down' ? 'Put the wagons in order, biggest first. Tap two wagons side by side to swap them.'
-      : kind === 'abc' ? 'Put the wagons in ABC order. Tap two wagons side by side to swap them.'
-        : 'Put the wagons in order, smallest first. Tap two wagons side by side to swap them.');
-    $('ask').innerHTML = '<div class="train" id="train" style="--n:' + (n + 1) + '"></div><div class="rails" aria-hidden="true"></div>'
+    const how = window.LogicaUI ? 'Drag a wagon to move it.' : 'Tap two wagons side by side to swap them.';
+    qSay(kind === 'down' ? 'Put the wagons in order, biggest first. ' + how
+      : kind === 'abc' ? 'Put the wagons in ABC order. ' + how
+        : 'Put the wagons in order, smallest first. ' + how);
+    // With the Arc bundle the wagons are a list to drag (or move with the arrow keys); without it, tap two wagons.
+    const list = !!window.LogicaUI;
+    $('ask').innerHTML = (list ? '<div class="trainlist" id="train"></div>' : '<div class="train" id="train" style="--n:' + (n + 1) + '"></div><div class="rails" aria-hidden="true"></div>')
       + '<p class="swaps" id="swaps" aria-live="polite"></p>';
     const train = $('train');
+    let hinted = [];
     function paint(swapped) {
-      train.innerHTML = '<span class="engine" aria-hidden="true">🚂</span>';
-      vals.forEach((v, i) => {
-        const b = document.createElement('button');
-        b.type = 'button'; b.className = 'wagon' + (i === sel ? ' sel' : '') + (swapped && swapped.includes(i) ? ' swap' : '');
-        b.textContent = v; b.setAttribute('aria-label', 'Wagon ' + (i + 1) + ': ' + v + (i === sel ? ', picked' : ''));
-        b.addEventListener('click', () => tap(i));
-        train.appendChild(b);
-      });
+      if (list) {
+        window.LogicaUI.reorder(train, { items: vals.map(String), hinted, label: 'Wagons, in train order', onReorder: reorder });
+      } else {
+        train.innerHTML = '<span class="engine" aria-hidden="true">🚂</span>';
+        vals.forEach((v, i) => {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'wagon' + (i === sel ? ' sel' : '') + (swapped && swapped.includes(i) ? ' swap' : '') + (hinted.includes(String(v)) ? ' hint' : '');
+          b.textContent = v; b.setAttribute('aria-label', 'Wagon ' + (i + 1) + ': ' + v + (i === sel ? ', picked' : ''));
+          b.addEventListener('click', () => tap(i));
+          train.appendChild(b);
+        });
+      }
       $('swaps').textContent = 'Swaps: ' + swaps + ' · Fewest: ' + par;
     }
-    function tap(i) {
-      if (train.classList.contains('done')) return;
-      if (sel < 0 || sel === i || Math.abs(sel - i) > 1) { sel = sel === i ? -1 : i; sfx.tap(); paint(); return; }
-      const a = Math.min(sel, i), b = a + 1, fixes = before(vals[b], vals[a]);
-      [vals[a], vals[b]] = [vals[b], vals[a]];
-      swaps++; sel = -1; sfx.drop();
-      paint([a, b]);
+    // Swaps the wagons at a and a + 1; true if that moved the train closer to the order.
+    function swapAt(a) {
+      const fixes = before(vals[a + 1], vals[a]);
+      [vals[a], vals[a + 1]] = [vals[a + 1], vals[a]];
+      swaps++;
+      return fixes;
+    }
+    // After one or more swaps. A wasted swap is a miss; after two, a pair in the wrong order glows.
+    function settle(wasted, swapped) {
+      sel = -1; hinted = []; sfx.drop();
+      paint(swapped);
       if (!inversions(vals, before)) {
         train.classList.add('done');
         [...train.querySelectorAll('.wagon')].forEach((w, k) => setTimeout(() => w.classList.add('done'), k * 70));
         sfx.whir(); solved(1600);
         return;
       }
-      // A wasted swap. After two, a pair in the wrong order glows.
-      if (!fixes) wrong(() => {
+      if (wasted) wrong(() => {
         const k = vals.findIndex((v, j) => j + 1 < vals.length && before(vals[j + 1], v));
-        const w = train.querySelectorAll('.wagon');
-        w[k].classList.add('hint'); w[k + 1].classList.add('hint');
+        hinted = [String(vals[k]), String(vals[k + 1])];
+        paint();
       });
+    }
+    function tap(i) {
+      if (train.classList.contains('done')) return;
+      if (sel < 0 || sel === i || Math.abs(sel - i) > 1) { sel = sel === i ? -1 : i; sfx.tap(); paint(); return; }
+      const a = Math.min(sel, i);
+      settle(!swapAt(a), [a, a + 1]);
+    }
+    // The list reports the whole new order. One wagon moved: count it as the side-by-side swaps it takes to get there,
+    // so the fewest swaps and the wasted swaps mean the same as when tapping.
+    function reorder(order) {
+      if (train.classList.contains('done')) return;
+      const cur = vals.map(String);
+      const i = cur.findIndex((v, k) => v !== order[k]);
+      if (i < 0) return;
+      const from = cur.indexOf(order[i]);
+      const up = cur.slice(); up.splice(i, 0, up.splice(from, 1)[0]);
+      let steps;
+      if (up.every((v, k) => v === order[k])) steps = Array.from({ length: from - i }, (_, k) => from - 1 - k);
+      else { const to = order.indexOf(cur[i]); steps = Array.from({ length: to - i }, (_, k) => i + k); }
+      let wasted = false;
+      steps.forEach((a) => { if (!swapAt(a)) wasted = true; });
+      settle(wasted);
     }
     paint();
   }

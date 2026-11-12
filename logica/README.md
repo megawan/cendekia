@@ -62,13 +62,13 @@ Every finished level also goes to the shared log (`Cendekia.round`), and the fir
 
 ## Arc UI components
 
-The star counts roll like an odometer, a toast announces a new sticker or a used hint, and ❓ How opens as a draggable bottom sheet, using the real [Arc UI](https://uiarc.dev) `animated-counter`, `toast-stack` and `bottom-sheet` components (React 19, copied into `ui/src/components/arc/` as Arc intends). Logica itself stays a static page: only the small bundle in `ui-dist/` is built, from `ui/`, and committed.
+The star counts roll like an odometer, a toast announces a new sticker or a used hint, ❓ How opens as a draggable bottom sheet, quiz progress is a stepper, and in Sort the Train the wagons are a list to drag (or move with the arrow keys on a wagon's handle), using the real [Arc UI](https://uiarc.dev) `animated-counter`, `toast-stack`, `bottom-sheet`, `stepper` and `reorderable-list` components. A wagon moved past others counts as the side-by-side swaps it takes, so the fewest swaps and wasted swaps mean the same as when tapping (React 19, copied into `ui/src/components/arc/` as Arc intends). Logica itself stays a static page: only the small bundle in `ui-dist/` is built, from `ui/`, and committed.
 
 ```bash
 cd logica/ui && npm install && npm run build
 ```
 
-`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })` and `window.LogicaUI.sheet({ title, html, closeText })`; `index.html` falls back to plain text and the old dialog if the bundle is missing. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
+`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })` and `window.LogicaUI.sheet({ title, html, closeText })`, `window.LogicaUI.progress(el, total, done)` and `window.LogicaUI.reorder(el, { items, hinted, onReorder })`; `index.html` falls back to plain text, the old dialog, pips and tap-to-swap wagons if the bundle is missing. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
 
 ## Animations
 

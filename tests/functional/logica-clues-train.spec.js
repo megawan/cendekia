@@ -55,7 +55,7 @@ test.describe('Who Is It?', () => {
         await page.locator('.pets button').nth(j).click();
       }
       await page.getByRole('button', { name: '✓ Check' }).click();
-      await expect(page.locator('#prog i.done')).toHaveCount(1);
+      await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(1);
     });
   }
 
@@ -73,21 +73,24 @@ test.describe('Who Is It?', () => {
     }
     await page.getByRole('button', { name: '✓ Check' }).click();
     await expect(page.locator('#people .person.no')).toHaveCount(2);
-    await expect(page.locator('#prog i.done')).toHaveCount(0);
+    await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(0);
   });
 });
 
 test.describe('Sort the Train', () => {
+  // The wagons are an Arc reorderable list: the arrow keys on a wagon's handle move it one place, which is one swap.
+  const wagons = (page) => page.locator('#train strong');
+  const swap = (page, k) => page.locator('#train [aria-label^="Reorder"]').nth(k).press('ArrowDown');
+
   // Swaps the first pair that is the wrong way round until the train is in order, and returns the swap count text.
   async function sortTrain(page) {
     const say = await page.locator('#qSay').textContent();
     const before = /biggest/.test(say) ? (x, y) => x > y : (x, y) => x < y;
     for (let guard = 0; guard < 60; guard++) {
       if (await page.locator('#train.done').count()) break;
-      const vals = (await page.locator('#train .wagon').allTextContents()).map((t) => (isNaN(+t) ? t : +t));
+      const vals = (await wagons(page).allTextContents()).map((t) => (isNaN(+t) ? t : +t));
       const k = vals.findIndex((v, j) => j + 1 < vals.length && before(vals[j + 1], v));
-      await page.locator('#train .wagon').nth(k).click();
-      await page.locator('#train .wagon').nth(k + 1).click();
+      await swap(page, k);
     }
     return page.locator('#swaps').textContent();
   }
@@ -99,7 +102,7 @@ test.describe('Sort the Train', () => {
       const text = await sortTrain(page);
       const [swaps, fewest] = text.match(/\d+/g).map(Number);
       expect(swaps).toBe(fewest);
-      await expect(page.locator('#prog i.done')).toHaveCount(1);
+      await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(1);
     });
   }
 
@@ -109,22 +112,20 @@ test.describe('Sort the Train', () => {
     const say = await page.locator('#qSay').textContent();
     const before = /biggest/.test(say) ? (x, y) => x > y : (x, y) => x < y;
     const wasted = async () => {
-      let vals = (await page.locator('#train .wagon').allTextContents()).map(Number);
+      let vals = (await wagons(page).allTextContents()).map(Number);
       let k = vals.findIndex((v, j) => j + 1 < vals.length && before(v, vals[j + 1]));
       if (k < 0) {
         // The train is fully the wrong way round: one good swap first makes a pair that is in order.
-        await page.locator('#train .wagon').nth(0).click();
-        await page.locator('#train .wagon').nth(1).click();
-        vals = (await page.locator('#train .wagon').allTextContents()).map(Number);
+        await swap(page, 0);
+        vals = (await wagons(page).allTextContents()).map(Number);
         k = vals.findIndex((v, j) => j + 1 < vals.length && before(v, vals[j + 1]));
       }
-      await page.locator('#train .wagon').nth(k).click();
-      await page.locator('#train .wagon').nth(k + 1).click();
+      await swap(page, k);
     };
     await wasted();
     await expect(page.locator('#qSay')).toHaveText('Try again.');
     await wasted();
-    await expect(page.locator('#train .wagon.hint')).toHaveCount(2);
+    await expect(page.locator('#train [data-hinted]')).toHaveCount(2);
   });
 });
 

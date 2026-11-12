@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { createRoot } from "react-dom/client";
+import { ReorderableList } from "./components/arc/reorderable-list/reorderable-list";
+import { Stepper } from "./components/arc/stepper/stepper";
 import { BottomSheet, BottomSheetClose } from "./components/arc/bottom-sheet/bottom-sheet";
 import { AnimatedCounter } from "./components/arc/animated-counter/animated-counter";
 import { ToastStack, ToastStackProvider, useToastStack, type ToastOptions } from "./components/arc/toast-stack/toast-stack";
@@ -47,7 +49,18 @@ createRoot(host).render(
   </ToastStackProvider>,
 );
 
-const counters = new WeakMap<HTMLElement, ReturnType<typeof createRoot>>();
+// One React root per element Logica hands over; its content is replaced on every call.
+const roots = new WeakMap<HTMLElement, ReturnType<typeof createRoot>>();
+function rootFor(el: HTMLElement) {
+  let root = roots.get(el);
+  if (!root) {
+    el.textContent = "";
+    el.classList.add("arc-ui");
+    root = createRoot(el);
+    roots.set(el, root);
+  }
+  return root;
+}
 
 window.LogicaUI = {
   toast(options) {
@@ -56,14 +69,16 @@ window.LogicaUI = {
   },
   sheet: setSheet,
   counter(el, value, suffix = "") {
-    let root = counters.get(el);
-    if (!root) {
-      el.textContent = "";
-      el.classList.add("arc-ui");
-      root = createRoot(el);
-      counters.set(el, root);
-    }
-    root.render(<AnimatedCounter value={value} suffix={suffix} />);
+    rootFor(el).render(<AnimatedCounter value={value} suffix={suffix} />);
+  },
+  progress(el, total, done) {
+    const steps = Array.from({ length: total }, (_, k) => ({ id: `q${k + 1}`, label: `Question ${k + 1}` }));
+    rootFor(el).render(<Stepper steps={steps} current={done} compact label="Questions" completeLabel="All done!" />);
+  },
+  reorder(el, { items, hinted = [], label, onReorder }) {
+    rootFor(el).render(
+      <ReorderableList label={label} hinted={hinted} items={items.map((id) => ({ id, title: id }))} onReorder={(next) => onReorder(next.map((i) => i.id))} />,
+    );
   },
 };
 
@@ -73,6 +88,8 @@ declare global {
       toast(options: ToastOptions): void;
       counter(el: HTMLElement, value: number, suffix?: string): void;
       sheet(options: SheetOptions | null): void;
+      progress(el: HTMLElement, total: number, done: number): void;
+      reorder(el: HTMLElement, options: { items: string[]; hinted?: string[]; label?: string; onReorder(order: string[]): void }): void;
     };
   }
 }
