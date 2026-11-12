@@ -12,7 +12,7 @@ Each app has a mascot with a name borrowed from a word in another language.
 
 ## Sada (Hijaiyah)
 
-Sada comes from the Arabic word *ṣadā* (صدى), meaning "echo". Just like an echo, Sada repeats every letter sound back to you, so you can listen, say it, and hear it again until it feels easy.
+Sada is a little lion. The name comes from the Arabic word *ṣadā* (صدى), meaning "echo". Just like an echo, Sada repeats every letter sound back to you, so you can listen, say it, and hear it again until it feels easy.
 
 ## Renjana (Aksara)
 
@@ -20,7 +20,7 @@ Renjana is an Indonesian word for a strong feeling of the heart: a deep passion,
 
 ## Poka (Logica)
 
-Poka is short for *poka-yoke* (ポカヨケ), a Japanese idea meaning "mistake-proofing": designing things so that a mistake is noticed and fixed before it causes trouble. Poka the robot does the same. It follows your program step by step, so you can see where a mistake hides, and then fix it.
+Poka is a little beaver in a hard hat, and the name is short for *poka-yoke* (ポカヨケ), a Japanese idea meaning "mistake-proofing": designing things so that a mistake is noticed and fixed before it causes trouble. Poka the beaver does the same, like a builder checking each step. It follows your program step by step, so you can see where a mistake hides, and then fix it.
 
 ## Pochi (Lexica)
 

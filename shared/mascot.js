@@ -6,7 +6,7 @@
     hijaiyah: {
       name: 'Sada',
       origin: 'Arabic for “echo”',
-      story: 'My name comes from the Arabic word ṣadā (⁨صدى⁩), which means “echo”. Like an echo, I repeat every letter sound back to you, so you can listen, say it and hear it again until it feels easy.'
+      story: 'I am a little lion, and my name comes from the Arabic word ṣadā (⁨صدى⁩), which means “echo”. Like an echo, I repeat every letter sound back to you, so you can listen, say it and hear it again until it feels easy.'
     },
     aksara: {
       name: 'Renjana',
@@ -16,7 +16,7 @@
     logica: {
       name: 'Poka',
       origin: 'from the Japanese “poka-yoke”',
-      story: 'I am short for poka-yoke (ポカヨケ), a Japanese idea meaning “mistake-proofing”: making mistakes easy to spot and fix. I follow your program step by step, so you can see where a mistake hides and then fix it.'
+      story: 'I am a little beaver, and my name is short for poka-yoke (ポカヨケ), a Japanese idea meaning “mistake-proofing”: making mistakes easy to spot and fix. I follow your program step by step, so you can see where a mistake hides and then fix it.'
     },
     lexica: {
       name: 'Pochi',

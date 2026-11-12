@@ -1,6 +1,6 @@
 # Logica
 
-Logical and computational thinking games for children, with Poka the robot. Everything is in English, and there is no voice: prompts are shown in Poka's speech bubble, with short sound effects.
+Logical and computational thinking games for children, with Poka the beaver. Everything is in English, and there is no voice: prompts are shown in Poka's speech bubble, with short sound effects.
 
 ## Children and difficulty
 
