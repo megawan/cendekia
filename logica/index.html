@@ -18,7 +18,7 @@
     --bg: #fff6ec; --ink: #1f2a44; --card: #ffffff; --line: #f0dcc4;
     --accent: #f2891f; --accent-d: #c96a0c; --warm: #f2a33a; --good: #1f9d6b; --bad: #d9534f;
     --c-green: #1f9d6b; --c-orange: #f2891f; --c-pink: #e0558a; --c-purple: #7a5af8; --c-blue: #2e90fa; --c-teal: #0e9aa7;
-    --c-indigo: #4c5fd5; --c-red: #e5484d; --c-sky: #0284c7; --c-lime: #4d9a1a;
+    --c-indigo: #4c5fd5; --c-red: #e5484d; --c-sky: #0284c7; --c-lime: #4d9a1a; --c-brown: #b45309;
     --d-U: #1f9d6b; --d-D: #7a5af8; --d-L: #e0558a; --d-R: #2e90fa; --loop: #f2891f;
     --screen: #1f2a44; --glow: #5ef2d6;
     --radius: 20px;
@@ -387,6 +387,28 @@
   .swaps { font-weight: 800; }
   .demo .train { max-width: 100px; gap: 2px; } .demo .train .engine { font-size: 1.2rem; }
   .demo .wagon { font-size: .8rem; border-radius: 5px; } .demo .wagon::before, .demo .wagon::after { width: 6px; height: 6px; bottom: -4px; border-width: 1px; }
+
+  /* Tower of Poka */
+  .hanoi { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 6px auto 4px; max-width: 460px; }
+  .peg { position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+    min-height: calc(var(--n) * 32px + 56px); padding: 26px 4px 8px; background: #fff; border: 3px solid var(--line); border-bottom-width: 6px;
+    border-radius: 16px; cursor: pointer; font: inherit; color: inherit; }
+  .peg::before { content: ""; position: absolute; left: 50%; top: 30px; bottom: 8px; width: 8px; margin-left: -4px; border-radius: 4px; background: #c9a27a; }
+  .peg.sel { border-color: var(--c-blue); background: #e3f0ff; }
+  .peg.hint { animation: blink .8s ease-in-out infinite; }
+  .peg.no { border-color: var(--bad); background: #fdeceb; animation: shake .3s; }
+  .peg .flag { position: absolute; top: 2px; right: 8px; font-size: 1.3rem; line-height: 1; }
+  .stack { position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .disk { display: block; width: calc(30% + 70% * var(--w)); height: 26px; margin: 3px 0; border-radius: 13px; background: var(--c); color: #fff;
+    font-weight: 800; font-size: .9rem; line-height: 26px; text-align: center; box-shadow: inset 0 -4px 0 rgba(0,0,0,.18); transition: transform .2s; }
+  .peg.sel .stack .disk:first-child { transform: translateY(-14px); }
+  .hanoi.done .disk { background: var(--good); }
+  .hUndo { margin: 2px auto 0; display: block; }
+  .goalpic { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; margin-bottom: 6px; }
+  .mtower { display: inline-grid; grid-template-columns: repeat(3, 54px); gap: 8px; vertical-align: middle; }
+  .mpeg { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-height: calc(var(--n, 3) * 14px + 6px);
+    border-bottom: 4px solid #c9a27a; }
+  .mpeg .disk { height: 12px; margin: 1px 0; line-height: 12px; font-size: 0; border-radius: 4px; box-shadow: none; }
 
   /* Map Maker */
   .mkSizes, .mkTools, .mkActions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
@@ -1191,7 +1213,10 @@
       levels: ['Two friends', 'Three friends', 'Not this one', 'Clever pets', 'This or that', 'Big group', 'Detective'] },
     { id: 'train', name: 'Sort the Train', skill: 'Sorting', icon: '🚂', c: 'var(--c-lime)', kind: 'quiz', total: 4,
       desc: 'Swap wagons that stand side by side until the whole train is in order, with as few swaps as you can.',
-      levels: ['Three wagons', 'Four wagons', 'Five wagons', 'Biggest first', 'Letters', 'Long train', 'Mixed up'] }
+      levels: ['Three wagons', 'Four wagons', 'Five wagons', 'Biggest first', 'Letters', 'Long train', 'Mixed up'] },
+    { id: 'hanoi', name: 'Tower of Poka', skill: 'Planning ahead', icon: '🗼', c: 'var(--c-brown)', kind: 'quiz', total: 3,
+      desc: 'Move the tower of disks to another peg, one disk at a time. A big disk never sits on a small one.',
+      levels: ['Small tower', 'Taller tower', 'Middle peg', 'Messy start', 'Rebuild', 'Big tower', 'Mixed up'] }
   ];
   // Robot and fixing levels are different for each difficulty; quiz levels are the same, with harder questions.
   const levelsOf = (w) => (w.kind === 'robot' ? C[w.id][S.diff].map((l) => l.name) : w.levels);
@@ -1419,7 +1444,8 @@
     code: 'How computers keep pictures and numbers as 0 and 1, write data in a shorter way, and hide a message with a code.',
     sudoku: 'Ruling out what cannot fit, one step at a time, until only one answer is left.',
     clues: 'Combining several clues, including "not", "or" and facts about things, to find the only answer that fits them all.',
-    train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.'
+    train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.',
+    hanoi: 'Planning several moves ahead, and solving a big job by solving smaller copies of it first: to move the biggest disk, the smaller tower has to get out of the way.'
   };
   let viewed = null, gateAns = 0;
   $('toParents').addEventListener('click', () => {
@@ -1599,6 +1625,11 @@
       ['<div class="demo"><div class="train" style="--n:4"><span class="engine">🚂</span><span class="wagon">3</span><span class="wagon">1</span><span class="wagon">2</span></div></div>', 'The wagons are mixed up.'],
       ['<div class="demo"><div class="train" style="--n:3"><span class="wagon sel">3</span><span class="wagon">1</span></div><b>⇄</b></div>', 'Tap two wagons side by side to swap them.'],
       ['<div class="demo"><div class="train" style="--n:4"><span class="engine">🚂</span><span class="wagon done">1</span><span class="wagon done">2</span><span class="wagon done">3</span></div></div>', 'Every swap should fix the order. Use as few swaps as you can.']
+    ],
+    hanoi: [
+      ['<div class="demo">' + miniTower([[0, 1], [], []], 2) + '<b>→</b>' + miniTower([[], [], [0, 1]], 2) + '</div>', 'Move the whole tower to the 🏁 peg, one disk at a time.'],
+      ['<div class="demo">' + miniTower([[1], [0], []], 2) + '</div>', 'Tap a peg to lift its top disk, then tap the peg to put it on.'],
+      ['<div class="demo">' + miniTower([[], [0], [1]], 2) + '</div>', 'A big disk never sits on a small one. Use the middle peg to make room!']
     ]
   });
   function tutorial(w) {
@@ -3194,7 +3225,118 @@
     paint();
   }
 
-  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain };
+  // ---- Tower of Poka ----
+  // A state has one number per disk, smallest first: the peg (0, 1 or 2) the disk stands on. Every such list is a legal
+  // position, because the order of a stack follows the sizes. A breadth-first search outward from the goal gives the
+  // fewest moves from every position, which is the "fewest" shown, the check for a wrong turn and the hint.
+  const HANOI = { easy: [2, 3, 3, 3, 3, 4, 4], medium: [3, 3, 4, 4, 4, 5, 5], hard: [3, 4, 4, 5, 5, 5, 6] };
+  const HANOI_CAP = { easy: 15, medium: 31, hard: 40 }; // the most moves a random puzzle may need
+  const HANOI_KIND = ['tower', 'tower', 'middle', 'messy', 'rebuild', 'tower', 'mixed'];
+  const HANOI_COLORS = ['var(--c-red)', 'var(--c-orange)', '#ca8a04', 'var(--c-green)', 'var(--c-blue)', 'var(--c-purple)'];
+  const PEG_NAMES = ['left', 'middle', 'right'];
+  const diskHtml = (d, n) => '<i class="disk" style="--w:' + (d + 1) / n + ';--c:' + HANOI_COLORS[d] + '">' + (d + 1) + '</i>';
+  // Each stack lists its disks from the top down. Used for the goal picture and the guide.
+  const miniTower = (stacks, n) => '<span class="mtower" style="--n:' + n + '">'
+    + stacks.map((st) => '<span class="mpeg">' + st.map((d) => diskHtml(d, n)).join('') + '</span>').join('') + '</span>';
+  const hanoiStacks = (s) => [0, 1, 2].map((p) => s.flatMap((q, d) => (q === p ? [d] : [])));
+  function hanoiMoves(s) {
+    const out = [];
+    s.forEach((from, d) => {
+      const smaller = s.slice(0, d);
+      if (smaller.includes(from)) return; // something smaller sits on it
+      for (let to = 0; to < 3; to++) if (to !== from && !smaller.includes(to)) out.push({ from, to, next: s.map((q, k) => (k === d ? to : q)) });
+    });
+    return out;
+  }
+  function hanoiDist(goal) {
+    const dist = new Map([[goal.join(''), 0]]), queue = [goal];
+    for (let h = 0; h < queue.length; h++) {
+      const d = dist.get(queue[h].join(''));
+      hanoiMoves(queue[h]).forEach((m) => { const key = m.next.join(''); if (!dist.has(key)) { dist.set(key, d + 1); queue.push(m.next); } });
+    }
+    return dist;
+  }
+  function genHanoi(lvl) {
+    const n = HANOI[S.diff][lvl], cap = HANOI_CAP[S.diff];
+    let kind = HANOI_KIND[lvl];
+    if (kind === 'mixed') kind = pick(['messy', 'rebuild']);
+    const all = (p) => Array(n).fill(p), spread = (s) => new Set(s).size > 1, random = () => Array.from({ length: n }, () => rnd(0, 2));
+    let start, goal, dist, par;
+    for (let tries = 0; ; tries++) {
+      if (tries === 300) kind = 'tower'; // cannot happen in practice; never loop forever
+      if (kind === 'tower') { start = all(0); goal = all(2); }
+      else if (kind === 'middle') { start = all(0); goal = all(1); }
+      else if (kind === 'messy') { start = random(); goal = all(rnd(0, 2)); }
+      else { start = random(); goal = random(); }
+      dist = hanoiDist(goal); par = dist.get(start.join(''));
+      if (kind === 'tower' || kind === 'middle' || (par >= 3 && par <= cap && spread(start) && (kind === 'messy' || spread(goal)))) break;
+    }
+    const standard = kind === 'tower' || kind === 'middle';
+    const flagged = !spread(goal), goalPeg = goal[0], showPar = S.diff !== 'hard';
+    let cur = start.slice(), moves = 0, sel = -1, flash = -1, hint = [], done = false;
+    const history = [];
+    qSay(flagged ? (standard ? 'Move the whole tower to the 🏁 peg. ' : 'Build the tower on the 🏁 peg. ') + 'Tap a peg, then tap where the top disk goes.'
+      : 'Make the picture, one disk at a time. Tap a peg, then tap where the top disk goes.');
+    $('ask').innerHTML = (flagged ? '' : '<div class="goalpic">Make this: ' + miniTower(hanoiStacks(goal), n) + '</div>')
+      + '<div class="hanoi" id="hanoi" style="--n:' + n + '"></div><p class="swaps" id="moves" aria-live="polite"></p>'
+      + '<button type="button" class="btn ghost hUndo" id="hUndo">↩ Undo</button>';
+    const box = $('hanoi');
+    function paint() {
+      const had = box.contains(document.activeElement) ? [...box.children].indexOf(document.activeElement) : -1;
+      box.innerHTML = '';
+      hanoiStacks(cur).forEach((st, p) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'peg' + (p === sel ? ' sel' : '') + (hint.includes(p) ? ' hint' : '') + (p === flash ? ' no' : '');
+        b.setAttribute('aria-label', 'Peg ' + (p + 1) + ' (' + PEG_NAMES[p] + ')' + (flagged && p === goalPeg ? ', goal' : '') + (p === sel ? ', picked' : '') + ': '
+          + (st.length ? 'disks ' + st.map((d) => d + 1).reverse().join(', ') + ' from bottom to top' : 'empty'));
+        b.innerHTML = (flagged && p === goalPeg ? '<span class="flag" aria-hidden="true">🏁</span>' : '')
+          + '<span class="stack" aria-hidden="true">' + st.map((d) => diskHtml(d, n)).join('') + '</span>';
+        b.addEventListener('click', () => tap(p));
+        box.appendChild(b);
+      });
+      if (had >= 0) box.children[had].focus();
+      $('moves').textContent = 'Moves: ' + moves + (showPar ? ' · Fewest: ' + par : '');
+      $('hUndo').disabled = done || !history.length;
+    }
+    function tap(p) {
+      if (done) return;
+      const top = (q) => cur.indexOf(q); // the smallest disk on a peg is its top; -1 for an empty peg
+      if (sel < 0) { if (top(p) >= 0) { sel = p; sfx.tap(); paint(); } return; }
+      if (sel === p) { sel = -1; sfx.tap(); paint(); return; }
+      const d = top(sel), t = top(p);
+      if (t >= 0 && t < d) { // a big disk on a small one: not a miss, just not allowed
+        sel = -1; flash = p; sfx.bad(); qSay('A big disk can\'t sit on a small one.', 'oops'); paint(); flash = -1;
+        return;
+      }
+      const was = dist.get(cur.join(''));
+      history.push(cur); cur = cur.map((q, k) => (k === d ? p : q)); moves++; sel = -1; hint = [];
+      sfx.drop();
+      const now = dist.get(cur.join(''));
+      if (!now) {
+        done = true; paint(); box.classList.add('done');
+        sfx.whir(); solved(standard ? 3200 : 1600);
+        if (standard) qSay('The fewest for ' + n + ' disks is ' + par + ' moves. One more disk doubles that and adds one!', 'cheer');
+        return;
+      }
+      if (now > was) { // a wrong turn: the goal is now further away
+        let hinted = false;
+        wrong(() => {
+          const best = hanoiMoves(cur).reduce((a, m) => (dist.get(m.next.join('')) < dist.get(a.next.join('')) ? m : a));
+          hint = [best.from, best.to]; hinted = true;
+        });
+        qSay(hinted ? 'That moved you further away. Look at the glowing pegs, or press ↩ Undo.' : 'That moved you further away. Press ↩ Undo, or keep thinking!', 'oops');
+      }
+      paint();
+    }
+    $('hUndo').addEventListener('click', () => {
+      if (done || !history.length) return;
+      cur = history.pop(); moves--; sel = -1; hint = []; sfx.tap(); paint();
+    });
+    paint();
+  }
+
+  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi };
 
   // =====================================================================
   // Result and stickers
