@@ -18,7 +18,7 @@
     --bg: #fff6ec; --ink: #1f2a44; --card: #ffffff; --line: #f0dcc4;
     --accent: #f2891f; --accent-d: #c96a0c; --warm: #f2a33a; --good: #1f9d6b; --bad: #d9534f;
     --c-green: #1f9d6b; --c-orange: #f2891f; --c-pink: #e0558a; --c-purple: #7a5af8; --c-blue: #2e90fa; --c-teal: #0e9aa7;
-    --c-indigo: #4c5fd5; --c-red: #e5484d; --c-sky: #0284c7; --c-lime: #4d9a1a; --c-brown: #b45309;
+    --c-indigo: #4c5fd5; --c-red: #e5484d; --c-sky: #0284c7; --c-lime: #4d9a1a; --c-brown: #b45309; --c-rose: #be185d;
     --d-U: #1f9d6b; --d-D: #7a5af8; --d-L: #e0558a; --d-R: #2e90fa; --loop: #f2891f;
     --screen: #1f2a44; --glow: #5ef2d6;
     --radius: 20px;
@@ -409,6 +409,34 @@
   .mpeg { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-height: calc(var(--n, 3) * 14px + 6px);
     border-bottom: 4px solid #c9a27a; }
   .mpeg .disk { height: 12px; margin: 1px 0; line-height: 12px; font-size: 0; border-radius: 4px; box-shadow: none; }
+
+  /* Poka's Backpack */
+  .pouches { display: flex; justify-content: center; gap: 10px; margin: 8px 0; }
+  .pouch { position: relative; flex: 1 1 0; max-width: 170px; min-width: 0; padding: 8px 6px 6px; background: #fff; border: 3px solid var(--line);
+    border-bottom-width: 6px; border-radius: 18px; text-align: center; font-weight: 700; }
+  .pouch .pe { display: block; font-size: 1.6rem; line-height: 1; }
+  .pouch b { display: block; font-size: .8rem; }
+  .pouch .cnt { display: block; font-size: 1.9rem; font-weight: 800; line-height: 1.2; }
+  .pouch .things { display: block; min-height: 1.3em; font-size: .9rem; line-height: 1.2; word-break: break-all; }
+  .pouch.ask { border-color: var(--c-rose); background: #fdf2f8; }
+  .pouch.ask::after { content: "?"; position: absolute; top: -10px; right: -6px; width: 24px; height: 24px; border-radius: 50%; background: var(--c-rose); color: #fff;
+    font-weight: 800; line-height: 24px; }
+  .recipe { list-style: none; margin: 0 auto 8px; padding: 0; display: grid; gap: 6px; width: min(100%, 360px); text-align: left; }
+  .pb { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 14px; color: #fff; font-weight: 700; font-size: 1.05rem;
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,.18); }
+  .pb .n { flex: none; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.3); text-align: center; line-height: 24px; font-size: .85rem; }
+  .pb.put { background: var(--c-blue); } .pb.add { background: var(--c-green); } .pb.take { background: var(--c-red); } .pb.copy { background: var(--c-purple); }
+  .trace { margin: 4px auto 0; border-collapse: collapse; background: #fff; font-weight: 700; }
+  .trace caption { font-size: .8rem; padding: 4px; }
+  .trace th, .trace td { padding: 4px 10px; border: 2px solid var(--line); }
+  .trace td.ask { background: #fdf2f8; }
+  .keypad { display: grid; justify-items: center; gap: 8px; }
+  .padAns { min-width: 90px; padding: 4px 16px; background: #fff; border: 3px solid var(--line); border-radius: 14px; font-size: 1.8rem; font-weight: 800; }
+  .padKeys { display: grid; grid-template-columns: repeat(3, 64px); gap: 8px; }
+  .key { min-height: 52px; font: inherit; font-size: 1.4rem; font-weight: 800; background: #fff; border: 3px solid var(--line); border-bottom-width: 5px;
+    border-radius: 14px; cursor: pointer; color: inherit; }
+  .keypad.no { animation: shake .3s; } .keypad.done .key { opacity: .5; }
+  .demo .recipe { gap: 3px; } .demo .pb { font-size: .75rem; padding: 3px 8px; } .demo .pouches { gap: 6px; } .demo .pouch .cnt { font-size: 1.2rem; }
 
   /* Map Maker */
   .mkSizes, .mkTools, .mkActions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
@@ -1216,7 +1244,10 @@
       levels: ['Three wagons', 'Four wagons', 'Five wagons', 'Biggest first', 'Letters', 'Long train', 'Mixed up'] },
     { id: 'hanoi', name: 'Tower of Poka', skill: 'Planning ahead', icon: '🗼', c: 'var(--c-brown)', kind: 'quiz', total: 3,
       desc: 'Move the tower of disks to another peg, one disk at a time. A big disk never sits on a small one.',
-      levels: ['Small tower', 'Taller tower', 'Middle peg', 'Messy start', 'Rebuild', 'Big tower', 'Mixed up'] }
+      levels: ['Small tower', 'Taller tower', 'Middle peg', 'Messy start', 'Rebuild', 'Big tower', 'Mixed up'] },
+    { id: 'pack', name: 'Poka\'s Backpack', skill: 'Variables', icon: '🎒', c: 'var(--c-rose)', kind: 'quiz', total: 3,
+      desc: 'Follow the steps and work out what is in each pocket of the backpack.',
+      levels: ['Put in, take out', 'Two pockets', 'Copy'] }
   ];
   // Robot and fixing levels are different for each difficulty; quiz levels are the same, with harder questions.
   const levelsOf = (w) => (w.kind === 'robot' ? C[w.id][S.diff].map((l) => l.name) : w.levels);
@@ -1445,7 +1476,8 @@
     sudoku: 'Ruling out what cannot fit, one step at a time, until only one answer is left.',
     clues: 'Combining several clues, including "not", "or" and facts about things, to find the only answer that fits them all.',
     train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.',
-    hanoi: 'Planning several moves ahead, and solving a big job by solving smaller copies of it first: to move the biggest disk, the smaller tower has to get out of the way.'
+    hanoi: 'Planning several moves ahead, and solving a big job by solving smaller copies of it first: to move the biggest disk, the smaller tower has to get out of the way.',
+    pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later.'
   };
   let viewed = null, gateAns = 0;
   $('toParents').addEventListener('click', () => {
@@ -1630,6 +1662,11 @@
       ['<div class="demo">' + miniTower([[0, 1], [], []], 2) + '<b>→</b>' + miniTower([[], [], [0, 1]], 2) + '</div>', 'Move the whole tower to the 🏁 peg, one disk at a time.'],
       ['<div class="demo">' + miniTower([[1], [0], []], 2) + '</div>', 'Tap a peg to lift its top disk, then tap the peg to put it on.'],
       ['<div class="demo">' + miniTower([[], [0], [1]], 2) + '</div>', 'A big disk never sits on a small one. Use the middle peg to make room!']
+    ],
+    pack: [
+      ['<div class="demo"><div class="pouches">' + pouchHtml(0, 3) + pouchHtml(1, 1) + '</div></div>', 'The backpack has pockets. Each pocket holds some things.'],
+      ['<div class="demo">' + progHtml([{ op: 'add', p: 0, v: 2 }, { op: 'take', p: 1, v: 1 }]) + '</div>', 'Follow the steps from the top, one at a time.'],
+      ['<div class="demo"><div class="pouches">' + pouchHtml(0, 5) + pouchHtml(1, 0) + '</div></div>', 'After every step the numbers change. What is in the pocket at the end?']
     ]
   });
   function tutorial(w) {
@@ -2385,7 +2422,8 @@
     if (Q.tries >= 2 && onHint) onHint();
   }
   // Option buttons. Each option is {html, ok, label}.
-  function options(list, onOk) {
+  // After two wrong answers, onHint runs; without it the right option glows.
+  function options(list, onOk, onHint) {
     const box = document.createElement('div');
     box.className = 'opts';
     box.style.setProperty('--n', list.length);
@@ -2401,7 +2439,7 @@
           onOk(b);
         } else {
           b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); b.disabled = true;
-          wrong(() => { const right = [...box.children][list.findIndex((x) => x.ok)]; right.classList.add('hint'); });
+          wrong(onHint || (() => { const right = [...box.children][list.findIndex((x) => x.ok)]; right.classList.add('hint'); }));
         }
       });
       box.appendChild(b);
@@ -3336,7 +3374,118 @@
     paint();
   }
 
-  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi };
+  // ---- Poka's Backpack ----
+  // The pockets are variables and a program is a list of steps that change them. packRun follows the steps and gives
+  // every state it passed through, or err when a step tried to take more than a pocket holds.
+  const PACK_ITEMS = [{ e: '🍎', n: 'Apples' }, { e: '🍪', n: 'Cookies' }, { e: '⭐', n: 'Stars' }];
+  // max: the most a pocket may hold; step: the biggest number in an add or take; len: steps for each level.
+  const PACK = { easy: { max: 9, step: 3, len: [2, 3, 3] }, medium: { max: 20, step: 9, len: [3, 4, 4] }, hard: { max: 99, step: 20, len: [4, 5, 5] } };
+  const PACK_ICON = { put: '📥', add: '➕', take: '➖', copy: '📋' };
+  function packRun(start, prog, lenient) {
+    let s = start.slice();
+    const trace = [s];
+    for (let i = 0; i < prog.length; i++) {
+      const o = prog[i];
+      s = s.slice();
+      if (o.op === 'put') s[o.p] = o.v;
+      else if (o.op === 'add') s[o.p] += o.v;
+      else if (o.op === 'take') { if (s[o.p] < o.v && !lenient) return { trace, err: true }; s[o.p] = Math.max(0, s[o.p] - o.v); }
+      else s[o.to] = s[o.p];
+      trace.push(s);
+    }
+    return { trace, final: s };
+  }
+  const packName = (p, long) => (long ? PACK_ITEMS[p].n : PACK_ITEMS[p].e);
+  const packText = (o, long) => (o.op === 'put' ? 'Put ' + o.v + ' in ' + packName(o.p, long)
+    : o.op === 'add' ? 'Add ' + o.v + ' to ' + packName(o.p, long)
+      : o.op === 'take' ? 'Take ' + o.v + ' from ' + packName(o.p, long)
+        : 'Copy ' + packName(o.p, long) + ' into ' + packName(o.to, long));
+  const progHtml = (prog) => '<ol class="recipe" aria-label="Steps">' + prog.map((o, k) => '<li class="pb ' + o.op + '" data-op="' + o.op + '" data-p="' + o.p
+    + '" data-v="' + (o.v === undefined ? '' : o.v) + '" data-to="' + (o.to === undefined ? '' : o.to) + '" aria-label="Step ' + (k + 1) + ': ' + packText(o, true) + '">'
+    + '<span class="n" aria-hidden="true">' + (k + 1) + '</span><span aria-hidden="true">' + PACK_ICON[o.op] + ' ' + packText(o) + '</span></li>').join('') + '</ol>';
+  const packThings = (p, v) => (v <= 10 ? PACK_ITEMS[p].e.repeat(v) : '');
+  const pouchHtml = (p, v, ask) => '<div class="pouch' + (ask ? ' ask' : '') + '" data-p="' + p + '"><span class="pe" aria-hidden="true">' + PACK_ITEMS[p].e + '</span>'
+    + '<b>' + PACK_ITEMS[p].n + '</b><span class="cnt">' + v + '</span><span class="things" aria-hidden="true">' + packThings(p, v) + '</span></div>';
+  // A number pad for the Hard answers: up to two digits, then ✓.
+  function packKeypad(ans, onOk, onHint) {
+    let val = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'keypad';
+    wrap.innerHTML = '<output class="padAns">?</output><div class="padKeys">' + [1, 2, 3, 4, 5, 6, 7, 8, 9, '⌫', 0, '✓'].map((k) => '<button type="button" class="key" data-k="' + k
+      + '" aria-label="' + (k === '⌫' ? 'Delete' : k === '✓' ? 'Check' : k) + '">' + k + '</button>').join('') + '</div>';
+    const out = wrap.querySelector('output');
+    wrap.addEventListener('click', (e) => {
+      const b = e.target.closest('.key');
+      if (!b || wrap.classList.contains('done')) return;
+      const k = b.dataset.k;
+      if (k === '✓') {
+        if (!val) return;
+        if (+val === ans) { wrap.classList.add('done'); onOk(); return; }
+        val = ''; out.textContent = '?';
+        wrap.classList.remove('no'); void wrap.offsetWidth; wrap.classList.add('no');
+        wrong(onHint);
+        return;
+      }
+      if (k === '⌫') val = val.slice(0, -1); else if (val.length < 2) val += k;
+      out.textContent = val || '?';
+      sfx.tap();
+    });
+    $('answers').appendChild(wrap);
+  }
+  // What will be in a pocket at the end? Every puzzle is made fresh: no step takes more than a pocket holds, no pocket
+  // overflows, and the pocket asked about really changes. The wrong answers are the slips a child makes: one step too
+  // many or too few, the other pocket, the start, or a copy going the wrong way.
+  function genPack(lvl) {
+    const cfg = PACK[S.diff], max = cfg.max, len = cfg.len[lvl], pockets = lvl === 0 ? 1 : 2;
+    let start, prog, run, ask;
+    for (let tries = 0; ; tries++) {
+      if (tries === 500) { start = [1]; prog = [{ op: 'add', p: 0, v: 1 }]; run = packRun(start, prog); ask = 0; break; } // cannot happen in practice
+      start = Array.from({ length: pockets }, () => rnd(0, Math.floor(max / 2)));
+      prog = Array.from({ length: len }, () => {
+        const p = rnd(0, pockets - 1), kind = pick(lvl === 2 ? ['add', 'take', 'copy', 'copy'] : ['add', 'take', 'put']);
+        if (kind === 'copy') return { op: 'copy', p, to: 1 - p };
+        return { op: kind, p, v: kind === 'put' ? rnd(0, Math.min(max, cfg.step * 2)) : rnd(1, cfg.step) };
+      });
+      run = packRun(start, prog);
+      ask = rnd(0, pockets - 1);
+      const k = prog.findIndex((o) => o.op === 'copy');
+      // A copy only teaches something if a pocket changes after it.
+      if (!run.err && run.trace.every((s) => s.every((v) => v <= max)) && run.final[ask] !== start[ask]
+        && (pockets === 1 || [0, 1].every((p) => prog.some((o) => o.p === p || o.to === p)))
+        && (lvl !== 2 || (k >= 0 && prog.slice(k + 1).some((o) => o.op !== 'copy')))) break;
+    }
+    const item = PACK_ITEMS[ask], ans = run.final[ask];
+    qSay('Follow the steps in order. How many ' + item.e + ' ' + item.n + ' will be in the pocket at the end?'
+      + (lvl === 2 ? ' A copy stays a copy, even if the other pocket changes later.' : ''));
+    $('ask').innerHTML = '<div class="pouches">' + start.map((v, p) => pouchHtml(p, v, p === ask)).join('') + '</div>' + progHtml(prog) + '<div id="traceBox"></div>';
+    // The hint after two wrong answers: the pockets after every step but the last.
+    const showTrace = () => {
+      const box = $('traceBox');
+      if (box.firstChild) return;
+      box.innerHTML = '<table class="trace"><caption>What is in the pockets after each step</caption><thead><tr><th scope="col">Step</th>'
+        + start.map((_, p) => '<th scope="col">' + PACK_ITEMS[p].e + ' ' + PACK_ITEMS[p].n + '</th>').join('') + '</tr></thead><tbody>'
+        + run.trace.slice(0, -1).map((s, k) => '<tr><th scope="row">' + (k || 'Start') + '</th>' + s.map((v, p) => '<td' + (p === ask ? ' class="ask"' : '') + '>' + v + '</td>').join('') + '</tr>').join('')
+        + '</tbody></table>';
+      qSay('Look at the table: it shows the pockets after the steps. Now do the last step!', 'happy');
+    };
+    const done = () => {
+      document.querySelectorAll('.pouch').forEach((el, p) => {
+        el.querySelector('.cnt').textContent = run.final[p];
+        el.querySelector('.things').textContent = packThings(p, run.final[p]);
+      });
+      solved(1500);
+    };
+    if (S.diff === 'hard') { packKeypad(ans, done, showTrace); return; }
+    const need = S.diff === 'easy' ? 3 : 4;
+    const slips = new Set([ans + 1, ans - 1, ans + 2, start[ask], packRun(start, prog.map((o) => (o.op === 'copy' ? { op: 'copy', p: o.to, to: o.p } : o)), true).final[ask]]);
+    run.final.forEach((v, p) => { if (p !== ask) slips.add(v); });
+    prog.forEach((_, k) => slips.add(packRun(start, prog.filter((__, j) => j !== k), true).final[ask]));
+    const bad = shuffle([...slips].filter((v) => v !== ans && v >= 0 && v <= max + 5)).slice(0, need - 1);
+    for (let d = 3; bad.length < need - 1; d++) [ans + d, ans - d].forEach((v) => { if (v >= 0 && v !== ans && !bad.includes(v) && bad.length < need - 1) bad.push(v); });
+    options(shuffle([ans, ...bad]).map((v) => ({ html: '<b>' + v + '</b>', ok: v === ans, label: String(v) })), done, showTrace);
+  }
+
+  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi, pack: genPack };
 
   // =====================================================================
   // Result and stickers
