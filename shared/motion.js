@@ -5,11 +5,11 @@
 //   Cendekia.fx.confetti(n)                  n pieces fall from the top of the screen
 //   Cendekia.fx.confetti(n, { glyphs: [] })  the same with emoji instead of paper pieces
 //   Cendekia.fx.burst(element)               a small ring of sparks around a right answer
-//   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its crest and wings move
+//   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its marked parts move
 //   Cendekia.fx.react(svg, 'cheer' | 'oops') the mascot hops and flaps, or shakes its head
 //
 // A mascot is drawn once in a <symbol> and shown with <use>. Its parts are marked with the classes crest, wing-l,
-// wing-r and eyes inside the symbol; a part a mascot does not have is skipped.
+// wing-r, tail, mane and eyes inside the symbol (see PARTS); a part a mascot does not have is skipped.
 (function () {
   var COLORS = ['#1f9d6b', '#f2a33a', '#e0558a', '#7a5af8', '#2e90fa', '#0e9aa7'];
   var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
@@ -92,8 +92,16 @@
     Array.prototype.forEach.call(sym.children, function (c) { svg.insertBefore(c.cloneNode(true), use); });
     use.remove();
   }
-  // Transforms on SVG parts turn around the part's own box, set here as the point each part hinges on.
-  var HINGE = { '.crest': '50% 100%', '.wing-l': '100% 0%', '.wing-r': '0% 0%', '.eyes': '50% 50%' };
+  // The parts a mascot can have. A part turns around its own box, so `hinge` is the point it hangs from. `idle` is its
+  // slow movement while the mascot waits, and `cheer` how far it swings (rotate, in degrees) when the mascot hops.
+  var PARTS = {
+    '.crest':  { hinge: '50% 100%', idle: { rotate: [-5, 5], duration: 1900 } },
+    '.wing-l': { hinge: '100% 0%',  idle: { rotate: [3, -4], duration: 2400 }, cheer: -35 },
+    '.wing-r': { hinge: '0% 0%',    idle: { rotate: [-3, 4], duration: 2400 }, cheer: 35 },
+    '.tail':   { hinge: '0% 100%',  idle: { rotate: [-5, 6], duration: 2100 }, cheer: 14 },
+    '.mane':   { hinge: '50% 50%',  idle: { scale: [1, 1.035], duration: 2300 } },
+    '.eyes':   { hinge: '50% 50%' }
+  };
   function parts(svg, sel) { return svg.querySelectorAll(sel); }
 
   function mascot(svg) {
@@ -102,13 +110,11 @@
     load().then(function (a) {
       if (!a) return;
       inline(svg);
-      Object.keys(HINGE).forEach(function (sel) {
-        parts(svg, sel).forEach(function (e) { e.style.transformBox = 'fill-box'; e.style.transformOrigin = HINGE[sel]; });
+      Object.keys(PARTS).forEach(function (sel) {
+        var part = PARTS[sel];
+        parts(svg, sel).forEach(function (e) { e.style.transformBox = 'fill-box'; e.style.transformOrigin = part.hinge; });
+        if (part.idle) a.animate(parts(svg, sel), Object.assign({ loop: true, alternate: true, ease: 'inOutSine' }, part.idle));
       });
-      var sway = { loop: true, alternate: true, ease: 'inOutSine' };
-      a.animate(parts(svg, '.crest'), Object.assign({ rotate: [-5, 5], duration: 1900 }, sway));
-      a.animate(parts(svg, '.wing-l'), Object.assign({ rotate: [3, -4], duration: 2400 }, sway));
-      a.animate(parts(svg, '.wing-r'), Object.assign({ rotate: [-3, 4], duration: 2400 }, sway));
       (function blink() {
         if (!svg.isConnected) return;
         if (!document.hidden) a.animate(parts(svg, '.eyes'), { scaleY: [1, 0.1, 1], duration: 180, ease: 'inOutQuad' });
@@ -124,8 +130,10 @@
       a.remove(svg); // a reaction still running is replaced, so a quick second answer starts clean
       if (mood === 'cheer') {
         a.animate(svg, { translateY: [0, -16, 0], scale: [1, 1.08, 1], duration: 480, ease: 'outQuad' });
-        a.animate(parts(svg, '.wing-l'), { rotate: [0, -35, 0], duration: 480, ease: 'outQuad', composition: 'blend' });
-        a.animate(parts(svg, '.wing-r'), { rotate: [0, 35, 0], duration: 480, ease: 'outQuad', composition: 'blend' });
+        Object.keys(PARTS).forEach(function (sel) {
+          // 'blend' adds the swing to the idle movement instead of cancelling it
+          if (PARTS[sel].cheer) a.animate(parts(svg, sel), { rotate: [0, PARTS[sel].cheer, 0], duration: 480, ease: 'outQuad', composition: 'blend' });
+        });
       } else if (mood === 'oops') {
         a.animate(svg, { translateX: [0, -7, 7, -5, 0], duration: 320, ease: 'inOutQuad' });
       }
