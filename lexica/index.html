@@ -196,17 +196,10 @@
   .sticker small { display: block; font-size: .8rem; opacity: .75; }
   .sticker.locked .face { filter: grayscale(1) brightness(1.1); opacity: .35; }
 
-  /* Confetti */
-  #fx { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 10; }
-  #fx i { position: absolute; top: -12px; width: 10px; height: 14px; border-radius: 2px; opacity: 0;
-    animation: fall var(--t) cubic-bezier(.3,.6,.5,1) forwards; }
-  @keyframes fall { 0% { opacity: 1; transform: translate(0,0) rotate(0); }
-    100% { opacity: 0; transform: translate(var(--dx), 105vh) rotate(var(--r)); } }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    #fx { display: none; }
-  }
+    }
   [hidden] { display: none !important; }
 </style>
 <link rel="stylesheet" href="../shared/arc.css">
@@ -328,7 +321,6 @@
     <div class="sgrid" id="sgrid"></div>
   </section>
 </main>
-<div id="fx" aria-hidden="true"></div>
 
 <!-- Content. tools/make-audio.mjs reads this block to record every word and phrase in both languages. -->
 <script type="application/json" id="content">
@@ -703,6 +695,7 @@
 </script>
 
 <script src="../shared/profile.js"></script>
+<script src="../shared/motion.js"></script>
 <script src="../shared/mascot.js"></script>
 <script>
 (() => {
@@ -992,19 +985,6 @@
     el.style.animation = 'none'; void el.getBoundingClientRect(); el.style.animation = '';
     if (text) $('say').textContent = text;
   }
-  function confetti(n) {
-    const fx = $('fx'), colors = ['#1f9d6b', '#f2a33a', '#e0558a', '#7a5af8', '#2e90fa', '#0e9aa7'];
-    for (let k = 0; k < n; k++) {
-      const p = document.createElement('i');
-      p.style.left = Math.random() * 100 + '%';
-      p.style.background = sample(colors);
-      p.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
-      p.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
-      p.style.setProperty('--t', (1.2 + Math.random() * 1.2) + 's');
-      fx.appendChild(p);
-      setTimeout(() => p.remove(), 2600);
-    }
-  }
 
   // Picks n items so every item of the pool shows up before any repeats.
   function spread(pool, n) {
@@ -1168,7 +1148,7 @@
     $('combo').textContent = combo >= 3 ? '🔥 ' + combo : '';
     const p = sample(C.cheers); // shown in the bubble only, a right answer is not read aloud
     mood('cheer', combo >= 3 ? p + ' ' + combo + ' right in a row!' : p);
-    if (combo >= 3) confetti(14);
+    if (combo >= 3) Cendekia.fx.confetti(14);
     $('prog').children[qi].classList.add('done');
   }
   // `after(go)` plays the closing sound for the question and calls go() to move on.
@@ -1181,7 +1161,7 @@
     }
     locked = true;
     [...grid.children].forEach((x) => x.classList.remove('hint'));
-    b.classList.add('ok');
+    b.classList.add('ok'); Cendekia.fx.burst(b);
     solved();
     after(advance());
   }
@@ -1203,7 +1183,7 @@
     g.hidden = !gained.length;
     if (gained.length) g.innerHTML = '<b>New sticker!</b><div class="stk">' + gained.map(face).join('') + '</div><small>' + gained.map((k) => k.name).join(', ') + '</small>';
     $('rNext').hidden = stageIdx + 1 >= STAGES.length;
-    sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
+    sfx.win(); Cendekia.fx.confetti(stars * 25 + (gained.length ? 40 : 0));
   }
   $('rNext').addEventListener('click', () => startStage(stageIdx + 1));
   $('rAgain').addEventListener('click', () => startStage(stageIdx));

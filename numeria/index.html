@@ -57,7 +57,6 @@
   @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
   @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
   @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-  @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
   @keyframes fadeUp { from { transform: translateY(8px); opacity: 0; } }
 
   /* Home */
@@ -228,8 +227,6 @@
   .stk b { display: block; line-height: 1.15; }
   .stk small { opacity: .7; }
 
-  #fx { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
-  #fx span { position: absolute; top: -40px; font-size: 1.8rem; animation: fall 2.4s ease-in forwards; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -392,9 +389,9 @@
     <div class="sgrid" id="sgrid"></div>
   </section>
 </main>
-<div id="fx" aria-hidden="true"></div>
 
 <script src="../shared/profile.js"></script>
+<script src="../shared/motion.js"></script>
 <script src="../shared/mascot.js"></script>
 <script src="../shared/trace.js"></script>
 <script>
@@ -1257,22 +1254,13 @@
     if (gained.length) $('resGift').innerHTML = '<span class="face" aria-hidden="true">' + gained[gained.length - 1].pic + '</span>New sticker: ' + gained[gained.length - 1].name + '!';
     const hasNext = i + 1 < w.levels.length;
     $('resNext').hidden = !hasNext;
-    if (stars === 3) confetti();
+    if (stars === 3) Cendekia.fx.confetti(24, { glyphs: CONFETTI });
   }
   $('resNext').addEventListener('click', () => { sfx.tap(); startLevel(curWorld, curLevel + 1); });
   $('resAgain').addEventListener('click', () => { sfx.tap(); startLevel(curWorld, curLevel); });
   $('resWorld').addEventListener('click', () => { sfx.tap(); show('world'); });
 
-  function confetti() {
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const fx = $('fx');
-    for (let k = 0; k < 24; k++) {
-      const s = document.createElement('span');
-      s.textContent = pick(['⭐', '🎉', '✨', '🍕', '🪙', '🍎']);
-      s.style.left = R(0, 96) + '%'; s.style.animationDelay = (Math.random() * 0.6).toFixed(2) + 's';
-      fx.appendChild(s); setTimeout(() => s.remove(), 3200);
-    }
-  }
+  const CONFETTI = ['⭐', '🎉', '✨', '🍕', '🪙', '🍎'];
 
   // ---- Trace numbers ----
   // S.traced holds the best stars for each number the child traced. They are shown here and do not count toward the
@@ -1289,7 +1277,7 @@
       S.traced[trIdx] = Math.max(S.traced[trIdx] || 0, r.stars);
       markDay(); save();
       CD.round({ app: 'numeria', stage: 'Tracing', stars: r.stars, right: 1, total: 1, ms: r.ms });
-      sfx.good(); if (r.stars === 3) confetti();
+      sfx.good(); if (r.stars === 3) Cendekia.fx.confetti(24, { glyphs: CONFETTI });
       $('trNext').hidden = false;
       $('trStars').textContent = traceStars() + ' / ' + TRACE.length * 3;
       renderTraceTiles();
