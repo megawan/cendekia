@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { pack: Array(3).fill(1) };
+    for (const x of ['easy', 'medium', 'hard']) best[x] = { pack: Array(5).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { pack: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -59,6 +59,52 @@ async function nextPuzzle(page) {
 async function solveOne(page, diff) {
   const puzzle = await readPuzzle(page);
   await answer(page, diff, follow(puzzle)[puzzle.ask]);
+}
+
+// Build levels: reads the goal and the blocks from the page and finds the fewest blocks that reach it.
+const readBuild = (page) => page.evaluate(() => ({
+  start: [...document.querySelectorAll('.pouch')].map((e) => +e.querySelector('.cnt').textContent),
+  goal: [...document.querySelectorAll('.pouch')].map((e) => (e.dataset.goal === '' ? null : +e.dataset.goal)),
+  limit: +document.getElementById('blocks').textContent.match(/\/ (\d+)/)[1],
+  palette: [...document.querySelectorAll('#bPal .pbtn')].map((b) => ({
+    k: +b.dataset.k, op: b.dataset.op, p: +b.dataset.p, v: b.dataset.v === '' ? null : +b.dataset.v, to: b.dataset.to === '' ? null : +b.dataset.to
+  }))
+}));
+
+function shortest({ start, goal, palette }) {
+  const key = (s) => s.join(','), fits = (s) => goal.every((g, p) => g === null || s[p] === g);
+  const seen = new Map([[key(start), null]]);
+  if (fits(start)) return [];
+  let frontier = [start];
+  for (let d = 0; d < 8; d++) {
+    const next = [];
+    for (const s of frontier) {
+      for (const o of palette) {
+        const n = s.slice();
+        if (o.op === 'add') n[o.p] += o.v;
+        else if (o.op === 'take') { if (n[o.p] < o.v) continue; n[o.p] -= o.v; }
+        else n[o.to] = n[o.p];
+        if (n.some((v) => v > 99) || seen.has(key(n))) continue;
+        seen.set(key(n), { prev: s, o });
+        if (fits(n)) {
+          const path = [];
+          for (let at = n, e = seen.get(key(at)); e; at = e.prev, e = seen.get(key(at))) path.unshift(e.o);
+          return path;
+        }
+        next.push(n);
+      }
+    }
+    frontier = next;
+  }
+  throw new Error('no way to the goal');
+}
+
+async function buildOne(page) {
+  const puzzle = await readBuild(page), path = shortest(puzzle);
+  expect(path.length).toBeLessThanOrEqual(puzzle.limit);
+  for (const o of path) await page.locator('#bPal .pbtn').nth(o.k).click();
+  await page.getByRole('button', { name: '▶ Run' }).click();
+  return path.length;
 }
 
 test.describe("Poka's Backpack", () => {
@@ -121,5 +167,62 @@ test.describe("Poka's Backpack", () => {
     await expect(page.locator('table.trace')).toBeVisible();
     await answer(page, 'hard', ans);
     await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(1);
+  });
+
+  for (const diff of ['easy', 'medium', 'hard']) {
+    for (const n of [4, 5]) {
+      test(`level ${n} is solved by building the steps on ${diff}`, async ({ page }) => {
+        await openLogica(page, diff);
+        await openLevel(page, n);
+        for (let k = 0; k < (diff === 'easy' ? 2 : 3); k++) {
+          await nextPuzzle(page);
+          const blocks = await buildOne(page);
+          // The goal is reached in the fewest blocks the page allows, and a swap takes three.
+          if (n === 5) expect(blocks).toBe(3);
+        }
+        await expect(page.locator('#resStars .star.on')).toHaveCount(3, { timeout: 15000 });
+      });
+    }
+  }
+
+  test('the run button waits for a block, and the limit stops extra blocks', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await openLevel(page, 4);
+    await expect(page.getByRole('button', { name: '▶ Run' })).toBeDisabled();
+    const { limit } = await readBuild(page);
+    const first = page.locator('#bPal .pbtn').first();
+    for (let k = 0; k < limit; k++) await first.click();
+    await expect(page.locator('#bTray li')).toHaveCount(limit);
+    await first.click();
+    await expect(page.locator('#qSay')).toContainText('at most ' + limit + ' blocks');
+    await expect(page.locator('#bTray li')).toHaveCount(limit);
+    await page.getByRole('button', { name: 'Remove the last block' }).click();
+    await expect(page.locator('#bTray li')).toHaveCount(limit - 1);
+  });
+
+  test('a wrong run is a miss: two show the table, the third puts a block in', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await openLevel(page, 5); // a swap cannot be done with one copy
+    await nextPuzzle(page);
+    await page.locator('#bPal .pbtn').first().click();
+    const run = page.getByRole('button', { name: '▶ Run' });
+    await run.click();
+    await expect(page.locator('#qSay')).toContainText('Not quite');
+    await expect(run).toBeEnabled();
+    await expect(page.locator('table.trace')).toHaveCount(0);
+    await run.click();
+    await expect(page.locator('table.trace')).toBeVisible();
+    await expect(run).toBeEnabled();
+    await run.click();
+    await expect(page.locator('#qSay')).toContainText('Poka put the first 1 block');
+    await expect(page.locator('table.trace')).toHaveCount(0);
+    await expect(page.locator('#bTray li')).toHaveCount(1);
+    // The wrong runs cost the stars of this puzzle.
+    await page.locator('#bTray li button').click();
+    const [a] = await readBuild(page).then((b) => [shortest(b)]);
+    for (const o of a) await page.locator('#bPal .pbtn').nth(o.k).click();
+    await run.click();
+    for (let k = 0; k < 2; k++) { await nextPuzzle(page); await buildOne(page); }
+    await expect(page.locator('#resStars .star.on')).toHaveCount(2, { timeout: 15000 });
   });
 });
