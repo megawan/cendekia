@@ -19,6 +19,8 @@ Each app keeps its own README with details. The mascots and where their names co
 
 The look comes from `shared/arc.css` (an Arc-style theme: soft accent-tinted gradient, frosted surfaces, hairline borders, pill buttons). Every page loads it after its own styles, and each app's service worker caches it, so add it to the `CORE` list of a new app.
 
+Motion comes from `shared/motion.js`, which draws with [anime.js](https://animejs.com) (`shared/anime.esm.min.js`, MIT, loaded the first time something animates). `Cendekia.fx.confetti(n)` drops confetti (or emoji with `{ glyphs }`) and `Cendekia.fx.burst(element)` sparks around a right answer. Nothing is drawn when the device asks for reduced motion. Load the script after `shared/profile.js` and add both files to a new app's service worker `CORE` list.
+
 ## Support
 
 If Cendekia is useful to your family, you can [buy me a coffee](https://buymeacoffee.com/megawan). The same link is in the footer of the home page.

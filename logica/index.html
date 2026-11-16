@@ -524,12 +524,6 @@
   .sticker small { display: block; font-size: .8rem; opacity: .75; }
   .sticker.locked .face { filter: grayscale(1) brightness(1.1); opacity: .35; }
 
-  /* Confetti */
-  #fx { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 30; }
-  #fx i { position: absolute; top: -12px; width: 10px; height: 14px; border-radius: 2px; opacity: 0;
-    animation: fall var(--t) cubic-bezier(.3,.6,.5,1) forwards; }
-  @keyframes fall { 0% { opacity: 1; transform: translate(0,0) rotate(0); }
-    100% { opacity: 0; transform: translate(var(--dx), 105vh) rotate(var(--r)); } }
 
   @media (max-width: 400px) {
     .blk { width: 42px; height: 42px; } .blk svg { width: 26px; height: 26px; }
@@ -540,7 +534,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    #fx, .floaters { display: none; }
+    .floaters { display: none; }
   }
   /* Players */
   .who { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 800;
@@ -893,7 +887,6 @@
     <div class="mkList" id="mkList"></div>
   </section>
 </main>
-<div id="fx" aria-hidden="true"></div>
 <div class="tutor" id="diffPick" role="dialog" aria-modal="true" aria-labelledby="dfTitle" hidden>
   <div class="tcard">
     <h2 id="dfTitle">How hard should it be?</h2>
@@ -1027,6 +1020,7 @@
 </script>
 
 <script src="../shared/profile.js"></script>
+<script src="../shared/motion.js"></script>
 <script src="../shared/mascot.js"></script>
 <script>
 (() => {
@@ -1700,21 +1694,6 @@
     void svg.getBoundingClientRect();
     svg.dataset.mood = m;
   }
-  function confetti(n) {
-    const fx = $('fx');
-    const colors = ['#f2891f', '#2e90fa', '#e0558a', '#1f9d6b', '#7a5af8', '#facc15'];
-    for (let k = 0; k < n; k++) {
-      const p = document.createElement('i');
-      p.style.left = Math.random() * 100 + 'vw';
-      p.style.background = pick(colors);
-      p.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
-      p.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
-      p.style.setProperty('--t', (1.4 + Math.random() * 1.4) + 's');
-      p.style.animationDelay = Math.random() * 0.3 + 's';
-      fx.appendChild(p);
-      setTimeout(() => p.remove(), 3400);
-    }
-  }
 
   // =====================================================================
   // Robot: programs on a grid
@@ -2360,7 +2339,7 @@
     save();
     if (res.end === 'win') {
       botEl.classList.add('dance'); mood(botEl.firstChild, 'cheer'); mood($('rCoach'), 'cheer');
-      rSay('Hooray, Poka made it!'); sfx.win(); confetti(40);
+      rSay('Hooray, Poka made it!'); sfx.win(); Cendekia.fx.confetti(40);
       let stars;
       if (R.debug) stars = 3 - (R.edits > 1 ? 1 : 0) - (R.fails >= 2 ? 1 : 0);
       else stars = 3 - (blocks() > R.par ? 1 : 0) - (R.fails >= 2 ? 1 : 0);
@@ -2416,7 +2395,7 @@
     solvedOne(); save();
     if (!Q.missed) { Q.combo++; } else { Q.combo = 0; Q.missedQ++; }
     $('combo').textContent = Q.combo >= 2 ? '×' + Q.combo + ' 🔥' : '';
-    if (Q.combo >= 3) confetti(14);
+    if (Q.combo >= 3) Cendekia.fx.confetti(14);
     sfx.good(); qSay(pick(CHEERS), 'cheer');
     Q.n++; paintProg();
     const my = runToken;
@@ -3640,7 +3619,7 @@
     $('resNext').hidden = i >= 0 && i + 1 >= levelsOf(w).length;
     $('resNext').textContent = last.def && last.def.custom ? '✎ Change the map' : i < 0 ? 'New map' : 'Next level';
     show('result');
-    sfx.win(); confetti(stars * 25 + (gained.length ? 40 : 0));
+    sfx.win(); Cendekia.fx.confetti(stars * 25 + (gained.length ? 40 : 0));
     if (gained.length) UI.toast({ type: 'success', title: 'New sticker!', description: gained.map((k) => k.name).join(', ') });
   }
   $('resNext').addEventListener('click', () => {
