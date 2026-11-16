@@ -77,8 +77,6 @@
   .mascot { display: block; }
   .mascot .m { display: none; fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
   .mascot[data-mood="happy"] .m.smile, .mascot[data-mood="cheer"] .m.smile, .mascot[data-mood="oops"] .m.oops { display: block; }
-  .mascot[data-mood="cheer"] { animation: hop .5s ease-out; }
-  .mascot[data-mood="oops"] { animation: shake .3s; }
   @keyframes hop { 30% { transform: translateY(-14px) scale(1.08); } }
   @keyframes bob { 50% { transform: translateY(-5px); } }
   @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
@@ -209,13 +207,13 @@
   <defs>
     <path id="starPath" d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/>
     <symbol id="parrot" viewBox="0 0 100 100">
-      <path fill="#e0558a" d="M42 26 Q34 8 44 4 Q47 14 50 22 Q55 6 64 8 Q63 18 58 28z"/>
+      <path class="crest" fill="#e0558a" d="M42 26 Q34 8 44 4 Q47 14 50 22 Q55 6 64 8 Q63 18 58 28z"/>
       <path fill="#1f9d6b" d="M50 20 Q82 20 88 54 Q90 90 50 94 Q10 90 12 54 Q18 20 50 20z"/>
-      <path fill="#167a53" d="M14 52 Q4 70 18 86 Q22 68 26 58z M86 52 Q96 70 82 86 Q78 68 74 58z"/>
+      <path class="wing-l" fill="#167a53" d="M14 52 Q4 70 18 86 Q22 68 26 58z"/><path class="wing-r" fill="#167a53" d="M86 52 Q96 70 82 86 Q78 68 74 58z"/>
       <ellipse fill="#c8f0d8" cx="50" cy="76" rx="22" ry="17"/>
-      <circle fill="#fff" cx="36" cy="42" r="12"/><circle fill="#fff" cx="64" cy="42" r="12"/>
+      <g class="eyes"><circle fill="#fff" cx="36" cy="42" r="12"/><circle fill="#fff" cx="64" cy="42" r="12"/>
       <circle fill="#1f2a44" cx="38" cy="43" r="6"/><circle fill="#1f2a44" cx="62" cy="43" r="6"/>
-      <circle cx="40" cy="40" r="2" fill="#fff"/><circle cx="64" cy="40" r="2" fill="#fff"/>
+      <circle cx="40" cy="40" r="2" fill="#fff"/><circle cx="64" cy="40" r="2" fill="#fff"/></g>
       <circle fill="#e0558a" opacity=".35" cx="24" cy="58" r="6"/><circle fill="#e0558a" opacity=".35" cx="76" cy="58" r="6"/>
       <path fill="#f2a33a" d="M43 52 Q50 46 57 52 Q56 62 50 63 Q44 62 43 52z"/>
     </symbol>
@@ -696,6 +694,7 @@
 
 <script src="../shared/profile.js"></script>
 <script src="../shared/motion.js"></script>
+<script>document.querySelectorAll(".mascot").forEach(Cendekia.fx.mascot);</script>
 <script src="../shared/mascot.js"></script>
 <script>
 (() => {
@@ -981,8 +980,7 @@
   function mood(m, text) {
     const el = $('coachMascot');
     el.setAttribute('data-mood', m);
-    // Restart the animation when the same mood repeats.
-    el.style.animation = 'none'; void el.getBoundingClientRect(); el.style.animation = '';
+    Cendekia.fx.react(el, m);
     if (text) $('say').textContent = text;
   }
 

@@ -26,3 +26,21 @@ test('nothing is drawn when the device asks for reduced motion', async ({ page }
   await page.waitForTimeout(300);
   await expect(page.locator('body > div[style*="z-index: 50"]')).toHaveCount(0);
 });
+
+test('lexica: Pochi idles, reacts and keeps his drawing', async ({ page }) => {
+  await page.goto('/lexica/');
+  const hero = page.locator('#home .mascot');
+  // The drawing is copied out of its <symbol>, so the parts can move on their own.
+  await expect(hero.locator('use')).toHaveCount(0);
+  await expect(hero.locator('.crest, .wing-l, .wing-r, .eyes')).toHaveCount(4);
+  await expect.poll(() => hero.locator('.crest').evaluate((e) => e.style.transform)).toContain('rotate');
+  await page.evaluate(() => window.Cendekia.fx.react(document.getElementById('coachMascot'), 'cheer'));
+  await expect.poll(() => page.locator('#coachMascot').evaluate((e) => e.style.transform)).toContain('translateY');
+});
+
+test('lexica: Pochi stays still when the device asks for reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/lexica/');
+  await page.waitForTimeout(300);
+  await expect(page.locator('#home .mascot use')).toHaveCount(1);
+});
