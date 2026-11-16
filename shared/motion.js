@@ -5,6 +5,11 @@
 //   Cendekia.fx.confetti(n)                  n pieces fall from the top of the screen
 //   Cendekia.fx.confetti(n, { glyphs: [] })  the same with emoji instead of paper pieces
 //   Cendekia.fx.burst(element)               a small ring of sparks around a right answer
+//   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its crest and wings move
+//   Cendekia.fx.react(svg, 'cheer' | 'oops') the mascot hops and flaps, or shakes its head
+//
+// A mascot is drawn once in a <symbol> and shown with <use>. Its parts are marked with the classes crest, wing-l,
+// wing-r and eyes inside the symbol; a part a mascot does not have is skipped.
 (function () {
   var COLORS = ['#1f9d6b', '#f2a33a', '#e0558a', '#7a5af8', '#2e90fa', '#0e9aa7'];
   var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
@@ -79,6 +84,54 @@
     });
   }
 
+  // A <use> hides its parts from scripts, so the symbol's shapes are copied into the svg in its place.
+  function inline(svg) {
+    var use = svg.querySelector('use');
+    var sym = use && document.querySelector(use.getAttribute('href'));
+    if (!sym) return;
+    Array.prototype.forEach.call(sym.children, function (c) { svg.insertBefore(c.cloneNode(true), use); });
+    use.remove();
+  }
+  // Transforms on SVG parts turn around the part's own box, set here as the point each part hinges on.
+  var HINGE = { '.crest': '50% 100%', '.wing-l': '100% 0%', '.wing-r': '0% 0%', '.eyes': '50% 50%' };
+  function parts(svg, sel) { return svg.querySelectorAll(sel); }
+
+  function mascot(svg) {
+    if (!svg || svg.dataset.alive || reduce.matches) return;
+    svg.dataset.alive = '1';
+    load().then(function (a) {
+      if (!a) return;
+      inline(svg);
+      Object.keys(HINGE).forEach(function (sel) {
+        parts(svg, sel).forEach(function (e) { e.style.transformBox = 'fill-box'; e.style.transformOrigin = HINGE[sel]; });
+      });
+      var sway = { loop: true, alternate: true, ease: 'inOutSine' };
+      a.animate(parts(svg, '.crest'), Object.assign({ rotate: [-5, 5], duration: 1900 }, sway));
+      a.animate(parts(svg, '.wing-l'), Object.assign({ rotate: [3, -4], duration: 2400 }, sway));
+      a.animate(parts(svg, '.wing-r'), Object.assign({ rotate: [-3, 4], duration: 2400 }, sway));
+      (function blink() {
+        if (!svg.isConnected) return;
+        if (!document.hidden) a.animate(parts(svg, '.eyes'), { scaleY: [1, 0.1, 1], duration: 180, ease: 'inOutQuad' });
+        setTimeout(blink, rand(2200, 5200));
+      })();
+    });
+  }
+
+  function react(svg, mood) {
+    if (!svg || reduce.matches) return;
+    load().then(function (a) {
+      if (!a) return;
+      a.remove(svg); // a reaction still running is replaced, so a quick second answer starts clean
+      if (mood === 'cheer') {
+        a.animate(svg, { translateY: [0, -16, 0], scale: [1, 1.08, 1], duration: 480, ease: 'outQuad' });
+        a.animate(parts(svg, '.wing-l'), { rotate: [0, -35, 0], duration: 480, ease: 'outQuad', composition: 'blend' });
+        a.animate(parts(svg, '.wing-r'), { rotate: [0, 35, 0], duration: 480, ease: 'outQuad', composition: 'blend' });
+      } else if (mood === 'oops') {
+        a.animate(svg, { translateX: [0, -7, 7, -5, 0], duration: 320, ease: 'inOutQuad' });
+      }
+    });
+  }
+
   window.Cendekia = window.Cendekia || {};
-  window.Cendekia.fx = { confetti: confetti, burst: burst };
+  window.Cendekia.fx = { confetti: confetti, burst: burst, mascot: mascot, react: react };
 })();
