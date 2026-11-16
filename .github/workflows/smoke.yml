@@ -36,6 +36,7 @@ jobs:
         /lexica/
         /logica/
         /numeria/
+        /mundia/
         /parents/
       files: |
         /shared/profile.js
@@ -49,3 +50,6 @@ jobs:
         /logica/sw.js
         /numeria/manifest.webmanifest
         /numeria/sw.js
+        /mundia/manifest.webmanifest
+        /mundia/sw.js
+        /mundia/maps.js
