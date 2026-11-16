@@ -18,7 +18,7 @@
     --bg: #fff6ec; --ink: #1f2a44; --card: #ffffff; --line: #f0dcc4;
     --accent: #f2891f; --accent-d: #c96a0c; --warm: #f2a33a; --good: #1f9d6b; --bad: #d9534f;
     --c-green: #1f9d6b; --c-orange: #f2891f; --c-pink: #e0558a; --c-purple: #7a5af8; --c-blue: #2e90fa; --c-teal: #0e9aa7;
-    --c-indigo: #4c5fd5; --c-red: #e5484d; --c-sky: #0284c7; --c-lime: #4d9a1a; --c-brown: #b45309; --c-rose: #be185d;
+    --c-indigo: #4c5fd5; --c-red: #e5484d; --c-sky: #0284c7; --c-lime: #4d9a1a; --c-brown: #b45309; --c-rose: #be185d; --c-amber: #a16207;
     --d-U: #1f9d6b; --d-D: #7a5af8; --d-L: #e0558a; --d-R: #2e90fa; --loop: #f2891f;
     --screen: #1f2a44; --glow: #5ef2d6;
     --radius: 20px;
@@ -444,6 +444,28 @@
   .pkTools { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 4px 0; }
   .keypad.no { animation: shake .3s; } .keypad.done .key { opacity: .5; }
   .demo .recipe { gap: 3px; } .demo .pb { font-size: .75rem; padding: 3px 8px; } .demo .pouches { gap: 6px; } .demo .pouch .cnt { font-size: 1.2rem; }
+
+  /* Poka's Workshop */
+  .circs { display: grid; gap: 6px; }
+  .circ { margin: 0; padding: 2px 0; border-radius: 14px; }
+  .circ.no { animation: shake .3s; background: #fdeceb; }
+  .circuit { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; overflow: visible; }
+  .circuit text { font-family: inherit; font-weight: 800; text-anchor: middle; pointer-events: none; }
+  .circuit .w { fill: none; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .circuit .w.unk { stroke: #cbd5e1; } .circuit .w.off { stroke: #94a3b8; }
+  .circuit .w.on { stroke: #f5b301; stroke-dasharray: 8 6; animation: flow .8s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -14; } }
+  .circuit .bd { font-size: 11px; fill: #475569; }
+  .circuit .sw rect { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 3; }
+  .circuit .sw text { fill: #334155; font-size: 15px; } .circuit .sw .st { font-size: 10px; }
+  .circuit .sw.on rect { fill: var(--good); stroke: #13714c; } .circuit .sw.on text { fill: #fff; }
+  .circuit .tap { cursor: pointer; }
+  .circuit .gate { cursor: help; } .circuit .gate rect { fill: var(--c-amber); } .circuit .gate text { fill: #fff; font-size: 14px; }
+  .circuit .lamp circle { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 3; }
+  .circuit .lamp.lit circle { fill: #fde047; stroke: #eab308; }
+  .circuit .lamp .em { font-size: 22px; } .circuit .lamp:not(.lit) .em { filter: grayscale(1); opacity: .6; }
+  .circuit [tabindex]:focus-visible { outline: 3px solid var(--c-blue); outline-offset: 2px; }
+  .demo .circuit { max-width: 230px; }
 
   /* Map Maker */
   .mkSizes, .mkTools, .mkActions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
@@ -1248,7 +1270,10 @@
       levels: ['Small tower', 'Taller tower', 'Middle peg', 'Messy start', 'Rebuild', 'Big tower', 'Mixed up'] },
     { id: 'pack', name: 'Poka\'s Backpack', skill: 'Variables', icon: '🎒', c: 'var(--c-rose)', kind: 'quiz', total: 3,
       desc: 'Follow the steps and work out what is in each pocket of the backpack.',
-      levels: ['Put in, take out', 'Two pockets', 'Copy', 'Build it', 'Swap'] }
+      levels: ['Put in, take out', 'Two pockets', 'Copy', 'Build it', 'Swap'] },
+    { id: 'circuit', name: "Poka's Workshop", skill: 'Logic gates', icon: '🔌', c: 'var(--c-amber)', kind: 'quiz', total: 3,
+      desc: 'Follow the wires through switches and gates, and light the lamp.',
+      levels: ['Switch and flip', 'Both keys', 'Either key', 'Mixed wires'] }
   ];
   // Robot and fixing levels are different for each difficulty; quiz levels are the same, with harder questions.
   const levelsOf = (w) => (w.kind === 'robot' ? C[w.id][S.diff].map((l) => l.name) : w.levels);
@@ -1478,7 +1503,8 @@
     clues: 'Combining several clues, including "not", "or" and facts about things, to find the only answer that fits them all.',
     train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.',
     hanoi: 'Planning several moves ahead, and solving a big job by solving smaller copies of it first: to move the biggest disk, the smaller tower has to get out of the way.',
-    pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later. Later, building the steps to reach a number, and swapping two pockets with a spare one.'
+    pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later. Later, building the steps to reach a number, and swapping two pockets with a spare one.',
+    circuit: 'Logic gates: AND, OR and NOT decide whether power gets through, the way computers combine simple yes-or-no decisions. Tracing a circuit from the switches to the lamp, and working back from the lamp to the switches.'
   };
   let viewed = null, gateAns = 0;
   $('toParents').addEventListener('click', () => {
@@ -1669,6 +1695,12 @@
       ['<div class="demo">' + progHtml([{ op: 'add', p: 0, v: 2 }, { op: 'take', p: 1, v: 1 }]) + '</div>', 'Follow the steps from the top, one at a time.'],
       ['<div class="demo"><div class="pouches">' + pouchHtml(0, 5) + pouchHtml(1, 0) + '</div></div>', 'After every step the numbers change. What is in the pocket at the end?'],
       ['<div class="demo"><span class="pb pbtn add">➕ Add 1 to 🍎</span> <span class="pb pbtn take">➖ Take 1 from 🍎</span></div>', 'Later you build the steps yourself: tap blocks, then press ▶ Run.']
+    ],
+    circuit: [
+      ['<div class="demo circ">' + cDemo({ t: 'in', i: 0 }, [true], true) + '</div>', 'A switch is ON or OFF. When it is ON, power flows along the wire.'],
+      ['<div class="demo circ">' + cDemo({ t: 'and', a: { t: 'in', i: 0 }, b: { t: 'in', i: 1 } }, [true, false], true) + '</div>',
+        'A gate decides. AND needs both wires to have power, OR needs at least one, and NOT flips it.'],
+      ['<div class="demo circ">' + cDemo({ t: 'or', a: { t: 'in', i: 0 }, b: { t: 'in', i: 1 } }, [true, false], false) + '</div>', 'Will the lamp shine? Follow the wires, then press ✓ Check.']
     ]
   });
   function tutorial(w) {
@@ -3589,7 +3621,162 @@
     paintTray();
   }
 
-  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi, pack: genPack };
+  // ---- Poka's Workshop: logic circuits ----
+  // A circuit is a tree: a switch {t: 'in', i}, a flip {t: 'not', a} or a gate {t: 'and' | 'or', a, b}. Every switch is
+  // used once, so no two wires ever cross and the picture can be laid out by simple rules.
+  const cEval = (n, inp) => (n.t === 'in' ? inp[n.i] : n.t === 'not' ? !cEval(n.a, inp) : n.t === 'and' ? cEval(n.a, inp) && cEval(n.b, inp) : cEval(n.a, inp) || cEval(n.b, inp));
+  const cLetter = (i) => 'ABCDEFGHIJKLMNOP'[i]; // Hard has up to three lamps of four switches each
+  const cFormula = (n) => (n.t === 'in' ? cLetter(n.i) : n.t === 'not' ? 'NOT ' + cFormula(n.a) : '(' + cFormula(n.a) + ' ' + n.t.toUpperCase() + ' ' + cFormula(n.b) + ')');
+  const cNodes = (n) => [n, ...(n.a ? cNodes(n.a) : []), ...(n.b ? cNodes(n.b) : [])];
+  const cInputs = (n) => Array.from({ length: 1 << n }, (_, m) => Array.from({ length: n }, (__, i) => !!((m >> i) & 1)));
+  const CIRC_HELP = {
+    and: 'AND: power gets through only when both wires coming in have power.',
+    or: 'OR: power gets through when at least one wire coming in has power.',
+    not: 'NOT flips it: power in means no power out, and no power in means power out.'
+  };
+  // Switches in the first column, then each gate one column after its inputs; a gate sits between its inputs.
+  function cLayout(root) {
+    let row = 0;
+    const place = (n) => {
+      if (n.t === 'in') { n.col = 0; n.row = row++; }
+      else if (n.t === 'not') { place(n.a); n.col = n.a.col + 1; n.row = n.a.row; }
+      else { place(n.a); place(n.b); n.col = Math.max(n.a.col, n.b.col) + 1; n.row = (n.a.row + n.b.row) / 2; }
+    };
+    place(root);
+    return root;
+  }
+  // o.vals: show the power in every wire; o.lamp: what the lamp shows (null is a question mark); o.edit: the switches can be
+  // tapped; o.guess: the lamp can be tapped.
+  function cSvg(root, inp, o) {
+    const cols = root.col + 2, colW = Math.min(84, Math.floor(380 / cols)), RH = 58;
+    const nodes = cNodes(root), lamp = { t: 'lamp', col: root.col + 1, row: root.row };
+    const W = cols * colW, H = (Math.max(...nodes.map((n) => n.row)) + 1) * RH + 12;
+    const X = (c) => c * colW + colW / 2, Y = (r) => r * RH + RH / 2 + 6;
+    const known = (n) => n.t === 'in' || o.vals, half = (n) => (n.t === 'lamp' ? 18 : 27);
+    let wires = '', boxes = '';
+    const wire = (c, p, yIn) => {
+      const x1 = X(c.col) + half(c), y1 = Y(c.row), x2 = X(p.col) - half(p), xm = (x1 + x2) / 2, on = cEval(c, inp);
+      wires += '<path class="w ' + (known(c) ? (on ? 'on' : 'off') : 'unk') + '" d="M' + x1 + ' ' + y1 + 'H' + xm + 'V' + yIn + 'H' + x2 + '"/>'
+        + (known(c) ? '<text class="bd" x="' + (x1 + 3) + '" y="' + (y1 - 5) + '">' + (on ? 1 : 0) + '</text>' : '');
+    };
+    nodes.forEach((n) => {
+      const x = X(n.col), y = Y(n.row);
+      if (n.t === 'in') {
+        const v = inp[n.i], name = 'Switch ' + cLetter(n.i);
+        boxes += '<g class="sw' + (v ? ' on' : '') + (o.edit ? ' tap' : '') + '" data-i="' + n.i + '" '
+          + (o.edit ? 'role="switch" tabindex="0" aria-checked="' + v + '" aria-label="' + name + '"' : 'role="img" aria-label="' + name + ' is ' + (v ? 'on' : 'off') + '"') + '>'
+          + '<rect x="' + (x - 27) + '" y="' + (y - 18) + '" width="54" height="36" rx="10"/><text x="' + x + '" y="' + (y - 2) + '">' + cLetter(n.i) + '</text>'
+          + '<text class="st" x="' + x + '" y="' + (y + 12) + '">' + (v ? 'ON' : 'OFF') + '</text></g>';
+        return;
+      }
+      (n.t === 'not' ? [n.a] : [n.a, n.b]).forEach((c, k, all) => wire(c, n, Y(n.row) + (all.length === 1 ? 0 : k ? 9 : -9)));
+      boxes += '<g class="gate" data-t="' + n.t + '" role="button" tabindex="0" aria-label="' + n.t.toUpperCase() + ' gate. Tap to hear what it does.">'
+        + '<rect x="' + (x - 27) + '" y="' + (y - 17) + '" width="54" height="34" rx="9"/><text x="' + x + '" y="' + (y + 5) + '">' + n.t.toUpperCase() + '</text></g>';
+    });
+    wire(root, lamp, Y(lamp.row));
+    const lit = o.lamp;
+    boxes += '<g class="lamp' + (lit ? ' lit' : '') + (o.guess ? ' tap' : '') + '" data-lamp ' + (o.guess ? 'role="button" tabindex="0"' : 'role="img"')
+      + ' aria-label="Lamp: ' + (lit === null ? (o.guess ? 'tap to say if it shines' : 'not shown yet') : lit ? 'on' : 'off') + '">'
+      + '<circle cx="' + X(lamp.col) + '" cy="' + Y(lamp.row) + '" r="19"/><text class="em" x="' + X(lamp.col) + '" y="' + (Y(lamp.row) + 7) + '">' + (lit === null ? '?' : '💡') + '</text></g>';
+    return '<svg class="circuit" viewBox="0 0 ' + W + ' ' + H + '" role="group" aria-label="Circuit: lamp = ' + cFormula(root) + '">' + wires + boxes + '</svg>';
+  }
+  function cDemo(tree, inp, shown) {
+    cLayout(tree);
+    return cSvg(tree, inp, { vals: shown, lamp: shown ? cEval(tree, inp) : null });
+  }
+  function cBuild(lvl, n, ops, notP, next, d) {
+    if (lvl === 0) { // one switch, flipped a few times
+      let node = { t: 'in', i: next.i++ };
+      for (let k = { easy: rnd(0, 1), medium: rnd(0, 2), hard: rnd(1, 3) }[d]; k > 0; k--) node = { t: 'not', a: node };
+      return node;
+    }
+    const tree = (m) => {
+      let node;
+      if (m === 1) node = { t: 'in', i: next.i++ };
+      else { const k = rnd(1, m - 1); node = { t: pick(ops), a: tree(k), b: tree(m - k) }; }
+      return Math.random() < notP ? { t: 'not', a: node } : node;
+    };
+    return tree(n);
+  }
+  // Levels 1 and 4 ask whether each lamp shines (every circuit has its own switches); levels 2 and 3 ask for the
+  // switches that light one lamp. Every puzzle is made fresh and checked: no circuit is stuck on or off, the lamps
+  // are a mix of on and off, and on Hard exactly one setting of the switches works.
+  function genCircuit(lvl) {
+    const d = S.diff, light = lvl === 1 || lvl === 2;
+    const nSw = { easy: [1, 2, 2, 2], medium: [1, 2, 3, 3], hard: [1, 3, 3, 4] }[d][lvl];
+    const lamps = light ? 1 : { easy: 2, medium: 3, hard: 3 }[d];
+    const ops = lvl === 1 ? ['and'] : lvl === 2 ? ['or'] : ['and', 'or'];
+    let roots, inp, target = true;
+    for (let tries = 0; ; tries++) {
+      const next = { i: 0 };
+      roots = Array.from({ length: lamps }, () => cLayout(cBuild(lvl, nSw, ops, lvl === 3 ? 0.3 : 0, next, d)));
+      if (roots.some((r) => r.col + 2 > 6)) continue; // too wide for the screen
+      if (light) {
+        target = d === 'hard' && Math.random() < 0.34 ? false : true;
+        const all = cInputs(next.i), good = all.filter((x) => cEval(roots[0], x) === target), bad = all.filter((x) => cEval(roots[0], x) !== target);
+        if (!good.length || !bad.length || (d === 'hard' && good.length !== 1 && tries < 300)) continue;
+        inp = pick(bad).slice();
+        break;
+      }
+      inp = Array.from({ length: next.i }, () => Math.random() < 0.5);
+      const outs = roots.map((r) => cEval(r, inp));
+      if (lamps > 1 && (!outs.some(Boolean) || outs.every(Boolean))) continue;
+      break;
+    }
+    const live = d === 'easy' && light; // on Easy the lamp answers at once; otherwise it waits for ✓ Check
+    let vals = live, final = false, shown = null;
+    const guess = roots.map(() => null);
+    qSay(light ? (live ? 'Turn the switches on and off to make the lamp shine.' : 'Set the switches so the lamp ' + (target ? 'shines' : 'stays dark') + ', then press ✓ Check.')
+      : 'Follow the wires. Will each lamp shine? Tap a lamp to say yes or no, then press ✓ Check.');
+    $('ask').innerHTML = '<div class="circs" id="circs"></div>' + (live ? '' : '<div class="check"><button type="button" class="btn go" id="cCheck">✓ Check</button></div>');
+    const box = $('circs');
+    const lampOf = (k) => (light ? (live || vals || final ? cEval(roots[0], inp) : shown) : final ? cEval(roots[k], inp) : guess[k]);
+    function paint() {
+      const at = box.contains(document.activeElement) ? document.activeElement.closest('.sw') : null, i = at && at.dataset.i;
+      box.innerHTML = roots.map((r, k) => '<figure class="circ" data-k="' + k + '" data-tree=\'' + JSON.stringify(r, ['t', 'i', 'a', 'b']) + '\'>'
+        + cSvg(r, inp, { vals: vals || final, lamp: lampOf(k), edit: light && !final, guess: !light && !final }) + '</figure>').join('');
+      if (i !== null && i !== undefined) { const el = box.querySelector('.sw[data-i="' + i + '"]'); if (el) el.focus(); }
+    }
+    const win = () => { final = true; paint(); sfx.whir(); solved(1500); };
+    box.addEventListener('click', (e) => {
+      const gate = e.target.closest('.gate'), sw = e.target.closest('.sw.tap'), lp = e.target.closest('.lamp.tap');
+      if (gate) { sfx.tap(); qSay(CIRC_HELP[gate.dataset.t], 'happy'); return; }
+      if (final) return;
+      if (sw) {
+        inp[+sw.dataset.i] = !inp[+sw.dataset.i]; shown = null; sfx.tap(); paint();
+        if (live && cEval(roots[0], inp) === target) win();
+      } else if (lp) {
+        const k = +lp.closest('.circ').dataset.k;
+        guess[k] = guess[k] === null ? true : !guess[k]; sfx.tap(); paint();
+      }
+    });
+    box.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[tabindex]')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
+    });
+    paint();
+    if (live) return;
+    $('cCheck').addEventListener('click', () => {
+      if (final) return;
+      let hinted = false;
+      const hint = () => { vals = true; hinted = true; };
+      if (light) {
+        const out = cEval(roots[0], inp);
+        if (out === target) { win(); return; }
+        shown = out;
+        wrong(hint); paint();
+        qSay('Not yet: the lamp is ' + (out ? 'on' : 'off') + '.' + (hinted ? ' Now you can see the power in the wires. Where does it stop?' : ''), 'oops');
+        return;
+      }
+      if (guess.includes(null)) { sfx.bad(); qSay('Tell me about every lamp first: tap each lamp to say yes or no.', 'oops'); return; }
+      const bad = roots.map((r, k) => k).filter((k) => guess[k] !== cEval(roots[k], inp));
+      if (!bad.length) { win(); return; }
+      wrong(hint); paint();
+      bad.forEach((k) => box.children[k].classList.add('no'));
+      qSay('Not quite: ' + (bad.length === 1 ? 'one lamp is' : bad.length + ' lamps are') + ' wrong.' + (hinted ? ' Now you can see the power in the wires.' : ''), 'oops');
+    });
+  }
+
+  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi, pack: genPack, circuit: genCircuit };
 
   // =====================================================================
   // Result and stickers
