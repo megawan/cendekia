@@ -27,6 +27,11 @@
       name: 'Myria',
       origin: 'Greek for “ten thousand”',
       story: 'I am a little squirrel who counts every nut I save, and my name comes from the Greek word myrias (μυριάς), “ten thousand”, the biggest number the ancient Greeks had a word for. It gave English “myriad”: too many to count. I love numbers of every size, from apples in the kitchen to discounts in the shop.'
+    },
+    mundia: {
+      name: 'Safiri',
+      origin: 'Swahili for “travel”',
+      story: 'I am a little turtle in an explorer’s hat, and my name comes from the Swahili word safiri, “travel”, the same root as the word safari. I carry my home on my back, so I can go anywhere: from the islands of Indonesia to every capital city in the world. Come and find them with me!'
     }
   };
 
