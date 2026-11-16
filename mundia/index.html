@@ -135,6 +135,8 @@
   .opt.ok { background: #e3f7ec; border-color: var(--good); animation: hop .45s; }
   .opt.no { background: #fdecec; border-color: var(--bad); opacity: .6; animation: shake .35s; }
   .tapnote { text-align: center; font-weight: 700; opacity: .75; margin: 4px 0 0; }
+  .bigflag { text-align: center; font-size: 5rem; line-height: 1.15; margin: 0; }
+  .opt.flagopt { font-size: 2.6rem; line-height: 1; }
   .why { background: #fff8e1; border: 2px solid #f1dfb2; border-radius: var(--radius); padding: 12px 14px; margin-top: 12px;
     text-align: center; animation: fadeUp .3s both; }
   .why p { margin: 0 0 10px; font-size: 1.1rem; line-height: 1.35; }
@@ -203,7 +205,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/10</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/15</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -411,12 +413,63 @@
     COUNTRIES.push({ key: a2, name, capital, continent, shape, x, y, a2, tag });
   }));
 
+  // Nature: name | what it is | latitude and longitude | continent (empty where it is not clear-cut) | a sentence to finish
+  // "<name> is ...". A river's dot marks one spot along it, a desert's or a sea's dot its middle.
+  const NATURE_DATA = {
+    mountain: 'Mount Everest|27.99|86.93|Asia|the highest mountain on Earth, in the Himalayas of Asia.;Mont Blanc|45.83|6.86|Europe|the highest mountain in the Alps, on the border of France and Italy.;'
+      + 'Mount Kilimanjaro|-3.07|37.35|Africa|the highest mountain in Africa, in Tanzania.;Aconcagua|-32.65|-70.01|South America|the highest mountain in South America, in Argentina.;'
+      + 'Denali|63.07|-151.00|North America|the highest mountain in North America, in Alaska.;Mount Fuji|35.36|138.73|Asia|a famous volcano and the highest mountain in Japan.;'
+      + 'Mount Elbrus|43.35|42.44|Europe|the highest mountain in Europe, in Russia.;Mount Kosciuszko|-36.46|148.26|Oceania|the highest mountain on the mainland of Australia.;'
+      + 'Puncak Jaya|-4.08|137.16||the highest mountain in Indonesia, in Papua.',
+    river: 'Nile|25.70|32.60|Africa|one of the longest rivers in the world. It flows through Egypt, in Africa.;Amazon|-3.10|-60.00|South America|the river that carries the most water in the world, in South America.;'
+      + 'Yangtze|30.60|114.30|Asia|the longest river in Asia, in China.;Mississippi|35.10|-90.10|North America|a great river in the United States, in North America.;'
+      + 'Congo|0.52|25.20|Africa|a huge river in the middle of Africa.;Danube|48.20|16.40|Europe|a river that runs through many countries in Europe, including Austria and Hungary.;'
+      + 'Ganges|25.40|83.00|Asia|a holy river in India, in Asia.;Mekong|17.97|102.60|Asia|a long river in Southeast Asia, from China to Vietnam.;'
+      + 'Volga|48.70|44.50|Europe|the longest river in Europe, in Russia.;Murray|-34.20|140.80|Oceania|the longest river in Australia.',
+    lake: 'Lake Victoria|-1.00|33.00|Africa|the largest lake in Africa.;Lake Superior|47.70|-87.50|North America|the largest of the Great Lakes, between the United States and Canada.;'
+      + 'Lake Baikal|53.50|108.20|Asia|the deepest lake in the world, in Russia.;Lake Titicaca|-15.80|-69.40|South America|a huge lake high in the Andes, between Peru and Bolivia.;'
+      + 'Lake Toba|2.65|98.85|Asia|the largest volcanic lake in the world, on the island of Sumatra in Indonesia.;Lake Ladoga|60.90|31.50|Europe|the largest lake in Europe, in Russia.;'
+      + 'Lake Chad|13.00|14.00|Africa|a lake in Africa that has become much smaller over the years.;Lake Eyre|-28.40|137.30|Oceania|a huge salt lake in Australia that is often dry.',
+    desert: 'Sahara|23.40|12.80|Africa|the largest hot desert in the world, in northern Africa.;Gobi|42.60|103.00|Asia|a cold desert in Mongolia and China.;'
+      + 'Arabian Desert|22.50|47.00|Asia|a huge desert that covers most of the Arabian Peninsula, in Asia.;Kalahari|-23.00|22.00|Africa|a sandy desert in southern Africa.;'
+      + 'Atacama|-23.90|-69.20|South America|one of the driest places on Earth, in Chile.;Great Victoria Desert|-29.50|127.00|Oceania|the largest desert in Australia.;'
+      + 'Thar|27.00|71.00|Asia|a desert between India and Pakistan.;Mojave|35.00|-116.00|North America|a desert in the south west of the United States.;'
+      + 'Taklamakan|38.90|83.60|Asia|a sandy desert in western China.',
+    ocean: 'Pacific Ocean|0.00|-140.00||the biggest and deepest ocean on Earth.;Atlantic Ocean|20.00|-40.00||the ocean between the Americas, Europe and Africa.;'
+      + 'Indian Ocean|-15.00|80.00||the ocean south of Asia, between Africa and Australia. Indonesia lies on its edge.;Arctic Ocean|79.00|-140.00||the smallest and coldest ocean, around the North Pole.',
+    sea: 'Mediterranean Sea|35.00|18.00||a sea between Europe, Africa and Asia.;Caribbean Sea|15.00|-75.00||a warm sea near Central America, Cuba and Jamaica.;'
+      + 'Red Sea|20.00|38.50||a long, narrow sea between Africa and Asia.;South China Sea|12.00|114.00||a big sea next to Southeast Asia, north of Indonesia.;'
+      + 'North Sea|56.00|3.00||a sea between Great Britain and the rest of Europe.;Black Sea|43.50|34.00||a sea between Europe and Asia.;'
+      + 'Arabian Sea|15.00|65.00||a part of the Indian Ocean, between India and Arabia.;Coral Sea|-18.00|152.00||a sea next to Australia, home of the Great Barrier Reef.;'
+      + 'Java Sea|-5.00|110.00||a sea in Indonesia, north of Java.'
+  };
+  const NATURE_ICON = { mountain: '⛰️', river: '🏞️', lake: '💧', desert: '🏜️', ocean: '🌊', sea: '🌊' };
+  const NATURE = [];
+  Object.keys(NATURE_DATA).forEach((type) => NATURE_DATA[type].split(';').forEach((row) => {
+    const [name, lat, lon, at, note] = row.split('|');
+    const [x, y] = project(MAPS.world, +lat, +lon);
+    NATURE.push({ key: name, name, type, icon: NATURE_ICON[type], at, note, x, y });
+  }));
+
   // ---- Levels ----
   // Every level is open from the start. Its id is the key of its stars in the save, so ids never change.
   const cities = (region) => CITIES.filter((c) => !region || c.region === region);
   const nations = (continent, tag) => COUNTRIES.filter((c) => c.continent === continent && (!tag || c.tag === tag || (tag === '1' && c.tag === 'S')));
+  const natural = (type) => NATURE.filter((p) => !type || p.type === type);
+  // The same ten regions of countries serve the capitals and the flags; the prefix keeps their stars apart.
+  const REGIONS = [
+    ['sea', 'Southeast Asia', () => nations('Asia', 'S')], ['asia', 'All of Asia', () => nations('Asia')],
+    ['eu1', 'Europe: well known', () => nations('Europe', '1')], ['eu', 'All of Europe', () => nations('Europe')],
+    ['af1', 'Africa: well known', () => nations('Africa', '1')], ['af', 'All of Africa', () => nations('Africa')],
+    ['na1', 'North America: well known', () => nations('North America', '1')], ['na', 'All of North America', () => nations('North America')],
+    ['sa', 'South America', () => nations('South America')], ['oc', 'Oceania', () => nations('Oceania')]
+  ];
+  const regionLevels = (prefix) => REGIONS.map(([id, name, items]) => ({ id: prefix + '.' + id, name, items }));
+  // Per topic: unit (what a level counts), hint (the line before a tap while exploring), all (what exploring shows),
+  // stage (a prefix for the shared log, so the parents' page can tell two topics' levels apart).
   const TOPICS = [
     { id: 'indonesia', map: 'indonesia', icon: '🏝️', c: 'var(--c-green)', name: 'Cities of Indonesia', blurb: 'Find the cities of every island and the capital of every province.',
+      unit: 'cities', sub: 'Tap any place to see its name and province', hint: 'Tap a dot on the map.', all: () => CITIES,
       kinds: ['find', 'which', 'capital'], levels: [
         { id: 'id.sumatra', name: 'Sumatra', items: () => cities('sumatra') },
         { id: 'id.java', name: 'Java', items: () => cities('java') },
@@ -427,17 +480,21 @@
         { id: 'id.all', name: 'All of Indonesia', items: () => cities() }
       ] },
     { id: 'world', map: 'world', icon: '🌍', c: 'var(--c-indigo)', name: 'Capitals of the World', blurb: 'Find countries on the world map and learn their capital cities.',
-      kinds: ['find', 'which', 'capital'], levels: [
-        { id: 'w.sea', name: 'Southeast Asia', items: () => nations('Asia', 'S') },
-        { id: 'w.asia', name: 'All of Asia', items: () => nations('Asia') },
-        { id: 'w.eu1', name: 'Europe: well known', items: () => nations('Europe', '1') },
-        { id: 'w.eu', name: 'All of Europe', items: () => nations('Europe') },
-        { id: 'w.af1', name: 'Africa: well known', items: () => nations('Africa', '1') },
-        { id: 'w.af', name: 'All of Africa', items: () => nations('Africa') },
-        { id: 'w.na1', name: 'North America: well known', items: () => nations('North America', '1') },
-        { id: 'w.na', name: 'All of North America', items: () => nations('North America') },
-        { id: 'w.sa', name: 'South America', items: () => nations('South America') },
-        { id: 'w.oc', name: 'Oceania', items: () => nations('Oceania') }
+      unit: 'countries', sub: 'Tap any place to see its name, flag and capital', hint: 'Tap a country or a dot on the map.', all: () => COUNTRIES,
+      kinds: ['find', 'which', 'capital'], levels: regionLevels('w') },
+    { id: 'flags', map: 'world', icon: '🚩', c: 'var(--c-pink)', name: 'Flags of the World', blurb: 'Match every flag with its country, on the map and in your head.',
+      unit: 'countries', sub: 'Tap any country to see its flag and name', hint: 'Tap a country or a dot on the map.', all: () => COUNTRIES, stage: 'Flags: ', flags: true,
+      kinds: ['flag', 'pickflag', 'find'], levels: regionLevels('f') },
+    { id: 'nature', map: 'world', icon: '⛰️', c: 'var(--c-teal)', name: 'Nature of the World', blurb: 'Find the mountains, rivers, lakes, deserts, oceans and seas of our planet.',
+      unit: 'places', sub: 'Tap any dot to see what it is', hint: 'Tap a dot on the map.', all: () => NATURE,
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'n.mountain', name: 'Mountains', items: () => natural('mountain') },
+        { id: 'n.river', name: 'Rivers', items: () => natural('river') },
+        { id: 'n.lake', name: 'Lakes', items: () => natural('lake') },
+        { id: 'n.desert', name: 'Deserts', items: () => natural('desert') },
+        { id: 'n.ocean', name: 'Oceans', items: () => natural('ocean'), kinds: ['find', 'which'] },
+        { id: 'n.sea', name: 'Seas', items: () => natural('sea'), kinds: ['find', 'which'] },
+        { id: 'n.all', name: 'All of nature', items: () => natural() }
       ] }
   ];
   const LEVELS = TOPICS.flatMap((t) => t.levels);
@@ -463,13 +520,16 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (51 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (102 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
     { at: 19, name: 'Tower', pic: '🗼', c: '#ffe0ec' }, { at: 25, name: 'Pyramids', pic: '🐪', c: '#fff1c2' },
     { at: 31, name: 'Statue', pic: '🗽', c: '#d9f5e8' }, { at: 38, name: 'Castle', pic: '🏯', c: '#ece6ff' },
-    { at: 44, name: 'Mountain', pic: '🏔️', c: '#d6ebff' }, { at: 51, name: 'World traveler', pic: '🌏', c: '#ffe3c2' }
+    { at: 44, name: 'Mountain', pic: '🏔️', c: '#d6ebff' }, { at: 51, name: 'World traveler', pic: '🌏', c: '#ffe3c2' },
+    { at: 58, name: 'Flag', pic: '🚩', c: '#ffe0ec' }, { at: 66, name: 'Desert', pic: '🏜️', c: '#fff1c2' },
+    { at: 76, name: 'Big wave', pic: '🌊', c: '#d6ebff' }, { at: 88, name: 'River boat', pic: '🛶', c: '#d9f5e8' },
+    { at: 102, name: 'Explorer', pic: '🧭', c: '#ece6ff' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -692,14 +752,14 @@
     const box = $('levels'); box.innerHTML = '';
     const x = document.createElement('button');
     x.type = 'button'; x.className = 'card wide'; x.style.setProperty('--c', t.c);
-    x.innerHTML = '<span class="badge" aria-hidden="true">🔎</span><span><b>Explore the map</b><small>Tap any place to see its name' + (t.map === 'world' ? ', flag and capital' : ' and province') + '</small></span>';
+    x.innerHTML = '<span class="badge" aria-hidden="true">🔎</span><span><b>Explore the map</b><small>' + t.sub + '</small></span>';
     x.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); startExplore(t); });
     box.appendChild(x);
     t.levels.forEach((lv, i) => {
       const b = document.createElement('button'), n = lv.items().length;
       b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', t.c); b.style.animationDelay = i * 0.04 + 's';
       b.setAttribute('aria-label', 'Level ' + (i + 1) + ', ' + lv.name + ', ' + best(lv) + ' stars');
-      b.innerHTML = '<span class="badge" aria-hidden="true">' + (i + 1) + '</span><span><b>' + esc(lv.name) + '</b><small>' + n + (t.map === 'world' ? ' countries' : ' cities') + '</small></span>'
+      b.innerHTML = '<span class="badge" aria-hidden="true">' + (i + 1) + '</span><span><b>' + esc(lv.name) + '</b><small>' + n + ' ' + t.unit + '</small></span>'
         + '<span class="st">' + [0, 1, 2].map((k) => starSvg(k < best(lv))).join('') + '</span>';
       b.addEventListener('click', () => { sfx.tap(); startLevel(lv); });
       box.appendChild(b);
@@ -717,11 +777,14 @@
 
   // ---- What a place is ----
   const isWorld = (it) => !!it.capital;
+  const isNature = (it) => !!it.type;
   // Country names that take "the" in a sentence ("Where is the Netherlands?").
   const THE = /^(United |Netherlands|Philippines|Bahamas|Gambia|Maldives|Marshall|Solomon|Comoros|Seychelles|Central African|Dominican Republic|DR Congo)/;
-  const named = (it) => (isWorld(it) && THE.test(it.name) ? 'the ' : '') + it.name;
+  const THE_TYPES = ['river', 'desert', 'ocean', 'sea'];
+  const named = (it) => ((isWorld(it) && THE.test(it.name)) || (isNature(it) && THE_TYPES.includes(it.type)) ? 'the ' : '') + it.name;
   const shapeOf = (it) => (isWorld(it) && MapView.has(it.shape) ? [it.shape] : []);
   function about(it) {
+    if (isNature(it)) { const n = named(it); return esc(n[0].toUpperCase() + n.slice(1)) + ' is ' + esc(it.note); }
     if (isWorld(it)) return 'The capital of ' + esc(named(it)) + ' is <b>' + esc(it.capital) + '</b>.';
     if (NOTES[it.name]) return esc(it.name) + ' is ' + esc(NOTES[it.name]);
     return esc(it.name) + (it.cap ? ' is the capital of <b>' + esc(it.prov) + '</b>.' : ' is a city in <b>' + esc(it.prov) + '</b>.');
@@ -734,11 +797,11 @@
     $('xTitle').textContent = '🔎 ' + t.name;
     MapView.place($('xSlot'));
     MapView.use(t.map);
-    const items = t.map === 'world' ? COUNTRIES : CITIES;
+    const items = t.all();
     MapView.clear();
     MapView.setDots(items, true);
     MapView.fit(t.map === 'world' ? [{ x: 0, y: 0 }, { x: MAPS.world.w, y: MAPS.world.h }] : items);
-    $('xInfo').innerHTML = '<p>Tap a ' + (t.map === 'world' ? 'country or a dot' : 'dot') + ' on the map.</p>';
+    $('xInfo').innerHTML = '<p>' + t.hint + '</p>';
     MapView.onTap(({ dot, shape }) => {
       const it = items.find((c) => c.key === dot) || (shape && items.find((c) => c.shape === shape));
       if (!it) return;
@@ -747,17 +810,19 @@
       MapView.say(it.name, it.x, it.y);
       $('xInfo').innerHTML = isWorld(it)
         ? '<span class="flag" aria-hidden="true">' + flag(it.a2) + '</span><span><b>' + esc(it.name) + '</b><p>Capital: <b>' + esc(it.capital) + '</b> · ' + esc(it.continent) + '</p></span>'
-        : '<span class="flag" aria-hidden="true">📍</span><span><b>' + esc(it.name) + '</b><p>' + about(it) + '</p></span>';
+        : '<span class="flag" aria-hidden="true">' + (it.icon || '📍') + '</span><span><b>' + esc(it.name) + '</b><p>' + about(it) + '</p></span>';
     });
   }
 
   // ---- Playing a level ----
-  // Three kinds of question: tap a place on the map ("find"), name the place that is lit up ("which"), and pick the
-  // capital ("capital", for countries and provinces). A wrong answer gets a second try; a second miss shows the answer.
+  // Kinds of question: tap a place on the map ("find", by name or, in the flags topic, by its flag), name the place that is
+  // lit up ("which"), pick the capital ("capital", for countries and provinces), pick the continent ("where", in nature),
+  // and the two flag kinds: name the country of a flag ("flag") or pick the flag of a country ("pickflag").
+  // A wrong answer gets a second try; a second miss shows the answer.
   let qs = [], qi = 0, tries = 0, results = [], started = 0, locked = false, pool = [], roundNo = 0;
   const PRAISE = ['Great!', 'Well done!', 'Yes, that is right!', 'Brilliant!', 'Super!', 'Spot on!', 'You got it!'];
   function makeRound(lv) {
-    const items = lv.items(), kinds = curTopic.kinds;
+    const items = lv.items(), kinds = lv.kinds || curTopic.kinds;
     const order = shuffle(items);
     const out = [];
     for (let i = 0; out.length < ROUND && i < order.length * 3; i++) {
@@ -765,24 +830,35 @@
       const kind = kinds[out.length % kinds.length];
       // A province's capital is only asked for a provincial capital.
       if (kind === 'capital' && !isWorld(it) && !it.cap) continue;
+      if (kind === 'where' && !it.at) continue; // an ocean, or a place on no single continent
       if (out.some((q) => q.it === it)) continue;
       out.push({ kind, it });
     }
     return shuffle(out);
   }
+  // What the right answer to a question is. Choices are these values; a flag is chosen by its two-letter code.
+  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
+  const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
+  // Flags that are too alike to be offered together.
+  const ALIKE = [['ID', 'MC'], ['RO', 'TD', 'AD']];
+  const alike = (a, b) => ALIKE.some((g) => g.includes(a) && g.includes(b));
   function choicesFor(q) {
-    const world = isWorld(q.it), same = pool.filter((p) => p !== q.it);
-    const all = (world ? COUNTRIES : CITIES).filter((p) => p !== q.it);
+    const it = q.it, want = target(q), same = pool.filter((p) => p !== it);
     let others;
-    if (q.kind === 'capital') {
-      const value = (p) => (world ? p.capital : p.name);
-      const near = world ? all.filter((p) => p.continent === q.it.continent) : same.filter((p) => p.cap);
-      const rest = world ? all : all.filter((p) => p.cap);
-      others = shuffle(near).concat(shuffle(rest)).map(value);
-      return shuffle([value(q.it)].concat([...new Set(others)].filter((v) => v !== value(q.it)).slice(0, 3)));
+    if (q.kind === 'where') others = shuffle(CONTINENTS);
+    else if (q.kind === 'flag' || q.kind === 'pickflag') {
+      const ok = COUNTRIES.filter((p) => p !== it && !alike(p.a2, it.a2));
+      others = shuffle(ok.filter((p) => p.continent === it.continent)).concat(shuffle(ok)).map((p) => (q.kind === 'flag' ? p.name : p.a2));
+    } else if (q.kind === 'capital' && isWorld(it)) {
+      others = shuffle(COUNTRIES.filter((p) => p !== it && p.continent === it.continent)).concat(shuffle(COUNTRIES)).map((p) => p.capital);
+    } else if (q.kind === 'capital') {
+      others = shuffle(same.filter((p) => p.cap)).concat(shuffle(CITIES.filter((p) => p.cap))).map((p) => p.name);
+    } else if (isNature(it)) {
+      others = shuffle(NATURE.filter((p) => p !== it && p.type === it.type)).concat(shuffle(NATURE)).map((p) => p.name);
+    } else {
+      others = shuffle(same).concat(shuffle(isWorld(it) ? COUNTRIES : CITIES)).map((p) => p.name);
     }
-    others = shuffle(same).concat(shuffle(all)).map((p) => p.name);
-    return shuffle([q.it.name].concat([...new Set(others)].filter((v) => v !== q.it.name).slice(0, 3)));
+    return shuffle([want].concat([...new Set(others)].filter((v) => v !== want).slice(0, 3)));
   }
 
   function startLevel(lv) {
@@ -804,6 +880,7 @@
     $('prog').innerHTML = qs.map((_, k) => '<i class="' + (k < results.length ? (results[k] ? 'ok' : 'miss') : k === qi ? 'now' : '') + '"></i>').join('');
     $('prog').setAttribute('aria-label', 'Question ' + (qi + 1) + ' of ' + qs.length);
   }
+  const stageOf = (lv) => (curTopic.stage || '') + lv.name;
   const mood = (m) => { const c = $('coach'); c.setAttribute('class', 'mascot'); void c.getBoundingClientRect(); if (m) c.classList.add(m); };
 
   function ask() {
@@ -815,20 +892,27 @@
     $('why').hidden = true;
     const box = $('answers'); box.innerHTML = '';
     if (q.kind === 'find') {
-      $('say').textContent = 'Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.');
-      box.innerHTML = '<p class="tapnote">👆 Tap the map' + (world ? ' (the country or its capital dot)' : '') + '</p>';
+      const byFlag = !!curTopic.flags;
+      $('say').textContent = byFlag ? 'Which country has this flag? Tap it on the map.' : 'Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.');
+      box.innerHTML = (byFlag ? '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>' : '')
+        + '<p class="tapnote">👆 Tap the map' + (world ? ' (the country or its capital dot)' : '') + '</p>';
       return;
     }
-    MapView.mark('hl', [it.key], shapeOf(it));
-    MapView.show(it);
-    $('say').textContent = q.kind === 'which'
-      ? (world ? 'Which country is this?' : 'Which city is this?')
+    const flagQ = q.kind === 'flag' || q.kind === 'pickflag';
+    if (!flagQ) MapView.mark('hl', [it.key], shapeOf(it));
+    if (!flagQ) MapView.show(it);
+    $('say').textContent = q.kind === 'flag' ? 'Which country has this flag?'
+      : q.kind === 'pickflag' ? 'Which one is the flag of ' + named(it) + '?'
+      : q.kind === 'where' ? 'Which continent is ' + named(it) + ' in?'
+      : q.kind === 'which' ? 'Which ' + (isNature(it) ? it.type : world ? 'country' : 'city') + ' is this?'
       : 'What is the capital of ' + (world ? named(it) : it.prov) + '?';
+    if (q.kind === 'flag') box.innerHTML = '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>';
     const opts = document.createElement('div'); opts.className = 'opts';
     choicesFor(q).forEach((v, k) => {
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'opt'; b.textContent = v; b.dataset.v = v; b.style.animationDelay = k * 0.05 + 's';
-      b.addEventListener('click', () => answer(v === (q.kind === 'capital' && world ? it.capital : it.name), b));
+      b.type = 'button'; b.className = 'opt'; b.dataset.v = v; b.style.animationDelay = k * 0.05 + 's';
+      if (q.kind === 'pickflag') { b.classList.add('flagopt'); b.textContent = flag(v); b.setAttribute('aria-label', 'Flag ' + (k + 1)); } else b.textContent = v;
+      b.addEventListener('click', () => answer(v === target(q), b));
       opts.appendChild(b);
     });
     box.appendChild(opts);
@@ -837,8 +921,9 @@
     const q = qs[qi];
     if (locked || !q || q.kind !== 'find') return;
     const it = q.it;
-    const got = pool.find((p) => p.key === dot) || (shape && pool.find((p) => p.shape === shape)) || (shape && COUNTRIES.find((p) => p.shape === shape));
-    if (!got && (!shape || !isWorld(it))) return; // the sea, or land away from the city dots
+    // Another country can be tapped by mistake only when a country is what is asked for.
+    const got = pool.find((p) => p.key === dot) || (shape && pool.find((p) => p.shape === shape)) || (shape && isWorld(it) && COUNTRIES.find((p) => p.shape === shape));
+    if (!got && (!shape || !isWorld(it))) return; // the sea, or land away from the dots
     if (got === it) { answer(true); return; }
     if (got) { MapView.mark('no', [got.key], shapeOf(got)); MapView.say(got.name, got.x, got.y); }
     answer(false, null, got);
@@ -862,7 +947,7 @@
     }
     tries++;
     sfx.bad(); mood('oops');
-    if (tries === 1) CD.weak('mundia', curLevel.name + ': ' + it.name);
+    if (tries === 1) CD.weak('mundia', stageOf(curLevel) + ': ' + it.name);
     if (btn) { btn.classList.add('no'); btn.disabled = true; }
     if (tries === 1) {
       $('say').textContent = wrongPlace ? 'That is ' + named(wrongPlace) + '. Try again!' : 'Not quite. Have another go!';
@@ -872,7 +957,7 @@
     locked = true;
     results.push(false);
     renderProg();
-    $('answers').querySelectorAll('.opt').forEach((b) => { if (b.dataset.v === (q.kind === 'capital' && isWorld(it) ? it.capital : it.name)) b.classList.add('ok'); b.disabled = true; });
+    $('answers').querySelectorAll('.opt').forEach((b) => { if (b.dataset.v === target(q)) b.classList.add('ok'); b.disabled = true; });
     MapView.mark('hl'); MapView.mark('no');
     MapView.mark('ok', [it.key], shapeOf(it));
     MapView.say(it.name, it.x, it.y);
@@ -896,7 +981,7 @@
     S.best[lv.id] = Math.max(best(lv), stars);
     S.stars = totalStars();
     markDay(); save();
-    CD.round({ app: 'mundia', stage: lv.name, stars, right, total: qs.length, ms: Date.now() - started });
+    CD.round({ app: 'mundia', stage: stageOf(lv), stars, right, total: qs.length, ms: Date.now() - started });
     show('result');
     sfx.win();
     $('resTitle').textContent = stars === 3 ? 'Perfect!' : stars === 2 ? 'Great job!' : 'Well done!';
