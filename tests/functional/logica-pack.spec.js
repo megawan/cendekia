@@ -225,4 +225,51 @@ test.describe("Poka's Backpack", () => {
     for (let k = 0; k < 2; k++) { await nextPuzzle(page); await buildOne(page); }
     await expect(page.locator('#resStars .star.on')).toHaveCount(2, { timeout: 15000 });
   });
+
+  test('tapping a step says what it does', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await openLevel(page, 3);
+    await nextPuzzle(page);
+    const said = { put: 'now has exactly', add: 'more go into', take: 'come out of', copy: 'gets the same number' };
+    const steps = page.locator('.recipe li');
+    for (let k = 0; k < await steps.count(); k++) {
+      const op = await steps.nth(k).getAttribute('data-op');
+      await steps.nth(k).click();
+      await expect(page.locator('#qSay')).toContainText(said[op]);
+    }
+  });
+
+  test('a step can be read from the keyboard too', async ({ page }) => {
+    await openLogica(page, 'easy');
+    await openLevel(page, 1);
+    await nextPuzzle(page);
+    await page.locator('.recipe li').first().focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#qSay')).toContainText(/exactly|more go into|come out of|same number/);
+  });
+
+  test('a block says what it does when it is added', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await openLevel(page, 4);
+    await nextPuzzle(page);
+    await page.locator('#bPal .pbtn').first().click();
+    await expect(page.locator('#qSay')).toContainText(/more go into|come out of/);
+  });
+
+  test('the steps guide explains every step, from the world screen and from a puzzle', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await page.locator('#worlds .card', { hasText: 'Backpack' }).click();
+    await page.locator('#wSteps').click();
+    const steps = page.getByRole('dialog', { name: 'Backpack steps' }).locator('.tsteps');
+    await expect(steps).toContainText('Put 5 in');
+    await expect(steps).toContainText('becomes exactly 5');
+    await expect(steps).toContainText('Add 3 to');
+    await expect(steps).toContainText('Take 3 from');
+    await expect(steps).toContainText('Copy');
+    await page.keyboard.press('Escape');
+    await page.locator('#wLevels .lv button').first().click();
+    await expect(page.locator('.pouch').first()).toBeVisible();
+    await page.getByRole('button', { name: '📖 Steps' }).click();
+    await expect(page.getByRole('dialog', { name: 'Backpack steps' }).locator('.tsteps')).toContainText('Like emptying your bag');
+  });
 });
