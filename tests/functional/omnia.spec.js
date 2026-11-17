@@ -418,6 +418,23 @@ test.describe('Omnia', () => {
     await expect(page.locator('#xInfo')).toContainText('our home');
   });
 
+  test('exploring the solar system, the planets are coloured and go round the Sun; in a quiz they stand still and are not coloured', async ({ page }) => {
+    await openTopic(page, 'The Solar System');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    const earth = page.locator('#map circle[aria-label="Earth"]');
+    expect(await earth.evaluate((c) => c.style.getPropertyValue('--fill'))).toBe('#3a9ad9');
+    const at = () => earth.evaluate((c) => c.getAttribute('cx') + ',' + c.getAttribute('cy'));
+    const first = await at();
+    await expect.poll(at).not.toBe(first);
+    await page.getByRole('button', { name: /Back|←/ }).first().click();
+    await page.locator('#levels .card', { hasText: 'The planets' }).click();
+    const quiz = page.locator('#map circle').nth(3);
+    expect(await quiz.evaluate((c) => c.style.getPropertyValue('--fill'))).toBe('');
+    const still = await quiz.evaluate((c) => c.getAttribute('cx'));
+    await page.waitForTimeout(600);
+    expect(await quiz.evaluate((c) => c.getAttribute('cx'))).toBe(still);
+  });
+
   test('planets put in order, nearest to the Sun first, are right', async ({ page }) => {
     const order = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
     await openTopic(page, 'The Solar System');
