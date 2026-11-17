@@ -16,7 +16,7 @@ General knowledge for children, in English, with Pacha the llama. The topics are
 | 🏝️ Islands and Straits | The biggest islands, Smaller islands, Straits, Seas, All | 15 islands, 6 straits and 8 seas of Indonesia |
 | 🧑‍🤝‍🧑 Peoples and Languages | Sumatra, Java and Bali, Kalimantan, Sulawesi, Nusa Tenggara, Maluku and Papua, All peoples | 23 peoples of Indonesia, where they live and the language they speak |
 | 🏞️ Rivers and Lakes | Rivers of Indonesia, Lakes of Sumatra, Java and Nusa Tenggara, Lakes of Kalimantan, Sulawesi and Papua, All | 11 rivers and 17 lakes of Indonesia, from the Kapuas to Lake Toba |
-| 🪐 The Solar System | The planets, Bigger planets, Farther from the Sun, Put in order, Sun, planets and Pluto | The Sun, the 8 planets and Pluto on a made-up map of space (not to scale): the Sun in the middle, an orbit for each planet, the planets in a row |
+| 🪐 The Solar System | The planets, Bigger planets, Farther from the Sun, Put in order, Sun, planets and Pluto | The Sun, the 8 planets and Pluto on a made-up map of space (not to scale): the Sun in the middle, an orbit for each planet, the planets in their own colours. When exploring, the planets go round the Sun (anime.js, the farther the slower); in a game they stand still and are not coloured |
 | 🗽 Landmarks of the World | Asia, Europe, Africa and Oceania, the Americas, All landmarks | 30 landmarks, from Borobudur to the Eiffel Tower, and the country of each |
 | 🍜 Foods of the World | Asia, Europe, Africa and Oceania, the Americas, All foods | 37 dishes, from sushi to tacos, and the country each comes from |
 

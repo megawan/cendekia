@@ -142,7 +142,7 @@
   #map.space path[data-id="sun"] { fill: #ffcf40; stroke: #ffe9a0; stroke-width: 3; }
   #map.space path.hl { stroke: #fff; stroke-width: 4; }
   #map.space text { fill: #fff; stroke: #0d1236; }
-  #map.space circle:not(.hl):not(.ok):not(.no):not(.on) { fill: #cfd6ff; stroke: #fff; }
+  #map.space circle:not(.hl):not(.ok):not(.no):not(.on) { fill: var(--fill, #cfd6ff); stroke: #fff; }
   #map.nodots circle { opacity: 0; }
   #map.nodots circle.hl, #map.nodots circle.on { opacity: 1; }
   #map path.route { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 7 6; stroke-linecap: round; pointer-events: none; }
@@ -822,6 +822,8 @@
   // The solar system, on a map made here (not to scale): the Sun in the middle, an orbit for each planet, and the planets in a row.
   // Orbit radius and the angle of the planet on it. dist is in million km from the Sun, diam in km, order counts the planets.
   const SOLAR_ORBIT = { Mercury: [60, 10], Venus: [100, -15], Earth: [140, 20], Mars: [180, -10], Jupiter: [240, 15], Saturn: [300, -20], Uranus: [360, 10], Neptune: [420, -15], Pluto: [470, 20] };
+  // The colour of each planet, as it looks from space. Shown only when exploring: in a quiz it would give the answer away.
+  const SOLAR_COLOR = { Mercury: '#9b9b9b', Venus: '#e8c872', Earth: '#3a9ad9', Mars: '#d9503a', Jupiter: '#d8a06a', Saturn: '#e6cf8f', Uranus: '#8fe0e6', Neptune: '#3f50d6', Pluto: '#c9b5a0' };
   const ring = (r) => 'M' + (500 - r) + ',500a' + r + ',' + r + ' 0 1,0 ' + 2 * r + ',0a' + r + ',' + r + ' 0 1,0 ' + (-2 * r) + ',0Z';
   MAPS.solar = { w: 1000, h: 1000, proj: 'flat', k: 1, tx: 0, ty: 0, shapes: Object.values(SOLAR_ORBIT).map(([r]) => ['', ring(r)]).concat([['sun', ring(34)]]) };
   const SOLAR_DATA = 'Sun|☀️|star|0|1392700|0|the star in the middle of the solar system. It gives us light and heat.;'
@@ -839,7 +841,7 @@
     let x = 500, y = 500;
     if (SOLAR_ORBIT[name]) { const [r, a] = SOLAR_ORBIT[name]; x = 500 + r * Math.cos(a * Math.PI / 180); y = 500 - r * Math.sin(a * Math.PI / 180); }
     return { key: name, name, group, noun: group === 'dwarf' ? 'dwarf planet' : group, icon, dist: +dist, diam: +diam, order: +order, note, plural: false,
-      ref: name === 'Sun' ? 'the Sun' : name, shape: name === 'Sun' ? 'sun' : undefined, x, y };
+      ref: name === 'Sun' ? 'the Sun' : name, shape: name === 'Sun' ? 'sun' : undefined, x, y, orbit: SOLAR_ORBIT[name], color: SOLAR_COLOR[name] };
   });
   const ORDINAL = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'];
   // Put in order: tasks of planets to tap, nearest to the Sun first. They use the same tapping as a route.
@@ -1110,7 +1112,7 @@
     const NS = 'http://www.w3.org/2000/svg', svg = $('map');
     const DOT = 5.5, HIT = 22, LABEL = 14; // screen pixels
     let map = null, name = '', vb = { x: 0, y: 0, w: 1, h: 1 }, home = null;
-    let shapes = new Map(), dots = new Map(), gDots = null, gRoute = null, label = null, labelAt = null, tapped = null, anim = 0;
+    let shapes = new Map(), dots = new Map(), gDots = null, gRoute = null, label = null, labelAt = null, labelKey = null, tapped = null, anim = 0, stops = [], orbiting = [];
     const el = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.keys(attrs).forEach((k) => n.setAttribute(k, attrs[k])); return n; };
     const size = () => { const r = svg.getBoundingClientRect(); return { w: r.width || 1, h: r.height || 1, left: r.left, top: r.top }; };
     const upp = () => vb.w / size().w; // map units per screen pixel
@@ -1133,11 +1135,13 @@
       labelAt = null;
     }
     // Places shown as dots. In a quiz the dots are named only "Place 3", so a screen reader does not give the answer away.
-    function setDots(items, named) {
+    function setDots(items, named, coloured) {
+      orbit([]);
       gDots.textContent = ''; dots = new Map();
       items.forEach((it, i) => {
         const c = el('circle', { cx: it.x.toFixed(1), cy: it.y.toFixed(1), r: 1, tabindex: 0, role: 'button', 'aria-label': named ? it.name : 'Place ' + (i + 1) });
         if (it.big) c.classList.add('big');
+        if (coloured && it.color) c.style.setProperty('--fill', it.color);
         c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (tapped) tapped({ dot: it.key, shape: null }); } });
         gDots.appendChild(c); dots.set(it.key, { c, it });
       });
@@ -1152,6 +1156,7 @@
     function clear() { ['hl', 'ok', 'no', 'on', 'pool'].forEach((c) => mark(c)); say(null); }
     function say(text, x, y) {
       labelAt = text ? { x, y } : null;
+      labelKey = null; dots.forEach((d, key) => { if (text && d.it.x === x && d.it.y === y) labelKey = key; });
       label.textContent = text || '';
       restyle();
     }
@@ -1162,6 +1167,21 @@
         label.setAttribute('x', labelAt.x.toFixed(1)); label.setAttribute('y', (labelAt.y - 11 * u).toFixed(1));
         label.setAttribute('font-size', (LABEL * u).toFixed(2)); label.setAttribute('stroke-width', (4 * u).toFixed(2));
       }
+    }
+    // Items with an orbit (the planets) go round it, each in its own time, the farther the slower; no items stops them and puts them back at the start.
+    // Their x and y move with them, so a tap, a label or a route finds them where they are drawn.
+    const put = (it, t) => { const [r, a] = it.orbit, rad = (a + 360 * t) * Math.PI / 180; it.x = 500 + r * Math.cos(rad); it.y = 500 - r * Math.sin(rad); };
+    function orbit(items) {
+      stops.forEach((stop) => stop()); stops = [];
+      orbiting.forEach((it) => put(it, 0)); orbiting = items.filter((it) => it.orbit);
+      orbiting.forEach((it) => {
+        const [r] = it.orbit, d = dots.get(it.key);
+        stops.push(Cendekia.fx.loop(r * 130, (t) => {
+          put(it, t);
+          d.c.setAttribute('cx', it.x.toFixed(1)); d.c.setAttribute('cy', it.y.toFixed(1));
+          if (labelKey === it.key) { labelAt = { x: it.x, y: it.y }; restyle(); }
+        }));
+      });
     }
     // The view always has the same shape as the box, so a screen pixel is a map unit times upp() both ways.
     function apply(v) {
@@ -1265,7 +1285,7 @@
     }
     window.addEventListener('resize', () => { if (map) apply(vb); });
     return {
-      use, setDots, mark, clear, say, fit, show,
+      use, setDots, orbit, mark, clear, say, fit, show,
       place(slot) { slot.appendChild($('mapbox')); },
       // Where a point of the map is on the screen, and how many screen pixels a map unit is now.
       screenOf(x, y) { const sz = size(); return [sz.left + (x - vb.x) / upp(), sz.top + (y - vb.y) / upp()]; },
@@ -1281,6 +1301,7 @@
   let curTopic = TOPICS[0], curLevel = null;
   function show(id) {
     ['home', 'topic', 'explore', 'play', 'result', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
+    if (id !== 'explore') MapView.orbit([]);
     if (id === 'home') renderHome();
     if (id === 'topic') renderTopic();
     if (id === 'stickers') renderStickers();
@@ -1373,7 +1394,8 @@
     MapView.clear();
     $('map').classList.remove('nodots');
     $('map').classList.toggle('space', t.map === 'solar');
-    MapView.setDots(items, true);
+    MapView.setDots(items, true, true);
+    MapView.orbit(items);
     MapView.fit(t.map === 'world' ? [{ x: 0, y: 0 }, { x: MAPS.world.w, y: MAPS.world.h }] : items);
     $('xInfo').innerHTML = '<p>' + t.hint + '</p>';
     MapView.onTap(({ dot, shape }) => {
