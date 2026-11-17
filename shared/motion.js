@@ -5,6 +5,7 @@
 //   Cendekia.fx.confetti(n)                  n pieces fall from the top of the screen
 //   Cendekia.fx.confetti(n, { glyphs: [] })  the same with emoji instead of paper pieces
 //   Cendekia.fx.burst(element)               a small ring of sparks around a right answer
+//   Cendekia.fx.pop(element)                 the element swells and settles, for something that was just finished
 //   Cendekia.fx.hop(element, left, top)      an absolutely placed element jumps to a new place in an arc
 //   Cendekia.fx.drop(element)                the element falls into place from a little above
 //   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its marked parts move
@@ -94,6 +95,13 @@
     Array.prototype.forEach.call(sym.children, function (c) { svg.insertBefore(c.cloneNode(true), use); });
     use.remove();
   }
+  function pop(el) {
+    if (!el || reduce.matches) return;
+    load().then(function (a) {
+      if (a) a.animate(el, { scale: [1, 1.06, 0.98, 1], duration: 520, ease: 'outQuad' });
+    });
+  }
+
   function hop(el, left, top) {
     function set() { el.style.left = left + 'px'; el.style.top = top + 'px'; }
     if (reduce.matches) { set(); return; }
@@ -161,5 +169,5 @@
   }
 
   window.Cendekia = window.Cendekia || {};
-  window.Cendekia.fx = { confetti: confetti, burst: burst, hop: hop, drop: drop, mascot: mascot, react: react };
+  window.Cendekia.fx = { confetti: confetti, burst: burst, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react };
 })();

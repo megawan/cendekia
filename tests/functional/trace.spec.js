@@ -36,6 +36,8 @@ test.describe('Aksara: trace letters', () => {
     await expect(page.locator('#trace')).toBeVisible();
     await traceLetter(page);
     await expect(page.locator('.tr-box.done')).toBeVisible();
+    // The finished letter swells (shared/motion.js).
+    await expect.poll(() => page.locator('.tr-box').evaluate((e) => e.style.transform)).toContain('scale');
     await expect(page.locator('#trNext')).toBeVisible();
     const saved = await page.evaluate(() => {
       const k = Object.keys(localStorage).find((x) => x.startsWith('baca.v1.'));

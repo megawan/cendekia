@@ -1,5 +1,5 @@
 // Offline support for Mundia. Bump CACHE when the precached files change.
-const CACHE = 'mundia-v3';
+const CACHE = 'mundia-v4';
 const FONTS = 'mundia-fonts-v1';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js', 'maps.js'];
 

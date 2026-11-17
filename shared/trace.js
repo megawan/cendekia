@@ -134,6 +134,7 @@
       meter.firstChild.style.width = Math.min(100, Math.round(m.coverage / PASS * 100)) + '%';
       if (m.coverage >= PASS && m.partsOk && m.accuracy >= 0.6) {
         finished = true; box.classList.add('done'); draw();
+        if (root.fx) { root.fx.pop(box); root.fx.burst(box); } // shared/motion.js, when the app loads it
         msg.textContent = o.doneText || 'Well done!';
         var stars = m.accuracy >= 0.85 ? 3 : m.accuracy >= 0.72 ? 2 : 1;
         if (o.onDone) o.onDone({ stars: stars, coverage: m.coverage, accuracy: m.accuracy, ms: Date.now() - started });
