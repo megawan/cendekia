@@ -43,6 +43,17 @@ test('screens do not animate when the device asks for reduced motion', async ({ 
   await expect(page.locator('#map > *').first()).toHaveCSS('opacity', '1');
 });
 
+// Poka: the coaches idle and hop, and the robot on the board idles too but keeps its own CSS animations.
+test('logica: Poka idles and the coach hops', async ({ page }) => {
+  await page.goto('/logica/');
+  await expect.poll(() => page.locator('svg.poka .ear-l').first().evaluate((e) => e.style.transform)).toContain('rotate');
+  await page.evaluate(() => {
+    const s = document.querySelector('#rCoach');
+    window.Cendekia.fx.react(s, 'cheer');
+  });
+  await expect.poll(() => page.locator('#rCoach').evaluate((e) => e.style.transform)).toContain('translateY');
+});
+
 // Home screens: numbers count up with their words kept, and a streak flame flickers.
 test('count keeps the words and ends on the real number', async ({ page }) => {
   await page.goto('/lexica/');

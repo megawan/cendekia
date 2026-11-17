@@ -171,7 +171,7 @@
         if (part.idle && parts(svg, sel).length) a.animate(parts(svg, sel), Object.assign({ loop: true, alternate: true, ease: 'inOutSine' }, part.idle));
       });
       (function blink() {
-        if (!svg.isConnected) return;
+        if (!svg.isConnected) { a.remove(svg.querySelectorAll('*')); return; } // a mascot taken out of the page stops moving
         if (!document.hidden && parts(svg, '.eyes').length) a.animate(parts(svg, '.eyes'), { scaleY: [1, 0.1, 1], duration: 180, ease: 'inOutQuad' });
         setTimeout(blink, rand(2200, 5200));
       })();
