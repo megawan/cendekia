@@ -205,7 +205,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/15</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/18</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -413,8 +413,19 @@
     COUNTRIES.push({ key: a2, name, capital, continent, shape, x, y, a2, tag });
   }));
 
-  // Nature: name | what it is | latitude and longitude | continent (empty where it is not clear-cut) | a sentence to finish
-  // "<name> is ...". A river's dot marks one spot along it, a desert's or a sea's dot its middle.
+  // Features are dots with a name, a group, the continent or province they are in, and a sentence that finishes
+  // "<name> is ...". Nature, culture and animals are all features. Rows: name | latitude | longitude | where
+  // (empty when it is not one place) | the sentence | emoji (only when it differs from its group's).
+  // A river's dot marks one spot along it, and a desert's or a sea's dot its middle; an animal's dot is somewhere it lives.
+  function makeFeatures(data, mapName, o) {
+    const out = [];
+    Object.keys(data).forEach((group) => data[group].split(';').forEach((row) => {
+      const [name, lat, lon, at, note, icon] = row.split('|');
+      const [x, y] = project(MAPS[mapName], +lat, +lon);
+      out.push({ key: name, name, group, noun: o.noun(group), icon: icon || o.icon[group], at, scope: o.scope, note, ref: o.ref(name, group), x, y });
+    }));
+    return out;
+  }
   const NATURE_DATA = {
     mountain: 'Mount Everest|27.99|86.93|Asia|the highest mountain on Earth, in the Himalayas of Asia.;Mont Blanc|45.83|6.86|Europe|the highest mountain in the Alps, on the border of France and Italy.;'
       + 'Mount Kilimanjaro|-3.07|37.35|Africa|the highest mountain in Africa, in Tanzania.;Aconcagua|-32.65|-70.01|South America|the highest mountain in South America, in Argentina.;'
@@ -443,19 +454,98 @@
       + 'Arabian Sea|15.00|65.00||a part of the Indian Ocean, between India and Arabia.;Coral Sea|-18.00|152.00||a sea next to Australia, home of the Great Barrier Reef.;'
       + 'Java Sea|-5.00|110.00||a sea in Indonesia, north of Java.'
   };
-  const NATURE_ICON = { mountain: '⛰️', river: '🏞️', lake: '💧', desert: '🏜️', ocean: '🌊', sea: '🌊' };
-  const NATURE = [];
-  Object.keys(NATURE_DATA).forEach((type) => NATURE_DATA[type].split(';').forEach((row) => {
-    const [name, lat, lon, at, note] = row.split('|');
-    const [x, y] = project(MAPS.world, +lat, +lon);
-    NATURE.push({ key: name, name, type, icon: NATURE_ICON[type], at, note, x, y });
-  }));
+  const NATURE = makeFeatures(NATURE_DATA, 'world', {
+    scope: 'continent', noun: (g) => g, icon: { mountain: '⛰️', river: '🏞️', lake: '💧', desert: '🏜️', ocean: '🌊', sea: '🌊' },
+    ref: (name, g) => (['river', 'desert', 'ocean', 'sea'].includes(g) ? 'the ' : '') + name
+  });
+
+  // Culture of Indonesia, on the map of Indonesia. The province is what "where" asks for.
+  const CULTURE_DATA = {
+    house: 'Rumah Gadang|-0.30|100.37|Sumatera Barat|the big house of the Minangkabau people, with a roof that curves up like buffalo horns.;'
+      + 'Rumah Bolon|2.66|98.80|Sumatera Utara|the traditional house of the Batak people, built on tall posts on Samosir island.;'
+      + 'Tongkonan|-3.05|119.75|Sulawesi Selatan|the house of the Toraja people, with a roof shaped like a boat.;'
+      + 'Honai|-4.10|138.95|Papua Pegunungan|a round house with a thatched roof, built to keep warm in the cool Papua highlands.;'
+      + 'Rumah Betang|-1.80|113.20|Kalimantan Tengah|a very long house of the Dayak people, where many families live together.;'
+      + 'Rumah Joglo|-7.57|110.82|Jawa Tengah|the traditional house of Java, with a tall roof in the middle.',
+    dance: 'Kecak|-8.62|115.22|Bali|a Balinese dance where dozens of men sit in a circle and chant "cak, cak, cak".;'
+      + 'Saman|4.20|97.30|Aceh|a dance from Aceh where many dancers sit in a row and clap and sway very fast.;'
+      + 'Reog Ponorogo|-7.87|111.46|Jawa Timur|a dance with a huge lion mask topped with peacock feathers.;'
+      + 'Jaipong|-6.91|107.61|Jawa Barat|a lively dance from the Sunda people of West Java.;'
+      + 'Pakarena|-5.15|119.42|Sulawesi Selatan|a slow, graceful dance from the Makassar people of South Sulawesi.;'
+      + 'Cakalele|0.80|128.00|Maluku Utara|a war dance with swords and shields, from the Maluku islands.;'
+      + 'Yospan|-2.53|140.72|Papua|a lively group dance from Papua.',
+    food: 'Rendang|-0.95|100.35|Sumatera Barat|beef cooked for hours in coconut milk and spices, from the Minangkabau people.;'
+      + 'Pempek|-2.99|104.76|Sumatera Selatan|fish cakes with a sour and spicy sauce, from Palembang.;'
+      + 'Gudeg|-7.80|110.37|DI Yogyakarta|a sweet stew of young jackfruit, from Yogyakarta.;'
+      + 'Soto Banjar|-3.32|114.59|Kalimantan Selatan|a fragrant chicken soup from Banjarmasin.;'
+      + 'Papeda|-8.49|140.40|Papua Selatan|a sticky porridge made from sago, eaten in Papua and Maluku.;'
+      + 'Tinutuan|1.30|124.90|Sulawesi Utara|a porridge with vegetables from Manado, also called bubur Manado.',
+    instrument: 'Angklung|-6.95|107.70|Jawa Barat|bamboo tubes that ring when they are shaken, from West Java.;'
+      + 'Gamelan|-7.57|110.82||an orchestra of gongs and metal xylophones, played in Java and Bali.;'
+      + 'Sasando|-10.70|123.10|Nusa Tenggara Timur|a harp with a palm-leaf cover, from the island of Rote.;'
+      + 'Kolintang|1.25|124.83|Sulawesi Utara|wooden bars played like a xylophone, from Minahasa.;'
+      + 'Sape|0.50|116.40|Kalimantan Timur|a lute of the Dayak people, played by plucking its strings.;'
+      + 'Tifa|-3.70|128.18||a drum from Maluku and Papua.',
+    cloth: 'Batik|-6.89|109.67||a cloth decorated by drawing patterns with wax and then dyeing it. It is famous in Java.;'
+      + 'Ulos|2.30|99.00|Sumatera Utara|a woven cloth of the Batak people, given as a gift on special days.;'
+      + 'Songket|-3.40|104.50|Sumatera Selatan|a cloth woven with gold or silver thread, famous in Palembang.;'
+      + 'Tenun Ikat Sumba|-9.65|120.00|Nusa Tenggara Timur|cloth woven from thread that was dyed before weaving, with patterns of animals, from Sumba.;'
+      + 'Noken|-3.37|135.50|Papua Tengah|a woven bag from Papua that is hung from the forehead to carry things.;'
+      + 'Sasirangan|-3.45|114.70|Kalimantan Selatan|a colourful cloth from Banjarmasin, with patterns made by tying and stitching before dyeing.'
+  };
+  const CULTURE = makeFeatures(CULTURE_DATA, 'indonesia', {
+    scope: 'province', noun: (g) => ({ house: 'house', dance: 'dance', food: 'dish', instrument: 'instrument', cloth: 'cloth' })[g],
+    icon: { house: '🏠', dance: '💃', food: '🍲', instrument: '🥁', cloth: '👘' }, ref: (name) => name
+  });
+  // The province of a feature is one of these, and its neighbours in a question are the provinces of the same region first.
+  const PROV_REGION = new Map(CITIES.map((c) => [c.prov, c.region]));
+
+  // Animals of the world, grouped by habitat.
+  const ANIMAL_DATA = {
+    rainforest: 'Orangutan|1.00|114.00|Asia|a red-haired ape that lives in the rainforests of Borneo and Sumatra, in Indonesia.|🦧;'
+      + 'Jaguar|-5.00|-62.00|South America|the biggest wild cat in the Americas. It hunts in the Amazon rainforest.|🐆;'
+      + 'Gorilla|-1.50|28.00|Africa|the biggest of the apes. It lives in the forests of central Africa.|🦍;'
+      + 'Macaw|-3.00|-72.00|South America|a big, colourful parrot of the Amazon rainforest.|🦜;'
+      + 'Sloth|9.50|-83.50||a slow animal that hangs upside down in the rainforest trees of Central and South America.|🦥;'
+      + 'Bird of paradise|-3.00|137.50||a bird with amazing feathers, found in the rainforests of Papua.|🐦',
+    savanna: 'Lion|-3.00|35.00|Africa|the king of the savanna, a big cat that lives in family groups called prides.|🦁;'
+      + 'Elephant|-16.00|25.00|Africa|the biggest animal that lives on land. This one lives on the African savanna.|🐘;'
+      + 'Giraffe|-24.00|16.00|Africa|the tallest animal in the world. It eats leaves from the tops of trees on the African savanna.|🦒;'
+      + 'Kangaroo|-27.00|140.00|Oceania|an animal that hops across the grasslands of Australia and carries its baby in a pouch.|🦘;'
+      + 'Bison|44.00|-103.00|North America|a huge, shaggy animal that lives on the grasslands of North America.|🦬;'
+      + 'Komodo dragon|-8.55|120.05|Asia|the biggest lizard in the world. It lives on a few islands in Indonesia, such as Komodo.|🦎',
+    desert: 'Arabian camel|23.00|45.00|Asia|a camel with one hump. It can go many days without water in the deserts of Arabia.|🐪;'
+      + 'Bactrian camel|43.00|103.00|Asia|a camel with two humps, from the cold Gobi desert.|🐫;'
+      + 'Fennec fox|28.00|8.00|Africa|a small fox with huge ears that lives in the Sahara.|🦊;'
+      + 'Roadrunner|34.00|-111.00|North America|a fast bird that runs across the deserts of North America.|🐦;'
+      + 'Dingo|-26.00|127.00|Oceania|a wild dog that lives in the dry outback of Australia.|🐕',
+    polar: 'Polar bear|73.00|-95.00||the biggest bear in the world. It hunts seals on the Arctic ice.|🐻‍❄️;'
+      + 'Arctic fox|72.00|-42.00||a small fox with a thick white coat in winter. It lives in the cold Arctic.|🦊;'
+      + 'Reindeer|68.00|25.00||a deer that lives in the cold north of Europe, Asia and North America.|🦌;'
+      + 'Snowy owl|66.00|-155.00||a white owl that lives on the cold Arctic tundra.|🦉',
+    ocean: 'Blue whale|45.00|-145.00||the biggest animal that has ever lived. It swims in all the oceans.|🐋;'
+      + 'Dolphin|34.00|-45.00||a clever, playful animal that leaps out of the sea.|🐬;'
+      + 'Great white shark|-36.00|22.00||a big shark with sharp teeth that hunts in the sea.|🦈;'
+      + 'Sea turtle|-9.50|114.50||a turtle that lives in the sea and comes to the beach to lay its eggs.|🐢;'
+      + 'Clownfish|-18.00|150.00||a small orange fish with white stripes that hides among the coral.|🐠;'
+      + 'Penguin|-52.00|-68.00||a bird that cannot fly but is a great swimmer. This kind lives on the coasts of Chile and Argentina.|🐧',
+    forest: 'Giant panda|31.00|103.00|Asia|a black and white bear that eats bamboo in the mountain forests of China.|🐼;'
+      + 'Tiger|22.00|80.00|Asia|the biggest wild cat in the world, with orange fur and black stripes. Many live in India.|🐅;'
+      + 'Snow leopard|36.00|78.00|Asia|a shy wild cat with thick fur that lives high in the mountains of Asia.|🐆;'
+      + 'Llama|-17.00|-69.00|South America|a woolly animal that carries loads in the high Andes mountains.|🦙;'
+      + 'Koala|-33.00|151.00|Oceania|a sleepy animal that lives in eucalyptus trees in Australia and eats their leaves.|🐨;'
+      + 'Grizzly bear|46.00|-110.00|North America|a big brown bear that lives in the mountains and forests of North America.|🐻'
+  };
+  const HABITAT = { rainforest: 'Rainforest', savanna: 'Savanna or grassland', desert: 'Desert', polar: 'Polar land', ocean: 'Ocean or coast', forest: 'Forest or mountains' };
+  const ANIMALS = makeFeatures(ANIMAL_DATA, 'world', {
+    scope: 'continent', noun: () => 'animal', icon: {}, ref: (name) => 'the ' + name.replace(/^(?!Komodo)\w/, (c) => c.toLowerCase())
+  });
 
   // ---- Levels ----
   // Every level is open from the start. Its id is the key of its stars in the save, so ids never change.
   const cities = (region) => CITIES.filter((c) => !region || c.region === region);
   const nations = (continent, tag) => COUNTRIES.filter((c) => c.continent === continent && (!tag || c.tag === tag || (tag === '1' && c.tag === 'S')));
-  const natural = (type) => NATURE.filter((p) => !type || p.type === type);
+  const group = (list, g) => list.filter((p) => !g || p.group === g);
   // The same ten regions of countries serve the capitals and the flags; the prefix keeps their stars apart.
   const REGIONS = [
     ['sea', 'Southeast Asia', () => nations('Asia', 'S')], ['asia', 'All of Asia', () => nations('Asia')],
@@ -487,14 +577,38 @@
       kinds: ['flag', 'pickflag', 'find'], levels: regionLevels('f') },
     { id: 'nature', map: 'world', icon: '⛰️', c: 'var(--c-teal)', name: 'Nature of the World', blurb: 'Find the mountains, rivers, lakes, deserts, oceans and seas of our planet.',
       unit: 'places', sub: 'Tap any dot to see what it is', hint: 'Tap a dot on the map.', all: () => NATURE,
+      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which continent is ' + it.ref + ' in?' },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'n.mountain', name: 'Mountains', items: () => natural('mountain') },
-        { id: 'n.river', name: 'Rivers', items: () => natural('river') },
-        { id: 'n.lake', name: 'Lakes', items: () => natural('lake') },
-        { id: 'n.desert', name: 'Deserts', items: () => natural('desert') },
-        { id: 'n.ocean', name: 'Oceans', items: () => natural('ocean'), kinds: ['find', 'which'] },
-        { id: 'n.sea', name: 'Seas', items: () => natural('sea'), kinds: ['find', 'which'] },
-        { id: 'n.all', name: 'All of nature', items: () => natural() }
+        { id: 'n.mountain', name: 'Mountains', items: () => group(NATURE, 'mountain') },
+        { id: 'n.river', name: 'Rivers', items: () => group(NATURE, 'river') },
+        { id: 'n.lake', name: 'Lakes', items: () => group(NATURE, 'lake') },
+        { id: 'n.desert', name: 'Deserts', items: () => group(NATURE, 'desert') },
+        { id: 'n.ocean', name: 'Oceans', items: () => group(NATURE, 'ocean'), kinds: ['find', 'which'] },
+        { id: 'n.sea', name: 'Seas', items: () => group(NATURE, 'sea'), kinds: ['find', 'which'] },
+        { id: 'n.all', name: 'All of nature', items: () => NATURE }
+      ] },
+    { id: 'culture', map: 'indonesia', icon: '🎭', c: 'var(--c-orange)', name: 'Culture of Indonesia', blurb: 'Find the houses, dances, foods and music of every part of Indonesia.',
+      unit: 'things', sub: 'Tap any dot to see what it is and where it is from', hint: 'Tap a dot on the map.', all: () => CULTURE, stage: 'Culture: ',
+      say: { find: (it) => 'Where is ' + it.ref + ' from? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is from here?', where: (it) => 'Which province is ' + it.ref + ' from?' },
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'c.house', name: 'Traditional houses', items: () => group(CULTURE, 'house') },
+        { id: 'c.dance', name: 'Dances', items: () => group(CULTURE, 'dance') },
+        { id: 'c.food', name: 'Foods', items: () => group(CULTURE, 'food') },
+        { id: 'c.instrument', name: 'Music instruments', items: () => group(CULTURE, 'instrument') },
+        { id: 'c.cloth', name: 'Clothes and cloth', items: () => group(CULTURE, 'cloth') },
+        { id: 'c.all', name: 'All of culture', items: () => CULTURE }
+      ] },
+    { id: 'animals', map: 'world', icon: '🦁', c: 'var(--c-blue)', name: 'Animals of the World', blurb: 'Find where animals live, from rainforests to the oceans.',
+      unit: 'animals', sub: 'Tap any dot to see an animal and where it lives', hint: 'Tap a dot on the map.', all: () => ANIMALS, stage: 'Animals: ',
+      say: { find: (it) => 'Where does ' + it.ref + ' live? Tap its dot.', which: () => 'Which animal lives here?', where: (it) => 'Which continent does ' + it.ref + ' live on?', habitat: (it) => 'Where does ' + it.ref + ' live?' },
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'a.rainforest', name: 'Rainforests', items: () => group(ANIMALS, 'rainforest') },
+        { id: 'a.savanna', name: 'Savannas and grasslands', items: () => group(ANIMALS, 'savanna') },
+        { id: 'a.desert', name: 'Deserts', items: () => group(ANIMALS, 'desert') },
+        { id: 'a.polar', name: 'Polar lands', items: () => group(ANIMALS, 'polar'), kinds: ['find', 'which'] },
+        { id: 'a.ocean', name: 'Oceans and coasts', items: () => group(ANIMALS, 'ocean'), kinds: ['find', 'which'] },
+        { id: 'a.forest', name: 'Forests and mountains', items: () => group(ANIMALS, 'forest') },
+        { id: 'a.all', name: 'All animals', items: () => ANIMALS, kinds: ['find', 'which', 'where', 'habitat'] }
       ] }
   ];
   const LEVELS = TOPICS.flatMap((t) => t.levels);
@@ -520,7 +634,7 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (102 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (141 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
@@ -529,7 +643,9 @@
     { at: 44, name: 'Mountain', pic: '🏔️', c: '#d6ebff' }, { at: 51, name: 'World traveler', pic: '🌏', c: '#ffe3c2' },
     { at: 58, name: 'Flag', pic: '🚩', c: '#ffe0ec' }, { at: 66, name: 'Desert', pic: '🏜️', c: '#fff1c2' },
     { at: 76, name: 'Big wave', pic: '🌊', c: '#d6ebff' }, { at: 88, name: 'River boat', pic: '🛶', c: '#d9f5e8' },
-    { at: 102, name: 'Explorer', pic: '🧭', c: '#ece6ff' }
+    { at: 102, name: 'Explorer', pic: '🧭', c: '#ece6ff' },
+    { at: 114, name: 'Mask', pic: '🎭', c: '#ffe3c2' }, { at: 126, name: 'Safari', pic: '🦁', c: '#fff1c2' },
+    { at: 141, name: 'Mundia master', pic: '🏆', c: '#fff1c2' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -777,14 +893,16 @@
 
   // ---- What a place is ----
   const isWorld = (it) => !!it.capital;
-  const isNature = (it) => !!it.type;
+  const isFeature = (it) => !!it.noun;
   // Country names that take "the" in a sentence ("Where is the Netherlands?").
   const THE = /^(United |Netherlands|Philippines|Bahamas|Gambia|Maldives|Marshall|Solomon|Comoros|Seychelles|Central African|Dominican Republic|DR Congo)/;
-  const THE_TYPES = ['river', 'desert', 'ocean', 'sea'];
-  const named = (it) => ((isWorld(it) && THE.test(it.name)) || (isNature(it) && THE_TYPES.includes(it.type)) ? 'the ' : '') + it.name;
+  const named = (it) => (isFeature(it) ? it.ref : (isWorld(it) && THE.test(it.name) ? 'the ' : '') + it.name);
   const shapeOf = (it) => (isWorld(it) && MapView.has(it.shape) ? [it.shape] : []);
   function about(it) {
-    if (isNature(it)) { const n = named(it); return esc(n[0].toUpperCase() + n.slice(1)) + ' is ' + esc(it.note); }
+    if (isFeature(it)) {
+      const n = it.ref, from = it.scope === 'province' && it.at ? ' It is from <b>' + esc(it.at) + '</b>.' : '';
+      return esc(n[0].toUpperCase() + n.slice(1)) + ' is ' + esc(it.note) + from;
+    }
     if (isWorld(it)) return 'The capital of ' + esc(named(it)) + ' is <b>' + esc(it.capital) + '</b>.';
     if (NOTES[it.name]) return esc(it.name) + ' is ' + esc(NOTES[it.name]);
     return esc(it.name) + (it.cap ? ' is the capital of <b>' + esc(it.prov) + '</b>.' : ' is a city in <b>' + esc(it.prov) + '</b>.');
@@ -837,7 +955,7 @@
     return shuffle(out);
   }
   // What the right answer to a question is. Choices are these values; a flag is chosen by its two-letter code.
-  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
+  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'habitat' ? HABITAT[q.it.group] : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
   const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
   // Flags that are too alike to be offered together.
   const ALIKE = [['ID', 'MC'], ['RO', 'TD', 'AD']];
@@ -845,7 +963,11 @@
   function choicesFor(q) {
     const it = q.it, want = target(q), same = pool.filter((p) => p !== it);
     let others;
-    if (q.kind === 'where') others = shuffle(CONTINENTS);
+    if (q.kind === 'habitat') others = shuffle(Object.keys(HABITAT).filter((h) => h !== it.group)).map((h) => HABITAT[h]);
+    else if (q.kind === 'where' && it.scope === 'province') {
+      const region = PROV_REGION.get(it.at), provs = [...PROV_REGION.keys()].filter((v) => v !== it.at);
+      others = shuffle(provs.filter((v) => PROV_REGION.get(v) === region)).concat(shuffle(provs));
+    } else if (q.kind === 'where') others = shuffle(CONTINENTS);
     else if (q.kind === 'flag' || q.kind === 'pickflag') {
       const ok = COUNTRIES.filter((p) => p !== it && !alike(p.a2, it.a2));
       others = shuffle(ok.filter((p) => p.continent === it.continent)).concat(shuffle(ok)).map((p) => (q.kind === 'flag' ? p.name : p.a2));
@@ -853,8 +975,9 @@
       others = shuffle(COUNTRIES.filter((p) => p !== it && p.continent === it.continent)).concat(shuffle(COUNTRIES)).map((p) => p.capital);
     } else if (q.kind === 'capital') {
       others = shuffle(same.filter((p) => p.cap)).concat(shuffle(CITIES.filter((p) => p.cap))).map((p) => p.name);
-    } else if (isNature(it)) {
-      others = shuffle(NATURE.filter((p) => p !== it && p.type === it.type)).concat(shuffle(NATURE)).map((p) => p.name);
+    } else if (isFeature(it)) {
+      const all = curTopic.all();
+      others = shuffle(all.filter((p) => p !== it && p.group === it.group)).concat(shuffle(all)).map((p) => p.name);
     } else {
       others = shuffle(same).concat(shuffle(isWorld(it) ? COUNTRIES : CITIES)).map((p) => p.name);
     }
@@ -893,7 +1016,7 @@
     const box = $('answers'); box.innerHTML = '';
     if (q.kind === 'find') {
       const byFlag = !!curTopic.flags;
-      $('say').textContent = byFlag ? 'Which country has this flag? Tap it on the map.' : 'Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.');
+      $('say').textContent = byFlag ? 'Which country has this flag? Tap it on the map.' : curTopic.say ? curTopic.say.find(it) : 'Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.');
       box.innerHTML = (byFlag ? '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>' : '')
         + '<p class="tapnote">👆 Tap the map' + (world ? ' (the country or its capital dot)' : '') + '</p>';
       return;
@@ -903,8 +1026,8 @@
     if (!flagQ) MapView.show(it);
     $('say').textContent = q.kind === 'flag' ? 'Which country has this flag?'
       : q.kind === 'pickflag' ? 'Which one is the flag of ' + named(it) + '?'
-      : q.kind === 'where' ? 'Which continent is ' + named(it) + ' in?'
-      : q.kind === 'which' ? 'Which ' + (isNature(it) ? it.type : world ? 'country' : 'city') + ' is this?'
+      : q.kind === 'where' || q.kind === 'habitat' || (q.kind === 'which' && curTopic.say) ? curTopic.say[q.kind](it)
+      : q.kind === 'which' ? 'Which ' + (world ? 'country' : 'city') + ' is this?'
       : 'What is the capital of ' + (world ? named(it) : it.prov) + '?';
     if (q.kind === 'flag') box.innerHTML = '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>';
     const opts = document.createElement('div'); opts.className = 'opts';
