@@ -2,7 +2,7 @@ const { test, expect } = require('../support/fixtures');
 
 // Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
 // "Culture of Indonesia", "Animals of the World", "Volcanoes and Disasters", "Islands and Straits", "Peoples and Languages",
-// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?" or "Neighbours").
+// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?" or "Island Routes").
 async function openTopic(page, name) {
   await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
@@ -44,14 +44,14 @@ const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(wind
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
-  test('lists the fourteen topics and their levels', async ({ page }) => {
+  test('lists the seventeen topics and their levels', async ({ page }) => {
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Capitals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
-    await expect(page.locator('#topics .card')).toHaveCount(15); // fourteen topics and the stickers
+    await expect(page.locator('#topics .card')).toHaveCount(18); // seventeen topics and the stickers
     await page.locator('#topics .card', { hasText: 'Flags of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
@@ -72,7 +72,7 @@ test.describe('Omnia', () => {
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Peoples and Languages' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
-    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 6], ['Neighbours', 4]]) { // a game has no Explore card
+    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 6], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3]]) { // a game has no Explore card
       await page.getByRole('button', { name: '← Home' }).click();
       await page.locator('#topics .card', { hasText: topic }).click();
       await expect(page.locator('#levels .card')).toHaveCount(levels);
@@ -168,6 +168,16 @@ test.describe('Omnia', () => {
       'Feijoada', 'Empanadas', 'Arepas', 'Jerk chicken']) expect(await onAnyLand(page, place), place).toBe(true);
     await page.locator('#map circle[aria-label="Sushi"]').press('Enter');
     await expect(page.locator('#xInfo')).toContainText('Japan');
+  });
+
+  test('rivers and lakes are on land, and each says its province', async ({ page }) => {
+    await openTopic(page, 'Rivers and Lakes');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    for (const place of ['Kapuas', 'Mahakam', 'Barito', 'Musi', 'Batang Hari', 'Kampar', 'Citarum', 'Bengawan Solo', 'Brantas', 'Digul', 'Mamberamo', 'Lake Toba', 'Lake Laut Tawar',
+      'Lake Maninjau', 'Lake Ranau', 'Rawa Pening', 'Lake Batur', 'Segara Anak', 'Kelimutu lakes', 'Lake Poso', 'Lake Matano', 'Lake Tempe', 'Lake Tondano', 'Lake Limboto',
+      'Lake Sentani', 'Lake Paniai', 'Lake Sentarum', 'Lake Jempang']) expect(await onAnyLand(page, place), place).toBe(true);
+    await page.locator('#map circle[aria-label="Lake Toba"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('Sumatera Utara');
   });
 
   test('the land borders are right, without the overseas ones', async ({ page }) => {
@@ -341,5 +351,60 @@ test.describe('Omnia', () => {
     await playRound(page);
     expect((await saved(page)).best['b.europe']).toBeGreaterThanOrEqual(1);
     expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Neighbours: Europe' });
+  });
+
+  test('Bigger or Farther? takes the bigger island, and shows the numbers', async ({ page }) => {
+    const area = { Sumatra: 443066, Java: 128297, Kalimantan: 539460, Sulawesi: 174600, Papua: 420540, Bali: 5780, Lombok: 4725, Sumbawa: 15448, Sumba: 10710, Flores: 13540,
+      Timor: 30777, Halmahera: 17780, Seram: 17100, Bangka: 11910, Nias: 5121 };
+    await openTopic(page, 'Bigger or Farther?');
+    await page.locator('#levels .card', { hasText: 'Bigger islands' }).click();
+    await expect(page.locator('#say')).toHaveText('Which island is bigger?');
+    const names = await page.locator('.opt').allInnerTexts();
+    expect(names).toHaveLength(2);
+    const bigger = names.reduce((a, b) => (area[a] >= area[b] ? a : b));
+    await page.locator('.opt', { hasText: new RegExp('^' + bigger + '$') }).click();
+    await expect(page.locator('.prog i.ok')).toHaveCount(1);
+    await expect(page.locator('#say')).toContainText('km²');
+  });
+
+  test('a comparing round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Bigger or Farther?');
+    await page.locator('#levels .card', { hasText: 'Farther capitals' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['k.capitals']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Compare: Farther capitals' });
+  });
+
+  test('Island Routes takes the islands in order, and an island out of order is a miss', async ({ page }) => {
+    const via = { 'Medan to Jakarta': ['Sumatra', 'Java'], 'Palembang to Surabaya': ['Sumatra', 'Java'], 'Jakarta to Denpasar': ['Java', 'Bali'], 'Medan to Denpasar': ['Sumatra', 'Java', 'Bali'],
+      'Padang to Semarang': ['Sumatra', 'Java'], 'Denpasar to Padang': ['Bali', 'Java', 'Sumatra'], 'Bandar Lampung to Bandung': ['Sumatra', 'Java'] };
+    await openTopic(page, 'Island Routes');
+    await page.locator('#levels .card', { hasText: 'Sumatra, Java and Bali' }).click();
+    const [, from, to] = (await page.locator('#say').innerText()).match(/from (.+) to (.+)\. Tap/);
+    const route = via[from + ' to ' + to];
+    expect(route, from + ' to ' + to).toBeTruthy();
+    const last = route[route.length - 1];
+    // The last island first is out of order for a trip of more than one island: a miss, with a second try.
+    await page.locator('#map circle[aria-label="' + last + '"]').press('Enter');
+    await expect(page.locator('#say')).toContainText('comes later');
+    for (const island of route) await page.locator('#map circle[aria-label="' + island + '"]').press('Enter');
+    await expect(page.locator('.prog i.miss')).toHaveCount(1); // right in the end, but not on the first try
+    await expect(page.locator('#map path.route')).toHaveAttribute('d', /^M/);
+  });
+
+  test('a routes round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Island Routes');
+    await page.locator('#levels .card', { hasText: 'Nusa Tenggara' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['t.nusa']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Routes: Nusa Tenggara' });
+  });
+
+  test('a rivers round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Rivers and Lakes');
+    await page.locator('#levels .card', { hasText: 'Rivers of Indonesia' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['r.river']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Rivers: Rivers of Indonesia' });
   });
 });
