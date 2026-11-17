@@ -62,8 +62,9 @@
   .poka .mouth { fill: none; stroke: #3b2a1a; stroke-width: 3.5; stroke-linecap: round; display: none; }
   .poka[data-mood="happy"] .m-happy, .poka[data-mood="cheer"] .m-cheer, .poka[data-mood="oops"] .m-oops,
   .poka:not([data-mood]) .m-happy { display: block; }
-  .poka[data-mood="cheer"] { animation: hop .5s ease-out; }
-  .poka[data-mood="oops"] { animation: shake .35s; }
+  /* The robot on the board keeps its own animations; the coaches and the hero react through shared/motion.js. */
+  .bot .poka[data-mood="cheer"] { animation: hop .5s ease-out; }
+  .bot .poka[data-mood="oops"] { animation: shake .35s; }
   @keyframes blinkEye { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
   @keyframes hop { 30% { transform: translateY(-14px) scale(1.08); } }
   @keyframes bob { 50% { transform: translateY(-6px); } }
@@ -1097,8 +1098,8 @@
 
   // ---- Poka ----
   const POKA = '<ellipse cx="50" cy="90" rx="26" ry="11" fill="#8a5329"/>'
-    + '<circle cx="21" cy="36" r="11" fill="#8a5329"/><circle cx="79" cy="36" r="11" fill="#8a5329"/>'
-    + '<circle cx="21" cy="36" r="5.5" fill="#e9b98a"/><circle cx="79" cy="36" r="5.5" fill="#e9b98a"/>'
+    + '<g class="ear-l"><circle cx="21" cy="36" r="11" fill="#8a5329"/><circle cx="21" cy="36" r="5.5" fill="#e9b98a"/></g>'
+    + '<g class="ear-r"><circle cx="79" cy="36" r="11" fill="#8a5329"/><circle cx="79" cy="36" r="5.5" fill="#e9b98a"/></g>'
     + '<ellipse cx="50" cy="58" rx="35" ry="32" fill="#b5733c"/>'
     + '<ellipse cx="50" cy="66" rx="21" ry="15" fill="#f0d3ac"/>'
     + '<rect x="44" y="66" width="12" height="11" rx="2.5" fill="#fff" stroke="#d9c3a6" stroke-width="1.5"/><path d="M50 66 V77" stroke="#d9c3a6" stroke-width="1.5"/>'
@@ -1107,7 +1108,7 @@
     + '<path class="mouth m-happy" d="M42 63 Q50 68 58 63"/><path class="mouth m-cheer" d="M40 62 Q50 72 60 62"/><path class="mouth m-oops" d="M43 67 Q46.5 63 50 67 T57 67"/>'
     + '<path d="M26 32 Q50 2 74 32z" fill="#f2c230"/><rect x="22" y="30" width="56" height="7" rx="3.5" fill="#e3a91b"/>';
   const pokaSvg = (mood) => '<svg class="poka" data-mood="' + (mood || 'happy') + '" viewBox="0 0 100 100" aria-hidden="true">' + POKA + '</svg>';
-  function fillPokas(root) { root.querySelectorAll('svg.poka:empty').forEach((s) => { s.innerHTML = POKA; }); }
+  function fillPokas(root) { root.querySelectorAll('svg.poka:empty').forEach((s) => { s.innerHTML = POKA; Cendekia.fx.mascot(s); }); }
   fillPokas(document);
 
   // ---- Shapes, drawn as small SVGs ----
@@ -1784,6 +1785,8 @@
     svg.dataset.mood = '';
     void svg.getBoundingClientRect();
     svg.dataset.mood = m;
+    // The robot on the board has its own CSS animations and is flipped with scaleX(-1), so only the coaches hop here.
+    if (!svg.closest('.bot')) Cendekia.fx.react(svg, m);
   }
 
   // =====================================================================
@@ -1979,6 +1982,7 @@
     botEl.className = 'bot';
     botEl.innerHTML = pokaSvg('happy');
     b.appendChild(botEl);
+    Cendekia.fx.mascot(botEl.firstChild); // its ears sway; the body is moved by the board's CSS
     resetBot();
   }
   function placeBot(x, y) { botEl.style.setProperty('--x', x); botEl.style.setProperty('--y', y); }
@@ -2415,7 +2419,7 @@
       placeBot(st.x, st.y);
       botEl.classList.remove('walk'); void botEl.offsetWidth; botEl.classList.add('walk');
       sfx.step();
-      if (st.gem) setTimeout(() => { if (my === runToken) { gemEls[st.x + ',' + st.y].classList.add('got'); sfx.gem(); gemCount($('board').querySelectorAll('.gem.got').length); } }, 220);
+      if (st.gem) setTimeout(() => { if (my === runToken) { Cendekia.fx.burst(gemEls[st.x + ',' + st.y]); gemEls[st.x + ',' + st.y].classList.add('got'); sfx.gem(); gemCount($('board').querySelectorAll('.gem.got').length); } }, 220);
       await sleep(STEP);
     }
     if (my !== runToken) return;
