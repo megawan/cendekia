@@ -5,6 +5,7 @@
 //   Cendekia.fx.confetti(n)                  n pieces fall from the top of the screen
 //   Cendekia.fx.confetti(n, { glyphs: [] })  the same with emoji instead of paper pieces
 //   Cendekia.fx.burst(element)               a small ring of sparks around a right answer
+//   Cendekia.fx.pop(element)                 the element swells and settles, for something that was just finished
 //   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its marked parts move
 //   Cendekia.fx.react(svg, 'cheer' | 'oops') the mascot hops and flaps, or shakes its head
 //
@@ -92,6 +93,13 @@
     Array.prototype.forEach.call(sym.children, function (c) { svg.insertBefore(c.cloneNode(true), use); });
     use.remove();
   }
+  function pop(el) {
+    if (!el || reduce.matches) return;
+    load().then(function (a) {
+      if (a) a.animate(el, { scale: [1, 1.06, 0.98, 1], duration: 520, ease: 'outQuad' });
+    });
+  }
+
   // The parts a mascot can have. A part turns around its own box, so `hinge` is the point it hangs from. `idle` is its
   // slow movement while the mascot waits, and `cheer` how far it swings (rotate, in degrees) when the mascot hops.
   var PARTS = {
@@ -141,5 +149,5 @@
   }
 
   window.Cendekia = window.Cendekia || {};
-  window.Cendekia.fx = { confetti: confetti, burst: burst, mascot: mascot, react: react };
+  window.Cendekia.fx = { confetti: confetti, burst: burst, pop: pop, mascot: mascot, react: react };
 })();
