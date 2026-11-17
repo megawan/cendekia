@@ -43,6 +43,55 @@ test('screens do not animate when the device asks for reduced motion', async ({ 
   await expect(page.locator('#map > *').first()).toHaveCSS('opacity', '1');
 });
 
+// Home screens: numbers count up with their words kept, and a streak flame flickers.
+test('count keeps the words and ends on the real number', async ({ page }) => {
+  await page.goto('/lexica/');
+  const start = await page.evaluate(async () => {
+    document.body.insertAdjacentHTML('beforeend', '<span id="cnt">12 stars</span>');
+    const el = document.getElementById('cnt');
+    window.Cendekia.fx.count(el);
+    return el.textContent;
+  });
+  expect(start).toBe('0 stars');
+  await expect(page.locator('#cnt')).toHaveText('12 stars', { timeout: 5000 });
+});
+
+test('the home screen counts its stars and days up and lights the streak flame', async ({ page }) => {
+  await page.goto('/lexica/');
+  await page.evaluate(() => {
+    const d = new Date(), p = (n) => String(n).padStart(2, '0');
+    const day = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    localStorage.setItem(window.Cendekia.key('kosakata.v1'), JSON.stringify({ stars: 42, best: {}, day, streak: 5 }));
+  });
+  await page.reload();
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: /Word cards/ }).click();
+  const start = await page.evaluate(async () => {
+    document.querySelector('#cards [data-go="home"]').click();
+    await Promise.resolve();
+    return document.getElementById('homeStars').textContent;
+  });
+  expect(start).toBe('0');
+  await expect(page.locator('#homeStars')).toHaveText('42', { timeout: 5000 });
+  await expect(page.locator('#homeDays')).toHaveText('5');
+  await expect.poll(() => page.locator('#homeDays').evaluate((e) => e.closest('.pill').firstElementChild.style.transform)).toContain('rotate');
+});
+
+test('flame flickers the element', async ({ page }) => {
+  await page.goto('/lexica/');
+  await page.evaluate(() => {
+    document.body.insertAdjacentHTML('beforeend', '<span id="fl">🔥</span>');
+    window.Cendekia.fx.flame(document.getElementById('fl'));
+  });
+  await expect.poll(() => page.locator('#fl').evaluate((e) => e.style.transform)).toContain('rotate');
+});
+
+test('the landing page shows every app card once it has settled', async ({ page }) => {
+  await page.goto('/');
+  await expect.poll(() => page.locator('.apps li').evaluateAll((els) => els.every((e) => e.style.opacity === '')), { timeout: 5000 }).toBe(true);
+  await expect(page.locator('a.app')).toHaveCount(6);
+});
+
 // Lexica's word cards: choosing a word turns the stage over.
 test('lexica: the stage flips when another word is chosen', async ({ page }) => {
   await page.goto('/lexica/');
