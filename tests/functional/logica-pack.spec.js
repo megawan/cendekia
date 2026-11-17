@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { pack: Array(6).fill(1) };
+    for (const x of ['easy', 'medium', 'hard']) best[x] = { pack: Array(7).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { pack: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -161,6 +161,40 @@ async function repeatOne(page, diff) {
   if (await page.locator('#bTray').count()) { await buildRepeat(page); return; }
   const puzzle = await readRepeat(page);
   await answer(page, diff, follow(puzzle)[puzzle.ask]);
+}
+
+// Mixed up: whichever kind of puzzle is on the screen, solved.
+const readDebug = (page) => page.evaluate(() => {
+  const op = (el) => ({ op: el.dataset.op, p: el.dataset.p === '' ? null : +el.dataset.p, v: el.dataset.v === '' ? null : +el.dataset.v, to: el.dataset.to === '' ? null : +el.dataset.to });
+  const dbg = document.getElementById('dbg');
+  return {
+    start: [...document.querySelectorAll('.pouch')].map((e) => +e.querySelector('.cnt').textContent),
+    ask: +dbg.dataset.ask, target: +dbg.dataset.target,
+    prog: [...document.querySelectorAll('.recipe > li')].map(op),
+    options: [...document.querySelectorAll('.opts .opt')].map((b) => ({ ...op(b), at: +b.dataset.at, label: b.getAttribute('aria-label') }))
+  };
+});
+// Does this change make the program end with the target?
+function fixWorks(d, o) {
+  try { return follow({ start: d.start, prog: d.prog.map((x, j) => (j === o.at ? { op: o.op, p: o.p, v: o.v, to: o.to } : x)) })[d.ask] === d.target; } catch (e) { return false; }
+}
+async function mixedOne(page, diff) {
+  if (await page.locator('#dbg').count()) {
+    const d = await readDebug(page);
+    await page.locator('.opts .opt').nth(d.options.findIndex((o) => fixWorks(d, o))).click();
+  } else if (await page.locator('#bTray').count()) {
+    if (await page.locator('#bPal .pbtn[data-op="loop"]').count()) await buildRepeat(page); else await buildOne(page);
+  } else {
+    const puzzle = await readRepeat(page);
+    await answer(page, diff, follow(puzzle)[puzzle.ask]);
+  }
+}
+// Plays the first two puzzles of Mixed up and waits for the third.
+async function toLastPuzzle(page, diff) {
+  await openLogica(page, diff);
+  await openLevel(page, 7);
+  for (let k = 0; k < 2; k++) { await nextPuzzle(page); await mixedOne(page, diff); }
+  await nextPuzzle(page);
 }
 
 test.describe("Poka's Backpack", () => {
@@ -499,5 +533,57 @@ test.describe("Poka's Backpack", () => {
     await page.locator('#worlds .card', { hasText: 'Backpack' }).click();
     await page.locator('#wSteps').click();
     await expect(page.getByRole('dialog', { name: 'Backpack steps' }).locator('.tsteps')).toContainText('Like clapping three times');
+  });
+
+  for (const diff of ['easy', 'medium', 'hard']) {
+    test(`mixed up is solved on ${diff}, and ends with a debug on medium and hard`, async ({ page }) => {
+      await openLogica(page, diff);
+      await openLevel(page, 7);
+      const puzzles = diff === 'easy' ? 2 : 3;
+      for (let k = 0; k < puzzles; k++) {
+        await nextPuzzle(page);
+        expect(await page.locator('#dbg').count()).toBe(diff !== 'easy' && k === 2 ? 1 : 0);
+        await mixedOne(page, diff);
+      }
+      await expect(page.locator('#resStars .star.on')).toHaveCount(3, { timeout: 15000 });
+    });
+  }
+
+  for (const diff of ['medium', 'hard']) {
+    test(`a debug puzzle has exactly one working change on ${diff}`, async ({ page }) => {
+      for (let k = 0; k < 3; k++) {
+        await toLastPuzzle(page, diff);
+        const d = await readDebug(page);
+        expect(d.options).toHaveLength(diff === 'medium' ? 3 : 4);
+        expect(new Set(d.options.map((o) => o.label)).size).toBe(d.options.length);
+        expect(d.options.filter((o) => fixWorks(d, o))).toHaveLength(1);
+        expect(follow({ start: d.start, prog: d.prog })[d.ask]).not.toBe(d.target); // the program really ends wrong
+        expect(d.prog.length).toBeGreaterThanOrEqual(diff === 'medium' ? 3 : 4);
+        expect(d.prog.length).toBeLessThanOrEqual(diff === 'medium' ? 4 : 5);
+      }
+    });
+  }
+
+  test('two wrong changes show the table and are recorded as slips, and the stars drop', async ({ page }) => {
+    await toLastPuzzle(page, 'medium');
+    const d = await readDebug(page);
+    const wrongs = d.options.map((o, i) => [o, i]).filter(([o]) => !fixWorks(d, o)).map(([, i]) => i);
+    await expect(page.locator('table.trace')).toHaveCount(0);
+    await page.locator('.opts .opt').nth(wrongs[0]).click();
+    await page.locator('.opts .opt').nth(wrongs[1]).click();
+    await expect(page.locator('table.trace')).toBeVisible();
+    const slips = (await storedLog(page))['medium/pack/6'].slips;
+    expect(Object.values(slips).reduce((a, n) => a + n, 0)).toBe(2);
+    expect(Object.keys(slips).every((t) => ['wrong-step', 'wrong-value'].includes(t))).toBe(true);
+    await page.locator('.opts .opt').nth(d.options.findIndex((o) => fixWorks(d, o))).click();
+    await expect(page.locator('.recipe > li.fixed')).toHaveCount(1);
+    await expect(page.locator('#resStars .star.on')).toHaveCount(2, { timeout: 10000 });
+  });
+
+  test('the program is shown as cards that say what they do, also in a debug puzzle', async ({ page }) => {
+    await toLastPuzzle(page, 'medium');
+    await expect(page.locator('#dbg')).toContainText('It should end with');
+    await page.locator('.recipe > li').first().click();
+    await expect(page.locator('#qSay')).toContainText(/exactly|more go into|come out of|same number/);
   });
 });
