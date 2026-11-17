@@ -204,7 +204,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/18</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/22</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -414,14 +414,14 @@
 
   // Features are dots with a name, a group, the continent or province they are in, and a sentence that finishes
   // "<name> is ...". Nature, culture and animals are all features. Rows: name | latitude | longitude | where
-  // (empty when it is not one place) | the sentence | emoji (only when it differs from its group's).
+  // (empty when it is not one place) | the sentence | emoji (only when it differs from its group's) | language (peoples).
   // A river's dot marks one spot along it, and a desert's or a sea's dot its middle; an animal's dot is somewhere it lives.
   function makeFeatures(data, mapName, o) {
     const out = [];
     Object.keys(data).forEach((group) => data[group].split(';').forEach((row) => {
-      const [name, lat, lon, at, note, icon] = row.split('|');
+      const [name, lat, lon, at, note, icon, lang] = row.split('|');
       const [x, y] = project(MAPS[mapName], +lat, +lon);
-      out.push({ key: name, name, group, noun: o.noun(group), icon: icon || o.icon[group], at, scope: o.scope, note, ref: o.ref(name, group), x, y });
+      out.push({ key: name, name, group, noun: o.noun(group), icon: icon || o.icon[group], at, scope: o.scope, locate: o.locate, plural: !!o.plural, lang, note, ref: o.ref(name, group), x, y });
     }));
     return out;
   }
@@ -494,7 +494,7 @@
   };
   const CULTURE = makeFeatures(CULTURE_DATA, 'indonesia', {
     scope: 'province', noun: (g) => ({ house: 'house', dance: 'dance', food: 'dish', instrument: 'instrument', cloth: 'cloth' })[g],
-    icon: { house: '🏠', dance: '💃', food: '🍲', instrument: '🥁', cloth: '👘' }, ref: (name) => name
+    icon: { house: '🏠', dance: '💃', food: '🍲', instrument: '🥁', cloth: '👘' }, ref: (name) => name, locate: 'It is from {}.'
   });
   // The province of a feature is one of these, and its neighbours in a question are the provinces of the same region first.
   const PROV_REGION = new Map(CITIES.map((c) => [c.prov, c.region]));
@@ -538,6 +538,90 @@
   const HABITAT = { rainforest: 'Rainforest', savanna: 'Savanna or grassland', desert: 'Desert', polar: 'Polar land', ocean: 'Ocean or coast', forest: 'Forest or mountains' };
   const ANIMALS = makeFeatures(ANIMAL_DATA, 'world', {
     scope: 'continent', noun: () => 'animal', icon: {}, ref: (name) => 'the ' + name.replace(/^(?!Komodo)\w/, (c) => c.toLowerCase())
+  });
+
+  // Volcanoes and disasters of Indonesia. Where: the province.
+  const DISASTER_DATA = {
+    sumatra: 'Sinabung|3.17|98.39|Sumatera Utara|a volcano near Lake Toba that has erupted many times since 2010.;'
+      + 'Marapi|-0.38|100.47|Sumatera Barat|an active volcano near Bukittinggi, in West Sumatra.;'
+      + 'Kerinci|-1.70|101.26||the highest volcano in Indonesia, 3,805 metres tall.;'
+      + 'Toba|2.65|98.85|Sumatera Utara|a huge volcano that erupted about 74,000 years ago. Its crater is now Lake Toba.;'
+      + 'Krakatau|-6.10|105.42|Lampung|the volcano whose huge eruption in 1883 was heard thousands of kilometres away.',
+    java: 'Merapi|-7.54|110.44||one of the most active volcanoes in Indonesia, near Yogyakarta.;'
+      + 'Bromo|-7.94|112.95|Jawa Timur|a smoking volcano inside a huge sandy crater, famous for its sunrise.;'
+      + 'Ijen|-8.06|114.24|Jawa Timur|a volcano with a turquoise crater lake and a blue fire at night.;'
+      + 'Slamet|-7.24|109.21|Jawa Tengah|the highest volcano in Central Java.;'
+      + 'Tangkuban Perahu|-6.76|107.61|Jawa Barat|a volcano near Bandung that looks like an upside-down boat.',
+    nusa: 'Agung|-8.34|115.51|Bali|the highest volcano in Bali, and a holy mountain.;'
+      + 'Rinjani|-8.41|116.46|Nusa Tenggara Barat|a tall volcano on Lombok with a crater lake.;'
+      + 'Tambora|-8.25|118.00|Nusa Tenggara Barat|the volcano whose eruption in 1815 was the biggest in recorded history.;'
+      + 'Kelimutu|-8.77|121.82|Nusa Tenggara Timur|a volcano on Flores with three crater lakes of different colours.',
+    east: 'Lokon|1.36|124.79|Sulawesi Utara|a volcano next to the city of Tomohon, near Manado.;'
+      + 'Karangetang|2.78|125.40|Sulawesi Utara|one of the most active volcanoes in Indonesia, on the island of Siau.;'
+      + 'Gamalama|0.80|127.33|Maluku Utara|a volcano that makes up the whole island of Ternate.;'
+      + 'Banda Api|-4.52|129.87|Maluku|a small volcano in the Banda Islands, where nutmeg grows.',
+    disaster: 'Aceh tsunami|3.30|95.98|Aceh|the huge wave of 26 December 2004, one of the deadliest disasters in history.;'
+      + 'Nias earthquake|2.09|97.01|Sumatera Utara|the strong earthquake of 2005 that hit the island of Nias.;'
+      + 'Mentawai tsunami|-3.50|100.10|Sumatera Barat|the earthquake and tsunami of 2010 that hit the Mentawai Islands.;'
+      + 'Palu earthquake|-0.90|119.87|Sulawesi Tengah|the earthquake and tsunami of September 2018 that hit the city of Palu.;'
+      + 'Jakarta flood|-6.20|106.83|DKI Jakarta|the water that sometimes covers parts of Jakarta in the rainy season.;'
+      + 'Kalimantan haze|-2.20|113.90|Kalimantan Tengah|the thick smoke from forest and peat fires, mostly in the dry season.'
+  };
+  const DISASTERS = makeFeatures(DISASTER_DATA, 'indonesia', {
+    scope: 'province', noun: (g) => (g === 'disaster' ? 'disaster' : 'volcano'), icon: { sumatra: '🌋', java: '🌋', nusa: '🌋', east: '🌋', disaster: '🌊' },
+    ref: (name, g) => (g === 'disaster' ? 'the ' + name : /^(Krakatau|Toba|Banda Api)$/.test(name) ? name : 'Mount ' + name), locate: 'It is in {}.'
+  });
+
+  // Islands, straits and seas of Indonesia. Where (straits only): the two places a strait lies between.
+  const WATER_DATA = {
+    big: 'Sumatra|-0.60|101.50||the biggest island that belongs only to Indonesia.;Java|-7.40|110.00||the island with the most people in Indonesia, and the home of Jakarta.;'
+      + 'Kalimantan|0.50|114.00||the Indonesian part of Borneo, the third biggest island in the world.;Sulawesi|-2.00|120.50||an island shaped like a letter K.;'
+      + 'Papua|-4.50|138.50||the Indonesian part of New Guinea, the second biggest island in the world.',
+    small: 'Bali|-8.40|115.20||a small island famous for its temples, dances and beaches.;Lombok|-8.60|116.40||the island east of Bali, with Mount Rinjani.;'
+      + 'Sumba|-9.70|120.00||an island known for its horses and its woven ikat cloth.;Flores|-8.60|121.40||an island with the coloured lakes of Kelimutu, and the gateway to Komodo.;'
+      + 'Timor|-9.30|124.80||an island shared by Indonesia and Timor-Leste.;Halmahera|0.80|128.00||the biggest island of North Maluku.;'
+      + 'Seram|-3.10|129.50||the biggest island of Maluku.;Bangka|-2.20|106.10||an island off the east coast of Sumatra, known for tin and its beaches.;'
+      + 'Nias|1.10|97.60||an island off the west coast of Sumatra, famous for surfing and stone jumping.',
+    strait: 'Malacca Strait|3.00|100.80|Sumatra and the Malay Peninsula|a very busy sea route.;Sunda Strait|-6.00|105.80|Sumatra and Java|a narrow sea with the volcano Krakatau in it.;'
+      + 'Bali Strait|-8.20|114.40|Java and Bali|a narrow sea that ferries cross in less than an hour.;Lombok Strait|-8.65|115.90|Bali and Lombok|a deep sea route.;'
+      + 'Makassar Strait|-2.00|118.00|Kalimantan and Sulawesi|a wide sea route.;Karimata Strait|-2.50|108.50|Belitung and Kalimantan|a sea that joins the Java Sea and the South China Sea.',
+    sea: 'Java Sea|-5.00|110.00||a shallow sea north of Java.;Banda Sea|-5.50|128.00||a deep sea in the Maluku islands, home of the Banda Islands.;'
+      + 'Flores Sea|-7.50|120.50||a sea between Sulawesi and the islands of Nusa Tenggara.;Celebes Sea|3.00|122.00||a sea north of Sulawesi.;'
+      + 'Arafura Sea|-9.00|135.00||a shallow sea between Papua and Australia.;Timor Sea|-11.00|127.00||a sea between Timor and Australia.;'
+      + 'Natuna Sea|3.00|110.00||a sea north of Kalimantan, around the Natuna Islands.;Molucca Sea|0.00|126.00||a sea between Sulawesi and Halmahera.'
+  };
+  const WATER = makeFeatures(WATER_DATA, 'indonesia', {
+    scope: 'between', noun: (g) => (g === 'strait' ? 'strait' : g === 'sea' ? 'sea' : 'island'), icon: { big: '🏝️', small: '🏝️', strait: '⛴️', sea: '🌊' },
+    ref: (name, g) => (g === 'strait' || g === 'sea' ? 'the ' : '') + name, locate: 'It lies between {}.'
+  });
+
+  // Peoples of Indonesia and the languages they speak. Where: the province; speak: the language.
+  const PEOPLE_DATA = {
+    sumatra: 'Acehnese|4.80|96.50|Aceh|the people of Aceh. "Teurimong geunaseh" means "thank you" in their language.|👳|Acehnese;'
+      + 'Batak|2.00|99.30|Sumatera Utara|the people who live around Lake Toba. They say "Horas!" to greet each other.|👨‍👩‍👧|Batak;'
+      + 'Nias|1.10|97.60|Sumatera Utara|the people of the island of Nias, famous for their stone jumping.|🪨|Nias;'
+      + 'Minangkabau|-0.60|100.50|Sumatera Barat|the people of West Sumatra, famous for their Rumah Gadang and rendang. "Tarimo kasih" means "thank you".|🏠|Minang;'
+      + 'Malay|0.60|101.80|Riau|the Malay people of Riau, whose language gave Indonesia its national language.|🗣️|Malay',
+    javabali: 'Javanese|-7.50|110.80||the biggest people of Indonesia. "Matur nuwun" means "thank you" in Javanese.|🎭|Javanese;'
+      + 'Sundanese|-6.90|107.60|Jawa Barat|the people of West Java. "Hatur nuhun" means "thank you" in Sundanese.|🎶|Sundanese;'
+      + 'Betawi|-6.25|106.85|DKI Jakarta|the original people of Jakarta.|🏙️|Betawi;'
+      + 'Madurese|-7.00|113.30|Jawa Timur|the people of the island of Madura, famous for their bull races.|🐂|Madurese;'
+      + 'Balinese|-8.40|115.20|Bali|the people of Bali, who say "suksma" for "thank you".|🛕|Balinese',
+    kalimantan: 'Dayak|0.00|112.50||the first peoples of Kalimantan, who live in many groups, each with its own language.|🛶|;'
+      + 'Banjar|-3.30|114.60|Kalimantan Selatan|the people of South Kalimantan, famous for their floating markets.|🛶|Banjar;'
+      + 'Kutai|-0.40|116.70|Kalimantan Timur|the people of East Kalimantan, where an old kingdom of the same name once stood.|👑|Kutai',
+    sulawesi: 'Bugis|-4.30|120.20|Sulawesi Selatan|a people of South Sulawesi, famous sailors who built the pinisi ship.|⛵|Bugis;'
+      + 'Toraja|-3.05|119.75|Sulawesi Selatan|the people of the highlands of South Sulawesi, famous for the tongkonan house.|🏠|Toraja;'
+      + 'Mandar|-3.50|119.00|Sulawesi Barat|the people of West Sulawesi, skilled sailors and fishers.|⛵|Mandar;'
+      + 'Minahasa|1.25|124.80|Sulawesi Utara|the people around Manado, in North Sulawesi.|🎵|Minahasan;'
+      + 'Gorontalo|0.60|123.10|Gorontalo|the people of the north coast of Sulawesi, around the city of Gorontalo.|🕌|Gorontalo',
+    east: 'Sasak|-8.60|116.40|Nusa Tenggara Barat|the people of Lombok.|🏠|Sasak;Tetun|-9.40|124.60|Nusa Tenggara Timur|a people of the island of Timor.|🌾|Tetun;'
+      + 'Ambonese|-3.65|128.20|Maluku|the people of Ambon and the Maluku islands, who speak a kind of Malay.|🥁|Ambonese Malay;'
+      + 'Dani|-4.10|138.95|Papua Pegunungan|the people of the Baliem Valley in the Papua highlands, who live in honai houses.|⛰️|Dani;'
+      + 'Asmat|-5.00|138.40|Papua Selatan|the people of the swamps of southern Papua, famous for their wood carving.|🪵|Asmat'
+  };
+  const PEOPLE = makeFeatures(PEOPLE_DATA, 'indonesia', {
+    scope: 'province', noun: () => 'people', icon: {}, ref: (name) => 'the ' + name, locate: 'They live in {}.', plural: true
   });
 
   // ---- Levels ----
@@ -608,6 +692,38 @@
         { id: 'a.ocean', name: 'Oceans and coasts', items: () => group(ANIMALS, 'ocean'), kinds: ['find', 'which'] },
         { id: 'a.forest', name: 'Forests and mountains', items: () => group(ANIMALS, 'forest') },
         { id: 'a.all', name: 'All animals', items: () => ANIMALS, kinds: ['find', 'which', 'where', 'habitat'] }
+      ] },
+    { id: 'disasters', map: 'indonesia', icon: '🌋', c: '#e5533d', name: 'Volcanoes and Disasters', blurb: 'Find the volcanoes of Indonesia and the places of its big earthquakes, floods and fires.',
+      unit: 'places', sub: 'Tap any dot to see what it is and where it is', hint: 'Tap a dot on the map.', all: () => DISASTERS, stage: 'Volcanoes: ',
+      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which province is ' + it.ref + ' in?' },
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'v.sumatra', name: 'Volcanoes of Sumatra', items: () => group(DISASTERS, 'sumatra') },
+        { id: 'v.java', name: 'Volcanoes of Java', items: () => group(DISASTERS, 'java') },
+        { id: 'v.nusa', name: 'Volcanoes of Bali and Nusa Tenggara', items: () => group(DISASTERS, 'nusa') },
+        { id: 'v.east', name: 'Volcanoes of Sulawesi and Maluku', items: () => group(DISASTERS, 'east') },
+        { id: 'v.disaster', name: 'Disasters', items: () => group(DISASTERS, 'disaster') },
+        { id: 'v.all', name: 'All volcanoes and disasters', items: () => DISASTERS }
+      ] },
+    { id: 'water', map: 'indonesia', icon: '🏝️', c: '#2a8fb5', name: 'Islands and Straits', blurb: 'Find the islands, straits and seas of the Indonesian archipelago.',
+      unit: 'places', sub: 'Tap any dot to see what it is', hint: 'Tap a dot on the map.', all: () => WATER, stage: 'Islands: ',
+      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which two places does ' + it.ref + ' lie between?' },
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'i.big', name: 'The biggest islands', items: () => group(WATER, 'big'), kinds: ['find', 'which'] },
+        { id: 'i.small', name: 'Smaller islands', items: () => group(WATER, 'small'), kinds: ['find', 'which'] },
+        { id: 'i.strait', name: 'Straits', items: () => group(WATER, 'strait') },
+        { id: 'i.sea', name: 'Seas', items: () => group(WATER, 'sea'), kinds: ['find', 'which'] },
+        { id: 'i.all', name: 'Islands, straits and seas', items: () => WATER }
+      ] },
+    { id: 'peoples', map: 'indonesia', icon: '🧑‍🤝‍🧑', c: '#a65fc2', name: 'Peoples and Languages', blurb: 'Find where the peoples of Indonesia live and the languages they speak.',
+      unit: 'peoples', sub: 'Tap any dot to see a people and where they live', hint: 'Tap a dot on the map.', all: () => PEOPLE, stage: 'Peoples: ',
+      say: { find: (it) => 'Where do ' + it.ref + ' live? Tap their dot.', which: () => 'Which people live here?', where: (it) => 'Which province do ' + it.ref + ' come from?', speak: (it) => 'Which language do ' + it.ref + ' speak?' },
+      kinds: ['find', 'which', 'where', 'speak'], levels: [
+        { id: 'p.sumatra', name: 'Sumatra', items: () => group(PEOPLE, 'sumatra') },
+        { id: 'p.javabali', name: 'Java and Bali', items: () => group(PEOPLE, 'javabali') },
+        { id: 'p.kalimantan', name: 'Kalimantan', items: () => group(PEOPLE, 'kalimantan') },
+        { id: 'p.sulawesi', name: 'Sulawesi', items: () => group(PEOPLE, 'sulawesi') },
+        { id: 'p.east', name: 'Nusa Tenggara, Maluku and Papua', items: () => group(PEOPLE, 'east') },
+        { id: 'p.all', name: 'All peoples', items: () => PEOPLE }
       ] }
   ];
   const LEVELS = TOPICS.flatMap((t) => t.levels);
@@ -633,7 +749,7 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (141 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (192 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
@@ -644,7 +760,9 @@
     { at: 76, name: 'Big wave', pic: '🌊', c: '#d6ebff' }, { at: 88, name: 'River boat', pic: '🛶', c: '#d9f5e8' },
     { at: 102, name: 'Explorer', pic: '🧭', c: '#ece6ff' },
     { at: 114, name: 'Mask', pic: '🎭', c: '#ffe3c2' }, { at: 126, name: 'Safari', pic: '🦁', c: '#fff1c2' },
-    { at: 141, name: 'Omnia master', pic: '🏆', c: '#fff1c2' }
+    { at: 141, name: 'Omnia master', pic: '🏆', c: '#fff1c2' },
+    { at: 152, name: 'Volcano', pic: '🌋', c: '#ffe3c2' }, { at: 164, name: 'Boat', pic: '⛵', c: '#d6ebff' },
+    { at: 178, name: 'Friends', pic: '🧑‍🤝‍🧑', c: '#ece6ff' }, { at: 192, name: 'Super explorer', pic: '🥇', c: '#fff1c2' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -899,8 +1017,8 @@
   const shapeOf = (it) => (isWorld(it) && MapView.has(it.shape) ? [it.shape] : []);
   function about(it) {
     if (isFeature(it)) {
-      const n = it.ref, from = it.scope === 'province' && it.at ? ' It is from <b>' + esc(it.at) + '</b>.' : '';
-      return esc(n[0].toUpperCase() + n.slice(1)) + ' is ' + esc(it.note) + from;
+      const n = it.ref, from = it.locate && it.at ? ' ' + esc(it.locate).replace('{}', '<b>' + esc(it.at) + '</b>') : '';
+      return esc(n[0].toUpperCase() + n.slice(1)) + (it.plural ? ' are ' : ' is ') + esc(it.note) + from;
     }
     if (isWorld(it)) return 'The capital of ' + esc(named(it)) + ' is <b>' + esc(it.capital) + '</b>.';
     if (NOTES[it.name]) return esc(it.name) + ' is ' + esc(NOTES[it.name]);
@@ -948,13 +1066,14 @@
       // A province's capital is only asked for a provincial capital.
       if (kind === 'capital' && !isWorld(it) && !it.cap) continue;
       if (kind === 'where' && !it.at) continue; // an ocean, or a place on no single continent
+      if (kind === 'speak' && !it.lang) continue; // a people with many languages
       if (out.some((q) => q.it === it)) continue;
       out.push({ kind, it });
     }
     return shuffle(out);
   }
   // What the right answer to a question is. Choices are these values; a flag is chosen by its two-letter code.
-  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'habitat' ? HABITAT[q.it.group] : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
+  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'speak' ? q.it.lang : q.kind === 'habitat' ? HABITAT[q.it.group] : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
   const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
   // Flags that are too alike to be offered together.
   const ALIKE = [['ID', 'MC'], ['RO', 'TD', 'AD']];
@@ -966,7 +1085,12 @@
     else if (q.kind === 'where' && it.scope === 'province') {
       const region = PROV_REGION.get(it.at), provs = [...PROV_REGION.keys()].filter((v) => v !== it.at);
       others = shuffle(provs.filter((v) => PROV_REGION.get(v) === region)).concat(shuffle(provs));
-    } else if (q.kind === 'where') others = shuffle(CONTINENTS);
+    } else if (q.kind === 'where' && it.scope === 'continent') others = shuffle(CONTINENTS);
+    else if (q.kind === 'where' || q.kind === 'speak') {
+      // The answers of the others in its group (the two places of a strait, a language), then of every other.
+      const val = (p) => (q.kind === 'where' ? p.at : p.lang), all = curTopic.all().filter((p) => p !== it && val(p));
+      others = shuffle(all.filter((p) => p.group === it.group)).concat(shuffle(all)).map(val);
+    }
     else if (q.kind === 'flag' || q.kind === 'pickflag') {
       const ok = COUNTRIES.filter((p) => p !== it && !alike(p.a2, it.a2));
       others = shuffle(ok.filter((p) => p.continent === it.continent)).concat(shuffle(ok)).map((p) => (q.kind === 'flag' ? p.name : p.a2));
@@ -1025,7 +1149,7 @@
     if (!flagQ) MapView.show(it);
     $('say').textContent = q.kind === 'flag' ? 'Which country has this flag?'
       : q.kind === 'pickflag' ? 'Which one is the flag of ' + named(it) + '?'
-      : q.kind === 'where' || q.kind === 'habitat' || (q.kind === 'which' && curTopic.say) ? curTopic.say[q.kind](it)
+      : curTopic.say && curTopic.say[q.kind] ? curTopic.say[q.kind](it)
       : q.kind === 'which' ? 'Which ' + (world ? 'country' : 'city') + ' is this?'
       : 'What is the capital of ' + (world ? named(it) : it.prov) + '?';
     if (q.kind === 'flag') box.innerHTML = '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>';
