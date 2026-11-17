@@ -38,7 +38,7 @@ async function playRound(page) {
   }
   await expect(page.locator('#result')).toBeVisible();
 }
-const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(window.Cendekia.key('mundia.v1'))));
+const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(window.Cendekia.key('omnia.v1'))));
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
@@ -139,7 +139,7 @@ test.describe('Omnia', () => {
     await page.locator('#levels .card', { hasText: 'Java' }).click();
     await playRound(page);
     expect((await saved(page)).best['id.java']).toBeGreaterThanOrEqual(1);
-    expect(await lastRound(page)).toMatchObject({ app: 'mundia', stage: 'Java' });
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Java' });
   });
 
   test('a flags round is saved under its own level and stage', async ({ page }) => {
@@ -149,7 +149,7 @@ test.describe('Omnia', () => {
     const s = await saved(page);
     expect(s.best['f.sea']).toBeGreaterThanOrEqual(1);
     expect(s.best['w.sea']).toBeUndefined();
-    expect(await lastRound(page)).toMatchObject({ app: 'mundia', stage: 'Flags: Southeast Asia' });
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Flags: Southeast Asia' });
   });
 
   test('a nature round can be played to the end', async ({ page }) => {
@@ -157,7 +157,7 @@ test.describe('Omnia', () => {
     await page.locator('#levels .card', { hasText: 'Mountains' }).click();
     await playRound(page);
     expect((await saved(page)).best['n.mountain']).toBeGreaterThanOrEqual(1);
-    expect(await lastRound(page)).toMatchObject({ app: 'mundia', stage: 'Mountains' });
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Mountains' });
   });
 
   test('a culture round can be played to the end', async ({ page }) => {
@@ -165,7 +165,7 @@ test.describe('Omnia', () => {
     await page.locator('#levels .card', { hasText: 'Dances' }).click();
     await playRound(page);
     expect((await saved(page)).best['c.dance']).toBeGreaterThanOrEqual(1);
-    expect(await lastRound(page)).toMatchObject({ app: 'mundia', stage: 'Culture: Dances' });
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Culture: Dances' });
   });
 
   test('an all-animals round can be played to the end', async ({ page }) => {
@@ -173,6 +173,6 @@ test.describe('Omnia', () => {
     await page.locator('#levels .card', { hasText: 'All animals' }).click();
     await playRound(page);
     expect((await saved(page)).best['a.all']).toBeGreaterThanOrEqual(1);
-    expect(await lastRound(page)).toMatchObject({ app: 'mundia', stage: 'Animals: All animals' });
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Animals: All animals' });
   });
 });

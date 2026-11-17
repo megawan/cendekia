@@ -44,7 +44,7 @@ Three stars for every question right on the first try, two for up to two misses,
 
 ## Children and parents
 
-Omnia uses the children shared by every Cendekia app (`shared/profile.js`). Each child's stars and days in a row are kept in `localStorage` under `mundia.v1.<child id>` (the app was first called Mundia, so the key and the app id `mundia` stay; `best` holds the stars of each level by its id, such as `id.java`, `w.sea`, `f.sea`, `n.river`, `c.dance` or `a.savanna`; never rename them). Every finished round goes to the shared log (`Cendekia.round`) and every first miss to the shared list of things that went wrong (`Cendekia.weak`, labelled with the level and the place; flags, culture and animals levels start with "Flags: ", "Culture: " and "Animals: " so they are not mixed up with the others), so Mundia shows on the [parents' page](../parents/). The daily time limit set there applies here too.
+Omnia uses the children shared by every Cendekia app (`shared/profile.js`). Each child's stars and days in a row are kept in `localStorage` under `omnia.v1.<child id>` (`best` holds the stars of each level by its id, such as `id.java`, `w.sea`, `f.sea`, `n.river`, `c.dance` or `a.savanna`; never rename them). Every finished round goes to the shared log (`Cendekia.round`) and every first miss to the shared list of things that went wrong (`Cendekia.weak`, labelled with the level and the place; flags, culture and animals levels start with "Flags: ", "Culture: " and "Animals: " so they are not mixed up with the others), so Mundia shows on the [parents' page](../parents/). The daily time limit set there applies here too.
 
 ## Sound, motion and offline
 
