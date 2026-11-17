@@ -181,7 +181,7 @@
     data.list = data.list.filter(function (p) { return p.id !== id; });
     var suffix = '.' + id;
     try {
-      Object.keys(localStorage).forEach(function (k) { if (k.slice(-suffix.length) === suffix && /^(baca|phonics|kosakata|hijaiyah|logika|numeria|mundia|cendekia)\./.test(k)) del(k); });
+      Object.keys(localStorage).forEach(function (k) { if (k.slice(-suffix.length) === suffix && /^(baca|phonics|kosakata|hijaiyah|logika|numeria|omnia|cendekia)\./.test(k)) del(k); });
     } catch (e) { /* private mode */ }
     if (!data.list.length) { var p = add('Child 1', AVATARS[0]); data.cur = p.id; } else if (data.cur === id) data.cur = data.list[0].id;
     save(PROFILES, data);

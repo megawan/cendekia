@@ -615,9 +615,8 @@
 
   // ---- Children and saved state ----
   // The children are shared by every Cendekia app (shared/profile.js). Omnia keeps, per child, the best stars of every
-  // level (best[level id]), their total and days in a row, under mundia.v1.<child id>. The app was first called
-  // Mundia; keep this key and the 'mundia' app id in the shared log so saved progress is not lost.
-  const BASE = 'mundia.v1';
+  // level (best[level id]), their total and days in a row, under omnia.v1.<child id>.
+  const BASE = 'omnia.v1';
   const fresh = () => ({ best: {}, stars: 0, day: '', streak: 0 });
   const S = Object.assign(fresh(), CD.state(BASE, CD.profile().id) || {});
   function save() { try { localStorage.setItem(CD.key(BASE), JSON.stringify(S)); } catch (e) { /* private mode */ } }
@@ -1070,7 +1069,7 @@
     }
     tries++;
     sfx.bad(); mood('oops');
-    if (tries === 1) CD.weak('mundia', stageOf(curLevel) + ': ' + it.name);
+    if (tries === 1) CD.weak('omnia', stageOf(curLevel) + ': ' + it.name);
     if (btn) { btn.classList.add('no'); btn.disabled = true; }
     if (tries === 1) {
       $('say').textContent = wrongPlace ? 'That is ' + named(wrongPlace) + '. Try again!' : 'Not quite. Have another go!';
@@ -1104,7 +1103,7 @@
     S.best[lv.id] = Math.max(best(lv), stars);
     S.stars = totalStars();
     markDay(); save();
-    CD.round({ app: 'mundia', stage: stageOf(lv), stars, right, total: qs.length, ms: Date.now() - started });
+    CD.round({ app: 'omnia', stage: stageOf(lv), stars, right, total: qs.length, ms: Date.now() - started });
     show('result');
     sfx.win();
     $('resTitle').textContent = stars === 3 ? 'Perfect!' : stars === 2 ? 'Great job!' : 'Well done!';
