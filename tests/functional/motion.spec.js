@@ -44,3 +44,15 @@ test('lexica: Pochi stays still when the device asks for reduced motion', async 
   await page.waitForTimeout(300);
   await expect(page.locator('#home .mascot use')).toHaveCount(1);
 });
+
+// Each mascot's drawing is marked with the parts that move. The coach mascot is the one that reacts to answers.
+for (const [dir, part, coach] of [['hijaiyah', '.mane', '#coachMascot'], ['aksara', '.wing-l', '#coachMascot'], ['numeria', '.tail', '#coach']]) {
+  test(`${dir}: the mascot idles and hops`, async ({ page }) => {
+    await page.goto(`/${dir}/`);
+    const first = page.locator('.mascot').first();
+    await expect(first.locator('use')).toHaveCount(0);
+    await expect.poll(() => first.locator(part).first().evaluate((e) => e.style.transform)).not.toBe('');
+    await page.evaluate((sel) => window.Cendekia.fx.react(document.querySelector(sel), 'cheer'), coach);
+    await expect.poll(() => page.locator(coach).evaluate((e) => e.style.transform)).toContain('translateY');
+  });
+}
