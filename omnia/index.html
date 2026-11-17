@@ -137,6 +137,8 @@
   .opt.flagopt { font-size: 2.6rem; line-height: 1; }
   .topics .sec { grid-column: 1 / -1; margin: 6px 0 -4px; font-size: 1.05rem; opacity: .75; text-transform: uppercase; letter-spacing: .06em; }
   #map.nodots circle { opacity: 0; }
+  #map.nodots circle.hl, #map.nodots circle.on { opacity: 1; }
+  #map path.route { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 7 6; stroke-linecap: round; pointer-events: none; }
   #map.nodots circle:focus-visible { opacity: 1; }
   /* Map Jigsaw: a piece in the tray, and the copy of it that follows the finger at the size of the map */
   .tray { display: grid; place-items: center; min-height: 120px; }
@@ -219,7 +221,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/27</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/30</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -359,7 +361,7 @@
   Object.keys(CITY_DATA).forEach((region) => CITY_DATA[region].split(';').forEach((row) => {
     const [name, prov, lat, lon, cap] = row.split('|');
     const [x, y] = project(MAPS.indonesia, +lat, +lon);
-    CITIES.push({ key: name, name, prov, cap: cap === '1', region, x, y, big: name === 'Jakarta' });
+    CITIES.push({ key: name, name, prov, cap: cap === '1', region, x, y, lat: +lat, lon: +lon, big: name === 'Jakarta' });
   }));
 
   // Countries: ISO number (its shape on the map) | name | capital | latitude and longitude of the capital |
@@ -426,7 +428,7 @@
   Object.keys(COUNTRY_DATA).forEach((continent) => COUNTRY_DATA[continent].split(';').forEach((row) => {
     const [shape, name, capital, lat, lon, a2, tag] = row.split('|');
     const [x, y] = project(MAPS.world, +lat, +lon);
-    COUNTRIES.push({ key: a2, name, capital, continent, shape, x, y, a2, tag });
+    COUNTRIES.push({ key: a2, name, capital, continent, shape, x, y, lat: +lat, lon: +lon, a2, tag });
   }));
 
   // Features are dots with a name, a group, the continent or province they are in, and a sentence that finishes
@@ -594,7 +596,7 @@
     big: 'Sumatra|-0.60|101.50||the biggest island that belongs only to Indonesia.;Java|-7.40|110.00||the island with the most people in Indonesia, and the home of Jakarta.;'
       + 'Kalimantan|0.50|114.00||the Indonesian part of Borneo, the third biggest island in the world.;Sulawesi|-2.00|120.50||an island shaped like a letter K.;'
       + 'Papua|-4.50|138.50||the Indonesian part of New Guinea, the second biggest island in the world.',
-    small: 'Bali|-8.40|115.20||a small island famous for its temples, dances and beaches.;Lombok|-8.60|116.40||the island east of Bali, with Mount Rinjani.;'
+    small: 'Bali|-8.40|115.20||a small island famous for its temples, dances and beaches.;Lombok|-8.60|116.40||the island east of Bali, with Mount Rinjani.;Sumbawa|-8.70|117.40||the island between Lombok and Flores, with the volcano Tambora.;'
       + 'Sumba|-9.70|120.00||an island known for its horses and its woven ikat cloth.;Flores|-8.60|121.40||an island with the coloured lakes of Kelimutu, and the gateway to Komodo.;'
       + 'Timor|-9.30|124.80||an island shared by Indonesia and Timor-Leste.;Halmahera|0.80|128.00||the biggest island of North Maluku.;'
       + 'Seram|-3.10|129.50||the biggest island of Maluku.;Bangka|-2.20|106.10||an island off the east coast of Sumatra, known for tin and its beaches.;'
@@ -738,6 +740,78 @@
   }
   const HAS_SHAPE = new Set(MAPS.world.shapes.map((s) => s[0]));
 
+  // Rivers and lakes of Indonesia. Where: the province. A river's dot marks one spot along it.
+  const RIVER_DATA = {
+    river: 'Kapuas|0.07|111.49|Kalimantan Barat|the longest river in Indonesia. It flows through West Kalimantan to the sea near Pontianak.;'
+      + 'Mahakam|-0.50|117.15|Kalimantan Timur|the big river of East Kalimantan, which flows through Samarinda. A rare freshwater dolphin lives in it.;'
+      + 'Barito|-1.50|114.80||a long river of Central and South Kalimantan that reaches the sea near Banjarmasin.;'
+      + 'Musi|-2.99|104.76|Sumatera Selatan|the river of Palembang, crossed by the Ampera Bridge.;'
+      + 'Batang Hari|-1.61|103.61|Jambi|the longest river on the island of Sumatra. It flows through the city of Jambi.;'
+      + 'Kampar|0.43|102.10|Riau|a river in Riau famous for the Bono, a giant tidal wave that rolls up the river.;'
+      + 'Citarum|-6.95|107.70|Jawa Barat|the most important river of West Java, which fills three big dams.;'
+      + 'Bengawan Solo|-7.57|110.83||the longest river on Java. It flows through Central and East Java.;'
+      + 'Brantas|-7.82|112.01|Jawa Timur|a river of East Java that flows past Malang and Kediri to the sea near Surabaya.;'
+      + 'Digul|-6.10|140.30|Papua Selatan|a long river of southern Papua that flows through swamps and rainforest.;'
+      + 'Mamberamo|-2.40|138.20|Papua|the biggest river of northern Papua. It flows through rainforest to the sea.',
+    lakesw: 'Lake Toba|2.65|98.85|Sumatera Utara|the biggest lake in Indonesia, a giant crater made by a huge volcano.;'
+      + 'Lake Laut Tawar|4.63|96.92|Aceh|a mountain lake in Aceh, next to the town of Takengon.;'
+      + 'Lake Maninjau|-0.31|100.20|Sumatera Barat|a deep crater lake in West Sumatra, reached by a road with 44 hairpin bends.;'
+      + 'Lake Ranau|-4.83|103.92||a big volcanic lake on the border of Lampung and South Sumatra.;'
+      + 'Rawa Pening|-7.30|110.43|Jawa Tengah|a lake in Central Java that is partly covered by water hyacinth.;'
+      + 'Lake Batur|-8.26|115.38|Bali|a crater lake in Bali, at the foot of the volcano Batur.;'
+      + 'Segara Anak|-8.41|116.46|Nusa Tenggara Barat|the crater lake inside Mount Rinjani, on Lombok.;'
+      + 'Kelimutu lakes|-8.77|121.82|Nusa Tenggara Timur|three crater lakes of different colours on top of a volcano on Flores.',
+    lakese: 'Lake Poso|-1.87|120.62|Sulawesi Tengah|a big, deep lake in Central Sulawesi.;'
+      + 'Lake Matano|-2.48|121.35|Sulawesi Selatan|the deepest lake in Southeast Asia.;'
+      + 'Lake Tempe|-4.00|120.00|Sulawesi Selatan|a shallow lake in South Sulawesi that grows and shrinks with the seasons.;'
+      + 'Lake Tondano|1.23|124.90|Sulawesi Utara|a lake near Manado, in the Minahasa highlands.;'
+      + 'Lake Limboto|0.57|122.97|Gorontalo|a lake in Gorontalo that is slowly getting smaller.;'
+      + 'Lake Sentani|-2.60|140.50|Papua|a lake near Jayapura with small islands, where a festival is held every year.;'
+      + 'Lake Paniai|-3.90|136.30|Papua Tengah|a high lake in the mountains of Papua.;'
+      + 'Lake Sentarum|0.80|112.10|Kalimantan Barat|a huge wetland of lakes that fill up when the Kapuas river floods.;'
+      + 'Lake Jempang|-0.30|115.97|Kalimantan Timur|a big lake in the wetlands of the Mahakam river.'
+  };
+  const RIVERS = makeFeatures(RIVER_DATA, 'indonesia', {
+    scope: 'province', noun: (g) => (g === 'river' ? 'river' : 'lake'), icon: { river: '🏞️', lakesw: '💧', lakese: '💧' }, locate: 'This is in {}.',
+    ref: (name, g) => (g === 'river' || name === 'Kelimutu lakes' ? 'the ' : '') + name, plural: (name) => name === 'Kelimutu lakes'
+  });
+
+  // Sizes for Bigger or Farther?, in square kilometres. An island is the island itself (Kalimantan and Papua: the Indonesian part).
+  const ISLAND_AREA = { Sumatra: 443066, Java: 128297, Kalimantan: 539460, Sulawesi: 174600, Papua: 420540, Bali: 5780, Lombok: 4725, Sumbawa: 15448, Sumba: 10710,
+    Flores: 13540, Timor: 30777, Halmahera: 17780, Seram: 17100, Bangka: 11910, Nias: 5121 };
+  const COUNTRY_AREA = { Russia: 17098246, Canada: 9984670, 'United States': 9833517, China: 9596961, Brazil: 8515767, Australia: 7692024, India: 3287263, Argentina: 2780400,
+    Kazakhstan: 2724900, Algeria: 2381741, 'DR Congo': 2344858, 'Saudi Arabia': 2149690, Mexico: 1964375, Indonesia: 1904569, Sudan: 1861484, Libya: 1759540, Iran: 1648195,
+    Mongolia: 1564116, Peru: 1285216, 'South Africa': 1221037, Ethiopia: 1104300, Egypt: 1002450, Tanzania: 947303, Nigeria: 923768, Venezuela: 916445, Pakistan: 881913,
+    Turkey: 783562, Chile: 756102, Madagascar: 587041, Kenya: 580367, Thailand: 513120, Spain: 505990, Sweden: 450295, Japan: 377975, Germany: 357022, Finland: 338424,
+    Vietnam: 331212, Italy: 301340, Poland: 312696, Philippines: 300000, 'New Zealand': 268021, 'United Kingdom': 243610, Ghana: 238533, Laos: 236800, Cambodia: 181035,
+    Greece: 131957, Cuba: 109884, Iceland: 103000, Switzerland: 41285, Netherlands: 41543, Brunei: 5765, Singapore: 728 };
+  // The distance between two places by the great circle, in kilometres.
+  const km = (a, b) => {
+    const r = Math.PI / 180, dp = (b.lat - a.lat) * r, dl = (b.lon - a.lon) * r;
+    const h = Math.sin(dp / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dl / 2) ** 2;
+    return 2 * 6371 * Math.asin(Math.sqrt(h));
+  };
+  const approx = (n) => { const m = Math.pow(10, Math.max(0, Math.floor(Math.log10(n)) - 2)); return (Math.round(n / m) * m).toLocaleString('en-US'); }; // three figures
+  const byName = (list, name) => list.find((p) => p.name === name);
+
+  // Island Routes: from one city to another, the islands you cross in order. Each level has the islands it shows.
+  const ROUTE_ISLANDS = {
+    west: ['Sumatra', 'Java', 'Bali', 'Bangka', 'Nias', 'Lombok'],
+    nusa: ['Java', 'Bali', 'Lombok', 'Sumbawa', 'Sumba', 'Flores', 'Timor']
+  };
+  const ROUTES = {
+    west: [['Medan', 'Jakarta', ['Sumatra', 'Java']], ['Palembang', 'Surabaya', ['Sumatra', 'Java']], ['Jakarta', 'Denpasar', ['Java', 'Bali']],
+      ['Medan', 'Denpasar', ['Sumatra', 'Java', 'Bali']], ['Padang', 'Semarang', ['Sumatra', 'Java']], ['Denpasar', 'Padang', ['Bali', 'Java', 'Sumatra']],
+      ['Bandar Lampung', 'Bandung', ['Sumatra', 'Java']]],
+    nusa: [['Surabaya', 'Mataram', ['Java', 'Bali', 'Lombok']], ['Denpasar', 'Labuan Bajo', ['Bali', 'Lombok', 'Sumbawa', 'Flores']],
+      ['Mataram', 'Bima', ['Lombok', 'Sumbawa']], ['Bima', 'Kupang', ['Sumbawa', 'Flores', 'Timor']],
+      ['Jakarta', 'Kupang', ['Java', 'Bali', 'Lombok', 'Sumbawa', 'Flores', 'Timor']], ['Denpasar', 'Kupang', ['Bali', 'Lombok', 'Sumbawa', 'Flores', 'Timor']]],
+    all: [['Surabaya', 'Banjarmasin', ['Java', 'Kalimantan']], ['Jakarta', 'Pontianak', ['Java', 'Kalimantan']], ['Balikpapan', 'Makassar', ['Kalimantan', 'Sulawesi']],
+      ['Makassar', 'Surabaya', ['Sulawesi', 'Java']], ['Banjarmasin', 'Denpasar', ['Kalimantan', 'Java', 'Bali']], ['Samarinda', 'Surabaya', ['Kalimantan', 'Java']],
+      ['Pontianak', 'Medan', ['Kalimantan', 'Sumatra']]]
+  };
+  const routesOf = (level) => ROUTES[level].map(([from, to, via]) => ({ key: from + '>' + to, name: from + ' to ' + to, from, to, via }));
+
   // ---- Levels ----
   // Every level is open from the start. Its id is the key of its stars in the save, so ids never change.
   const cities = (region) => CITIES.filter((c) => !region || c.region === region);
@@ -842,6 +916,15 @@
         { id: 'p.east', name: 'Nusa Tenggara, Maluku and Papua', items: () => group(PEOPLE, 'east') },
         { id: 'p.all', name: 'All peoples', items: () => PEOPLE }
       ] },
+    { id: 'rivers', section: 'Indonesia', map: 'indonesia', icon: '🏞️', c: '#3a86c8', name: 'Rivers and Lakes', blurb: 'Find the rivers and lakes of Indonesia, from the Kapuas to Lake Toba.',
+      unit: 'places', sub: 'Tap any dot to see what it is and where it is', hint: 'Tap a dot on the map.', all: () => RIVERS, stage: 'Rivers: ',
+      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which province is ' + it.ref + ' in?' },
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'r.river', name: 'Rivers of Indonesia', items: () => group(RIVERS, 'river') },
+        { id: 'r.lakesw', name: 'Lakes of Sumatra, Java and Nusa Tenggara', items: () => group(RIVERS, 'lakesw') },
+        { id: 'r.lakese', name: 'Lakes of Kalimantan, Sulawesi and Papua', items: () => group(RIVERS, 'lakese') },
+        { id: 'r.all', name: 'All rivers and lakes', items: () => RIVERS }
+      ] },
     { id: 'landmarks', section: 'The world', map: 'world', icon: '🗽', c: '#6a7fa8', name: 'Landmarks of the World', blurb: 'Find the famous buildings and wonders of the world, and the country of each.',
       unit: 'landmarks', sub: 'Tap any dot to see a landmark and where it is', hint: 'Tap a dot on the map.', all: () => LANDMARKS, stage: 'Landmarks: ',
       say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: () => 'Which landmark is this?', where: (it) => 'Which country is ' + it.ref + ' in?' },
@@ -887,6 +970,27 @@
         { id: 'b.africa', name: 'Africa', items: () => nations('Africa'), subjects: () => borderSubjects('Africa') },
         { id: 'b.america', name: 'The Americas', items: () => nations('North America').concat(nations('South America')),
           subjects: () => borderSubjects('North America').concat(borderSubjects('South America')) }
+      ] },
+    // Bigger or Farther?: two places, tap the answer. Each level says how to compare (cmp): the number, how different the two must be
+    // (ratio), the question, and what the number is. A level can use its own map, and can have a place to measure from.
+    { id: 'compare', section: 'Map games', map: 'indonesia', icon: '📏', c: '#c9892b', name: 'Bigger or Farther?', blurb: 'Which island is bigger? Which city is farther away? Guess, then see the numbers.',
+      unit: 'places', noExplore: true, hideDots: true, stage: 'Compare: ', kinds: ['cmp'], levels: [
+        { id: 'k.islands', name: 'Bigger islands', items: () => WATER.filter((p) => ISLAND_AREA[p.name]),
+          cmp: { metric: (it) => ISLAND_AREA[it.name], ratio: 1.2, text: 'Which island is bigger?', unit: 'km²' } },
+        { id: 'k.countries', name: 'Bigger countries', map: 'world', items: () => COUNTRIES.filter((c) => COUNTRY_AREA[c.name]),
+          cmp: { metric: (it) => COUNTRY_AREA[it.name], ratio: 1.3, text: 'Which country is bigger?', unit: 'km²' } },
+        { id: 'k.cities', name: 'Farther cities', items: () => CITIES,
+          cmp: { pairs: () => CITIES.filter((c) => c.name !== 'Jakarta'), from: () => byName(CITIES, 'Jakarta'), ratio: 1.4,
+            metric: (it) => km(byName(CITIES, 'Jakarta'), it), text: 'Which city is farther from Jakarta?', unit: 'km away' } },
+        { id: 'k.capitals', name: 'Farther capitals', map: 'world', items: () => COUNTRIES,
+          cmp: { pairs: () => COUNTRIES.filter((c) => c.name !== 'Indonesia'), from: () => byName(COUNTRIES, 'Indonesia'), ratio: 1.4, label: (it) => it.capital,
+            metric: (it) => km(byName(COUNTRIES, 'Indonesia'), it), text: 'Which capital is farther from Jakarta?', unit: 'km away' } }
+      ] },
+    { id: 'routes', section: 'Map games', map: 'indonesia', icon: '⛵', c: '#1a9bb0', name: 'Island Routes', blurb: 'Travel from city to city and tap the islands you cross, in order.',
+      unit: 'islands', noExplore: true, namedDots: true, round: 5, stage: 'Routes: ', kinds: ['route'], levels: [
+        { id: 't.west', name: 'Sumatra, Java and Bali', items: () => ROUTE_ISLANDS.west.map((n) => byName(WATER, n)), subjects: () => routesOf('west') },
+        { id: 't.nusa', name: 'Nusa Tenggara', items: () => ROUTE_ISLANDS.nusa.map((n) => byName(WATER, n)), subjects: () => routesOf('nusa') },
+        { id: 't.all', name: 'All of Indonesia', items: () => WATER.filter((p) => ISLAND_AREA[p.name]), subjects: () => routesOf('all') }
       ] }
   ];
   const LEVELS = TOPICS.flatMap((t) => t.levels);
@@ -912,7 +1016,7 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (267 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (300 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
@@ -928,7 +1032,8 @@
     { at: 178, name: 'Friends', pic: '🧑‍🤝‍🧑', c: '#ece6ff' }, { at: 192, name: 'Super explorer', pic: '🥇', c: '#fff1c2' },
     { at: 205, name: 'Monument', pic: '🗿', c: '#ece6ff' }, { at: 220, name: 'Noodles', pic: '🍜', c: '#ffe3c2' },
     { at: 238, name: 'Puzzle', pic: '🧩', c: '#d9f5e8' }, { at: 252, name: 'Detective', pic: '🔍', c: '#d6ebff' },
-    { at: 267, name: 'Good neighbour', pic: '🏘️', c: '#ffe0ec' }
+    { at: 267, name: 'Good neighbour', pic: '🏘️', c: '#ffe0ec' },
+    { at: 275, name: 'Riverside', pic: '🏞️', c: '#d9f5e8' }, { at: 288, name: 'Ruler', pic: '📏', c: '#fff1c2' }, { at: 300, name: 'Ship', pic: '🚢', c: '#d6ebff' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -950,7 +1055,7 @@
     const NS = 'http://www.w3.org/2000/svg', svg = $('map');
     const DOT = 5.5, HIT = 22, LABEL = 14; // screen pixels
     let map = null, name = '', vb = { x: 0, y: 0, w: 1, h: 1 }, home = null;
-    let shapes = new Map(), dots = new Map(), gDots = null, label = null, labelAt = null, tapped = null, anim = 0;
+    let shapes = new Map(), dots = new Map(), gDots = null, gRoute = null, label = null, labelAt = null, tapped = null, anim = 0;
     const el = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.keys(attrs).forEach((k) => n.setAttribute(k, attrs[k])); return n; };
     const size = () => { const r = svg.getBoundingClientRect(); return { w: r.width || 1, h: r.height || 1, left: r.left, top: r.top }; };
     const upp = () => vb.w / size().w; // map units per screen pixel
@@ -967,6 +1072,7 @@
         land.appendChild(p);
       });
       if (mapName === 'indonesia') (shapes.get('360') || []).forEach((p) => p.classList.add('home'));
+      gRoute = el('path', { class: 'route' }); svg.appendChild(gRoute);
       gDots = el('g', {}); svg.appendChild(gDots);
       label = el('text', { 'text-anchor': 'middle' }); svg.appendChild(label);
       labelAt = null;
@@ -1109,6 +1215,8 @@
       // Where a point of the map is on the screen, and how many screen pixels a map unit is now.
       screenOf(x, y) { const sz = size(); return [sz.left + (x - vb.x) / upp(), sz.top + (y - vb.y) / upp()]; },
       pxPerUnit: () => 1 / upp(),
+      // A dashed line through points (the places of a route); no points clears it.
+      trace(points) { gRoute.setAttribute('d', points.length > 1 ? 'M' + points.map((p) => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join('L') : ''); },
       onTap(fn) { tapped = fn; },
       has: (id) => shapes.has(id)
     };
@@ -1231,8 +1339,23 @@
   // A wrong answer gets a second try; a second miss shows the answer.
   let qs = [], qi = 0, tries = 0, results = [], started = 0, locked = false, pool = [], roundNo = 0;
   const PRAISE = ['Great!', 'Well done!', 'Yes, that is right!', 'Brilliant!', 'Super!', 'Spot on!', 'You got it!'];
+  // Bigger or Farther?: pairs whose numbers are different enough (ratio) that the answer is clear. it is the right one.
+  function makePairs(lv, size) {
+    const c = lv.cmp, items = c.pairs ? c.pairs() : lv.items(), out = [], seen = new Set();
+    for (let n = 0; n < 300 && out.length < size; n++) {
+      const a = pick(items), b = pick(items);
+      if (a === b || seen.has(a.key + '|' + b.key) || seen.has(b.key + '|' + a.key)) continue;
+      const hi = c.metric(a) >= c.metric(b) ? a : b, lo = hi === a ? b : a;
+      if (c.metric(hi) / c.metric(lo) < c.ratio) continue;
+      seen.add(a.key + '|' + b.key);
+      out.push({ kind: 'cmp', it: hi, other: lo });
+    }
+    return out;
+  }
   function makeRound(lv) {
-    const items = lv.subjects ? lv.subjects() : lv.items(), kinds = lv.kinds || curTopic.kinds, size = curTopic.round || ROUND;
+    const size = curTopic.round || ROUND;
+    if (lv.cmp) return makePairs(lv, size);
+    const items = lv.subjects ? lv.subjects() : lv.items(), kinds = lv.kinds || curTopic.kinds;
     const order = shuffle(items);
     const out = [];
     for (let i = 0; out.length < size && i < order.length * 3; i++) {
@@ -1248,7 +1371,8 @@
     return shuffle(out);
   }
   // What the right answer to a question is. Choices are these values; a flag is chosen by its two-letter code.
-  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'speak' ? q.it.lang : q.kind === 'habitat' ? HABITAT[q.it.group] : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
+  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'speak' ? q.it.lang : q.kind === 'cmp' ? labelOf(q.it) : q.kind === 'habitat' ? HABITAT[q.it.group] : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
+  const labelOf = (it) => (curLevel && curLevel.cmp && curLevel.cmp.label ? curLevel.cmp.label(it) : it.name);
   const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
   // Flags that are too alike to be offered together.
   const ALIKE = [['ID', 'MC'], ['RO', 'TD', 'AD']];
@@ -1289,10 +1413,10 @@
     qs = makeRound(lv); qi = 0; results = []; started = Date.now(); roundNo++;
     show('play');
     MapView.place($('pSlot'));
-    MapView.use(curTopic.map);
+    MapView.use(lv.map || curTopic.map);
     MapView.clear();
     $('map').classList.toggle('nodots', !!curTopic.hideDots);
-    MapView.setDots(pool, false);
+    MapView.setDots(pool, !!curTopic.namedDots);
     MapView.mark('pool', [], pool.flatMap(shapeOf));
     MapView.fit(pool);
     MapView.onTap(onMapTap);
@@ -1310,12 +1434,14 @@
     tries = 0; locked = false;
     renderProg(); mood();
     ['hl', 'ok', 'no', 'on'].forEach((c) => MapView.mark(c));
-    MapView.say(null);
+    MapView.say(null); MapView.trace([]);
     $('why').hidden = true;
     const box = $('answers'); box.innerHTML = '';
     if (q.kind === 'drag') { askDrag(it); return; }
     if (q.kind === 'who') { askWho(it); return; }
     if (q.kind === 'neigh') { askNeigh(it); return; }
+    if (q.kind === 'cmp') { askCmp(q); return; }
+    if (q.kind === 'route') { askRoute(it); return; }
     if (q.kind === 'find') {
       const byFlag = !!curTopic.flags;
       $('say').textContent = byFlag ? 'Which country has this flag? Tap it on the map.' : curTopic.say ? curTopic.say.find(it) : 'Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.');
@@ -1346,6 +1472,7 @@
     const q = qs[qi];
     if (locked || !q) return;
     if (q.kind === 'neigh') { tapNeigh({ dot, shape }); return; }
+    if (q.kind === 'route') { tapRoute({ dot }); return; }
     if (q.kind !== 'find' && q.kind !== 'drag') return; // tapping the country also answers a jigsaw piece
     const it = q.it;
     // Another country can be tapped by mistake only when a country is what is asked for.
@@ -1504,6 +1631,68 @@
     MapView.mark('no'); MapView.mark('ok', nbWant.map((c) => c.key), nbWant.flatMap(shapeOf));
     $('say').textContent = 'Here they are!';
     $('whyText').textContent = cap(named(it)) + ' shares a border with ' + listOf(nbWant) + '.';
+    $('why').hidden = false;
+    $('whyNext').focus();
+  }
+
+  // ---- Bigger or Farther?: two places, pick the bigger or the farther one ----
+  // The two are lit up on the map (and the place to measure from, if there is one). A right answer shows the numbers.
+  function askCmp(q) {
+    const c = curLevel.cmp, a = q.it, b = q.other, from = c.from && c.from();
+    MapView.mark('hl', [a.key, b.key], shapeOf(a).concat(shapeOf(b)));
+    if (from) { MapView.mark('on', [from.key]); MapView.say(from.name === 'Indonesia' ? 'Jakarta' : from.name, from.x, from.y); }
+    MapView.fit([a, b].concat(from ? [from] : []), true, true);
+    $('say').textContent = c.text;
+    const line = (it) => labelOf(it) + ' is about ' + approx(c.metric(it)) + ' ' + c.unit + '.';
+    const opts = document.createElement('div'); opts.className = 'opts';
+    shuffle([a, b]).forEach((it, k) => {
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'opt'; btn.dataset.v = labelOf(it); btn.textContent = labelOf(it); btn.style.animationDelay = k * 0.05 + 's';
+      btn.addEventListener('click', () => {
+        const right = it === a;
+        answer(right, btn);
+        if (right) $('say').textContent = pick(PRAISE) + ' ' + line(a) + ' ' + line(b);
+      });
+      opts.appendChild(btn);
+    });
+    $('answers').appendChild(opts);
+  }
+
+  // ---- Island Routes: tap the islands of a trip, in order ----
+  // A right island in its place is a step; any other island is a miss, and a second miss shows the whole way.
+  let rtWant = [], rtI = 0;
+  const rtNote = () => { $('rtNote').textContent = '⛵ Islands crossed: ' + rtI + ' of ' + rtWant.length; };
+  function askRoute(r) {
+    rtWant = r.via.map((n) => byName(pool, n)); rtI = 0;
+    $('say').textContent = 'Travel from ' + r.from + ' to ' + r.to + '. Tap each island you cross, in order.';
+    $('answers').innerHTML = '<p class="tapnote" id="rtNote"></p>';
+    rtNote();
+  }
+  function tapRoute({ dot }) {
+    const r = qs[qi].it, got = pool.find((p) => p.key === dot);
+    if (!got || rtWant.slice(0, rtI).includes(got)) return;
+    if (got === rtWant[rtI]) {
+      rtI++; sfx.good();
+      const done = rtWant.slice(0, rtI);
+      MapView.mark('no'); MapView.mark('ok', done.map((c) => c.key)); MapView.trace(done); MapView.say(got.name, got.x, got.y); rtNote();
+      if (rtI < rtWant.length) { $('say').textContent = 'Yes, ' + got.name + '! Where next?'; return; }
+      locked = true; results.push(tries === 0); mood('cheer');
+      $('say').textContent = pick(PRAISE);
+      renderProg();
+      const x = roundNo; setTimeout(() => { if (x === roundNo) next(); }, 1300);
+      return;
+    }
+    tries++; sfx.bad(); mood('oops');
+    MapView.mark('no', [got.key]); MapView.say(got.name, got.x, got.y);
+    if (tries === 1) {
+      CD.weak('omnia', stageOf(curLevel) + ': ' + r.name);
+      $('say').textContent = rtWant.includes(got) ? got.name + ' comes later. Which island is next?' : got.name + ' is not on the way. Try again!';
+      return;
+    }
+    locked = true; results.push(false); renderProg();
+    MapView.mark('no'); MapView.mark('ok', rtWant.map((c) => c.key)); MapView.trace(rtWant);
+    $('say').textContent = 'Here is the way!';
+    $('whyText').textContent = r.from + ' is on ' + rtWant[0].name + ' and ' + r.to + ' is on ' + rtWant[rtWant.length - 1].name + '. The way is ' + rtWant.map((c) => c.name).join(' → ') + '.';
     $('why').hidden = false;
     $('whyNext').focus();
   }
