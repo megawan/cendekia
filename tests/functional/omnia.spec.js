@@ -1,9 +1,9 @@
 const { test, expect } = require('../support/fixtures');
 
-// Opens one topic of Mundia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
+// Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
 // "Culture of Indonesia" or "Animals of the World").
 async function openTopic(page, name) {
-  await page.goto('/mundia/');
+  await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
   await expect(page.locator('#topic')).toBeVisible();
 }
@@ -41,7 +41,7 @@ async function playRound(page) {
 const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(window.Cendekia.key('mundia.v1'))));
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
-test.describe('Mundia', () => {
+test.describe('Omnia', () => {
   test('lists the six topics and their levels', async ({ page }) => {
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
