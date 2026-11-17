@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { pack: Array(5).fill(1) };
+    for (const x of ['easy', 'medium', 'hard']) best[x] = { pack: Array(6).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { pack: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -30,9 +30,11 @@ const readPuzzle = (page) => page.evaluate(() => ({
 }));
 
 // Follows the steps. A step that takes more than a pocket holds throws.
+// A repeat does its steps n times.
+const unroll = (prog) => prog.flatMap((o) => (o.op === 'loop' ? Array.from({ length: o.n }, () => o.body).flat() : [o]));
 function follow({ start, prog }, lenient) {
   const s = start.slice();
-  prog.forEach((o) => {
+  unroll(prog).forEach((o) => {
     if (o.op === 'put') s[o.p] = o.v;
     else if (o.op === 'add') s[o.p] += o.v;
     else if (o.op === 'take') { if (s[o.p] < o.v && !lenient) throw new Error('takes more than the pocket holds'); s[o.p] = Math.max(0, s[o.p] - o.v); }
@@ -105,6 +107,60 @@ async function buildOne(page) {
   for (const o of path) await page.locator('#bPal .pbtn').nth(o.k).click();
   await page.getByRole('button', { name: '▶ Run' }).click();
   return path.length;
+}
+
+// Repeat levels: a program may hold a repeat, whose steps are cards inside its card.
+const readRepeat = (page) => page.evaluate(() => {
+  const op = (li) => ({ op: li.dataset.op, p: li.dataset.p === '' ? null : +li.dataset.p, v: li.dataset.v === '' ? null : +li.dataset.v, to: li.dataset.to === '' ? null : +li.dataset.to });
+  return {
+    start: [...document.querySelectorAll('.pouch')].map((e) => +e.querySelector('.cnt').textContent),
+    ask: [...document.querySelectorAll('.pouch')].findIndex((e) => e.classList.contains('ask')),
+    prog: [...document.querySelectorAll('.recipe > li')].map((li) => (li.dataset.op === 'loop'
+      ? { op: 'loop', n: +li.dataset.n, body: [...li.querySelectorAll(':scope > .body > li')].map(op) } : op(li)))
+  };
+});
+
+// Build with a repeat: a repeat of one or two blocks, maybe with one block after it, that reaches the goal within the limit.
+function repeatSolution({ start, goal, palette, limit }) {
+  const plain = palette.filter((o) => o.op !== 'loop');
+  const bodies = [...plain.map((o) => [o]), ...plain.flatMap((a) => plain.map((b) => [a, b]))];
+  const reach = (prog) => { let v = start[0]; for (const o of unroll(prog)) { v += o.op === 'add' ? o.v : -o.v; if (v < 0) return null; } return v; };
+  for (let n = 2; n <= 9; n++) for (const body of bodies) for (const tail of [null, ...plain]) {
+    const prog = [{ op: 'loop', n, body }, ...(tail ? [tail] : [])];
+    if (1 + body.length + (tail ? 1 : 0) <= limit && reach(prog) === goal[0]) return prog;
+  }
+  return null;
+}
+// The fewest blocks to reach the goal with no repeat at all.
+function straightFewest({ start, goal, palette }) {
+  const plain = palette.filter((o) => o.op !== 'loop'), seen = new Set([start[0]]);
+  let frontier = [start[0]];
+  for (let d = 0; d <= 12; d++) {
+    if (frontier.includes(goal[0])) return d;
+    const next = [];
+    for (const v of frontier) for (const o of plain) {
+      const w = v + (o.op === 'add' ? o.v : -o.v);
+      if (w >= 0 && w <= 99 && !seen.has(w)) { seen.add(w); next.push(w); }
+    }
+    frontier = next;
+  }
+  return null;
+}
+async function buildRepeat(page) {
+  const puzzle = await readBuild(page), prog = repeatSolution(puzzle);
+  expect(prog).not.toBeNull();
+  const block = (o) => page.locator('#bPal .pbtn[data-k="' + o.k + '"]');
+  await page.locator('#bPal .pbtn[data-op="loop"]').click();
+  for (let k = 2; k < prog[0].n; k++) await page.getByRole('button', { name: 'More times' }).click();
+  for (const o of prog[0].body) await block(o).click();
+  if (prog[1]) { await page.locator('#bTray .tg').click(); await block(prog[1]).click(); } // step out of the repeat first
+  await page.getByRole('button', { name: '▶ Run' }).click();
+}
+// Plays whichever puzzle is on the screen of the Repeat level.
+async function repeatOne(page, diff) {
+  if (await page.locator('#bTray').count()) { await buildRepeat(page); return; }
+  const puzzle = await readRepeat(page);
+  await answer(page, diff, follow(puzzle)[puzzle.ask]);
 }
 
 test.describe("Poka's Backpack", () => {
@@ -334,5 +390,113 @@ test.describe("Poka's Backpack", () => {
     const rep = await parentsWith(page, { 'put-add': 2, other: 9 });
     await expect(rep).toContainText('Worth practicing');
     await expect(rep).not.toContainText('Common slips');
+  });
+
+  for (const diff of ['easy', 'medium', 'hard']) {
+    test(`the repeat level is solved on ${diff}`, async ({ page }) => {
+      await openLogica(page, diff);
+      await openLevel(page, 6);
+      for (let k = 0; k < (diff === 'easy' ? 2 : 3); k++) {
+        await nextPuzzle(page);
+        // Easy has two to read; Medium and Hard have one to read, then two to build.
+        expect(await page.locator('#bTray').count()).toBe(diff !== 'easy' && k > 0 ? 1 : 0);
+        await repeatOne(page, diff);
+      }
+      await expect(page.locator('#resStars .star.on')).toHaveCount(3, { timeout: 15000 });
+    });
+  }
+
+  for (const diff of ['easy', 'medium', 'hard']) {
+    test(`repeat puzzles are valid on ${diff}`, async ({ page }) => {
+      for (let k = 0; k < 5; k++) {
+        await openLogica(page, diff);
+        await openLevel(page, 6);
+        const puzzle = await readRepeat(page);
+        const loop = puzzle.prog.find((o) => o.op === 'loop');
+        expect(loop.n).toBeGreaterThanOrEqual(2);
+        expect(loop.body.length).toBeGreaterThanOrEqual(1);
+        expect(loop.body.length).toBeLessThanOrEqual(diff === 'easy' ? 1 : 2);
+        const final = follow(puzzle); // throws if a step takes too much
+        expect(final[puzzle.ask]).not.toBe(puzzle.start[puzzle.ask]);
+        // Doing the repeat only once must give another answer, or the count would not matter.
+        const once = follow({ start: puzzle.start, prog: puzzle.prog.map((o) => (o.op === 'loop' ? { ...o, n: 1 } : o)) });
+        expect(once[puzzle.ask]).not.toBe(final[puzzle.ask]);
+      }
+    });
+  }
+
+  for (const diff of ['medium', 'hard']) {
+    test(`a build puzzle needs the repeat on ${diff}`, async ({ page }) => {
+      for (let k = 0; k < 3; k++) {
+        await openLogica(page, diff);
+        await openLevel(page, 6);
+        await nextPuzzle(page);
+        await repeatOne(page, diff); // the first puzzle is one to read
+        await nextPuzzle(page);
+        const puzzle = await readBuild(page), fewest = straightFewest(puzzle);
+        expect(repeatSolution(puzzle)).not.toBeNull();
+        // With no repeat, even the fewest blocks do not fit in the limit.
+        if (fewest !== null) expect(fewest).toBeGreaterThan(puzzle.limit);
+      }
+    });
+  }
+
+  test('blocks go into the repeat until you step out of it, and a repeat holds two steps', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await openLevel(page, 6);
+    await nextPuzzle(page);
+    await repeatOne(page, 'medium');
+    await nextPuzzle(page);
+    const { limit } = await readBuild(page), plain = page.locator('#bPal .pbtn:not([data-op="loop"])');
+    await page.locator('#bPal .pbtn[data-op="loop"]').click();
+    await expect(page.locator('#bTray li.loop.target')).toHaveCount(1);
+    await expect(page.locator('#bTray .rn')).toHaveText('2 times');
+    await page.getByRole('button', { name: 'More times' }).click();
+    await expect(page.locator('#bTray .rn')).toHaveText('3 times');
+    await page.getByRole('button', { name: 'Fewer times' }).click();
+    await page.getByRole('button', { name: 'Fewer times' }).click(); // never below two
+    await expect(page.locator('#bTray .rn')).toHaveText('2 times');
+    await plain.first().click();
+    await plain.first().click();
+    await expect(page.locator('#bTray .body li')).toHaveCount(2);
+    await expect(page.locator('#blocks')).toHaveText('Blocks: 3 / ' + limit);
+    if (limit > 3) {
+      await plain.first().click(); // a third step does not fit in the repeat
+      await expect(page.locator('#qSay')).toContainText('two steps at most');
+      await expect(page.locator('#bTray .body li')).toHaveCount(2);
+    }
+    await page.locator('#bTray .tg').click(); // step out
+    await expect(page.locator('#bTray li.loop.target')).toHaveCount(0);
+    if (limit > 3) {
+      await plain.first().click();
+      await expect(page.locator('#bTray > li')).toHaveCount(2); // the repeat and a step after it
+    }
+    await page.getByRole('button', { name: 'Remove all blocks' }).click();
+    await expect(page.locator('#bTray li')).toHaveCount(0);
+  });
+
+  test('a repeat done once is recorded as a slip, and the card says what it does', async ({ page }) => {
+    let tagged = false;
+    for (let k = 0; k < 15 && !tagged; k++) {
+      await openLogica(page, 'medium');
+      await openLevel(page, 6);
+      const puzzle = await readRepeat(page), ans = follow(puzzle)[puzzle.ask];
+      const once = follow({ start: puzzle.start, prog: puzzle.prog.map((o) => (o.op === 'loop' ? { ...o, n: 1 } : o)) }, true)[puzzle.ask];
+      const option = page.locator('.opt[aria-label="' + once + '"]');
+      if (once === ans || !(await option.count())) continue;
+      await page.locator('.recipe > li.loop').click({ position: { x: 20, y: 8 } });
+      await expect(page.locator('#qSay')).toContainText('times in all');
+      await option.click();
+      expect((await storedLog(page))['medium/pack/5'].slips).toEqual({ 'repeat-once': 1 });
+      tagged = true;
+    }
+    expect(tagged).toBe(true);
+  });
+
+  test('the steps guide explains Repeat', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await page.locator('#worlds .card', { hasText: 'Backpack' }).click();
+    await page.locator('#wSteps').click();
+    await expect(page.getByRole('dialog', { name: 'Backpack steps' }).locator('.tsteps')).toContainText('Like clapping three times');
   });
 });

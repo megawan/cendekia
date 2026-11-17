@@ -442,6 +442,14 @@
   .recipe li.now { outline: 4px solid #facc15; }
   .recipe:empty::before { content: "Tap a block below"; display: block; padding: 10px; border: 3px dashed var(--line); border-radius: 14px; text-align: center; opacity: .6; }
   .pkTools { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 4px 0; }
+  .recipe .body { list-style: none; margin: 6px 0 0; padding: 0 0 0 16px; display: grid; gap: 4px; flex: 1 0 100%; }
+  .recipe li.loop { flex-wrap: wrap; background: var(--loop); } .recipe li.loop > .n { align-self: center; }
+  .recipe .body:empty::before { content: "Tap a block to put it inside"; display: block; padding: 6px; border: 2px dashed rgba(255,255,255,.7); border-radius: 10px; font-size: .85rem; text-align: center; }
+  .recipe li.loop.target { outline: 4px solid #facc15; } .recipe li.loop.in { outline: 3px dashed #facc15; }
+  .recipe .lhead { display: flex; align-items: center; gap: 8px; flex: 1 0 100%; }
+  .recipe .lhead button { min-width: 36px; min-height: 36px; padding: 0 6px; border: 0; border-radius: 50%; background: rgba(255,255,255,.3); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+  .recipe .lhead .tg { flex: 1; display: flex; align-items: center; gap: 10px; border-radius: 10px; background: none; text-align: left; }
+  .recipe .lhead .rn { font-weight: 800; }
   .recipe li.tap { cursor: pointer; } .recipe li.tap:focus-visible { outline: 3px solid var(--c-blue); outline-offset: 2px; }
   .keypad.no { animation: shake .3s; } .keypad.done .key { opacity: .5; }
   .demo .recipe { gap: 3px; } .demo .pb { font-size: .75rem; padding: 3px 8px; } .demo .pouches { gap: 6px; } .demo .pouch .cnt { font-size: 1.2rem; }
@@ -1287,7 +1295,7 @@
       levels: ['Small tower', 'Taller tower', 'Middle peg', 'Messy start', 'Rebuild', 'Big tower', 'Mixed up'] },
     { id: 'pack', name: 'Poka\'s Backpack', skill: 'Variables', icon: '🎒', c: 'var(--c-rose)', kind: 'quiz', total: 3,
       desc: 'Follow the steps and work out what is in each pocket of the backpack.',
-      levels: ['Put in, take out', 'Two pockets', 'Copy', 'Build it', 'Swap'] },
+      levels: ['Put in, take out', 'Two pockets', 'Copy', 'Build it', 'Swap', 'Repeat'] },
     { id: 'circuit', name: "Poka's Workshop", skill: 'Logic gates', icon: '🔌', c: 'var(--c-amber)', kind: 'quiz', total: 3,
       desc: 'Follow the wires through switches and gates, and light the lamp.',
       levels: ['Switch and flip', 'Both keys', 'Either key', 'Mixed wires', 'Fill the gate', 'Build a circuit'] }
@@ -1524,7 +1532,7 @@
     clues: 'Combining several clues, including "not", "or" and facts about things, to find the only answer that fits them all.',
     train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.',
     hanoi: 'Planning several moves ahead, and solving a big job by solving smaller copies of it first: to move the biggest disk, the smaller tower has to get out of the way.',
-    pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later. Later, building the steps to reach a number, and swapping two pockets with a spare one.',
+    pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later. Later, building the steps to reach a number, swapping two pockets with a spare one, and repeating steps instead of writing them again and again.',
     circuit: 'Logic gates: AND, OR and NOT decide whether power gets through, the way computers combine simple yes-or-no decisions. Tracing a circuit from the switches to the lamp, and working back from the lamp to the switches. Later, choosing the gates that make a circuit match a table.'
   };
   let viewed = null, gateAns = 0;
@@ -1554,7 +1562,10 @@
       'other-pocket': 'Answers with the number from the other pocket. Check which pocket the ? is on before answering.',
       start: 'Answers with the number the pocket started with, as if no step had changed it.',
       'copy-reverse': 'Copies the wrong way round. In Copy A into B, it is B that gets the number from A.',
-      'off-by-one': 'Is often one or two away from the answer. Counting each step aloud can help.'
+      'off-by-one': 'Is often one or two away from the answer. Counting each step aloud can help.',
+      'repeat-once': 'Does the steps inside a repeat only once. Saying each round aloud ("one... two... three...") helps.',
+      'repeat-count': 'Repeats the wrong number of times, often one too many or too few. Tick off each round on the screen.',
+      'loop-first-only': 'Repeats only the first step inside a repeat, not all of them. Everything inside the repeat is done again each round.'
     }
   };
   const goodOnes = (L) => L.ok + L.wins;
@@ -3449,7 +3460,7 @@
   const PACK_ITEMS = [{ e: '🍎', n: 'Apples' }, { e: '🍪', n: 'Cookies' }, { e: '⭐', n: 'Stars' }];
   // max: the most a pocket may hold; step: the biggest number in an add or take; len: steps for each level.
   const PACK = { easy: { max: 9, step: 3, len: [2, 3, 3] }, medium: { max: 20, step: 9, len: [3, 4, 4] }, hard: { max: 99, step: 20, len: [4, 5, 5] } };
-  const PACK_ICON = { put: '📥', add: '➕', take: '➖', copy: '📋' };
+  const PACK_ICON = { put: '📥', add: '➕', take: '➖', copy: '📋', loop: '🔁' };
   // One step on a copy of the pockets; null when a take wants more than the pocket holds (unless lenient).
   function packStep(s, o, lenient) {
     const n = s.slice();
@@ -3459,24 +3470,43 @@
     else n[o.to] = n[o.p];
     return n;
   }
+  // A repeat {op: 'loop', n, body} does the steps in its body n times. packFlat lists the steps a program takes, in order:
+  // o is the step, at the number of the block in the program, sub the number inside a repeat (-1 outside one) and round
+  // which time round a repeat it is.
+  function packFlat(prog) {
+    const out = [];
+    prog.forEach((o, at) => {
+      if (o.op !== 'loop') out.push({ o, at, sub: -1, round: 0 });
+      else for (let round = 0; round < o.n; round++) o.body.forEach((b, sub) => out.push({ o: b, at, sub, round }));
+    });
+    return out;
+  }
+  // The pockets after every step (trace[0] is the start), or err with at, the number of the step that took too much.
   function packRun(start, prog, lenient) {
+    const flat = packFlat(prog);
     let s = start;
     const trace = [s];
-    for (let i = 0; i < prog.length; i++) {
-      s = packStep(s, prog[i], lenient);
-      if (!s) return { trace, err: true, at: i };
+    for (let i = 0; i < flat.length; i++) {
+      s = packStep(s, flat[i].o, lenient);
+      if (!s) return { trace, err: true, at: i, flat };
       trace.push(s);
     }
-    return { trace, final: s };
+    return { trace, final: s, flat };
   }
+  const packMap = (prog, f) => prog.map((o) => (o.op === 'loop' ? { ...o, body: o.body.map(f) } : f(o))); // f on every step, inside a repeat too
+  const packCount = (prog) => prog.reduce((n, o) => n + (o.op === 'loop' ? 1 + o.body.length : 1), 0); // a repeat counts as a block, and so does each step in it
+  const packLabel = (f) => (f.at + 1) + (f.sub < 0 ? '' : 'abc'[f.sub]) + (f.sub < 0 ? '' : ', round ' + (f.round + 1));
   const packName = (p, long) => (long ? PACK_ITEMS[p].n : PACK_ITEMS[p].e);
   const packText = (o, long) => (o.op === 'put' ? 'Put ' + o.v + ' in ' + packName(o.p, long)
     : o.op === 'add' ? 'Add ' + o.v + ' to ' + packName(o.p, long)
       : o.op === 'take' ? 'Take ' + o.v + ' from ' + packName(o.p, long)
-        : 'Copy ' + packName(o.p, long) + ' into ' + packName(o.to, long));
-  const progHtml = (prog) => '<ol class="recipe" aria-label="Steps">' + prog.map((o, k) => '<li class="pb ' + o.op + '" data-op="' + o.op + '" data-p="' + o.p
-    + '" data-v="' + (o.v === undefined ? '' : o.v) + '" data-to="' + (o.to === undefined ? '' : o.to) + '" aria-label="Step ' + (k + 1) + ': ' + packText(o, true) + '">'
-    + '<span class="n" aria-hidden="true">' + (k + 1) + '</span><span aria-hidden="true">' + PACK_ICON[o.op] + ' ' + packText(o) + '</span></li>').join('') + '</ol>';
+        : o.op === 'loop' ? 'Repeat ' + o.n + ' times' : 'Copy ' + packName(o.p, long) + ' into ' + packName(o.to, long));
+  const attr = (v) => (v === undefined || v === null ? '' : v);
+  const stepHtml = (o, num, inside) => '<li class="pb ' + o.op + '" data-op="' + o.op + '" data-p="' + attr(o.p) + '" data-v="' + attr(o.v) + '" data-to="' + attr(o.to) + '" data-n="' + attr(o.n)
+    + '" aria-label="Step ' + num + ': ' + packText(o, true) + '"><span class="n" aria-hidden="true">' + num + '</span><span aria-hidden="true">' + PACK_ICON[o.op] + ' ' + packText(o) + '</span>' + (inside || '') + '</li>';
+  // The steps as cards; the steps inside a repeat are cards in the repeat's card, lettered a, b.
+  const progHtml = (prog) => '<ol class="recipe" aria-label="Steps">' + prog.map((o, k) => stepHtml(o, k + 1, o.op === 'loop'
+    ? '<ol class="body">' + o.body.map((b, j) => stepHtml(b, (k + 1) + 'abc'[j])).join('') + '</ol>' : '')).join('') + '</ol>';
   const packThings = (p, v) => (v <= 10 ? PACK_ITEMS[p].e.repeat(v) : '');
   // goal is only given when the child builds the steps: a number to reach, or null for a pocket that may end with anything.
   const pouchHtml = (p, v, ask, goal) => '<div class="pouch' + (ask ? ' ask' : '') + '" data-p="' + p + '"' + (goal === undefined ? '' : ' data-goal="' + (goal === null ? '' : goal) + '"') + '>'
@@ -3488,12 +3518,13 @@
     el.querySelector('.things').textContent = packThings(p, state[p]);
   });
   // The pockets after each step, as a table. ask marks the pocket being asked about.
-  const packTable = (rows, ask) => '<table class="trace"><caption>What is in the pockets after each step</caption><thead><tr><th scope="col">Step</th>'
+  const packTable = (rows, ask, labels) => '<table class="trace"><caption>What is in the pockets after each step</caption><thead><tr><th scope="col">Step</th>'
     + rows[0].map((_, p) => '<th scope="col">' + PACK_ITEMS[p].e + ' ' + PACK_ITEMS[p].n + '</th>').join('') + '</tr></thead><tbody>'
-    + rows.map((s, k) => '<tr><th scope="row">' + (k || 'Start') + '</th>' + s.map((v, p) => '<td' + (p === ask ? ' class="ask"' : '') + '>' + v + '</td>').join('') + '</tr>').join('')
+    + rows.map((s, k) => '<tr><th scope="row">' + (k ? (labels ? labels[k - 1] : k) : 'Start') + '</th>' + s.map((v, p) => '<td' + (p === ask ? ' class="ask"' : '') + '>' + v + '</td>').join('') + '</tr>').join('')
     + '</tbody></table>';
   // What a step does, in a sentence: said when a step or a block is tapped.
   const packHelp = (o) => {
+    if (o.op === 'loop') return 'Repeat ' + o.n + ' times: do the steps inside, then do them again, ' + o.n + ' times in all.';
     const a = PACK_ITEMS[o.p].n, b = o.to === undefined || o.to === null ? '' : PACK_ITEMS[o.to].n;
     return o.op === 'put' ? 'Put ' + o.v + ' in ' + a + ': the ' + a + ' pocket now has exactly ' + o.v + ', whatever it had before.'
       : o.op === 'add' ? 'Add ' + o.v + ' to ' + a + ': ' + o.v + ' more go into the ' + a + ' pocket, on top of what is already there.'
@@ -3513,7 +3544,9 @@
       [pair(pouchHtml(0, 5), pouchHtml(0, 2)),
         '<b>Take 3 from 🍎</b>: 3 come out. You cannot take more than there is. Like eating 3 of your 5 cookies.', 'stack'],
       [pair(pouchHtml(0, 4) + pouchHtml(1, 1), pouchHtml(0, 4) + pouchHtml(1, 4)),
-        '<b>Copy 🍎 into 🍪</b>: the second pocket gets the same number as the first, and the first keeps its number. Later steps change only the pocket they name. Like writing a number on a second piece of paper.', 'stack']
+        '<b>Copy 🍎 into 🍪</b>: the second pocket gets the same number as the first, and the first keeps its number. Later steps change only the pocket they name. Like writing a number on a second piece of paper.', 'stack'],
+      ['<div class="demo">' + progHtml([{ op: 'loop', n: 3, body: [{ op: 'add', p: 0, v: 2 }] }]) + '</div>' + pair(pouchHtml(0, 1), pouchHtml(0, 7)),
+        '<b>Repeat 3 times</b>: do the steps inside, then do them again, three times in all. Add 2, three times, is 6 more, so 1 becomes 7. Like clapping three times: the same thing again.', 'stack']
     ]);
   }
   // A number pad for the Hard answers: up to two digits, then ✓.
@@ -3547,6 +3580,7 @@
   // overflows, and the pocket asked about really changes. The wrong answers are the slips a child makes: one step too
   // many or too few, the other pocket, the start, or a copy going the wrong way.
   function genPack(lvl) {
+    if (lvl === 5 && (S.diff === 'easy' || Q.n === 0)) { genPackRepeat(); return; } // Medium and Hard: one to read, then two to build
     if (lvl >= 3) { genPackBuild(lvl); return; }
     const cfg = PACK[S.diff], max = cfg.max, len = cfg.len[lvl], pockets = lvl === 0 ? 1 : 2;
     let start, prog, run, ask;
@@ -3566,9 +3600,32 @@
         && (pockets === 1 || [0, 1].every((p) => prog.some((o) => o.p === p || o.to === p)))
         && (lvl !== 2 || (k >= 0 && prog.slice(k + 1).some((o) => o.op !== 'copy')))) break;
     }
+    packAsk({ lvl, start, prog, ask, run, max });
+  }
+  // Level 6, predict: a program with a repeat. The answer changes if the repeat is done once, so the count matters.
+  function genPackRepeat() {
+    const d = S.diff, max = PACK[d].max, pockets = d === 'easy' ? 1 : 2, nMax = { easy: 3, medium: 5, hard: 9 }[d], vMax = { easy: 3, medium: 5, hard: 9 }[d];
+    let start, prog, run, ask;
+    for (let tries = 0; ; tries++) {
+      if (tries === 500) { start = [0]; prog = [{ op: 'loop', n: 2, body: [{ op: 'add', p: 0, v: 1 }] }]; run = packRun(start, prog); ask = 0; break; } // cannot happen in practice
+      const step = () => ({ op: pick(['add', 'take']), p: rnd(0, pockets - 1), v: rnd(1, vMax) });
+      const loop = { op: 'loop', n: rnd(2, nMax), body: Array.from({ length: d === 'easy' ? 1 : rnd(1, 2) }, step) };
+      prog = [...Array.from({ length: d === 'easy' ? 0 : rnd(0, 1) }, step), loop, ...Array.from({ length: rnd(0, 1) }, step)];
+      start = Array.from({ length: pockets }, () => rnd(0, Math.floor(max / 3)));
+      run = packRun(start, prog);
+      ask = rnd(0, pockets - 1);
+      if (!run.err && run.trace.every((s) => s.every((v) => v <= max)) && run.final[ask] !== start[ask]
+        && packRun(start, prog.map((o) => (o === loop ? { ...o, n: 1 } : o)), true).final[ask] !== run.final[ask]
+        && (pockets === 1 || [0, 1].every((p) => packFlat(prog).some((f) => f.o.p === p)))) break;
+    }
+    packAsk({ lvl: 5, start, prog, ask, run, max });
+  }
+  // The question for a program: how many are in the pocket asked about at the end? Easy and Medium offer choices, Hard a number pad.
+  function packAsk({ lvl, start, prog, ask, run, max }) {
     const item = PACK_ITEMS[ask], ans = run.final[ask];
     qSay('Follow the steps in order. How many ' + item.e + ' ' + item.n + ' will be in the pocket at the end?'
-      + (lvl === 2 ? ' A copy stays a copy, even if the other pocket changes later.' : '') + ' Tap a step to hear what it does.');
+      + (lvl === 2 ? ' A copy stays a copy, even if the other pocket changes later.' : '') + (prog.some((o) => o.op === 'loop') ? ' A repeat does the steps inside again and again.' : '')
+      + ' Tap a step to hear what it does.');
     $('ask').innerHTML = '<div class="pouches">' + start.map((v, p) => pouchHtml(p, v, p === ask)).join('') + '</div>' + progHtml(prog) + '<div id="traceBox"></div>'
       + '<div class="check"><button type="button" class="btn ghost" id="pGuide">📖 Steps</button></div>';
     $('pGuide').addEventListener('click', packGuide);
@@ -3576,7 +3633,7 @@
     recipe.querySelectorAll('li').forEach((li) => { li.tabIndex = 0; li.setAttribute('role', 'button'); li.classList.add('tap'); });
     recipe.addEventListener('click', (e) => {
       const li = e.target.closest('li');
-      if (li) { sfx.tap(); qSay(packHelp({ op: li.dataset.op, p: +li.dataset.p, v: +li.dataset.v, to: li.dataset.to === '' ? null : +li.dataset.to }), 'happy'); }
+      if (li) { sfx.tap(); qSay(packHelp({ op: li.dataset.op, n: +li.dataset.n, p: +li.dataset.p, v: +li.dataset.v, to: li.dataset.to === '' ? null : +li.dataset.to }), 'happy'); }
     });
     recipe.addEventListener('keydown', (e) => {
       if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('li')) { e.preventDefault(); e.target.click(); }
@@ -3585,23 +3642,29 @@
     const showTrace = () => {
       const box = $('traceBox');
       if (box.firstChild) return;
-      box.innerHTML = packTable(run.trace.slice(0, -1), ask);
+      box.innerHTML = packTable(run.trace.slice(0, -1), ask, run.flat.map(packLabel));
       qSay('Look at the table: it shows the pockets after the steps. Now do the last step!', 'happy');
     };
     const done = () => { packPaint(run.final); solved(1500); };
     // The wrong answers are the slips a child makes. When two slips give the same number, the first one listed names it.
     const slips = new Map();
     const slip = (tag, v) => { if (v !== ans && v >= 0 && v <= max + 5 && !slips.has(v)) slips.set(v, tag); };
-    slip('put-add', packRun(start, prog.map((o) => (o.op === 'put' ? { op: 'add', p: o.p, v: o.v } : o)), true).final[ask]); // Put taken for Add
-    slip('copy-reverse', packRun(start, prog.map((o) => (o.op === 'copy' ? { op: 'copy', p: o.to, to: o.p } : o)), true).final[ask]);
+    slip('put-add', packRun(start, packMap(prog, (o) => (o.op === 'put' ? { op: 'add', p: o.p, v: o.v } : o)), true).final[ask]); // Put taken for Add
+    slip('copy-reverse', packRun(start, packMap(prog, (o) => (o.op === 'copy' ? { op: 'copy', p: o.to, to: o.p } : o)), true).final[ask]);
+    const loop = prog.find((o) => o.op === 'loop'), times = (n) => prog.map((o) => (o === loop ? { ...o, n } : o));
+    if (loop) {
+      slip('repeat-once', packRun(start, times(1), true).final[ask]); // the steps inside done once
+      [loop.n + 1, loop.n - 1].forEach((n) => { if (n >= 1) slip('repeat-count', packRun(start, times(n), true).final[ask]); });
+      if (loop.body.length > 1) slip('loop-first-only', packRun(start, prog.flatMap((o) => (o === loop ? [...Array(o.n).fill(o.body[0]), ...o.body.slice(1)] : [o])), true).final[ask]);
+    }
     prog.forEach((_, k) => slip('skip-step', packRun(start, prog.filter((__, j) => j !== k), true).final[ask]));
     run.final.forEach((v, p) => { if (p !== ask) slip('other-pocket', v); });
     slip('start', start[ask]);
     [ans + 1, ans - 1, ans + 2, ans - 2].forEach((v) => slip('off-by-one', v));
     if (S.diff === 'hard') { packKeypad(ans, done, showTrace, Object.fromEntries(slips)); return; }
     const need = S.diff === 'easy' ? 3 : 4;
-    // A put taken for an add is the slip worth showing, so it always makes the list when there is one.
-    const pool = shuffle([...slips.keys()]), mix = pool.filter((v) => slips.get(v) === 'put-add').concat(pool.filter((v) => slips.get(v) !== 'put-add'));
+    // A put taken for an add and a repeat done the wrong number of times are the slips worth showing, so they make the list first.
+    const key = (v) => ['put-add', 'repeat-once', 'repeat-count'].includes(slips.get(v)), pool = shuffle([...slips.keys()]), mix = pool.filter(key).concat(pool.filter((v) => !key(v)));
     const bad = mix.slice(0, need - 1);
     for (let d = 3; bad.length < need - 1; d++) [ans + d, ans - d].forEach((v) => { if (v >= 0 && v !== ans && !bad.includes(v) && bad.length < need - 1) { bad.push(v); slips.set(v, 'off-by-one'); } });
     options(shuffle([ans, ...bad]).map((v) => ({ html: '<b>' + v + '</b>', ok: v === ans, label: String(v), slip: v === ans ? undefined : slips.get(v) })), done, showTrace);
@@ -3638,9 +3701,23 @@
   }
   function genPackBuild(lvl) {
     const B = PACK_BLOCKS[S.diff], max = PACK[S.diff].max;
-    let swap = lvl === 4, start, goal, palette, sol;
+    let swap = lvl === 4, loops = lvl === 5, start, goal, palette, sol;
     for (let tries = 0; ; tries++) {
-      if (tries === 500) swap = false; // cannot happen in practice; the plain level always works
+      if (tries === 500) { swap = false; loops = false; } // cannot happen in practice; the plain level always works
+      if (loops) {
+        // A repeat of one or two steps, maybe with one more step after it. It must be the repeat that makes the blocks fit: with
+        // no repeat, even the fewest blocks do not stay within the limit.
+        const plain = [...B.add.map((v) => ({ op: 'add', p: 0, v })), ...B.take.map((v) => ({ op: 'take', p: 0, v }))];
+        start = [rnd(0, Math.floor(max / 4))];
+        const answer = [{ op: 'loop', n: rnd(2, S.diff === 'medium' ? 5 : 9), body: Array.from({ length: rnd(1, 2) }, () => pick(plain)) }, ...(Math.random() < 0.5 ? [pick(plain)] : [])];
+        const res = packRun(start, answer);
+        if (res.err || res.trace.some((st) => st[0] > max) || res.final[0] === start[0]) continue;
+        goal = [res.final[0]]; sol = answer;
+        palette = [...plain, { op: 'loop', n: 2, body: [] }];
+        const straight = packSolve(start, goal, plain, 12, max);
+        if (straight && straight.length <= packCount(answer) + 1) continue;
+        break;
+      }
       if (swap) {
         const a = rnd(1, max);
         let b = rnd(1, max);
@@ -3654,8 +3731,8 @@
       sol = packSolve(start, goal, palette, B.max, max);
       if (sol && sol.length >= (swap ? 3 : 2)) break;
     }
-    const limit = sol.length + (swap ? 1 : B.extra);
-    qSay((swap ? 'Swap the ' + PACK_ITEMS[0].e + ' and the ' + PACK_ITEMS[1].e + '! The ' + PACK_ITEMS[2].e + ' pocket is spare: use it to hold one for a moment.'
+    const limit = loops ? packCount(sol) + 1 : sol.length + (swap ? 1 : B.extra);
+    qSay((loops ? 'Make the pocket hold the 🎯 number. A 🔁 Repeat does the steps inside again and again, so it needs fewer blocks.' : swap ? 'Swap the ' + PACK_ITEMS[0].e + ' and the ' + PACK_ITEMS[1].e + '! The ' + PACK_ITEMS[2].e + ' pocket is spare: use it to hold one for a moment.'
       : 'Make the pocket hold the 🎯 number.') + ' Tap blocks to build the steps, then press ▶ Run. You can use up to ' + limit + ' blocks.');
     $('ask').innerHTML = '<div class="pouches">' + start.map((v, p) => pouchHtml(p, v, false, goal[p])).join('') + '</div>'
       + '<ol class="recipe" id="bTray" aria-label="Your steps"></ol><p class="swaps" id="blocks" aria-live="polite"></p>'
@@ -3665,31 +3742,65 @@
       + '<button type="button" class="btn ghost" id="bClear" aria-label="Remove all blocks">🗑️</button>'
       + '<button type="button" class="btn go" id="bRun">▶ Run</button></div><div id="traceBox"></div>';
     $('bGuide').addEventListener('click', packGuide);
-    let tray = [], running = false, hints = 0;
+    let tray = [], target = null, running = false, hints = 0; // target: the repeat the next block goes into; null is the program itself
     const my = runToken;
-    $('bPal').innerHTML = palette.map((o, k) => '<button type="button" class="pb pbtn ' + o.op + '" data-k="' + k + '" data-op="' + o.op + '" data-p="' + o.p + '" data-v="' + (o.v === undefined ? '' : o.v)
-      + '" data-to="' + (o.to === undefined ? '' : o.to) + '" aria-label="' + packText(o, true) + '">' + PACK_ICON[o.op] + ' ' + packText(o) + '</button>').join('');
+    $('bPal').innerHTML = palette.map((o, k) => '<button type="button" class="pb pbtn ' + o.op + '" data-k="' + k + '" data-op="' + o.op + '" data-p="' + attr(o.p) + '" data-v="' + attr(o.v)
+      + '" data-to="' + attr(o.to) + '" aria-label="' + (o.op === 'loop' ? 'Repeat: do the steps inside again and again' : packText(o, true)) + '">'
+      + PACK_ICON[o.op] + ' ' + (o.op === 'loop' ? 'Repeat' : packText(o)) + '</button>').join('');
+    const rm = (what, at, sub) => '<button type="button" data-act="rm" data-at="' + at + '" data-sub="' + sub + '" aria-label="Remove ' + what + '">';
     function paintTray() {
-      $('bTray').innerHTML = tray.map((o, k) => '<li class="pb ' + o.op + '" data-op="' + o.op + '"><button type="button" data-k="' + k + '" aria-label="Remove step ' + (k + 1) + ': ' + packText(o, true) + '">'
-        + '<span class="n" aria-hidden="true">' + (k + 1) + '</span><span aria-hidden="true">' + PACK_ICON[o.op] + ' ' + packText(o) + '</span></button></li>').join('');
-      $('blocks').textContent = 'Blocks: ' + tray.length + ' / ' + limit;
+      const card = (o, id, num, at, sub) => '<li class="pb ' + o.op + '" data-op="' + o.op + '" data-id="' + id + '">' + rm('step ' + num + ': ' + packText(o, true), at, sub)
+        + '<span class="n" aria-hidden="true">' + num + '</span><span aria-hidden="true">' + PACK_ICON[o.op] + ' ' + packText(o) + '</span></button></li>';
+      $('bTray').innerHTML = tray.map((o, k) => (o.op !== 'loop' ? card(o, k, k + 1, k, -1)
+        : '<li class="pb loop' + (o === target ? ' target' : '') + '" data-op="loop" data-id="' + k + '"><div class="lhead">'
+          + '<button type="button" class="tg" data-act="target" data-at="' + k + '" aria-pressed="' + (o === target) + '" aria-label="Repeat ' + o.n + ' times. Put the next blocks inside">'
+          + '<span class="n" aria-hidden="true">' + (k + 1) + '</span><span aria-hidden="true">🔁 Repeat</span></button>'
+          + '<button type="button" data-act="dec" data-at="' + k + '" aria-label="Fewer times">−</button><span class="rn" aria-live="polite">' + o.n + ' times</span>'
+          + '<button type="button" data-act="inc" data-at="' + k + '" aria-label="More times">+</button>' + rm('the repeat and the steps in it', k, -1) + '✕</button></div>'
+          + '<ol class="body">' + o.body.map((b, j) => card(b, k + '.' + j, (k + 1) + 'abc'[j], k, j)).join('') + '</ol></li>')).join('');
+      $('blocks').textContent = 'Blocks: ' + packCount(tray) + ' / ' + limit;
       $('bRun').disabled = running || !tray.length;
       $('bUndo').disabled = $('bClear').disabled = running || !tray.length;
     }
-    const mark = (k) => [...$('bTray').children].forEach((li, i) => li.classList.toggle('now', i === k));
+    // Lights up the step being done, and the repeat around it.
+    const mark = (f) => {
+      $('bTray').querySelectorAll('li').forEach((li) => li.classList.remove('now', 'in'));
+      if (!f) return;
+      const at = (id) => $('bTray').querySelector('li[data-id="' + id + '"]');
+      if (f.sub < 0) at(f.at).classList.add('now'); else { at(f.at).classList.add('in'); at(f.at + '.' + f.sub).classList.add('now'); }
+    };
     $('bPal').addEventListener('click', (e) => {
       const b = e.target.closest('.pbtn');
       if (!b || running) return;
-      if (tray.length >= limit) { sfx.bad(); qSay('You can use at most ' + limit + ' blocks here. Take one out, or think of a shorter way.', 'oops'); return; }
-      const block = palette[+b.dataset.k]; tray.push(block); sfx.tap(); paintTray(); qSay(packHelp(block), 'happy');
+      if (packCount(tray) >= limit) { sfx.bad(); qSay('You can use at most ' + limit + ' blocks here. Take one out, or think of a shorter way.', 'oops'); return; }
+      const block = palette[+b.dataset.k];
+      if (block.op === 'loop') {
+        const again = { op: 'loop', n: 2, body: [] };
+        tray.push(again); target = again; sfx.tap(); paintTray();
+        qSay(packHelp(again) + ' Tap blocks to put them inside.', 'happy');
+        return;
+      }
+      if (target) {
+        if (target.body.length >= 2) { sfx.bad(); qSay('A repeat holds two steps at most. Tap 🔁 Repeat to step out of it.', 'oops'); return; }
+        target.body.push(block);
+      } else tray.push(block);
+      sfx.tap(); paintTray(); qSay(packHelp(block), 'happy');
     });
     $('bTray').addEventListener('click', (e) => {
       const b = e.target.closest('button');
       if (!b || running) return;
-      tray.splice(+b.dataset.k, 1); sfx.tap(); paintTray();
+      const at = +b.dataset.at, sub = +b.dataset.sub, again = tray[at];
+      if (b.dataset.act === 'rm') { if (sub >= 0) again.body.splice(sub, 1); else { if (again === target) target = null; tray.splice(at, 1); } }
+      else if (b.dataset.act === 'target') target = target === again ? null : again; // tap the repeat again to step out of it
+      else if (b.dataset.act === 'dec') again.n = Math.max(2, again.n - 1);
+      else again.n = Math.min(9, again.n + 1);
+      sfx.tap(); paintTray();
     });
-    $('bUndo').addEventListener('click', () => { tray.pop(); sfx.tap(); paintTray(); });
-    $('bClear').addEventListener('click', () => { tray = []; sfx.tap(); paintTray(); });
+    $('bUndo').addEventListener('click', () => {
+      if (target && target.body.length) target.body.pop(); else if (tray.pop() === target) target = null;
+      sfx.tap(); paintTray();
+    });
+    $('bClear').addEventListener('click', () => { tray = []; target = null; sfx.tap(); paintTray(); });
     $('bRun').addEventListener('click', () => {
       if (running || !tray.length) return;
       running = true; paintTray(); packPaint(start);
@@ -3697,20 +3808,20 @@
       let k = 0;
       const step = () => {
         if (my !== runToken) return;
-        if (k < rows) { mark(k); packPaint(res.trace[k + 1]); sfx.drop(); k++; setTimeout(step, 450); return; }
-        mark(res.err ? res.at : -1);
+        if (k < rows) { mark(res.flat[k]); packPaint(res.trace[k + 1]); sfx.drop(); k++; setTimeout(step, 450); return; }
+        mark(res.err ? res.flat[res.at] : null);
         const last = res.trace[rows], miss = goal.map((g, p) => (g !== null && last[p] !== g ? PACK_ITEMS[p].e + ' ended with ' + last[p] + ', not ' + g : '')).filter(Boolean);
         if (!res.err && !miss.length) { solved(1500); return; } // the tray stays locked until the next puzzle
         let note = '';
-        const o = res.err && tray[res.at]; // before a hint changes the tray
+        const o = res.err && res.flat[res.at].o; // before a hint changes the tray
         wrong(() => {
           hints++;
-          if (hints === 1) { $('traceBox').innerHTML = packTable(res.trace); note = ' Look at the table to see where it went wrong.'; }
-          else { $('traceBox').innerHTML = ''; tray = sol.slice(0, hints - 1); note = ' Poka put the first ' + tray.length + ' block' + (tray.length > 1 ? 's' : '') + ' in for you.'; }
+          if (hints === 1) { $('traceBox').innerHTML = packTable(res.trace, undefined, res.flat.map(packLabel)); note = ' Look at the table to see where it went wrong.'; }
+          else { $('traceBox').innerHTML = ''; tray = JSON.parse(JSON.stringify(sol.slice(0, hints - 1))); target = null; note = ' Poka put the first ' + tray.length + ' block' + (tray.length > 1 ? 's' : '') + ' in for you.'; }
         });
         qSay((res.err ? (last[o.p] ? 'There are only ' + last[o.p] : 'There is nothing') + ' in the ' + PACK_ITEMS[o.p].e + ' pocket to take!' : 'Not quite: ' + miss.join(', ') + '.') + note, 'oops');
         running = false; paintTray();
-        setTimeout(() => { if (my === runToken) { mark(-1); packPaint(start); } }, 900);
+        setTimeout(() => { if (my === runToken) { mark(null); packPaint(start); } }, 900);
       };
       step();
     });
