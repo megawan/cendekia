@@ -1,6 +1,6 @@
-# Mundia
+# Omnia
 
-General knowledge for children, in English, with Safiri the turtle. The topics are about places, flags and nature, on maps a child can drag, pinch and zoom.
+General knowledge for children, in English, with Pacha the llama. The topics are about places, flags and nature, on maps a child can drag, pinch and zoom.
 
 ## Topics and levels
 
@@ -40,7 +40,7 @@ Three stars for every question right on the first try, two for up to two misses,
 
 ## Children and parents
 
-Mundia uses the children shared by every Cendekia app (`shared/profile.js`). Each child's stars and days in a row are kept in `localStorage` under `mundia.v1.<child id>` (`best` holds the stars of each level by its id, such as `id.java`, `w.sea`, `f.sea` or `n.river`; never rename them). Every finished round goes to the shared log (`Cendekia.round`) and every first miss to the shared list of things that went wrong (`Cendekia.weak`, labelled with the level and the place; flags levels start with "Flags: " so they are not mixed up with the capitals), so Mundia shows on the [parents' page](../parents/). The daily time limit set there applies here too.
+Omnia uses the children shared by every Cendekia app (`shared/profile.js`). Each child's stars and days in a row are kept in `localStorage` under `mundia.v1.<child id>` (the app was first called Mundia, so the key and the app id `mundia` stay; `best` holds the stars of each level by its id, such as `id.java`, `w.sea`, `f.sea` or `n.river`; never rename them). Every finished round goes to the shared log (`Cendekia.round`) and every first miss to the shared list of things that went wrong (`Cendekia.weak`, labelled with the level and the place; flags levels start with "Flags: " so they are not mixed up with the capitals), so Omnia shows on the [parents' page](../parents/). The daily time limit set there applies here too.
 
 ## Sound, motion and offline
 

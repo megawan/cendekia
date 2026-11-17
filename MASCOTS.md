@@ -9,7 +9,7 @@ Each app has a mascot with a name borrowed from a word in another language.
 | [`logica/`](logica) | Poka | Japanese, from *poka-yoke* |
 | [`lexica/`](lexica) | Pochi | Russian, from *pochemuchka* |
 | [`numeria/`](numeria) | Myria | Greek, "ten thousand" |
-| [`mundia/`](mundia) | Safiri | Swahili, "travel" |
+| [`omnia/`](omnia) | Pacha | Quechua, "world" |
 
 ## Sada (Hijaiyah)
 
@@ -31,9 +31,8 @@ Pochi is short for *pochemuchka* (почемучка), a Russian word for a pers
 
 Myria is a little orange squirrel with a big bushy tail, who counts every nut in the pantry. The name comes from the Greek word *myrias* (μυριάς), which means "ten thousand", the biggest number the ancient Greeks had a single word for. It later gave English the word "myriad", meaning too many to count. Myria is friendly and loves numbers of every size, from counting apples in the kitchen to working out discounts in the shop.
 
-## Safiri (Mundia)
+## Pacha (Omnia)
 
-Safiri is a little turtle in an explorer's hat. The name is the Swahili word *safiri*, "travel", from the same root as *safari*, "journey". A turtle carries its home on its back, so Safiri can go anywhere: from the islands of Indonesia to every capital city in the world.
-
+Pacha is a little llama with a pack on its back. The name is the Quechua word *pacha*, spoken in the Andes of Peru, which means "world", "earth" and even "time and space" all at once. Llamas have carried people and goods across the high mountains for thousands of years, so Pacha has seen many lands and loves to share what it has learned along the way.
 
 Each app's home screen shows a one-line note under the subtitle (for example "Sada · Arabic for “echo” ›"). Tapping it, or the mascot, opens a bottom sheet (text only, no picture) with a shorter version of the text above, written in the mascot's own voice. Those texts live in [`shared/mascot.js`](shared/mascot.js).

@@ -7,7 +7,7 @@ const APPS = [
   ['lexica', /Lexica/],
   ['logica', /Logica/],
   ['numeria', /Numeria/],
-  ['mundia', /Mundia/],
+  ['omnia', /Omnia/],
 ];
 
 test('landing page links to every app and to the parent page', async ({ page }) => {

@@ -1,8 +1,8 @@
-// Builds mundia/maps.js, the country shapes of the two maps, from Natural Earth data (public domain) in the
+// Builds omnia/maps.js, the country shapes of the two maps, from Natural Earth data (public domain) in the
 // world-atlas package. The page has no build step: run this only to change the maps, then commit maps.js.
 //
 //   npm i --no-save world-atlas@2.0.2 topojson-client@3.1.0 topojson-simplify@3.0.3 d3-geo@3.1.1
-//   node mundia/tools/make-maps.mjs
+//   node omnia/tools/make-maps.mjs
 //
 // Each map stores its projection (scale k and translate tx, ty) so the page can place cities from latitude and
 // longitude with the same formula (see project() in index.html).
@@ -57,7 +57,7 @@ const maps = {
   world: { ...meta(world, W, WH, 'naturalEarth1'), shapes: worldShapes },
   indonesia: { ...meta(indo, I, IH, 'mercator'), shapes: indoShapes }
 };
-const js = '// Country shapes for Mundia, made by tools/make-maps.mjs from Natural Earth (public domain). Do not edit by hand.\n'
-  + 'window.MUNDIA_MAPS = ' + JSON.stringify(maps) + ';\n';
+const js = '// Country shapes for Omnia, made by tools/make-maps.mjs from Natural Earth (public domain). Do not edit by hand.\n'
+  + 'window.OMNIA_MAPS = ' + JSON.stringify(maps) + ';\n';
 writeFileSync(process.argv[2] || new URL('../maps.js', import.meta.url), js);
 console.log('maps.js', (js.length / 1024).toFixed(0) + ' KB', 'world', worldShapes.length, 'indonesia', indoShapes.length);

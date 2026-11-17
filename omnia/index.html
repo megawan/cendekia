@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Omnia</title>
+<meta name="theme-color" content="#4c5fd5">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="General knowledge for children, with interactive maps: the cities of Indonesia and the capitals of every country in the world.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f5ff; --ink: #1f2a44; --card: #ffffff; --line: #dde2f5;
+    --accent: #4c5fd5; --accent-d: #3443a6; --warm: #f2a33a; --good: #1f9d6b; --bad: #d9534f;
+    --c-green: #1f9d6b; --c-orange: #f2891f; --c-blue: #2e90fa; --c-teal: #0e9aa7; --c-pink: #e0558a; --c-indigo: #4c5fd5;
+    --sea: #d6ecfb; --land: #e9e4d4; --land-home: #bfe3b4; --land-edge: #ffffff;
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { background: var(--bg); }
+  html, body { margin: 0; min-height: 100%; color: var(--ink); font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 16px 16px 40px; }
+  h1 { font-size: 2.2rem; margin: 0; line-height: 1.05; }
+  h2 { font-size: clamp(1.1rem, 5vw, 1.4rem); margin: 0; text-align: center; flex: 1; line-height: 1.15; }
+  .sub { margin: 0; opacity: .8; }
+  .btn { font: inherit; font-weight: 700; font-size: 1.1rem; border: 0; border-radius: var(--radius); padding: 12px 20px;
+    background: var(--accent); color: #fff; cursor: pointer; min-height: 52px; }
+  .btn.go { background: var(--good); }
+  .btn.ghost { background: #fff; color: var(--ink); border: 2px solid var(--line); }
+  button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .bar .btn { padding: 8px 14px; min-height: 46px; font-size: 1rem; }
+  .spacer { width: 46px; }
+  .note { font-size: .95rem; text-align: center; opacity: .8; margin-top: 16px; }
+  .note a { color: inherit; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 2px solid var(--line);
+    border-radius: 999px; padding: 4px 14px 4px 10px; font-weight: 700; white-space: nowrap; }
+  .stack { display: grid; gap: 14px; max-width: 420px; margin: 20px auto; }
+
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  @keyframes hop { 30% { transform: translateY(-14px) scale(1.08); } }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+  @keyframes fadeUp { from { transform: translateY(8px); opacity: 0; } }
+
+  /* Home */
+  .homeTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .hero { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 8px 0 12px; }
+  .mascot { display: block; width: 84px; height: 84px; animation: bob 3s ease-in-out infinite; }
+  .mascot .m { display: none; fill: none; stroke: #1c2038; stroke-width: 3.5; stroke-linecap: round; }
+  .mascot .m-cheer { fill: #1c2038; }
+  .mascot .m-happy, .mascot.cheer .m-cheer, .mascot.oops .m-oops { display: block; }
+  .mascot.cheer .m-happy, .mascot.oops .m-happy { display: none; }
+  .pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .topics { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 620px) { .topics { grid-template-columns: 1fr 1fr; } }
+  .card { --c: var(--c-blue); display: flex; align-items: center; gap: 14px; text-align: left; background: var(--card);
+    border: 2px solid var(--line); border-radius: var(--radius); padding: 14px; font: inherit; color: inherit; cursor: pointer;
+    animation: popIn .4s both; width: 100%; }
+  .card .badge { flex: none; width: 62px; height: 62px; border-radius: 50%; background: var(--c); color: #fff;
+    display: grid; place-items: center; font-size: 2rem; line-height: 1; }
+  .card b { display: block; font-size: 1.15rem; line-height: 1.2; }
+  .card small { display: block; font-size: .88rem; opacity: .75; line-height: 1.3; margin-top: 2px; }
+  .card .meter { display: block; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; margin-top: 6px; }
+  .card .meter i { display: block; height: 100%; background: var(--warm); border-radius: 4px; }
+  .card.wide { grid-column: 1 / -1; }
+
+  /* Topic: levels */
+  .levels { display: grid; gap: 10px; }
+  @media (min-width: 620px) { .levels { grid-template-columns: 1fr 1fr; } }
+  .levels .card { padding: 10px 14px; }
+  .levels .card .badge { width: 48px; height: 48px; font-size: 1.4rem; font-weight: 800; }
+  .levels .card > span:nth-child(2) { flex: 1; }
+  .st { display: flex; gap: 2px; }
+  .st svg { width: 20px; height: 20px; fill: var(--line); }
+  .st svg.on { fill: var(--warm); }
+
+  /* The map */
+  .mapbox { position: relative; height: clamp(240px, 52vh, 540px); border-radius: var(--radius); overflow: hidden;
+    border: 2px solid var(--line); background: var(--sea); margin-bottom: 12px; }
+  #map { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+  #map:active { cursor: grabbing; }
+  #map .sea { fill: var(--sea); }
+  #map path { fill: var(--land); stroke: var(--land-edge); stroke-width: .8; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+  #map path.home { fill: var(--land-home); }
+  #map path.pool { fill: #d3e9c8; }
+  #map path.hl { fill: var(--warm); }
+  #map path.ok { fill: #7fd3a6; }
+  #map path.no { fill: #f2a7a5; }
+  #map path.on { fill: #a9b4f2; }
+  #map circle { fill: #fff; stroke: var(--ink); stroke-width: 1.6; vector-effect: non-scaling-stroke; cursor: pointer; }
+  #map circle.big { fill: var(--accent); stroke: #fff; }
+  #map circle.hl { fill: var(--warm); stroke-width: 2.5; }
+  #map circle.on { fill: var(--accent); stroke: #fff; stroke-width: 2.5; }
+  #map circle.ok { fill: var(--good); stroke: #fff; stroke-width: 2.5; }
+  #map circle.no { fill: var(--bad); stroke: #fff; stroke-width: 2.5; }
+  #map circle:focus { outline: none; }
+  #map circle:focus-visible { stroke: var(--accent); stroke-width: 4; }
+  #map text { font-family: inherit; font-weight: 800; fill: var(--ink); stroke: #fff; paint-order: stroke; stroke-linejoin: round; pointer-events: none; }
+  .zoom { position: absolute; right: 8px; top: 8px; display: grid; gap: 6px; }
+  .zoom button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink);
+    font: inherit; font-size: 1.4rem; font-weight: 800; line-height: 1; cursor: pointer; box-shadow: 0 2px 6px -2px rgba(28,32,56,.25); }
+  .hint { position: absolute; left: 8px; bottom: 8px; font-size: .8rem; font-weight: 700; background: rgba(255,255,255,.85);
+    border-radius: 999px; padding: 4px 10px; pointer-events: none; }
+
+  /* Explore */
+  .info { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 12px 16px; min-height: 76px;
+    display: flex; align-items: center; gap: 12px; animation: fadeUp .25s both; }
+  .info .flag { font-size: 2.4rem; line-height: 1; }
+  .info > span > b { display: block; font-size: 1.25rem; }
+  .info p { margin: 2px 0 0; line-height: 1.35; }
+
+  /* Play */
+  .prog { display: flex; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
+  .prog i { width: 14px; height: 14px; border-radius: 50%; background: var(--line); }
+  .prog i.ok { background: var(--good); }
+  .prog i.miss { background: var(--warm); }
+  .prog i.now { background: var(--accent); transform: scale(1.25); }
+  .coach { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .coach .mascot { width: 56px; height: 56px; animation: none; flex: none; }
+  .coach .mascot.cheer { animation: hop .5s ease-out; }
+  .coach .mascot.oops { animation: shake .35s; }
+  .bubble { position: relative; flex: 1; background: #fff; border: 2px solid var(--line); border-radius: 16px;
+    padding: 8px 14px; font-weight: 700; font-size: 1.15rem; line-height: 1.3; }
+  .bubble::before { content: ""; position: absolute; left: -9px; top: 50%; margin-top: -8px; width: 14px; height: 14px;
+    background: #fff; border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); transform: rotate(45deg); }
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opt { font: inherit; font-weight: 800; font-size: 1.1rem; min-height: 60px; border-radius: var(--radius);
+    background: #fff; color: var(--ink); border: 3px solid var(--line); cursor: pointer; padding: 6px 8px; animation: popIn .3s both; line-height: 1.2; }
+  .opt.ok { background: #e3f7ec; border-color: var(--good); animation: hop .45s; }
+  .opt.no { background: #fdecec; border-color: var(--bad); opacity: .6; animation: shake .35s; }
+  .tapnote { text-align: center; font-weight: 700; opacity: .75; margin: 4px 0 0; }
+  .bigflag { text-align: center; font-size: 5rem; line-height: 1.15; margin: 0; }
+  .opt.flagopt { font-size: 2.6rem; line-height: 1; }
+  .why { background: #fff8e1; border: 2px solid #f1dfb2; border-radius: var(--radius); padding: 12px 14px; margin-top: 12px;
+    text-align: center; animation: fadeUp .3s both; }
+  .why p { margin: 0 0 10px; font-size: 1.1rem; line-height: 1.35; }
+  .why b { color: var(--good); }
+
+  /* Result */
+  .result { text-align: center; }
+  .result .mascot { width: 96px; height: 96px; margin: 0 auto; animation: hop .6s ease-out; }
+  .stars { display: flex; justify-content: center; gap: 8px; }
+  .stars svg { width: 60px; height: 60px; fill: var(--line); }
+  .stars svg.on { fill: var(--warm); animation: popIn .5s both; }
+  .stars svg.on:nth-child(2) { animation-delay: .2s; }
+  .stars svg.on:nth-child(3) { animation-delay: .4s; }
+  .summary { font-size: 1.15rem; margin: 0; }
+  .gift { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 10px; font-weight: 700; }
+  .gift .face { font-size: 2.6rem; display: block; animation: popIn .5s .5s both; }
+
+  /* Stickers */
+  .sgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (min-width: 620px) { .sgrid { grid-template-columns: repeat(5, 1fr); } }
+  .stk { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 10px 6px; text-align: center; }
+  .stk .face { font-size: 2.4rem; display: grid; place-items: center; width: 66px; height: 66px; margin: 0 auto 4px; border-radius: 50%; background: var(--c); }
+  .stk.lock .face { filter: grayscale(1) brightness(1.3); opacity: .35; }
+  .stk b { display: block; line-height: 1.15; }
+  .stk small { opacity: .7; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+<link rel="stylesheet" href="../shared/arc.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Pacha the llama, without a mouth: each picture adds the mouth for its mood -->
+    <symbol id="llama" viewBox="0 0 100 100">
+      <path fill="#f1e2c8" d="M27 38 Q16 6 31 8 Q43 14 41 36Z"/><path fill="#f1e2c8" d="M73 38 Q84 6 69 8 Q57 14 59 36Z"/>
+      <path fill="#ffb3c4" d="M29 30 Q24 14 31 14 Q37 18 37 30Z"/><path fill="#ffb3c4" d="M71 30 Q76 14 69 14 Q63 18 63 30Z"/>
+      <ellipse cx="50" cy="90" rx="34" ry="11" fill="#4c5fd5"/>
+      <path fill="none" stroke="#ffd166" stroke-width="3" d="M20 90 Q50 101 80 90"/><path fill="none" stroke="#ff8fb8" stroke-width="2" d="M24 84 Q50 94 76 84"/>
+      <ellipse cx="50" cy="58" rx="33" ry="30" fill="#f1e2c8"/>
+      <circle fill="#fff8ea" cx="36" cy="27" r="9"/><circle fill="#fff8ea" cx="50" cy="23" r="10"/><circle fill="#fff8ea" cx="64" cy="27" r="9"/>
+      <ellipse cx="50" cy="70" rx="20" ry="13" fill="#fff8ea"/>
+      <circle fill="#fff" cx="37" cy="54" r="8"/><circle fill="#fff" cx="63" cy="54" r="8"/>
+      <circle fill="#1c2038" cx="38.5" cy="55" r="4.8"/><circle fill="#1c2038" cx="61.5" cy="55" r="4.8"/>
+      <circle fill="#fff" cx="40" cy="53.2" r="1.7"/><circle fill="#fff" cx="63" cy="53.2" r="1.7"/>
+      <circle fill="#ff8fb8" opacity=".55" cx="26" cy="66" r="4.5"/><circle fill="#ff8fb8" opacity=".55" cx="74" cy="66" r="4.5"/>
+      <ellipse fill="#8a5a44" cx="50" cy="63" rx="4" ry="2.6"/>
+    </symbol>
+    <path id="starPath" d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/>
+  </defs>
+</svg>
+<main>
+  <!-- Home: the topics -->
+  <section id="home">
+    <div class="homeTop"><a class="btn ghost back" href="../">← Cendekia</a><div id="who"></div></div>
+    <div class="hero" data-mascot="omnia">
+      <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#llama"/><path class="m m-happy" d="M42 70 Q50 77 58 70"/><path class="m m-cheer" d="M41 68 Q50 81 59 68Z"/><path class="m m-oops" d="M43 74 Q46.5 69 50 74 T57 74"/></svg>
+      <div>
+        <h1>Omnia</h1>
+        <p class="sub">Know your world, with Pacha the llama</p>
+      </div>
+    </div>
+    <div class="pills">
+      <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
+      <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/15</span> stickers</span>
+    </div>
+    <div class="topics" id="topics"></div>
+    <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
+  </section>
+
+  <!-- One topic: explore its map, or play a level -->
+  <section id="topic" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Home</button>
+      <h2 id="tTitle">Levels</h2><span class="spacer"></span>
+    </div>
+    <div class="levels" id="levels"></div>
+  </section>
+
+  <!-- Explore: tap anything on the map -->
+  <section id="explore" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="topic">← Back</button>
+      <h2 id="xTitle">Explore</h2><span class="spacer"></span>
+    </div>
+    <!-- The one map, moved into the screen that shows it -->
+    <div class="slot" id="xSlot">
+      <div class="mapbox" id="mapbox">
+        <svg id="map" role="group" tabindex="0" aria-label="Map. Use the arrow keys to move it and plus or minus to zoom."></svg>
+        <div class="zoom">
+          <button type="button" id="zIn" aria-label="Zoom in">+</button>
+          <button type="button" id="zOut" aria-label="Zoom out">−</button>
+          <button type="button" id="zFit" aria-label="Show the whole area">⤢</button>
+        </div>
+        <span class="hint" aria-hidden="true">Drag to move · pinch to zoom</span>
+      </div>
+    </div>
+    <div class="info" id="xInfo" aria-live="polite"></div>
+  </section>
+
+  <!-- A round of questions -->
+  <section id="play" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="topic">← Levels</button>
+      <div class="prog" id="prog"></div>
+      <span class="spacer"></span>
+    </div>
+    <div class="coach">
+      <svg class="mascot" id="coach" viewBox="0 0 100 100" aria-hidden="true"><use href="#llama"/><path class="m m-happy" d="M42 70 Q50 77 58 70"/><path class="m m-cheer" d="M41 68 Q50 81 59 68Z"/><path class="m m-oops" d="M43 74 Q46.5 69 50 74 T57 74"/></svg>
+      <div class="bubble" id="say" aria-live="polite"></div>
+    </div>
+    <div class="slot" id="pSlot"></div>
+    <div id="answers"></div>
+    <div class="why" id="why" hidden aria-live="polite">
+      <p id="whyText"></p>
+      <button type="button" class="btn go" id="whyNext">Next →</button>
+    </div>
+  </section>
+
+  <!-- Result -->
+  <section id="result" class="result" hidden>
+    <div class="stack">
+      <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#llama"/><path class="m m-cheer" style="display:block" d="M41 68 Q50 81 59 68Z"/></svg>
+      <h2 id="resTitle">Great!</h2>
+      <div class="stars" id="resStars"></div>
+      <p class="summary" id="resText"></p>
+      <div class="gift" id="resGift" hidden></div>
+      <button type="button" class="btn go" id="resNext">Next level</button>
+      <button type="button" class="btn" id="resAgain">Play again</button>
+      <button type="button" class="btn ghost" data-go="topic">Choose a level</button>
+    </div>
+  </section>
+
+  <!-- Stickers -->
+  <section id="stickers" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Back</button>
+      <h2>Travel Stickers</h2>
+      <span class="pill"><span aria-hidden="true">⭐</span><span id="stkStars">0</span></span>
+    </div>
+    <p class="note" id="stkNext"></p>
+    <div class="sgrid" id="sgrid"></div>
+  </section>
+</main>
+
+
+<script src="../shared/profile.js"></script>
+<script src="../shared/motion.js"></script>
+<script src="../shared/mascot.js"></script>
+<script src="maps.js"></script>
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const CD = window.Cendekia, MAPS = window.OMNIA_MAPS;
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Places ----
+  // Latitude and longitude become map coordinates with the projection the map was drawn with (tools/make-maps.mjs):
+  // d3's Natural Earth for the world and Mercator for Indonesia, then the map's own scale and offset.
+  function project(map, lat, lon) {
+    const l = lon * Math.PI / 180, p = lat * Math.PI / 180;
+    let x, y;
+    if (map.proj === 'mercator') { x = l; y = Math.log(Math.tan(Math.PI / 4 + p / 2)); } else {
+      const p2 = p * p, p4 = p2 * p2;
+      x = l * (0.8707 - 0.131979 * p2 + p4 * (-0.013791 + p4 * (0.003971 * p2 - 0.001529 * p4)));
+      y = p * (1.007226 + p2 * (0.015085 + p4 * (-0.044475 + 0.028874 * p2 - 0.005916 * p4)));
+    }
+    return [map.tx + map.k * x, map.ty - map.k * y];
+  }
+
+  // Cities of Indonesia: name | province | latitude | longitude | 1 if it is the capital of the province.
+  // Every provincial capital (38 provinces), and a few other well-known cities.
+  const CITY_DATA = {
+    sumatra: 'Banda Aceh|Aceh|5.55|95.32|1;Medan|Sumatera Utara|3.59|98.67|1;Padang|Sumatera Barat|-0.95|100.35|1;Pekanbaru|Riau|0.51|101.45|1;'
+      + 'Tanjung Pinang|Kepulauan Riau|0.92|104.45|1;Jambi|Jambi|-1.61|103.61|1;Bengkulu|Bengkulu|-3.80|102.27|1;Palembang|Sumatera Selatan|-2.99|104.76|1;'
+      + 'Pangkal Pinang|Kepulauan Bangka Belitung|-2.13|106.11|1;Bandar Lampung|Lampung|-5.43|105.26|1;Batam|Kepulauan Riau|1.13|104.05|0;Bukittinggi|Sumatera Barat|-0.30|100.37|0',
+    java: 'Jakarta|DKI Jakarta|-6.20|106.83|1;Serang|Banten|-6.12|106.15|1;Bandung|Jawa Barat|-6.91|107.61|1;Semarang|Jawa Tengah|-6.97|110.42|1;'
+      + 'Yogyakarta|DI Yogyakarta|-7.80|110.37|1;Surabaya|Jawa Timur|-7.25|112.75|1;Bogor|Jawa Barat|-6.60|106.80|0;Cirebon|Jawa Barat|-6.71|108.56|0;'
+      + 'Surakarta (Solo)|Jawa Tengah|-7.57|110.82|0;Malang|Jawa Timur|-7.98|112.63|0',
+    nusa: 'Denpasar|Bali|-8.65|115.22|1;Mataram|Nusa Tenggara Barat|-8.58|116.12|1;Kupang|Nusa Tenggara Timur|-10.18|123.61|1;'
+      + 'Bima|Nusa Tenggara Barat|-8.46|118.73|0;Labuan Bajo|Nusa Tenggara Timur|-8.50|119.88|0',
+    kalimantan: 'Pontianak|Kalimantan Barat|-0.03|109.33|1;Palangka Raya|Kalimantan Tengah|-2.21|113.92|1;Banjarbaru|Kalimantan Selatan|-3.44|114.83|1;'
+      + 'Samarinda|Kalimantan Timur|-0.50|117.15|1;Tanjung Selor|Kalimantan Utara|2.84|117.37|1;Banjarmasin|Kalimantan Selatan|-3.32|114.59|0;'
+      + 'Balikpapan|Kalimantan Timur|-1.27|116.83|0;Nusantara|Kalimantan Timur|-0.97|116.71|0',
+    sulawesi: 'Manado|Sulawesi Utara|1.49|124.84|1;Gorontalo|Gorontalo|0.54|123.06|1;Palu|Sulawesi Tengah|-0.90|119.87|1;Mamuju|Sulawesi Barat|-2.68|118.89|1;'
+      + 'Makassar|Sulawesi Selatan|-5.14|119.42|1;Kendari|Sulawesi Tenggara|-3.97|122.51|1',
+    east: 'Ambon|Maluku|-3.70|128.18|1;Sofifi|Maluku Utara|0.74|127.56|1;Jayapura|Papua|-2.53|140.72|1;Manokwari|Papua Barat|-0.86|134.06|1;'
+      + 'Sorong|Papua Barat Daya|-0.88|131.26|1;Nabire|Papua Tengah|-3.37|135.50|1;Wamena|Papua Pegunungan|-4.10|138.95|1;Merauke|Papua Selatan|-8.49|140.40|1;'
+      + 'Timika|Papua Tengah|-4.55|136.89|0'
+  };
+  const NOTES = {
+    Jakarta: 'the capital city of Indonesia, in the province of DKI Jakarta.',
+    Nusantara: 'the new capital city of Indonesia, being built in Kalimantan Timur.'
+  };
+  const CITIES = [];
+  Object.keys(CITY_DATA).forEach((region) => CITY_DATA[region].split(';').forEach((row) => {
+    const [name, prov, lat, lon, cap] = row.split('|');
+    const [x, y] = project(MAPS.indonesia, +lat, +lon);
+    CITIES.push({ key: name, name, prov, cap: cap === '1', region, x, y, big: name === 'Jakarta' });
+  }));
+
+  // Countries: ISO number (its shape on the map) | name | capital | latitude and longitude of the capital |
+  // two-letter code (for the flag) | S for Southeast Asia, 1 for the well-known ones of a continent.
+  // The member states of the United Nations and the Vatican. Israel and Palestine are left out because their capitals
+  // are disputed. Where a country names more than one capital, the official one is used.
+  const COUNTRY_DATA = {
+    Asia: '004|Afghanistan|Kabul|34.52|69.18|AF|;051|Armenia|Yerevan|40.18|44.51|AM|;031|Azerbaijan|Baku|40.40|49.86|AZ|;048|Bahrain|Manama|26.24|50.58|BH|;'
+      + '050|Bangladesh|Dhaka|23.73|90.41|BD|;064|Bhutan|Thimphu|27.47|89.64|BT|;096|Brunei|Bandar Seri Begawan|4.88|114.93|BN|S;116|Cambodia|Phnom Penh|11.55|104.91|KH|S;'
+      + '156|China|Beijing|39.93|116.39|CN|1;268|Georgia|Tbilisi|41.73|44.79|GE|;356|India|New Delhi|28.60|77.20|IN|1;360|Indonesia|Jakarta|-6.17|106.83|ID|S;'
+      + '364|Iran|Tehran|35.67|51.42|IR|;368|Iraq|Baghdad|33.34|44.39|IQ|;392|Japan|Tokyo|35.69|139.75|JP|1;400|Jordan|Amman|31.95|35.93|JO|;'
+      + '398|Kazakhstan|Astana|51.18|71.43|KZ|;414|Kuwait|Kuwait City|29.37|47.98|KW|;417|Kyrgyzstan|Bishkek|42.88|74.58|KG|;418|Laos|Vientiane|17.97|102.60|LA|S;'
+      + '422|Lebanon|Beirut|33.87|35.51|LB|;458|Malaysia|Kuala Lumpur|3.17|101.70|MY|S;462|Maldives|Malé|4.17|73.50|MV|;496|Mongolia|Ulaanbaatar|47.92|106.91|MN|;'
+      + '104|Myanmar|Naypyidaw|19.77|96.12|MM|S;524|Nepal|Kathmandu|27.72|85.31|NP|;408|North Korea|Pyongyang|39.02|125.75|KP|;512|Oman|Muscat|23.61|58.59|OM|;'
+      + '586|Pakistan|Islamabad|33.70|73.16|PK|;608|Philippines|Manila|14.61|120.98|PH|S;634|Qatar|Doha|25.29|51.53|QA|;682|Saudi Arabia|Riyadh|24.64|46.77|SA|1;'
+      + '702|Singapore|Singapore|1.29|103.85|SG|S;410|South Korea|Seoul|37.57|127.00|KR|1;144|Sri Lanka|Sri Jayawardenepura Kotte|6.90|79.95|LK|;'
+      + '760|Syria|Damascus|33.50|36.30|SY|;762|Tajikistan|Dushanbe|38.56|68.77|TJ|;764|Thailand|Bangkok|13.75|100.51|TH|S;626|Timor-Leste|Dili|-8.56|125.58|TL|S;'
+      + '792|Turkey|Ankara|39.93|32.86|TR|1;795|Turkmenistan|Ashgabat|37.95|58.38|TM|;784|United Arab Emirates|Abu Dhabi|24.47|54.37|AE|;'
+      + '860|Uzbekistan|Tashkent|41.31|69.29|UZ|;704|Vietnam|Hanoi|21.04|105.85|VN|S;887|Yemen|Sanaa|15.36|44.20|YE|',
+    Europe: '008|Albania|Tirana|41.33|19.82|AL|;020|Andorra|Andorra la Vella|42.50|1.52|AD|;040|Austria|Vienna|48.20|16.36|AT|;112|Belarus|Minsk|53.90|27.56|BY|;'
+      + '056|Belgium|Brussels|50.84|4.33|BE|1;070|Bosnia and Herzegovina|Sarajevo|43.85|18.38|BA|;100|Bulgaria|Sofia|42.69|23.31|BG|;191|Croatia|Zagreb|45.80|16.00|HR|;'
+      + '196|Cyprus|Nicosia|35.17|33.37|CY|;203|Czechia|Prague|50.09|14.46|CZ|;208|Denmark|Copenhagen|55.68|12.56|DK|;233|Estonia|Tallinn|59.43|24.73|EE|;'
+      + '246|Finland|Helsinki|60.18|24.93|FI|;250|France|Paris|48.87|2.33|FR|1;276|Germany|Berlin|52.52|13.40|DE|1;300|Greece|Athens|37.99|23.73|GR|1;'
+      + '348|Hungary|Budapest|47.50|19.08|HU|;352|Iceland|Reykjavík|64.15|-21.95|IS|;372|Ireland|Dublin|53.34|-6.25|IE|;380|Italy|Rome|41.90|12.48|IT|1;'
+      + '428|Latvia|Riga|56.95|24.10|LV|;438|Liechtenstein|Vaduz|47.13|9.52|LI|;440|Lithuania|Vilnius|54.68|25.32|LT|;442|Luxembourg|Luxembourg|49.61|6.13|LU|;'
+      + '470|Malta|Valletta|35.90|14.51|MT|;498|Moldova|Chișinău|47.01|28.86|MD|;492|Monaco|Monaco|43.74|7.41|MC|;499|Montenegro|Podgorica|42.47|19.27|ME|;'
+      + '528|Netherlands|Amsterdam|52.35|4.91|NL|1;807|North Macedonia|Skopje|42.00|21.43|MK|;578|Norway|Oslo|59.92|10.75|NO|1;616|Poland|Warsaw|52.25|21.00|PL|1;'
+      + '620|Portugal|Lisbon|38.72|-9.15|PT|1;642|Romania|Bucharest|44.44|26.10|RO|;643|Russia|Moscow|55.75|37.61|RU|1;674|San Marino|San Marino|43.94|12.44|SM|;'
+      + '688|Serbia|Belgrade|44.82|20.47|RS|;703|Slovakia|Bratislava|48.15|17.12|SK|;705|Slovenia|Ljubljana|46.06|14.51|SI|;724|Spain|Madrid|40.40|-3.69|ES|1;'
+      + '752|Sweden|Stockholm|59.35|18.10|SE|1;756|Switzerland|Bern|46.92|7.47|CH|1;804|Ukraine|Kyiv|50.44|30.51|UA|;826|United Kingdom|London|51.50|-0.12|GB|1;'
+      + '336|Vatican City|Vatican City|41.90|12.45|VA|',
+    Africa: '012|Algeria|Algiers|36.77|3.05|DZ|1;024|Angola|Luanda|-8.84|13.23|AO|;204|Benin|Porto-Novo|6.48|2.62|BJ|;072|Botswana|Gaborone|-24.65|25.91|BW|;'
+      + '854|Burkina Faso|Ouagadougou|12.37|-1.53|BF|;108|Burundi|Gitega|-3.43|29.93|BI|;132|Cabo Verde|Praia|14.92|-23.52|CV|;120|Cameroon|Yaoundé|3.87|11.51|CM|;'
+      + '140|Central African Republic|Bangui|4.37|18.56|CF|;148|Chad|N’Djamena|12.12|15.05|TD|;174|Comoros|Moroni|-11.70|43.24|KM|;178|Congo|Brazzaville|-4.26|15.28|CG|;'
+      + '180|DR Congo|Kinshasa|-4.33|15.31|CD|1;384|Côte d’Ivoire|Yamoussoukro|6.82|-5.28|CI|;262|Djibouti|Djibouti|11.60|43.15|DJ|;818|Egypt|Cairo|30.05|31.25|EG|1;'
+      + '226|Equatorial Guinea|Malabo|3.75|8.78|GQ|;232|Eritrea|Asmara|15.33|38.93|ER|;748|Eswatini|Mbabane|-26.32|31.13|SZ|;231|Ethiopia|Addis Ababa|9.04|38.70|ET|1;'
+      + '266|Gabon|Libreville|0.39|9.46|GA|;270|Gambia|Banjul|13.45|-16.59|GM|;288|Ghana|Accra|5.55|-0.22|GH|1;324|Guinea|Conakry|9.53|-13.68|GN|;'
+      + '624|Guinea-Bissau|Bissau|11.87|-15.60|GW|;404|Kenya|Nairobi|-1.28|36.81|KE|1;426|Lesotho|Maseru|-29.32|27.48|LS|;430|Liberia|Monrovia|6.31|-10.80|LR|;'
+      + '434|Libya|Tripoli|32.89|13.18|LY|;450|Madagascar|Antananarivo|-18.91|47.51|MG|1;454|Malawi|Lilongwe|-13.98|33.78|MW|;466|Mali|Bamako|12.65|-8.00|ML|;'
+      + '478|Mauritania|Nouakchott|18.09|-15.98|MR|;480|Mauritius|Port Louis|-20.17|57.50|MU|;504|Morocco|Rabat|34.03|-6.84|MA|1;508|Mozambique|Maputo|-25.95|32.59|MZ|;'
+      + '516|Namibia|Windhoek|-22.57|17.08|NA|;562|Niger|Niamey|13.52|2.11|NE|;566|Nigeria|Abuja|9.09|7.53|NG|1;646|Rwanda|Kigali|-1.95|30.06|RW|;'
+      + '678|São Tomé and Príncipe|São Tomé|0.33|6.73|ST|;686|Senegal|Dakar|14.72|-17.48|SN|;690|Seychelles|Victoria|-4.62|55.45|SC|;694|Sierra Leone|Freetown|8.47|-13.24|SL|;'
+      + '706|Somalia|Mogadishu|2.07|45.36|SO|;710|South Africa|Pretoria|-25.70|28.23|ZA|1;728|South Sudan|Juba|4.83|31.58|SS|;729|Sudan|Khartoum|15.59|32.53|SD|;'
+      + '834|Tanzania|Dodoma|-6.18|35.75|TZ|1;768|Togo|Lomé|6.13|1.22|TG|;788|Tunisia|Tunis|36.80|10.18|TN|;800|Uganda|Kampala|0.32|32.58|UG|;'
+      + '894|Zambia|Lusaka|-15.41|28.28|ZM|;716|Zimbabwe|Harare|-17.82|31.04|ZW|',
+    'North America': '028|Antigua and Barbuda|Saint John’s|17.12|-61.85|AG|;044|Bahamas|Nassau|25.08|-77.35|BS|;052|Barbados|Bridgetown|13.10|-59.62|BB|;'
+      + '084|Belize|Belmopan|17.25|-88.77|BZ|;124|Canada|Ottawa|45.42|-75.70|CA|1;188|Costa Rica|San José|9.94|-84.09|CR|1;192|Cuba|Havana|23.13|-82.37|CU|1;'
+      + '212|Dominica|Roseau|15.30|-61.39|DM|;214|Dominican Republic|Santo Domingo|18.47|-69.90|DO|;222|El Salvador|San Salvador|13.71|-89.20|SV|;'
+      + '308|Grenada|Saint George’s|12.05|-61.74|GD|;320|Guatemala|Guatemala City|14.62|-90.53|GT|1;332|Haiti|Port-au-Prince|18.54|-72.34|HT|;'
+      + '340|Honduras|Tegucigalpa|14.10|-87.22|HN|;388|Jamaica|Kingston|17.98|-76.77|JM|1;484|Mexico|Mexico City|19.44|-99.13|MX|1;558|Nicaragua|Managua|12.15|-86.27|NI|;'
+      + '591|Panama|Panama City|8.97|-79.53|PA|1;659|Saint Kitts and Nevis|Basseterre|17.30|-62.72|KN|;662|Saint Lucia|Castries|14.00|-61.00|LC|;'
+      + '670|Saint Vincent and the Grenadines|Kingstown|13.15|-61.21|VC|;780|Trinidad and Tobago|Port of Spain|10.65|-61.52|TT|;840|United States|Washington, D.C.|38.90|-77.01|US|1',
+    'South America': '032|Argentina|Buenos Aires|-34.60|-58.40|AR|1;068|Bolivia|Sucre|-19.04|-65.26|BO|;076|Brazil|Brasília|-15.78|-47.92|BR|1;'
+      + '152|Chile|Santiago|-33.45|-70.67|CL|1;170|Colombia|Bogotá|4.60|-74.09|CO|1;218|Ecuador|Quito|-0.21|-78.50|EC|;328|Guyana|Georgetown|6.80|-58.17|GY|;'
+      + '600|Paraguay|Asunción|-25.29|-57.64|PY|;604|Peru|Lima|-12.05|-77.05|PE|1;740|Suriname|Paramaribo|5.84|-55.17|SR|;858|Uruguay|Montevideo|-34.86|-56.17|UY|;'
+      + '862|Venezuela|Caracas|10.50|-66.92|VE|1',
+    Oceania: '036|Australia|Canberra|-35.28|149.13|AU|1;242|Fiji|Suva|-18.13|178.44|FJ|1;296|Kiribati|Tarawa|1.34|173.02|KI|;584|Marshall Islands|Majuro|7.10|171.38|MH|;'
+      + '583|Micronesia|Palikir|6.92|158.15|FM|;520|Nauru|Yaren|-0.55|166.92|NR|;554|New Zealand|Wellington|-41.30|174.78|NZ|1;585|Palau|Ngerulmud|7.50|134.62|PW|;'
+      + '598|Papua New Guinea|Port Moresby|-9.46|147.19|PG|1;882|Samoa|Apia|-13.84|-171.74|WS|1;090|Solomon Islands|Honiara|-9.44|159.95|SB|1;'
+      + '776|Tonga|Nuku’alofa|-21.14|-175.22|TO|1;798|Tuvalu|Funafuti|-8.52|179.22|TV|;548|Vanuatu|Port Vila|-17.73|168.32|VU|1'
+  };
+  const flag = (a2) => String.fromCodePoint(...[...a2].map((c) => 0x1f1a5 + c.charCodeAt(0)));
+  const COUNTRIES = [];
+  Object.keys(COUNTRY_DATA).forEach((continent) => COUNTRY_DATA[continent].split(';').forEach((row) => {
+    const [shape, name, capital, lat, lon, a2, tag] = row.split('|');
+    const [x, y] = project(MAPS.world, +lat, +lon);
+    COUNTRIES.push({ key: a2, name, capital, continent, shape, x, y, a2, tag });
+  }));
+
+  // Nature: name | what it is | latitude and longitude | continent (empty where it is not clear-cut) | a sentence to finish
+  // "<name> is ...". A river's dot marks one spot along it, a desert's or a sea's dot its middle.
+  const NATURE_DATA = {
+    mountain: 'Mount Everest|27.99|86.93|Asia|the highest mountain on Earth, in the Himalayas of Asia.;Mont Blanc|45.83|6.86|Europe|the highest mountain in the Alps, on the border of France and Italy.;'
+      + 'Mount Kilimanjaro|-3.07|37.35|Africa|the highest mountain in Africa, in Tanzania.;Aconcagua|-32.65|-70.01|South America|the highest mountain in South America, in Argentina.;'
+      + 'Denali|63.07|-151.00|North America|the highest mountain in North America, in Alaska.;Mount Fuji|35.36|138.73|Asia|a famous volcano and the highest mountain in Japan.;'
+      + 'Mount Elbrus|43.35|42.44|Europe|the highest mountain in Europe, in Russia.;Mount Kosciuszko|-36.46|148.26|Oceania|the highest mountain on the mainland of Australia.;'
+      + 'Puncak Jaya|-4.08|137.16||the highest mountain in Indonesia, in Papua.',
+    river: 'Nile|25.70|32.60|Africa|one of the longest rivers in the world. It flows through Egypt, in Africa.;Amazon|-3.10|-60.00|South America|the river that carries the most water in the world, in South America.;'
+      + 'Yangtze|30.60|114.30|Asia|the longest river in Asia, in China.;Mississippi|35.10|-90.10|North America|a great river in the United States, in North America.;'
+      + 'Congo|0.52|25.20|Africa|a huge river in the middle of Africa.;Danube|48.20|16.40|Europe|a river that runs through many countries in Europe, including Austria and Hungary.;'
+      + 'Ganges|25.40|83.00|Asia|a holy river in India, in Asia.;Mekong|17.97|102.60|Asia|a long river in Southeast Asia, from China to Vietnam.;'
+      + 'Volga|48.70|44.50|Europe|the longest river in Europe, in Russia.;Murray|-34.20|140.80|Oceania|the longest river in Australia.',
+    lake: 'Lake Victoria|-1.00|33.00|Africa|the largest lake in Africa.;Lake Superior|47.70|-87.50|North America|the largest of the Great Lakes, between the United States and Canada.;'
+      + 'Lake Baikal|53.50|108.20|Asia|the deepest lake in the world, in Russia.;Lake Titicaca|-15.80|-69.40|South America|a huge lake high in the Andes, between Peru and Bolivia.;'
+      + 'Lake Toba|2.65|98.85|Asia|the largest volcanic lake in the world, on the island of Sumatra in Indonesia.;Lake Ladoga|60.90|31.50|Europe|the largest lake in Europe, in Russia.;'
+      + 'Lake Chad|13.00|14.00|Africa|a lake in Africa that has become much smaller over the years.;Lake Eyre|-28.40|137.30|Oceania|a huge salt lake in Australia that is often dry.',
+    desert: 'Sahara|23.40|12.80|Africa|the largest hot desert in the world, in northern Africa.;Gobi|42.60|103.00|Asia|a cold desert in Mongolia and China.;'
+      + 'Arabian Desert|22.50|47.00|Asia|a huge desert that covers most of the Arabian Peninsula, in Asia.;Kalahari|-23.00|22.00|Africa|a sandy desert in southern Africa.;'
+      + 'Atacama|-23.90|-69.20|South America|one of the driest places on Earth, in Chile.;Great Victoria Desert|-29.50|127.00|Oceania|the largest desert in Australia.;'
+      + 'Thar|27.00|71.00|Asia|a desert between India and Pakistan.;Mojave|35.00|-116.00|North America|a desert in the south west of the United States.;'
+      + 'Taklamakan|38.90|83.60|Asia|a sandy desert in western China.',
+    ocean: 'Pacific Ocean|0.00|-140.00||the biggest and deepest ocean on Earth.;Atlantic Ocean|20.00|-40.00||the ocean between the Americas, Europe and Africa.;'
+      + 'Indian Ocean|-15.00|80.00||the ocean south of Asia, between Africa and Australia. Indonesia lies on its edge.;Arctic Ocean|79.00|-140.00||the smallest and coldest ocean, around the North Pole.',
+    sea: 'Mediterranean Sea|35.00|18.00||a sea between Europe, Africa and Asia.;Caribbean Sea|15.00|-75.00||a warm sea near Central America, Cuba and Jamaica.;'
+      + 'Red Sea|20.00|38.50||a long, narrow sea between Africa and Asia.;South China Sea|12.00|114.00||a big sea next to Southeast Asia, north of Indonesia.;'
+      + 'North Sea|56.00|3.00||a sea between Great Britain and the rest of Europe.;Black Sea|43.50|34.00||a sea between Europe and Asia.;'
+      + 'Arabian Sea|15.00|65.00||a part of the Indian Ocean, between India and Arabia.;Coral Sea|-18.00|152.00||a sea next to Australia, home of the Great Barrier Reef.;'
+      + 'Java Sea|-5.00|110.00||a sea in Indonesia, north of Java.'
+  };
+  const NATURE_ICON = { mountain: '⛰️', river: '🏞️', lake: '💧', desert: '🏜️', ocean: '🌊', sea: '🌊' };
+  const NATURE = [];
+  Object.keys(NATURE_DATA).forEach((type) => NATURE_DATA[type].split(';').forEach((row) => {
+    const [name, lat, lon, at, note] = row.split('|');
+    const [x, y] = project(MAPS.world, +lat, +lon);
+    NATURE.push({ key: name, name, type, icon: NATURE_ICON[type], at, note, x, y });
+  }));
+
+  // ---- Levels ----
+  // Every level is open from the start. Its id is the key of its stars in the save, so ids never change.
+  const cities = (region) => CITIES.filter((c) => !region || c.region === region);
+  const nations = (continent, tag) => COUNTRIES.filter((c) => c.continent === continent && (!tag || c.tag === tag || (tag === '1' && c.tag === 'S')));
+  const natural = (type) => NATURE.filter((p) => !type || p.type === type);
+  // The same ten regions of countries serve the capitals and the flags; the prefix keeps their stars apart.
+  const REGIONS = [
+    ['sea', 'Southeast Asia', () => nations('Asia', 'S')], ['asia', 'All of Asia', () => nations('Asia')],
+    ['eu1', 'Europe: well known', () => nations('Europe', '1')], ['eu', 'All of Europe', () => nations('Europe')],
+    ['af1', 'Africa: well known', () => nations('Africa', '1')], ['af', 'All of Africa', () => nations('Africa')],
+    ['na1', 'North America: well known', () => nations('North America', '1')], ['na', 'All of North America', () => nations('North America')],
+    ['sa', 'South America', () => nations('South America')], ['oc', 'Oceania', () => nations('Oceania')]
+  ];
+  const regionLevels = (prefix) => REGIONS.map(([id, name, items]) => ({ id: prefix + '.' + id, name, items }));
+  // Per topic: unit (what a level counts), hint (the line before a tap while exploring), all (what exploring shows),
+  // stage (a prefix for the shared log, so the parents' page can tell two topics' levels apart).
+  const TOPICS = [
+    { id: 'indonesia', map: 'indonesia', icon: '🏝️', c: 'var(--c-green)', name: 'Cities of Indonesia', blurb: 'Find the cities of every island and the capital of every province.',
+      unit: 'cities', sub: 'Tap any place to see its name and province', hint: 'Tap a dot on the map.', all: () => CITIES,
+      kinds: ['find', 'which', 'capital'], levels: [
+        { id: 'id.sumatra', name: 'Sumatra', items: () => cities('sumatra') },
+        { id: 'id.java', name: 'Java', items: () => cities('java') },
+        { id: 'id.nusa', name: 'Bali and Nusa Tenggara', items: () => cities('nusa') },
+        { id: 'id.kalimantan', name: 'Kalimantan', items: () => cities('kalimantan') },
+        { id: 'id.sulawesi', name: 'Sulawesi', items: () => cities('sulawesi') },
+        { id: 'id.east', name: 'Maluku and Papua', items: () => cities('east') },
+        { id: 'id.all', name: 'All of Indonesia', items: () => cities() }
+      ] },
+    { id: 'world', map: 'world', icon: '🌍', c: 'var(--c-indigo)', name: 'Capitals of the World', blurb: 'Find countries on the world map and learn their capital cities.',
+      unit: 'countries', sub: 'Tap any place to see its name, flag and capital', hint: 'Tap a country or a dot on the map.', all: () => COUNTRIES,
+      kinds: ['find', 'which', 'capital'], levels: regionLevels('w') },
+    { id: 'flags', map: 'world', icon: '🚩', c: 'var(--c-pink)', name: 'Flags of the World', blurb: 'Match every flag with its country, on the map and in your head.',
+      unit: 'countries', sub: 'Tap any country to see its flag and name', hint: 'Tap a country or a dot on the map.', all: () => COUNTRIES, stage: 'Flags: ', flags: true,
+      kinds: ['flag', 'pickflag', 'find'], levels: regionLevels('f') },
+    { id: 'nature', map: 'world', icon: '⛰️', c: 'var(--c-teal)', name: 'Nature of the World', blurb: 'Find the mountains, rivers, lakes, deserts, oceans and seas of our planet.',
+      unit: 'places', sub: 'Tap any dot to see what it is', hint: 'Tap a dot on the map.', all: () => NATURE,
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'n.mountain', name: 'Mountains', items: () => natural('mountain') },
+        { id: 'n.river', name: 'Rivers', items: () => natural('river') },
+        { id: 'n.lake', name: 'Lakes', items: () => natural('lake') },
+        { id: 'n.desert', name: 'Deserts', items: () => natural('desert') },
+        { id: 'n.ocean', name: 'Oceans', items: () => natural('ocean'), kinds: ['find', 'which'] },
+        { id: 'n.sea', name: 'Seas', items: () => natural('sea'), kinds: ['find', 'which'] },
+        { id: 'n.all', name: 'All of nature', items: () => natural() }
+      ] }
+  ];
+  const LEVELS = TOPICS.flatMap((t) => t.levels);
+  const ROUND = 6;
+
+  // ---- Children and saved state ----
+  // The children are shared by every Cendekia app (shared/profile.js). Omnia keeps, per child, the best stars of every
+  // level (best[level id]), their total and days in a row, under mundia.v1.<child id>. The app was first called
+  // Mundia; keep this key and the 'mundia' app id in the shared log so saved progress is not lost.
+  const BASE = 'mundia.v1';
+  const fresh = () => ({ best: {}, stars: 0, day: '', streak: 0 });
+  const S = Object.assign(fresh(), CD.state(BASE, CD.profile().id) || {});
+  function save() { try { localStorage.setItem(CD.key(BASE), JSON.stringify(S)); } catch (e) { /* private mode */ } }
+  const yesterday = () => { const y = new Date(); y.setDate(y.getDate() - 1); return CD.dayStr(y); };
+  const streakNow = () => (S.day === CD.dayStr(new Date()) || S.day === yesterday() ? S.streak : 0);
+  function markDay() {
+    const today = CD.dayStr(new Date());
+    if (S.day === today) return;
+    S.streak = S.day === yesterday() ? S.streak + 1 : 1;
+    S.day = today;
+  }
+  const best = (lv) => S.best[lv.id] || 0;
+  const totalStars = () => LEVELS.reduce((a, lv) => a + best(lv), 0);
+  const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
+  const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
+
+  // ---- Stickers: places to visit, unlocked by the total star count (102 at most) ----
+  const STICKERS = [
+    { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
+    { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
+    { at: 19, name: 'Tower', pic: '🗼', c: '#ffe0ec' }, { at: 25, name: 'Pyramids', pic: '🐪', c: '#fff1c2' },
+    { at: 31, name: 'Statue', pic: '🗽', c: '#d9f5e8' }, { at: 38, name: 'Castle', pic: '🏯', c: '#ece6ff' },
+    { at: 44, name: 'Mountain', pic: '🏔️', c: '#d6ebff' }, { at: 51, name: 'World traveler', pic: '🌏', c: '#ffe3c2' },
+    { at: 58, name: 'Flag', pic: '🚩', c: '#ffe0ec' }, { at: 66, name: 'Desert', pic: '🏜️', c: '#fff1c2' },
+    { at: 76, name: 'Big wave', pic: '🌊', c: '#d6ebff' }, { at: 88, name: 'River boat', pic: '🛶', c: '#d9f5e8' },
+    { at: 102, name: 'Explorer', pic: '🧭', c: '#ece6ff' }
+  ];
+  const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
+
+  // ---- Sound ----
+  let ctx = null;
+  function tone(freqs, dur, type, vol) {
+    try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+    freqs.forEach((f, i) => {
+      const t0 = ctx.currentTime + i * dur, o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(vol || 0.16, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      o.connect(g); g.connect(ctx.destination); o.start(t0); o.stop(t0 + dur);
+    });
+  }
+  const sfx = { tap() { tone([520], 0.05); }, good() { tone([660, 880], 0.11); }, bad() { tone([220], 0.22, 'triangle'); }, win() { tone([523, 659, 784, 1047], 0.13); } };
+
+  // ---- The map: drag to move, pinch or scroll to zoom, tap a place ----
+  const MapView = (() => {
+    const NS = 'http://www.w3.org/2000/svg', svg = $('map');
+    const DOT = 5.5, HIT = 22, LABEL = 14; // screen pixels
+    let map = null, name = '', vb = { x: 0, y: 0, w: 1, h: 1 }, home = null;
+    let shapes = new Map(), dots = new Map(), gDots = null, label = null, labelAt = null, tapped = null, anim = 0;
+    const el = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.keys(attrs).forEach((k) => n.setAttribute(k, attrs[k])); return n; };
+    const size = () => { const r = svg.getBoundingClientRect(); return { w: r.width || 1, h: r.height || 1, left: r.left, top: r.top }; };
+    const upp = () => vb.w / size().w; // map units per screen pixel
+
+    function use(mapName) {
+      if (mapName === name) return;
+      name = mapName; map = MAPS[mapName];
+      svg.textContent = ''; shapes = new Map(); dots = new Map();
+      svg.appendChild(el('rect', { class: 'sea', x: -map.w, y: -map.h, width: map.w * 3, height: map.h * 3 }));
+      const land = el('g', {}); svg.appendChild(land);
+      map.shapes.forEach(([id, d]) => {
+        const p = el('path', { d });
+        if (id) { p.dataset.id = id; if (!shapes.has(id)) shapes.set(id, []); shapes.get(id).push(p); }
+        land.appendChild(p);
+      });
+      if (mapName === 'indonesia') (shapes.get('360') || []).forEach((p) => p.classList.add('home'));
+      gDots = el('g', {}); svg.appendChild(gDots);
+      label = el('text', { 'text-anchor': 'middle' }); svg.appendChild(label);
+      labelAt = null;
+    }
+    // Places shown as dots. In a quiz the dots are named only "Place 3", so a screen reader does not give the answer away.
+    function setDots(items, named) {
+      gDots.textContent = ''; dots = new Map();
+      items.forEach((it, i) => {
+        const c = el('circle', { cx: it.x.toFixed(1), cy: it.y.toFixed(1), r: 1, tabindex: 0, role: 'button', 'aria-label': named ? it.name : 'Place ' + (i + 1) });
+        if (it.big) c.classList.add('big');
+        c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (tapped) tapped({ dot: it.key, shape: null }); } });
+        gDots.appendChild(c); dots.set(it.key, { c, it });
+      });
+      restyle();
+    }
+    function mark(cls, dotKeys, shapeIds) {
+      dots.forEach((d) => d.c.classList.remove(cls));
+      shapes.forEach((ps) => ps.forEach((p) => p.classList.remove(cls)));
+      (dotKeys || []).forEach((k) => { const d = dots.get(k); if (d) { d.c.classList.add(cls); gDots.appendChild(d.c); } });
+      (shapeIds || []).forEach((id) => (shapes.get(id) || []).forEach((p) => p.classList.add(cls)));
+    }
+    function clear() { ['hl', 'ok', 'no', 'on', 'pool'].forEach((c) => mark(c)); say(null); }
+    function say(text, x, y) {
+      labelAt = text ? { x, y } : null;
+      label.textContent = text || '';
+      restyle();
+    }
+    function restyle() {
+      const u = upp();
+      dots.forEach((d) => d.c.setAttribute('r', ((d.it.big ? 1.35 : 1) * DOT * u).toFixed(2)));
+      if (label && labelAt) {
+        label.setAttribute('x', labelAt.x.toFixed(1)); label.setAttribute('y', (labelAt.y - 11 * u).toFixed(1));
+        label.setAttribute('font-size', (LABEL * u).toFixed(2)); label.setAttribute('stroke-width', (4 * u).toFixed(2));
+      }
+    }
+    // The view always has the same shape as the box, so a screen pixel is a map unit times upp() both ways.
+    function apply(v) {
+      const s = size(), a = s.w / s.h;
+      const maxW = Math.max(map.w, map.h * a) * 1.1, w = Math.min(Math.max(v.w, map.w / 24), maxW), h = w / a;
+      const cx = Math.min(Math.max(v.x + v.w / 2, 0), map.w), cy = Math.min(Math.max(v.y + v.h / 2, 0), map.h);
+      vb = { x: cx - w / 2, y: cy - h / 2, w, h };
+      svg.setAttribute('viewBox', vb.x.toFixed(2) + ' ' + vb.y.toFixed(2) + ' ' + vb.w.toFixed(2) + ' ' + vb.h.toFixed(2));
+      restyle();
+    }
+    function goTo(v, smooth) {
+      cancelAnimationFrame(anim);
+      if (!smooth || reduced()) { apply(v); return; }
+      const from = Object.assign({}, vb), t0 = performance.now();
+      const step = (t) => {
+        const k = Math.min(1, (t - t0) / 380), e = 1 - Math.pow(1 - k, 3);
+        apply({ x: from.x + (v.x - from.x) * e, y: from.y + (v.y - from.y) * e, w: from.w + (v.w - from.w) * e, h: from.h + (v.h - from.h) * e });
+        if (k < 1) anim = requestAnimationFrame(step);
+      };
+      anim = requestAnimationFrame(step);
+    }
+    // Fits points (and a margin) into the box; home is where ⤢ goes back to.
+    function fit(points, smooth, keepHome) {
+      const s = size(), a = s.w / s.h;
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      points.forEach((p) => { x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y); x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y); });
+      if (!points.length) { x0 = 0; y0 = 0; x1 = map.w; y1 = map.h; }
+      const pad = Math.max((x1 - x0), (y1 - y0)) * 0.12 + map.w * 0.02;
+      let w = Math.max(x1 - x0 + 2 * pad, (y1 - y0 + 2 * pad) * a, map.w / 10);
+      const v = { x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - w / a / 2, w, h: w / a };
+      if (!keepHome) home = v;
+      goTo(v, smooth);
+    }
+    // Brings a point into view if it is outside, keeping the zoom.
+    function show(p) {
+      const m = vb.w * 0.1;
+      if (p.x > vb.x + m && p.x < vb.x + vb.w - m && p.y > vb.y + m && p.y < vb.y + vb.h - m) return;
+      goTo({ x: p.x - vb.w / 2, y: p.y - vb.h / 2, w: vb.w, h: vb.h }, true);
+    }
+    function zoomAt(f, cx, cy, from) {
+      const s = size(), v = from || vb, fx = (cx - s.left) / s.w, fy = (cy - s.top) / s.h;
+      const mx = v.x + fx * v.w, my = v.y + fy * v.h, w = v.w * f, h = v.h * f;
+      apply({ x: mx - fx * w, y: my - fy * h, w, h });
+    }
+    const centre = () => { const s = size(); return [s.left + s.w / 2, s.top + s.h / 2]; };
+    $('zIn').addEventListener('click', () => { cancelAnimationFrame(anim); zoomAt(0.6, ...centre()); });
+    $('zOut').addEventListener('click', () => { cancelAnimationFrame(anim); zoomAt(1 / 0.6, ...centre()); });
+    $('zFit').addEventListener('click', () => { if (home) goTo(home, true); });
+
+    // Pointer: one finger drags, two fingers pinch, a press that hardly moves is a tap.
+    const pts = new Map();
+    let start = null, moved = false, pinch = null;
+    const mid = () => { const [a, b] = [...pts.values()]; return [(a.x + b.x) / 2, (a.y + b.y) / 2, Math.hypot(a.x - b.x, a.y - b.y) || 1]; };
+    svg.addEventListener('pointerdown', (e) => {
+      cancelAnimationFrame(anim);
+      try { svg.setPointerCapture(e.pointerId); } catch (err) { /* already released */ }
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pts.size === 1) { start = { x: e.clientX, y: e.clientY, vb: Object.assign({}, vb) }; moved = false; }
+      if (pts.size === 2) { const [x, y, d] = mid(); pinch = { x, y, d, vb: Object.assign({}, vb) }; moved = true; }
+    });
+    svg.addEventListener('pointermove', (e) => {
+      if (!pts.has(e.pointerId)) return;
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pts.size >= 2 && pinch) {
+        const [x, y, d] = mid(), s = size(), f = pinch.d / d;
+        zoomAt(f, pinch.x, pinch.y, pinch.vb);
+        apply({ x: vb.x - (x - pinch.x) * (vb.w / s.w), y: vb.y - (y - pinch.y) * (vb.h / s.h), w: vb.w, h: vb.h });
+      } else if (start) {
+        const dx = e.clientX - start.x, dy = e.clientY - start.y;
+        if (!moved && Math.hypot(dx, dy) > 8) moved = true;
+        if (moved) { const u = start.vb.w / size().w; apply({ x: start.vb.x - dx * u, y: start.vb.y - dy * u, w: start.vb.w, h: start.vb.h }); }
+      }
+    });
+    const up = (e) => {
+      if (!pts.has(e.pointerId)) return;
+      const tap = e.type === 'pointerup' && pts.size === 1 && !moved;
+      pts.delete(e.pointerId);
+      if (pts.size < 2) pinch = null;
+      if (pts.size === 1) { const [p] = [...pts.values()]; start = { x: p.x, y: p.y, vb: Object.assign({}, vb) }; }
+      if (pts.size === 0) start = null;
+      if (tap) hit(e.clientX, e.clientY);
+    };
+    svg.addEventListener('pointerup', up);
+    svg.addEventListener('pointercancel', up);
+    svg.addEventListener('wheel', (e) => { e.preventDefault(); cancelAnimationFrame(anim); zoomAt(Math.exp(e.deltaY * 0.0015), e.clientX, e.clientY); }, { passive: false });
+    svg.addEventListener('keydown', (e) => {
+      const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+      if (k) { e.preventDefault(); apply({ x: vb.x + k[0] * vb.w * 0.15, y: vb.y + k[1] * vb.h * 0.15, w: vb.w, h: vb.h }); }
+      if (e.key === '+' || e.key === '=') zoomAt(0.7, ...centre());
+      if (e.key === '-') zoomAt(1 / 0.7, ...centre());
+    });
+    // A tap picks the nearest dot within reach, and otherwise the country under the finger.
+    function hit(cx, cy) {
+      if (!tapped) return;
+      const s = size(), u = upp(), mx = vb.x + (cx - s.left) * u, my = vb.y + (cy - s.top) * u;
+      let near = null, bestD = HIT * u;
+      dots.forEach((d, key) => { const dd = Math.hypot(d.it.x - mx, d.it.y - my); if (dd < bestD) { bestD = dd; near = key; } });
+      let shape = null;
+      if (!near) { const t = document.elementFromPoint(cx, cy); shape = t && t.dataset && t.dataset.id ? t.dataset.id : null; }
+      tapped({ dot: near, shape });
+    }
+    window.addEventListener('resize', () => { if (map) apply(vb); });
+    return {
+      use, setDots, mark, clear, say, fit, show,
+      place(slot) { slot.appendChild($('mapbox')); },
+      onTap(fn) { tapped = fn; },
+      has: (id) => shapes.has(id)
+    };
+  })();
+
+  // ---- Screens ----
+  let curTopic = TOPICS[0], curLevel = null;
+  function show(id) {
+    ['home', 'topic', 'explore', 'play', 'result', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
+    if (id === 'home') renderHome();
+    if (id === 'topic') renderTopic();
+    if (id === 'stickers') renderStickers();
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => { sfx.tap(); show(b.dataset.go); }));
+
+  function renderHome() {
+    const stars = totalStars(), days = streakNow();
+    $('homeStars').textContent = stars + (stars === 1 ? ' star' : ' stars');
+    $('homeDays').textContent = days + (days === 1 ? ' day' : ' days');
+    $('homeStk').textContent = unlocked(stars) + '/' + STICKERS.length;
+    const box = $('topics'); box.innerHTML = '';
+    TOPICS.forEach((t, k) => {
+      const max = t.levels.length * 3, got = topicStars(t);
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', t.c); b.style.animationDelay = k * 0.06 + 's';
+      b.setAttribute('aria-label', t.name + ', ' + got + ' of ' + max + ' stars');
+      b.innerHTML = '<span class="badge" aria-hidden="true">' + t.icon + '</span><span style="flex:1"><b>' + t.name + '</b><small>' + t.blurb + '</small>'
+        + '<span class="meter" aria-hidden="true"><i style="width:' + Math.round(100 * got / max) + '%"></i></span><small>' + got + ' / ' + max + ' ⭐</small></span>';
+      b.addEventListener('click', () => { sfx.tap(); curTopic = t; show('topic'); });
+      box.appendChild(b);
+    });
+    const s = document.createElement('button');
+    s.type = 'button'; s.className = 'card wide'; s.style.setProperty('--c', 'var(--c-orange)'); s.style.animationDelay = '.15s';
+    s.innerHTML = '<span class="badge" aria-hidden="true">🗺️</span><span><b>Travel Stickers</b><small>Collect stars to fill your travel book</small></span>';
+    s.addEventListener('click', () => { sfx.tap(); show('stickers'); });
+    box.appendChild(s);
+  }
+
+  function renderTopic() {
+    const t = curTopic;
+    $('tTitle').textContent = t.icon + ' ' + t.name;
+    const box = $('levels'); box.innerHTML = '';
+    const x = document.createElement('button');
+    x.type = 'button'; x.className = 'card wide'; x.style.setProperty('--c', t.c);
+    x.innerHTML = '<span class="badge" aria-hidden="true">🔎</span><span><b>Explore the map</b><small>' + t.sub + '</small></span>';
+    x.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); startExplore(t); });
+    box.appendChild(x);
+    t.levels.forEach((lv, i) => {
+      const b = document.createElement('button'), n = lv.items().length;
+      b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', t.c); b.style.animationDelay = i * 0.04 + 's';
+      b.setAttribute('aria-label', 'Level ' + (i + 1) + ', ' + lv.name + ', ' + best(lv) + ' stars');
+      b.innerHTML = '<span class="badge" aria-hidden="true">' + (i + 1) + '</span><span><b>' + esc(lv.name) + '</b><small>' + n + ' ' + t.unit + '</small></span>'
+        + '<span class="st">' + [0, 1, 2].map((k) => starSvg(k < best(lv))).join('') + '</span>';
+      b.addEventListener('click', () => { sfx.tap(); startLevel(lv); });
+      box.appendChild(b);
+    });
+  }
+
+  function renderStickers() {
+    const stars = totalStars();
+    $('stkStars').textContent = stars;
+    const nx = STICKERS.find((k) => k.at > stars);
+    $('stkNext').textContent = nx ? (nx.at - stars) + ' more ' + (nx.at - stars === 1 ? 'star' : 'stars') + ' for the next sticker!' : 'You have seen the whole world!';
+    $('sgrid').innerHTML = STICKERS.map((k) => '<div class="stk' + (k.at <= stars ? '' : ' lock') + '"><span class="face" style="--c:' + k.c + '" aria-hidden="true">' + k.pic + '</span><b>'
+      + (k.at <= stars ? k.name : '???') + '</b><small>⭐ ' + k.at + '</small></div>').join('');
+  }
+
+  // ---- What a place is ----
+  const isWorld = (it) => !!it.capital;
+  const isNature = (it) => !!it.type;
+  // Country names that take "the" in a sentence ("Where is the Netherlands?").
+  const THE = /^(United |Netherlands|Philippines|Bahamas|Gambia|Maldives|Marshall|Solomon|Comoros|Seychelles|Central African|Dominican Republic|DR Congo)/;
+  const THE_TYPES = ['river', 'desert', 'ocean', 'sea'];
+  const named = (it) => ((isWorld(it) && THE.test(it.name)) || (isNature(it) && THE_TYPES.includes(it.type)) ? 'the ' : '') + it.name;
+  const shapeOf = (it) => (isWorld(it) && MapView.has(it.shape) ? [it.shape] : []);
+  function about(it) {
+    if (isNature(it)) { const n = named(it); return esc(n[0].toUpperCase() + n.slice(1)) + ' is ' + esc(it.note); }
+    if (isWorld(it)) return 'The capital of ' + esc(named(it)) + ' is <b>' + esc(it.capital) + '</b>.';
+    if (NOTES[it.name]) return esc(it.name) + ' is ' + esc(NOTES[it.name]);
+    return esc(it.name) + (it.cap ? ' is the capital of <b>' + esc(it.prov) + '</b>.' : ' is a city in <b>' + esc(it.prov) + '</b>.');
+  }
+
+  // ---- Explore ----
+  function startExplore(t) {
+    curTopic = t;
+    show('explore');
+    $('xTitle').textContent = '🔎 ' + t.name;
+    MapView.place($('xSlot'));
+    MapView.use(t.map);
+    const items = t.all();
+    MapView.clear();
+    MapView.setDots(items, true);
+    MapView.fit(t.map === 'world' ? [{ x: 0, y: 0 }, { x: MAPS.world.w, y: MAPS.world.h }] : items);
+    $('xInfo').innerHTML = '<p>' + t.hint + '</p>';
+    MapView.onTap(({ dot, shape }) => {
+      const it = items.find((c) => c.key === dot) || (shape && items.find((c) => c.shape === shape));
+      if (!it) return;
+      sfx.tap();
+      MapView.mark('on', [it.key], shapeOf(it));
+      MapView.say(it.name, it.x, it.y);
+      $('xInfo').innerHTML = isWorld(it)
+        ? '<span class="flag" aria-hidden="true">' + flag(it.a2) + '</span><span><b>' + esc(it.name) + '</b><p>Capital: <b>' + esc(it.capital) + '</b> · ' + esc(it.continent) + '</p></span>'
+        : '<span class="flag" aria-hidden="true">' + (it.icon || '📍') + '</span><span><b>' + esc(it.name) + '</b><p>' + about(it) + '</p></span>';
+    });
+  }
+
+  // ---- Playing a level ----
+  // Kinds of question: tap a place on the map ("find", by name or, in the flags topic, by its flag), name the place that is
+  // lit up ("which"), pick the capital ("capital", for countries and provinces), pick the continent ("where", in nature),
+  // and the two flag kinds: name the country of a flag ("flag") or pick the flag of a country ("pickflag").
+  // A wrong answer gets a second try; a second miss shows the answer.
+  let qs = [], qi = 0, tries = 0, results = [], started = 0, locked = false, pool = [], roundNo = 0;
+  const PRAISE = ['Great!', 'Well done!', 'Yes, that is right!', 'Brilliant!', 'Super!', 'Spot on!', 'You got it!'];
+  function makeRound(lv) {
+    const items = lv.items(), kinds = lv.kinds || curTopic.kinds;
+    const order = shuffle(items);
+    const out = [];
+    for (let i = 0; out.length < ROUND && i < order.length * 3; i++) {
+      const it = order[i % order.length];
+      const kind = kinds[out.length % kinds.length];
+      // A province's capital is only asked for a provincial capital.
+      if (kind === 'capital' && !isWorld(it) && !it.cap) continue;
+      if (kind === 'where' && !it.at) continue; // an ocean, or a place on no single continent
+      if (out.some((q) => q.it === it)) continue;
+      out.push({ kind, it });
+    }
+    return shuffle(out);
+  }
+  // What the right answer to a question is. Choices are these values; a flag is chosen by its two-letter code.
+  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
+  const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
+  // Flags that are too alike to be offered together.
+  const ALIKE = [['ID', 'MC'], ['RO', 'TD', 'AD']];
+  const alike = (a, b) => ALIKE.some((g) => g.includes(a) && g.includes(b));
+  function choicesFor(q) {
+    const it = q.it, want = target(q), same = pool.filter((p) => p !== it);
+    let others;
+    if (q.kind === 'where') others = shuffle(CONTINENTS);
+    else if (q.kind === 'flag' || q.kind === 'pickflag') {
+      const ok = COUNTRIES.filter((p) => p !== it && !alike(p.a2, it.a2));
+      others = shuffle(ok.filter((p) => p.continent === it.continent)).concat(shuffle(ok)).map((p) => (q.kind === 'flag' ? p.name : p.a2));
+    } else if (q.kind === 'capital' && isWorld(it)) {
+      others = shuffle(COUNTRIES.filter((p) => p !== it && p.continent === it.continent)).concat(shuffle(COUNTRIES)).map((p) => p.capital);
+    } else if (q.kind === 'capital') {
+      others = shuffle(same.filter((p) => p.cap)).concat(shuffle(CITIES.filter((p) => p.cap))).map((p) => p.name);
+    } else if (isNature(it)) {
+      others = shuffle(NATURE.filter((p) => p !== it && p.type === it.type)).concat(shuffle(NATURE)).map((p) => p.name);
+    } else {
+      others = shuffle(same).concat(shuffle(isWorld(it) ? COUNTRIES : CITIES)).map((p) => p.name);
+    }
+    return shuffle([want].concat([...new Set(others)].filter((v) => v !== want).slice(0, 3)));
+  }
+
+  function startLevel(lv) {
+    if (!CD.gate()) return; // the parent's daily time limit
+    curLevel = lv;
+    pool = lv.items();
+    qs = makeRound(lv); qi = 0; results = []; started = Date.now(); roundNo++;
+    show('play');
+    MapView.place($('pSlot'));
+    MapView.use(curTopic.map);
+    MapView.clear();
+    MapView.setDots(pool, false);
+    MapView.mark('pool', [], pool.flatMap(shapeOf));
+    MapView.fit(pool);
+    MapView.onTap(onMapTap);
+    ask();
+  }
+  function renderProg() {
+    $('prog').innerHTML = qs.map((_, k) => '<i class="' + (k < results.length ? (results[k] ? 'ok' : 'miss') : k === qi ? 'now' : '') + '"></i>').join('');
+    $('prog').setAttribute('aria-label', 'Question ' + (qi + 1) + ' of ' + qs.length);
+  }
+  const stageOf = (lv) => (curTopic.stage || '') + lv.name;
+  const mood = (m) => { const c = $('coach'); c.setAttribute('class', 'mascot'); void c.getBoundingClientRect(); if (m) c.classList.add(m); };
+
+  function ask() {
+    const q = qs[qi], it = q.it, world = isWorld(it);
+    tries = 0; locked = false;
+    renderProg(); mood();
+    ['hl', 'ok', 'no', 'on'].forEach((c) => MapView.mark(c));
+    MapView.say(null);
+    $('why').hidden = true;
+    const box = $('answers'); box.innerHTML = '';
+    if (q.kind === 'find') {
+      const byFlag = !!curTopic.flags;
+      $('say').textContent = byFlag ? 'Which country has this flag? Tap it on the map.' : 'Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.');
+      box.innerHTML = (byFlag ? '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>' : '')
+        + '<p class="tapnote">👆 Tap the map' + (world ? ' (the country or its capital dot)' : '') + '</p>';
+      return;
+    }
+    const flagQ = q.kind === 'flag' || q.kind === 'pickflag';
+    if (!flagQ) MapView.mark('hl', [it.key], shapeOf(it));
+    if (!flagQ) MapView.show(it);
+    $('say').textContent = q.kind === 'flag' ? 'Which country has this flag?'
+      : q.kind === 'pickflag' ? 'Which one is the flag of ' + named(it) + '?'
+      : q.kind === 'where' ? 'Which continent is ' + named(it) + ' in?'
+      : q.kind === 'which' ? 'Which ' + (isNature(it) ? it.type : world ? 'country' : 'city') + ' is this?'
+      : 'What is the capital of ' + (world ? named(it) : it.prov) + '?';
+    if (q.kind === 'flag') box.innerHTML = '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>';
+    const opts = document.createElement('div'); opts.className = 'opts';
+    choicesFor(q).forEach((v, k) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'opt'; b.dataset.v = v; b.style.animationDelay = k * 0.05 + 's';
+      if (q.kind === 'pickflag') { b.classList.add('flagopt'); b.textContent = flag(v); b.setAttribute('aria-label', 'Flag ' + (k + 1)); } else b.textContent = v;
+      b.addEventListener('click', () => answer(v === target(q), b));
+      opts.appendChild(b);
+    });
+    box.appendChild(opts);
+  }
+  function onMapTap({ dot, shape }) {
+    const q = qs[qi];
+    if (locked || !q || q.kind !== 'find') return;
+    const it = q.it;
+    // Another country can be tapped by mistake only when a country is what is asked for.
+    const got = pool.find((p) => p.key === dot) || (shape && pool.find((p) => p.shape === shape)) || (shape && isWorld(it) && COUNTRIES.find((p) => p.shape === shape));
+    if (!got && (!shape || !isWorld(it))) return; // the sea, or land away from the dots
+    if (got === it) { answer(true); return; }
+    if (got) { MapView.mark('no', [got.key], shapeOf(got)); MapView.say(got.name, got.x, got.y); }
+    answer(false, null, got);
+  }
+
+  function answer(right, btn, wrongPlace) {
+    if (locked) return;
+    const q = qs[qi], it = q.it;
+    if (right) {
+      locked = true;
+      results.push(tries === 0);
+      sfx.good(); mood('cheer');
+      $('say').textContent = pick(PRAISE);
+      if (btn) btn.classList.add('ok');
+      MapView.mark('hl'); MapView.mark('no');
+      MapView.mark('ok', [it.key], shapeOf(it));
+      MapView.say(it.name, it.x, it.y);
+      renderProg();
+      const r = roundNo; setTimeout(() => { if (r === roundNo) next(); }, 1300);
+      return;
+    }
+    tries++;
+    sfx.bad(); mood('oops');
+    if (tries === 1) CD.weak('mundia', stageOf(curLevel) + ': ' + it.name);
+    if (btn) { btn.classList.add('no'); btn.disabled = true; }
+    if (tries === 1) {
+      $('say').textContent = wrongPlace ? 'That is ' + named(wrongPlace) + '. Try again!' : 'Not quite. Have another go!';
+      return;
+    }
+    // Second miss: show where it is and what to remember.
+    locked = true;
+    results.push(false);
+    renderProg();
+    $('answers').querySelectorAll('.opt').forEach((b) => { if (b.dataset.v === target(q)) b.classList.add('ok'); b.disabled = true; });
+    MapView.mark('hl'); MapView.mark('no');
+    MapView.mark('ok', [it.key], shapeOf(it));
+    MapView.say(it.name, it.x, it.y);
+    MapView.show(it);
+    $('say').textContent = 'Here it is!';
+    $('whyText').innerHTML = about(it);
+    $('why').hidden = false;
+    $('whyNext').focus();
+  }
+  $('whyNext').addEventListener('click', () => { sfx.tap(); next(); });
+  function next() {
+    if ($('play').hidden) return;
+    qi++;
+    if (qi < qs.length) ask(); else finish();
+  }
+
+  function finish() {
+    const lv = curLevel, right = results.filter(Boolean).length, misses = qs.length - right;
+    const stars = misses === 0 ? 3 : misses <= 2 ? 2 : 1;
+    const before = totalStars();
+    S.best[lv.id] = Math.max(best(lv), stars);
+    S.stars = totalStars();
+    markDay(); save();
+    CD.round({ app: 'mundia', stage: stageOf(lv), stars, right, total: qs.length, ms: Date.now() - started });
+    show('result');
+    sfx.win();
+    $('resTitle').textContent = stars === 3 ? 'Perfect!' : stars === 2 ? 'Great job!' : 'Well done!';
+    $('resStars').innerHTML = [0, 1, 2].map((k) => starSvg(k < stars)).join('');
+    $('resText').textContent = right + ' of ' + qs.length + ' right on the first try.' + (stars < 3 ? ' Play again for ' + (stars === 2 ? 'three' : 'more') + ' stars!' : '');
+    const gained = STICKERS.filter((k) => k.at > before && k.at <= S.stars);
+    $('resGift').hidden = !gained.length;
+    if (gained.length) $('resGift').innerHTML = '<span class="face" aria-hidden="true">' + gained[gained.length - 1].pic + '</span>New sticker: ' + gained[gained.length - 1].name + '!';
+    const i = curTopic.levels.indexOf(lv);
+    $('resNext').hidden = i + 1 >= curTopic.levels.length;
+    if (stars === 3) CD.fx.confetti(24, { glyphs: ['⭐', '🎉', '✨', '🌍', '🏝️', '🗺️'] });
+  }
+  $('resNext').addEventListener('click', () => { sfx.tap(); startLevel(curTopic.levels[curTopic.levels.indexOf(curLevel) + 1]); });
+  $('resAgain').addEventListener('click', () => { sfx.tap(); startLevel(curLevel); });
+
+  CD.chip($('who'));
+  show('home');
+
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+  }
+})();
+</script>
+<script data-goatcounter="https://megawan.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
