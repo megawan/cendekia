@@ -13,7 +13,7 @@
 //   Cendekia.fx.react(svg, 'cheer' | 'oops') the mascot hops and flaps, or shakes its head
 //
 // A mascot is drawn once in a <symbol> and shown with <use>. Its parts are marked with the classes crest, wing-l,
-// wing-r, tail, mane and eyes inside the symbol (see PARTS); a part a mascot does not have is skipped.
+// wing-r, ear-l, ear-r, tail, mane and eyes inside the symbol (see PARTS); a part a mascot does not have is skipped.
 (function () {
   var COLORS = ['#1f9d6b', '#f2a33a', '#e0558a', '#7a5af8', '#2e90fa', '#0e9aa7'];
   var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
@@ -144,6 +144,8 @@
     '.wing-l': { hinge: '100% 0%',  idle: { rotate: [3, -4], duration: 2400 }, cheer: -35 },
     '.wing-r': { hinge: '0% 0%',    idle: { rotate: [-3, 4], duration: 2400 }, cheer: 35 },
     '.tail':   { hinge: '0% 100%',  idle: { rotate: [-5, 6], duration: 2100 }, cheer: 14 },
+    '.ear-l':  { hinge: '70% 100%', idle: { rotate: [-3, 4], duration: 2200 }, cheer: -14 },
+    '.ear-r':  { hinge: '30% 100%', idle: { rotate: [3, -4], duration: 2200 }, cheer: 14 },
     '.mane':   { hinge: '50% 50%',  idle: { scale: [1, 1.035], duration: 2300 } },
     '.eyes':   { hinge: '50% 50%' }
   };
