@@ -12,6 +12,9 @@
 //   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its marked parts move
 //   Cendekia.fx.react(svg, 'cheer' | 'oops') the mascot hops and flaps, or shakes its head
 //
+// Screens need no call: an app is a set of <section>s in <main>, shown one at a time by toggling `hidden`. Once the page
+// has loaded, every section that appears has its children rise in one after another (the first screen is left alone).
+//
 // A mascot is drawn once in a <symbol> and shown with <use>. Its parts are marked with the classes crest, wing-l,
 // wing-r, ear-l, ear-r, tail, mane and eyes inside the symbol (see PARTS); a part a mascot does not have is skipped.
 (function () {
@@ -186,6 +189,32 @@
       }
     });
   }
+
+  // The first children of the section are hidden before the browser paints, so the screen does not show for a moment
+  // before it animates, and shown again if the library cannot load.
+  function enter(sec) {
+    var kids = Array.prototype.slice.call(sec.children, 0, 8).filter(function (e) { return !e.hidden; });
+    if (!kids.length) return;
+    kids.forEach(function (e) { e.style.opacity = '0'; });
+    function clear() { kids.forEach(function (e) { e.style.opacity = ''; e.style.transform = ''; }); }
+    load().then(function (a) {
+      if (!a) { clear(); return; }
+      a.remove(kids);
+      a.animate(kids, { translateY: [14, 0], opacity: [0, 1], duration: 320, delay: a.stagger(35), ease: 'outCubic', onComplete: clear });
+    });
+  }
+  function watchScreens() {
+    var main = document.querySelector('main');
+    if (!main || !window.MutationObserver || reduce.matches) return;
+    new MutationObserver(function (list) {
+      list.forEach(function (m) {
+        var s = m.target;
+        // oldValue is null when the section was already shown, so only a section that was hidden counts
+        if (s.parentNode === main && s.tagName === 'SECTION' && m.oldValue !== null && !s.hasAttribute('hidden')) enter(s);
+      });
+    }).observe(main, { attributes: true, attributeFilter: ['hidden'], attributeOldValue: true, subtree: true });
+  }
+  if (document.readyState === 'complete') watchScreens(); else window.addEventListener('load', watchScreens);
 
   window.Cendekia = window.Cendekia || {};
   window.Cendekia.fx = { confetti: confetti, burst: burst, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react };
