@@ -1,7 +1,7 @@
 const { test, expect } = require('../support/fixtures');
 
 // Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
-// "Culture of Indonesia" or "Animals of the World").
+// "Culture of Indonesia", "Animals of the World", "Volcanoes and Disasters", "Islands and Straits" or "Peoples and Languages").
 async function openTopic(page, name) {
   await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
@@ -42,14 +42,14 @@ const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(wind
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
-  test('lists the six topics and their levels', async ({ page }) => {
+  test('lists the nine topics and their levels', async ({ page }) => {
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Capitals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
-    await expect(page.locator('#topics .card')).toHaveCount(7); // six topics and the stickers
+    await expect(page.locator('#topics .card')).toHaveCount(10); // nine topics and the stickers
     await page.locator('#topics .card', { hasText: 'Flags of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
@@ -61,6 +61,15 @@ test.describe('Omnia', () => {
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Animals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
+    await page.getByRole('button', { name: '← Home' }).click();
+    await page.locator('#topics .card', { hasText: 'Volcanoes and Disasters' }).click();
+    await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
+    await page.getByRole('button', { name: '← Home' }).click();
+    await page.locator('#topics .card', { hasText: 'Islands and Straits' }).click();
+    await expect(page.locator('#levels .card')).toHaveCount(6); // Explore and five levels
+    await page.getByRole('button', { name: '← Home' }).click();
+    await page.locator('#topics .card', { hasText: 'Peoples and Languages' }).click();
+    await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
   });
 
   test('mountains, rivers and deserts lie on land and oceans and seas do not', async ({ page }) => {
@@ -102,6 +111,37 @@ test.describe('Omnia', () => {
     for (const place of ['Blue whale', 'Dolphin', 'Great white shark', 'Sea turtle', 'Clownfish']) expect(await onAnyLand(page, place), place).toBe(false);
     await page.locator('#map circle[aria-label="Lion"]').press('Enter');
     await expect(page.locator('#xInfo')).toContainText('king of the savanna');
+  });
+
+  test('volcanoes are on land, tsunamis at sea, and each says its province', async ({ page }) => {
+    await openTopic(page, 'Volcanoes and Disasters');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    for (const place of ['Sinabung', 'Marapi', 'Kerinci', 'Toba', 'Merapi', 'Bromo', 'Ijen', 'Slamet', 'Tangkuban Perahu', 'Agung', 'Rinjani', 'Tambora', 'Kelimutu', 'Lokon',
+      'Karangetang', 'Gamalama', 'Palu earthquake', 'Jakarta flood', 'Kalimantan haze']) expect(await onAnyLand(page, place), place).toBe(true);
+    for (const place of ['Aceh tsunami', 'Nias earthquake', 'Mentawai tsunami']) expect(await onAnyLand(page, place), place).toBe(false);
+    await page.locator('#map circle[aria-label="Bromo"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('Jawa Timur');
+  });
+
+  test('islands are on land and straits and seas are not', async ({ page }) => {
+    await openTopic(page, 'Islands and Straits');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    for (const place of ['Sumatra', 'Java', 'Kalimantan', 'Sulawesi', 'Papua', 'Bali', 'Lombok', 'Sumba', 'Flores', 'Timor', 'Halmahera', 'Seram', 'Bangka', 'Nias']) {
+      expect(await onAnyLand(page, place), place).toBe(true);
+    }
+    for (const place of ['Malacca Strait', 'Sunda Strait', 'Bali Strait', 'Lombok Strait', 'Makassar Strait', 'Karimata Strait', 'Java Sea', 'Banda Sea', 'Flores Sea',
+      'Celebes Sea', 'Arafura Sea', 'Timor Sea', 'Natuna Sea', 'Molucca Sea']) expect(await onAnyLand(page, place), place).toBe(false);
+    await page.locator('#map circle[aria-label="Sunda Strait"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('Sumatra and Java');
+  });
+
+  test('peoples live on land and say what language they speak', async ({ page }) => {
+    await openTopic(page, 'Peoples and Languages');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    for (const place of ['Acehnese', 'Batak', 'Nias', 'Minangkabau', 'Malay', 'Javanese', 'Sundanese', 'Betawi', 'Madurese', 'Balinese', 'Dayak', 'Banjar', 'Kutai', 'Bugis',
+      'Toraja', 'Mandar', 'Minahasa', 'Gorontalo', 'Sasak', 'Tetun', 'Ambonese', 'Dani', 'Asmat']) expect(await onAnyLand(page, place), place).toBe(true);
+    await page.locator('#map circle[aria-label="Balinese"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('suksma');
   });
 
   test('flags are shown for the countries, and Israel is not among them', async ({ page }) => {
@@ -174,5 +214,29 @@ test.describe('Omnia', () => {
     await playRound(page);
     expect((await saved(page)).best['a.all']).toBeGreaterThanOrEqual(1);
     expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Animals: All animals' });
+  });
+
+  test('a volcano round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Volcanoes and Disasters');
+    await page.locator('#levels .card', { hasText: 'Volcanoes of Java' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['v.java']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Volcanoes: Volcanoes of Java' });
+  });
+
+  test('a straits round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Islands and Straits');
+    await page.locator('#levels .card b', { hasText: /^Straits$/ }).click();
+    await playRound(page);
+    expect((await saved(page)).best['i.strait']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Islands: Straits' });
+  });
+
+  test('an all-peoples round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Peoples and Languages');
+    await page.locator('#levels .card', { hasText: 'All peoples' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['p.all']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Peoples: All peoples' });
   });
 });
