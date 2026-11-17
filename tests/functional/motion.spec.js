@@ -59,7 +59,7 @@ test('lexica: Pochi stays still when the device asks for reduced motion', async 
 });
 
 // Each mascot's drawing is marked with the parts that move. The coach mascot is the one that reacts to answers.
-for (const [dir, part, coach] of [['hijaiyah', '.mane', '#coachMascot'], ['aksara', '.wing-l', '#coachMascot'], ['numeria', '.tail', '#coach']]) {
+for (const [dir, part, coach] of [['hijaiyah', '.mane', '#coachMascot'], ['aksara', '.wing-l', '#coachMascot'], ['numeria', '.tail', '#coach'], ['omnia', '.ear-l', '#coach']]) {
   test(`${dir}: the mascot idles and hops`, async ({ page }) => {
     await page.goto(`/${dir}/`);
     const first = page.locator('.mascot').first();
