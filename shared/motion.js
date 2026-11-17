@@ -11,10 +11,13 @@
 //   Cendekia.fx.reveal(stars, gift)          the earned stars (.on) pop in one by one, then the new-sticker box drops in
 //   Cendekia.fx.flip(element)                the element turns over like a card (its parent needs CSS `perspective`)
 //   Cendekia.fx.cascade(elements)            the elements rise in one after another
+//   Cendekia.fx.count(element)               the first number in the element counts up from 0 ("12 stars" keeps its words)
+//   Cendekia.fx.flame(element)               the element flickers like a flame, for the days in a row
 //   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its marked parts move
 //   Cendekia.fx.react(svg, 'cheer' | 'oops') the mascot hops and flaps, or shakes its head
 //
-// Screens need no call: an app is a set of <section>s in <main>, shown one at a time by toggling `hidden`. Once the page
+// On a home screen, the numbers in #homeStars and #homeDays count up each time it appears, and the flame of a streak
+// flickers. Screens need no call: an app is a set of <section>s in <main>, shown one at a time by toggling `hidden`. Once the page
 // has loaded, every section that appears has its children rise in one after another (the first screen is left alone).
 //
 // A mascot is drawn once in a <symbol> and shown with <use>. Its parts are marked with the classes crest, wing-l,
@@ -165,11 +168,11 @@
       Object.keys(PARTS).forEach(function (sel) {
         var part = PARTS[sel];
         parts(svg, sel).forEach(function (e) { e.style.transformBox = 'fill-box'; e.style.transformOrigin = part.hinge; });
-        if (part.idle) a.animate(parts(svg, sel), Object.assign({ loop: true, alternate: true, ease: 'inOutSine' }, part.idle));
+        if (part.idle && parts(svg, sel).length) a.animate(parts(svg, sel), Object.assign({ loop: true, alternate: true, ease: 'inOutSine' }, part.idle));
       });
       (function blink() {
         if (!svg.isConnected) return;
-        if (!document.hidden) a.animate(parts(svg, '.eyes'), { scaleY: [1, 0.1, 1], duration: 180, ease: 'inOutQuad' });
+        if (!document.hidden && parts(svg, '.eyes').length) a.animate(parts(svg, '.eyes'), { scaleY: [1, 0.1, 1], duration: 180, ease: 'inOutQuad' });
         setTimeout(blink, rand(2200, 5200));
       })();
     });
@@ -184,7 +187,7 @@
         a.animate(svg, { translateY: [0, -16, 0], scale: [1, 1.08, 1], duration: 480, ease: 'outQuad' });
         Object.keys(PARTS).forEach(function (sel) {
           // 'blend' adds the swing to the idle movement instead of cancelling it
-          if (PARTS[sel].cheer) a.animate(parts(svg, sel), { rotate: [0, PARTS[sel].cheer, 0], duration: 480, ease: 'outQuad', composition: 'blend' });
+          if (PARTS[sel].cheer && parts(svg, sel).length) a.animate(parts(svg, sel), { rotate: [0, PARTS[sel].cheer, 0], duration: 480, ease: 'outQuad', composition: 'blend' });
         });
       } else if (mood === 'oops') {
         a.animate(svg, { translateX: [0, -7, 7, -5, 0], duration: 320, ease: 'inOutQuad' });
@@ -207,6 +210,38 @@
   }
   function enter(sec) {
     cascade(Array.prototype.slice.call(sec.children, 0, 8).filter(function (e) { return !e.hidden; }));
+    count(sec.querySelector('#homeStars'));
+    count(sec.querySelector('#homeDays'));
+    lightFlame(sec);
+  }
+
+  function count(el) {
+    var m = el && el.textContent.match(/\d+/);
+    if (!m || !+m[0] || reduce.matches) return;
+    var text = el.textContent, to = +m[0], n = { v: 0 };
+    el.textContent = text.replace(/\d+/, '0'); // before the first paint, so the real number does not show first
+    load().then(function (a) {
+      if (!a) { el.textContent = text; return; }
+      a.animate(n, {
+        v: to, duration: 800, ease: 'outCubic',
+        onUpdate: function () { el.textContent = text.replace(/\d+/, Math.round(n.v)); },
+        onComplete: function () { el.textContent = text; }
+      });
+    });
+  }
+
+  function flame(el) {
+    if (!el || reduce.matches || el.dataset.lit) return;
+    el.dataset.lit = '1';
+    el.style.display = 'inline-block'; el.style.transformOrigin = '50% 90%';
+    load().then(function (a) {
+      if (a) a.animate(el, { scale: [1, 1.18, 0.96, 1.12, 1], rotate: [-4, 5, -3, 4, -4], duration: 1500, loop: true, ease: 'inOutSine' });
+    });
+  }
+  // The icon beside the days in a row, when there is a streak.
+  function lightFlame(root) {
+    var days = root.querySelector('#homeDays'), pill = days && days.closest('.pill');
+    if (pill && /[1-9]/.test(days.textContent)) flame(pill.firstElementChild);
   }
 
   function flip(el) {
@@ -228,8 +263,9 @@
       });
     }).observe(main, { attributes: true, attributeFilter: ['hidden'], attributeOldValue: true, subtree: true });
   }
-  if (document.readyState === 'complete') watchScreens(); else window.addEventListener('load', watchScreens);
+  function start() { watchScreens(); lightFlame(document); }
+  if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
 
   window.Cendekia = window.Cendekia || {};
-  window.Cendekia.fx = { confetti: confetti, burst: burst, flip: flip, cascade: cascade, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react };
+  window.Cendekia.fx = { confetti: confetti, burst: burst, count: count, flame: flame, flip: flip, cascade: cascade, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react };
 })();
