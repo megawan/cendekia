@@ -135,6 +135,23 @@
   .tapnote { text-align: center; font-weight: 700; opacity: .75; margin: 4px 0 0; }
   .bigflag { text-align: center; font-size: 5rem; line-height: 1.15; margin: 0; }
   .opt.flagopt { font-size: 2.6rem; line-height: 1; }
+  .topics .sec { grid-column: 1 / -1; margin: 6px 0 -4px; font-size: 1.05rem; opacity: .75; text-transform: uppercase; letter-spacing: .06em; }
+  #map.nodots circle { opacity: 0; }
+  #map.nodots circle:focus-visible { opacity: 1; }
+  /* Map Jigsaw: a piece in the tray, and the copy of it that follows the finger at the size of the map */
+  .tray { display: grid; place-items: center; min-height: 120px; }
+  .piece { padding: 6px; border-radius: 16px; background: #fff; border: 2px dashed var(--line); touch-action: none; cursor: grab;
+    user-select: none; -webkit-user-select: none; display: inline-block; }
+  .piece.ghost { opacity: .35; }
+  .piece.placed { visibility: hidden; }
+  .piece svg, .pfloat svg { display: block; overflow: visible; }
+  .piece path, .pfloat path { fill: #f6c26b; stroke: #8a5a00; stroke-width: 1.5; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+  .pfloat { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; filter: drop-shadow(0 6px 8px rgba(28,32,56,.3)); }
+  /* Who Am I?: the clues so far */
+  .clues { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; }
+  .clues li { background: #fff; border: 2px solid var(--line); border-radius: 14px; padding: 8px 12px; font-weight: 700; line-height: 1.3; animation: fadeUp .25s both; }
+  .clues .bigflag { display: inline-block; font-size: 2.6rem; vertical-align: middle; margin-left: 6px; }
+  .moreclue { margin: 0 0 10px; width: 100%; }
   .why { background: #fff8e1; border: 2px solid #f1dfb2; border-radius: var(--radius); padding: 12px 14px; margin-top: 12px;
     text-align: center; animation: fadeUp .3s both; }
   .why p { margin: 0 0 10px; font-size: 1.1rem; line-height: 1.35; }
@@ -202,7 +219,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/22</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/27</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -289,6 +306,7 @@
 <script>document.querySelectorAll(".mascot").forEach(Cendekia.fx.mascot);</script>
 <script src="../shared/mascot.js"></script>
 <script src="maps.js"></script>
+<script src="borders.js"></script>
 <script>
 (() => {
   'use strict';
@@ -420,7 +438,7 @@
     Object.keys(data).forEach((group) => data[group].split(';').forEach((row) => {
       const [name, lat, lon, at, note, icon, lang] = row.split('|');
       const [x, y] = project(MAPS[mapName], +lat, +lon);
-      out.push({ key: name, name, group, noun: o.noun(group), icon: icon || o.icon[group], at, scope: o.scope, locate: o.locate, plural: !!o.plural, lang, note, ref: o.ref(name, group), x, y });
+      out.push({ key: name, name, group, noun: o.noun(group), icon: icon || o.icon[group], at, scope: o.scope, locate: o.locate, plural: typeof o.plural === 'function' ? o.plural(name) : !!o.plural, lang, note, ref: o.ref(name, group), x, y });
     }));
     return out;
   }
@@ -623,6 +641,103 @@
     scope: 'province', noun: () => 'people', icon: {}, ref: (name) => 'the ' + name, locate: 'They live in {}.', plural: true
   });
 
+  // Landmarks of the world, by continent. Where: the country.
+  const LANDMARK_DATA = {
+    asia: 'Borobudur|-7.61|110.20|Indonesia|a huge Buddhist temple from the 9th century, built from stone, in Central Java.;'
+      + 'Great Wall|40.43|116.57|China|a very long wall built over many centuries to protect the north of China.|🧱;'
+      + 'Taj Mahal|27.17|78.04|India|a white marble tomb built in the 1600s by an emperor for his wife.|🕌;'
+      + 'Angkor Wat|13.41|103.87|Cambodia|the largest religious monument in the world, a huge temple.;'
+      + 'Petronas Towers|3.16|101.71|Malaysia|twin skyscrapers in Kuala Lumpur that are joined by a bridge.;'
+      + 'Burj Khalifa|25.20|55.27|United Arab Emirates|the tallest building in the world, in Dubai.;'
+      + 'Petra|30.33|35.44|Jordan|an ancient city carved into pink rock.;'
+      + 'Hagia Sophia|41.01|28.98|Turkey|a great building in Istanbul that has been both a church and a mosque.',
+    europe: 'Eiffel Tower|48.86|2.29|France|an iron tower in Paris that was finished in 1889.|🗼;'
+      + 'Colosseum|41.89|12.49|Italy|a huge ancient arena in Rome where gladiators once fought.;'
+      + 'Big Ben|51.50|-0.12|United Kingdom|the famous bell in the clock tower of the Palace of Westminster in London.;'
+      + 'Sagrada Família|41.40|2.17|Spain|an amazing church in Barcelona that is still being built.;'
+      + 'Acropolis|37.97|23.73|Greece|an ancient hilltop city in Athens, with the temple called the Parthenon.;'
+      + 'Brandenburg Gate|52.52|13.38|Germany|a famous gate in Berlin.;'
+      + 'St Basil’s Cathedral|55.75|37.62|Russia|a colourful church with onion-shaped domes in Moscow.',
+    africaoc: 'Pyramids of Giza|29.98|31.13|Egypt|huge ancient tombs of the pharaohs, built more than 4,000 years ago.|🔺;'
+      + 'Table Mountain|-33.96|18.40|South Africa|a flat-topped mountain above the city of Cape Town.;'
+      + 'Lalibela|12.03|39.05|Ethiopia|a town with churches carved down into solid rock.;'
+      + 'Great Zimbabwe|-20.27|30.93|Zimbabwe|the ruins of a great stone city from the Middle Ages.;'
+      + 'Sydney Opera House|-33.86|151.21|Australia|a famous building with roofs shaped like sails, in Sydney harbour.;'
+      + 'Uluru|-25.34|131.04|Australia|a giant red rock in the middle of Australia, holy to the Anangu people.',
+    america: 'Statue of Liberty|40.69|-74.04|United States|a giant statue in New York harbour, a gift from France.|🗽;'
+      + 'Golden Gate Bridge|37.82|-122.48|United States|a red suspension bridge in San Francisco.;'
+      + 'Mount Rushmore|43.88|-103.46|United States|a mountain with the faces of four presidents carved into it.;'
+      + 'CN Tower|43.64|-79.39|Canada|a very tall tower in the city of Toronto.;'
+      + 'Chichen Itza|20.68|-88.57|Mexico|an ancient Maya city with a big stepped pyramid.;'
+      + 'Panama Canal|9.08|-79.68|Panama|a canal that lets ships cross from the Atlantic Ocean to the Pacific Ocean.;'
+      + 'Christ the Redeemer|-22.95|-43.21|Brazil|a huge statue of Jesus on a mountain above Rio de Janeiro.;'
+      + 'Machu Picchu|-13.16|-72.55|Peru|an ancient Inca city high in the Andes mountains.;'
+      + 'Moai|-27.11|-109.35|Chile|giant stone statues of heads on Easter Island.'
+  };
+  const LANDMARKS = makeFeatures(LANDMARK_DATA, 'world', {
+    scope: 'country', noun: () => 'landmark', icon: { asia: '🏯', europe: '🏰', africaoc: '🏛️', america: '🗽' }, locate: 'This is in {}.',
+    ref: (name) => (/^(Great Wall|Eiffel Tower|Colosseum|Acropolis|Brandenburg Gate|Pyramids of Giza|Statue of Liberty|Golden Gate Bridge|CN Tower|Panama Canal|Sydney Opera House|Burj Khalifa|Petronas Towers|Moai)$/.test(name) ? 'the ' : '') + name,
+    plural: (name) => /^(Pyramids of Giza|Petronas Towers|Moai)$/.test(name)
+  });
+
+  // Foods of the world, by continent. Where: the country the dish comes from.
+  const FOOD_DATA = {
+    asia: 'Sushi|35.69|139.69|Japan|small rolls or pieces of rice with raw or cooked fish and vegetables.|🍣;'
+      + 'Kimchi|37.57|127.00|South Korea|spicy fermented vegetables, usually cabbage, eaten at almost every meal.|🥬;'
+      + 'Dumplings|34.30|108.90|China|parcels of dough with a filling, steamed, boiled or fried.|🥟;'
+      + 'Biryani|17.40|78.50|India|rice cooked with spices and meat or vegetables.|🍛;'
+      + 'Pad Thai|13.75|100.50|Thailand|fried rice noodles with egg, peanuts and lime.|🍜;'
+      + 'Pho|21.04|105.85|Vietnam|a noodle soup with herbs and beef or chicken.|🍲;'
+      + 'Nasi lemak|3.14|101.69|Malaysia|rice cooked in coconut milk, served with sambal, egg and anchovies.|🍚;'
+      + 'Nasi goreng|-7.40|110.40|Indonesia|fried rice with sweet soy sauce, often eaten with an egg.|🍳;'
+      + 'Kebab|39.93|32.86|Turkey|grilled meat served on a skewer or in bread.|🥙;'
+      + 'Adobo|14.60|120.98|Philippines|chicken or pork cooked in vinegar, soy sauce and garlic.|🍗',
+    europe: 'Pizza|40.85|14.27|Italy|a flat bread baked with tomato and cheese, first made in Naples.|🍕;'
+      + 'Croissant|48.86|2.35|France|a flaky, buttery pastry in the shape of a crescent.|🥐;'
+      + 'Paella|39.47|-0.38|Spain|rice cooked in a wide pan with seafood, chicken or vegetables, from Valencia.|🥘;'
+      + 'Fish and chips|51.50|-0.12|United Kingdom|fried fish with thick chips, a classic British meal.|🐟;'
+      + 'Pierogi|52.23|21.01|Poland|dumplings filled with potato, cheese, meat or fruit.|🥟;'
+      + 'Pretzel|48.14|11.58|Germany|a salty, knot-shaped bread, from Bavaria.|🥨;'
+      + 'Moussaka|37.98|23.73|Greece|a baked dish of aubergine, minced meat and white sauce.|🍆;'
+      + 'Waffles|50.85|4.35|Belgium|crisp, square cakes with deep pockets, eaten with sugar or fruit.|🧇;'
+      + 'Goulash|47.50|19.04|Hungary|a thick soup or stew of meat, vegetables and paprika.|🥣;'
+      + 'Fondue|46.95|7.45|Switzerland|melted cheese that you dip bread into.|🧀',
+    africaoc: 'Couscous|34.02|-6.84|Morocco|tiny grains of steamed semolina, served with vegetables and meat.|🫕;'
+      + 'Injera|9.03|38.75|Ethiopia|a soft, sour flatbread that is used to scoop up stews.|🫓;'
+      + 'Koshari|30.05|31.25|Egypt|a mix of rice, lentils, pasta and a spicy tomato sauce.|🍝;'
+      + 'Bobotie|-25.70|28.23|South Africa|a baked dish of spiced minced meat topped with egg.|🍖;'
+      + 'Ugali|-1.28|36.81|Kenya|a stiff maize porridge eaten with stews in East Africa.|🌽;'
+      + 'Jollof rice|9.07|7.49|Nigeria|rice cooked in a spicy tomato sauce, loved all over West Africa.|🍅;'
+      + 'Meat pie|-35.28|149.13|Australia|a hand-sized pie filled with minced meat and gravy.|🥧;'
+      + 'Hāngī|-41.29|174.78|New Zealand|a meal cooked in an earth oven, from the Māori people.|🔥;'
+      + 'Kokoda|-18.14|178.44|Fiji|raw fish soaked in lime juice and coconut milk.|🐠',
+    america: 'Tacos|19.43|-99.13|Mexico|tortillas folded around meat, vegetables and salsa.|🌮;'
+      + 'Poutine|46.80|-71.20|Canada|chips with cheese curds and gravy, from Quebec.|🍟;'
+      + 'Hamburger|38.90|-77.04|United States|a meat patty in a bun, with salad and sauce, loved in the United States.|🍔;'
+      + 'Ceviche|-12.05|-77.05|Peru|raw fish “cooked” in lime juice, with onion and chilli.|🦐;'
+      + 'Feijoada|-15.78|-47.92|Brazil|a stew of black beans and pork, often eaten on Saturdays.|🫘;'
+      + 'Empanadas|-34.60|-58.40|Argentina|baked or fried pastries filled with meat, cheese or vegetables.|🥠;'
+      + 'Arepas|10.50|-66.92|Venezuela|round maize cakes that are filled or eaten with cheese.|🫓;'
+      + 'Jerk chicken|17.98|-76.79|Jamaica|chicken rubbed with hot spices and grilled.|🌶️'
+  };
+  const FOODS = makeFeatures(FOOD_DATA, 'world', {
+    scope: 'country', noun: () => 'dish', icon: {}, locate: 'This comes from {}.', ref: (name) => name.replace(/^./, (c) => c.toLowerCase()),
+    plural: (name) => /^(Dumplings|Tacos|Empanadas|Arepas|Waffles|Pierogi|Fish and chips)$/.test(name)
+  });
+
+  // The land borders between countries (borders.js, made by tools/make-borders.mjs). A list is only used when every
+  // neighbour is a country of the game: Israel, Palestine, Kosovo and the like are not, so those lists are not the whole truth.
+  const BORDERS = window.OMNIA_BORDERS || {};
+  const BY_SHAPE = new Map(COUNTRIES.map((c) => [c.shape, c]));
+  const NOT_SURE = new Set(['724', '826']); // Spain (Ceuta and Melilla) and the United Kingdom (Gibraltar) have borders the data lacks
+  function neighboursOf(it) {
+    const ids = BORDERS[it.shape];
+    if (!ids || NOT_SURE.has(it.shape)) return null;
+    const out = ids.map((id) => BY_SHAPE.get(id));
+    return out.every(Boolean) ? out : null;
+  }
+  const HAS_SHAPE = new Set(MAPS.world.shapes.map((s) => s[0]));
+
   // ---- Levels ----
   // Every level is open from the start. Its id is the key of its stars in the save, so ids never change.
   const cities = (region) => CITIES.filter((c) => !region || c.region === region);
@@ -637,10 +752,13 @@
     ['sa', 'South America', () => nations('South America')], ['oc', 'Oceania', () => nations('Oceania')]
   ];
   const regionLevels = (prefix) => REGIONS.map(([id, name, items]) => ({ id: prefix + '.' + id, name, items }));
+  // Countries whose whole list of neighbours is known, with one to six of them, so a round can ask for all of them.
+  const borderSubjects = (continent) => nations(continent).filter((c) => { const n = neighboursOf(c); return n && n.length >= 1 && n.length <= 6; });
   // Per topic: unit (what a level counts), hint (the line before a tap while exploring), all (what exploring shows),
   // stage (a prefix for the shared log, so the parents' page can tell two topics' levels apart).
+  const SECTIONS = ['Indonesia', 'The world', 'Map games'];
   const TOPICS = [
-    { id: 'indonesia', map: 'indonesia', icon: '🏝️', c: 'var(--c-green)', name: 'Cities of Indonesia', blurb: 'Find the cities of every island and the capital of every province.',
+    { id: 'indonesia', section: 'Indonesia', map: 'indonesia', icon: '🏝️', c: 'var(--c-green)', name: 'Cities of Indonesia', blurb: 'Find the cities of every island and the capital of every province.',
       unit: 'cities', sub: 'Tap any place to see its name and province', hint: 'Tap a dot on the map.', all: () => CITIES,
       kinds: ['find', 'which', 'capital'], levels: [
         { id: 'id.sumatra', name: 'Sumatra', items: () => cities('sumatra') },
@@ -651,13 +769,13 @@
         { id: 'id.east', name: 'Maluku and Papua', items: () => cities('east') },
         { id: 'id.all', name: 'All of Indonesia', items: () => cities() }
       ] },
-    { id: 'world', map: 'world', icon: '🌍', c: 'var(--c-indigo)', name: 'Capitals of the World', blurb: 'Find countries on the world map and learn their capital cities.',
+    { id: 'world', section: 'The world', map: 'world', icon: '🌍', c: 'var(--c-indigo)', name: 'Capitals of the World', blurb: 'Find countries on the world map and learn their capital cities.',
       unit: 'countries', sub: 'Tap any place to see its name, flag and capital', hint: 'Tap a country or a dot on the map.', all: () => COUNTRIES,
       kinds: ['find', 'which', 'capital'], levels: regionLevels('w') },
-    { id: 'flags', map: 'world', icon: '🚩', c: 'var(--c-pink)', name: 'Flags of the World', blurb: 'Match every flag with its country, on the map and in your head.',
+    { id: 'flags', section: 'The world', map: 'world', icon: '🚩', c: 'var(--c-pink)', name: 'Flags of the World', blurb: 'Match every flag with its country, on the map and in your head.',
       unit: 'countries', sub: 'Tap any country to see its flag and name', hint: 'Tap a country or a dot on the map.', all: () => COUNTRIES, stage: 'Flags: ', flags: true,
       kinds: ['flag', 'pickflag', 'find'], levels: regionLevels('f') },
-    { id: 'nature', map: 'world', icon: '⛰️', c: 'var(--c-teal)', name: 'Nature of the World', blurb: 'Find the mountains, rivers, lakes, deserts, oceans and seas of our planet.',
+    { id: 'nature', section: 'The world', map: 'world', icon: '⛰️', c: 'var(--c-teal)', name: 'Nature of the World', blurb: 'Find the mountains, rivers, lakes, deserts, oceans and seas of our planet.',
       unit: 'places', sub: 'Tap any dot to see what it is', hint: 'Tap a dot on the map.', all: () => NATURE,
       say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which continent is ' + it.ref + ' in?' },
       kinds: ['find', 'which', 'where'], levels: [
@@ -669,7 +787,7 @@
         { id: 'n.sea', name: 'Seas', items: () => group(NATURE, 'sea'), kinds: ['find', 'which'] },
         { id: 'n.all', name: 'All of nature', items: () => NATURE }
       ] },
-    { id: 'culture', map: 'indonesia', icon: '🎭', c: 'var(--c-orange)', name: 'Culture of Indonesia', blurb: 'Find the houses, dances, foods and music of every part of Indonesia.',
+    { id: 'culture', section: 'Indonesia', map: 'indonesia', icon: '🎭', c: 'var(--c-orange)', name: 'Culture of Indonesia', blurb: 'Find the houses, dances, foods and music of every part of Indonesia.',
       unit: 'things', sub: 'Tap any dot to see what it is and where it is from', hint: 'Tap a dot on the map.', all: () => CULTURE, stage: 'Culture: ',
       say: { find: (it) => 'Where is ' + it.ref + ' from? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is from here?', where: (it) => 'Which province is ' + it.ref + ' from?' },
       kinds: ['find', 'which', 'where'], levels: [
@@ -680,7 +798,7 @@
         { id: 'c.cloth', name: 'Clothes and cloth', items: () => group(CULTURE, 'cloth') },
         { id: 'c.all', name: 'All of culture', items: () => CULTURE }
       ] },
-    { id: 'animals', map: 'world', icon: '🦁', c: 'var(--c-blue)', name: 'Animals of the World', blurb: 'Find where animals live, from rainforests to the oceans.',
+    { id: 'animals', section: 'The world', map: 'world', icon: '🦁', c: 'var(--c-blue)', name: 'Animals of the World', blurb: 'Find where animals live, from rainforests to the oceans.',
       unit: 'animals', sub: 'Tap any dot to see an animal and where it lives', hint: 'Tap a dot on the map.', all: () => ANIMALS, stage: 'Animals: ',
       say: { find: (it) => 'Where does ' + it.ref + ' live? Tap its dot.', which: () => 'Which animal lives here?', where: (it) => 'Which continent does ' + it.ref + ' live on?', habitat: (it) => 'Where does ' + it.ref + ' live?' },
       kinds: ['find', 'which', 'where'], levels: [
@@ -692,7 +810,7 @@
         { id: 'a.forest', name: 'Forests and mountains', items: () => group(ANIMALS, 'forest') },
         { id: 'a.all', name: 'All animals', items: () => ANIMALS, kinds: ['find', 'which', 'where', 'habitat'] }
       ] },
-    { id: 'disasters', map: 'indonesia', icon: '🌋', c: '#e5533d', name: 'Volcanoes and Disasters', blurb: 'Find the volcanoes of Indonesia and the places of its big earthquakes, floods and fires.',
+    { id: 'disasters', section: 'Indonesia', map: 'indonesia', icon: '🌋', c: '#e5533d', name: 'Volcanoes and Disasters', blurb: 'Find the volcanoes of Indonesia and the places of its big earthquakes, floods and fires.',
       unit: 'places', sub: 'Tap any dot to see what it is and where it is', hint: 'Tap a dot on the map.', all: () => DISASTERS, stage: 'Volcanoes: ',
       say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which province is ' + it.ref + ' in?' },
       kinds: ['find', 'which', 'where'], levels: [
@@ -703,7 +821,7 @@
         { id: 'v.disaster', name: 'Disasters', items: () => group(DISASTERS, 'disaster') },
         { id: 'v.all', name: 'All volcanoes and disasters', items: () => DISASTERS }
       ] },
-    { id: 'water', map: 'indonesia', icon: '🏝️', c: '#2a8fb5', name: 'Islands and Straits', blurb: 'Find the islands, straits and seas of the Indonesian archipelago.',
+    { id: 'water', section: 'Indonesia', map: 'indonesia', icon: '🏝️', c: '#2a8fb5', name: 'Islands and Straits', blurb: 'Find the islands, straits and seas of the Indonesian archipelago.',
       unit: 'places', sub: 'Tap any dot to see what it is', hint: 'Tap a dot on the map.', all: () => WATER, stage: 'Islands: ',
       say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which two places does ' + it.ref + ' lie between?' },
       kinds: ['find', 'which', 'where'], levels: [
@@ -713,7 +831,7 @@
         { id: 'i.sea', name: 'Seas', items: () => group(WATER, 'sea'), kinds: ['find', 'which'] },
         { id: 'i.all', name: 'Islands, straits and seas', items: () => WATER }
       ] },
-    { id: 'peoples', map: 'indonesia', icon: '🧑‍🤝‍🧑', c: '#a65fc2', name: 'Peoples and Languages', blurb: 'Find where the peoples of Indonesia live and the languages they speak.',
+    { id: 'peoples', section: 'Indonesia', map: 'indonesia', icon: '🧑‍🤝‍🧑', c: '#a65fc2', name: 'Peoples and Languages', blurb: 'Find where the peoples of Indonesia live and the languages they speak.',
       unit: 'peoples', sub: 'Tap any dot to see a people and where they live', hint: 'Tap a dot on the map.', all: () => PEOPLE, stage: 'Peoples: ',
       say: { find: (it) => 'Where do ' + it.ref + ' live? Tap their dot.', which: () => 'Which people live here?', where: (it) => 'Which province do ' + it.ref + ' come from?', speak: (it) => 'Which language do ' + it.ref + ' speak?' },
       kinds: ['find', 'which', 'where', 'speak'], levels: [
@@ -723,10 +841,56 @@
         { id: 'p.sulawesi', name: 'Sulawesi', items: () => group(PEOPLE, 'sulawesi') },
         { id: 'p.east', name: 'Nusa Tenggara, Maluku and Papua', items: () => group(PEOPLE, 'east') },
         { id: 'p.all', name: 'All peoples', items: () => PEOPLE }
+      ] },
+    { id: 'landmarks', section: 'The world', map: 'world', icon: '🗽', c: '#6a7fa8', name: 'Landmarks of the World', blurb: 'Find the famous buildings and wonders of the world, and the country of each.',
+      unit: 'landmarks', sub: 'Tap any dot to see a landmark and where it is', hint: 'Tap a dot on the map.', all: () => LANDMARKS, stage: 'Landmarks: ',
+      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: () => 'Which landmark is this?', where: (it) => 'Which country is ' + it.ref + ' in?' },
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'l.asia', name: 'Landmarks of Asia', items: () => group(LANDMARKS, 'asia') },
+        { id: 'l.europe', name: 'Landmarks of Europe', items: () => group(LANDMARKS, 'europe') },
+        { id: 'l.africaoc', name: 'Landmarks of Africa and Oceania', items: () => group(LANDMARKS, 'africaoc') },
+        { id: 'l.america', name: 'Landmarks of the Americas', items: () => group(LANDMARKS, 'america') },
+        { id: 'l.all', name: 'All landmarks', items: () => LANDMARKS }
+      ] },
+    { id: 'foods', section: 'The world', map: 'world', icon: '🍜', c: '#d9822b', name: 'Foods of the World', blurb: 'Find where famous dishes come from, from sushi to tacos.',
+      unit: 'dishes', sub: 'Tap any dot to see a dish and where it comes from', hint: 'Tap a dot on the map.', all: () => FOODS, stage: 'Foods: ',
+      say: { find: (it) => 'Where does ' + it.ref + ' come from? Tap its dot.', which: () => 'Which dish comes from here?', where: (it) => 'Which country does ' + it.ref + ' come from?' },
+      kinds: ['find', 'which', 'where'], levels: [
+        { id: 'fd.asia', name: 'Foods of Asia', items: () => group(FOODS, 'asia') },
+        { id: 'fd.europe', name: 'Foods of Europe', items: () => group(FOODS, 'europe') },
+        { id: 'fd.africaoc', name: 'Foods of Africa and Oceania', items: () => group(FOODS, 'africaoc') },
+        { id: 'fd.america', name: 'Foods of the Americas', items: () => group(FOODS, 'america') },
+        { id: 'fd.all', name: 'All foods', items: () => FOODS }
+      ] },
+    // Games on the map: not a way to explore, so no Explore card. Their dots are hidden (still there for the keyboard).
+    { id: 'jigsaw', section: 'Map games', map: 'world', icon: '🧩', c: '#2f9e7d', name: 'Map Jigsaw', blurb: 'Drag the shape of a country to its place on the map.',
+      unit: 'countries', noExplore: true, hideDots: true, stage: 'Jigsaw: ', kinds: ['drag'], levels: [
+        { id: 'j.sea', name: 'Southeast Asia', items: () => nations('Asia', 'S').filter((c) => HAS_SHAPE.has(c.shape)) },
+        { id: 'j.eu1', name: 'Europe: well known', items: () => nations('Europe', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
+        { id: 'j.af1', name: 'Africa: well known', items: () => nations('Africa', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
+        { id: 'j.na1', name: 'North America: well known', items: () => nations('North America', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
+        { id: 'j.sa', name: 'South America', items: () => nations('South America').filter((c) => HAS_SHAPE.has(c.shape)) }
+      ] },
+    { id: 'who', section: 'Map games', map: 'world', icon: '🕵️', c: '#8a5cc7', name: 'Who Am I?', blurb: 'Guess the place from clues. The fewer clues you need, the better!',
+      unit: 'to guess', noExplore: true, stage: 'Who am I: ', all: () => pool, kinds: ['who'], levels: [
+        { id: 'q.w1', name: 'Well-known countries', items: () => COUNTRIES.filter((c) => c.tag) },
+        { id: 'q.wall', name: 'All countries', items: () => COUNTRIES },
+        { id: 'q.animals', name: 'Animals', items: () => ANIMALS },
+        { id: 'q.landmarks', name: 'Landmarks', items: () => LANDMARKS },
+        { id: 'q.foods', name: 'Foods', items: () => FOODS },
+        { id: 'q.nature', name: 'Nature', items: () => NATURE }
+      ] },
+    { id: 'neighbours', section: 'Map games', map: 'world', icon: '🏘️', c: '#e0558a', name: 'Neighbours', blurb: 'Tap every country that shares a border with a country.',
+      unit: 'countries', noExplore: true, hideDots: true, round: 5, stage: 'Neighbours: ', kinds: ['neigh'], levels: [
+        { id: 'b.europe', name: 'Europe', items: () => nations('Europe'), subjects: () => borderSubjects('Europe') },
+        { id: 'b.asia', name: 'Asia', items: () => nations('Asia'), subjects: () => borderSubjects('Asia') },
+        { id: 'b.africa', name: 'Africa', items: () => nations('Africa'), subjects: () => borderSubjects('Africa') },
+        { id: 'b.america', name: 'The Americas', items: () => nations('North America').concat(nations('South America')),
+          subjects: () => borderSubjects('North America').concat(borderSubjects('South America')) }
       ] }
   ];
   const LEVELS = TOPICS.flatMap((t) => t.levels);
-  const ROUND = 6;
+  const ROUND = 6; // questions in a round, unless the topic says (round)
 
   // ---- Children and saved state ----
   // The children are shared by every Cendekia app (shared/profile.js). Omnia keeps, per child, the best stars of every
@@ -748,7 +912,7 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (192 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (267 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
@@ -761,7 +925,10 @@
     { at: 114, name: 'Mask', pic: '🎭', c: '#ffe3c2' }, { at: 126, name: 'Safari', pic: '🦁', c: '#fff1c2' },
     { at: 141, name: 'Omnia master', pic: '🏆', c: '#fff1c2' },
     { at: 152, name: 'Volcano', pic: '🌋', c: '#ffe3c2' }, { at: 164, name: 'Boat', pic: '⛵', c: '#d6ebff' },
-    { at: 178, name: 'Friends', pic: '🧑‍🤝‍🧑', c: '#ece6ff' }, { at: 192, name: 'Super explorer', pic: '🥇', c: '#fff1c2' }
+    { at: 178, name: 'Friends', pic: '🧑‍🤝‍🧑', c: '#ece6ff' }, { at: 192, name: 'Super explorer', pic: '🥇', c: '#fff1c2' },
+    { at: 205, name: 'Monument', pic: '🗿', c: '#ece6ff' }, { at: 220, name: 'Noodles', pic: '🍜', c: '#ffe3c2' },
+    { at: 238, name: 'Puzzle', pic: '🧩', c: '#d9f5e8' }, { at: 252, name: 'Detective', pic: '🔍', c: '#d6ebff' },
+    { at: 267, name: 'Good neighbour', pic: '🏘️', c: '#ffe0ec' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -939,6 +1106,9 @@
     return {
       use, setDots, mark, clear, say, fit, show,
       place(slot) { slot.appendChild($('mapbox')); },
+      // Where a point of the map is on the screen, and how many screen pixels a map unit is now.
+      screenOf(x, y) { const sz = size(); return [sz.left + (x - vb.x) / upp(), sz.top + (y - vb.y) / upp()]; },
+      pxPerUnit: () => 1 / upp(),
       onTap(fn) { tapped = fn; },
       has: (id) => shapes.has(id)
     };
@@ -961,7 +1131,12 @@
     $('homeDays').textContent = days + (days === 1 ? ' day' : ' days');
     $('homeStk').textContent = unlocked(stars) + '/' + STICKERS.length;
     const box = $('topics'); box.innerHTML = '';
-    TOPICS.forEach((t, k) => {
+    let section = '';
+    TOPICS.slice().sort((a, b) => SECTIONS.indexOf(a.section) - SECTIONS.indexOf(b.section)).forEach((t, k) => {
+      if (t.section !== section) {
+        section = t.section;
+        const h = document.createElement('h3'); h.className = 'sec'; h.textContent = section; box.appendChild(h);
+      }
       const max = t.levels.length * 3, got = topicStars(t);
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', t.c); b.style.animationDelay = k * 0.06 + 's';
@@ -986,7 +1161,7 @@
     x.type = 'button'; x.className = 'card wide'; x.style.setProperty('--c', t.c);
     x.innerHTML = '<span class="badge" aria-hidden="true">🔎</span><span><b>Explore the map</b><small>' + t.sub + '</small></span>';
     x.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); startExplore(t); });
-    box.appendChild(x);
+    if (!t.noExplore) box.appendChild(x);
     t.levels.forEach((lv, i) => {
       const b = document.createElement('button'), n = lv.items().length;
       b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', t.c); b.style.animationDelay = i * 0.04 + 's';
@@ -1033,6 +1208,7 @@
     MapView.use(t.map);
     const items = t.all();
     MapView.clear();
+    $('map').classList.remove('nodots');
     MapView.setDots(items, true);
     MapView.fit(t.map === 'world' ? [{ x: 0, y: 0 }, { x: MAPS.world.w, y: MAPS.world.h }] : items);
     $('xInfo').innerHTML = '<p>' + t.hint + '</p>';
@@ -1056,10 +1232,10 @@
   let qs = [], qi = 0, tries = 0, results = [], started = 0, locked = false, pool = [], roundNo = 0;
   const PRAISE = ['Great!', 'Well done!', 'Yes, that is right!', 'Brilliant!', 'Super!', 'Spot on!', 'You got it!'];
   function makeRound(lv) {
-    const items = lv.items(), kinds = lv.kinds || curTopic.kinds;
+    const items = lv.subjects ? lv.subjects() : lv.items(), kinds = lv.kinds || curTopic.kinds, size = curTopic.round || ROUND;
     const order = shuffle(items);
     const out = [];
-    for (let i = 0; out.length < ROUND && i < order.length * 3; i++) {
+    for (let i = 0; out.length < size && i < order.length * 3; i++) {
       const it = order[i % order.length];
       const kind = kinds[out.length % kinds.length];
       // A province's capital is only asked for a provincial capital.
@@ -1115,6 +1291,7 @@
     MapView.place($('pSlot'));
     MapView.use(curTopic.map);
     MapView.clear();
+    $('map').classList.toggle('nodots', !!curTopic.hideDots);
     MapView.setDots(pool, false);
     MapView.mark('pool', [], pool.flatMap(shapeOf));
     MapView.fit(pool);
@@ -1136,6 +1313,9 @@
     MapView.say(null);
     $('why').hidden = true;
     const box = $('answers'); box.innerHTML = '';
+    if (q.kind === 'drag') { askDrag(it); return; }
+    if (q.kind === 'who') { askWho(it); return; }
+    if (q.kind === 'neigh') { askNeigh(it); return; }
     if (q.kind === 'find') {
       const byFlag = !!curTopic.flags;
       $('say').textContent = byFlag ? 'Which country has this flag? Tap it on the map.' : curTopic.say ? curTopic.say.find(it) : 'Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.');
@@ -1164,7 +1344,9 @@
   }
   function onMapTap({ dot, shape }) {
     const q = qs[qi];
-    if (locked || !q || q.kind !== 'find') return;
+    if (locked || !q) return;
+    if (q.kind === 'neigh') { tapNeigh({ dot, shape }); return; }
+    if (q.kind !== 'find' && q.kind !== 'drag') return; // tapping the country also answers a jigsaw piece
     const it = q.it;
     // Another country can be tapped by mistake only when a country is what is asked for.
     const got = pool.find((p) => p.key === dot) || (shape && pool.find((p) => p.shape === shape)) || (shape && isWorld(it) && COUNTRIES.find((p) => p.shape === shape));
@@ -1174,14 +1356,167 @@
     answer(false, null, got);
   }
 
+  // ---- Map Jigsaw: drag the shape of a country onto the map ----
+  // The piece is the biggest part of the country's shape (not its far islands). It follows the finger at the size it has on the
+  // map now; dropped on its own country, or near its middle, it is right. Tapping the country (or its dot) also answers it.
+  const parts = new Map();
+  function mainPart(id) {
+    if (parts.has(id)) return parts.get(id);
+    let best = null;
+    MAPS.world.shapes.filter(([sid]) => sid === id).forEach(([, d]) => d.split(/(?=M)/).forEach((sub) => {
+      const n = sub.match(/-?\d+(?:\.\d+)?/g).map(Number);
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      for (let i = 0; i + 1 < n.length; i += 2) { x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i + 1]); y1 = Math.max(y1, n[i + 1]); }
+      const area = (x1 - x0) * (y1 - y0);
+      if (!best || area > best.area) best = { d: sub, x0, y0, w: Math.max(x1 - x0, 0.01), h: Math.max(y1 - y0, 0.01), area };
+    }));
+    parts.set(id, best);
+    return best;
+  }
+  const pieceSvg = (g, k) => '<svg viewBox="' + [g.x0, g.y0, g.w, g.h].join(' ') + '" width="' + (g.w * k).toFixed(1) + '" height="' + (g.h * k).toFixed(1) + '" aria-hidden="true"><path d="' + g.d + '"/></svg>';
+  function askDrag(it) {
+    const g = mainPart(it.shape);
+    $('say').textContent = 'Where does ' + named(it) + ' belong? Drag its piece onto the map.';
+    const k = Math.min(130 / g.w, 96 / g.h);
+    $('answers').innerHTML = '<div class="tray"><div class="piece" role="img" aria-label="The piece to place">' + pieceSvg(g, k) + '</div></div>'
+      + '<p class="tapnote">…or tap its place on the map</p>';
+    const pc = $('answers').querySelector('.piece');
+    let d = null;
+    pc.addEventListener('pointerdown', (e) => {
+      if (locked) return;
+      e.preventDefault();
+      try { pc.setPointerCapture(e.pointerId); } catch (err) { /* already released */ }
+      const pp = MapView.pxPerUnit(), big = Math.max(g.w, g.h) * pp, f = big < 40 ? 40 / big : 1; // a tiny country is drawn bigger
+      const fl = document.createElement('div'); fl.className = 'pfloat'; fl.innerHTML = pieceSvg(g, pp * f); document.body.appendChild(fl);
+      const W = g.w * pp * f, H = g.h * pp * f, [cx, cy] = MapView.screenOf(g.x0 + g.w / 2, g.y0 + g.h / 2);
+      d = { fl, W, H, cx, cy, sx: e.clientX, sy: e.clientY, moved: false };
+      pc.dataset.tx = Math.round(cx); pc.dataset.ty = Math.round(cy); // where it belongs, on the screen
+      pc.classList.add('ghost'); sfx.tap();
+      follow(e);
+    });
+    const follow = (e) => { d.fl.style.transform = 'translate(' + (e.clientX - d.W / 2) + 'px,' + (e.clientY - d.H / 2) + 'px)'; };
+    pc.addEventListener('pointermove', (e) => {
+      if (!d) return;
+      if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) > 6) d.moved = true;
+      follow(e);
+    });
+    const drop = (e) => {
+      if (!d) return;
+      const x = d; d = null;
+      x.fl.remove(); pc.classList.remove('ghost');
+      if (e.type !== 'pointerup' || !x.moved || locked) return;
+      const r = $('mapbox').getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return; // dropped off the map: back to the tray
+      const t = document.elementFromPoint(e.clientX, e.clientY), under = t && t.dataset && t.dataset.id ? t.dataset.id : null;
+      if (under === it.shape || Math.hypot(e.clientX - x.cx, e.clientY - x.cy) < Math.max(32, 0.4 * Math.max(x.W, x.H))) { answer(true); return; }
+      const got = under && BY_SHAPE.get(under);
+      if (got) { MapView.mark('no', [got.key], shapeOf(got)); MapView.say(got.name, got.x, got.y); }
+      answer(false, null, got);
+    };
+    pc.addEventListener('pointerup', drop);
+    pc.addEventListener('pointercancel', drop);
+  }
+
+  // ---- Who Am I?: clues one at a time ----
+  // Reading up to FREE_CLUES clues keeps the first try; every clue after that counts as a miss. The last clue shows the place.
+  const FREE_CLUES = 3;
+  let clueN = 1, clueList = [];
+  const an = (w) => (/^[aeiou]/i.test(w) ? 'an ' : 'a ') + w;
+  function cluesFor(it) {
+    const out = [];
+    if (isWorld(it)) {
+      out.push('I am a country in <b>' + esc(it.continent) + '</b>.');
+      const nb = neighboursOf(it);
+      if (nb) out.push(nb.length === 0 ? 'I am an island country. I have <b>no land neighbours</b>.' : 'I share a land border with <b>' + nb.length + (nb.length === 1 ? ' country' : ' countries') + '</b>.');
+      out.push('My capital city starts with the letter <b>' + esc(it.capital[0]) + '</b>.');
+      out.push('This is my flag: <span class="bigflag" aria-hidden="true">' + flag(it.a2) + '</span>');
+      out.push('My capital city is <b>' + esc(it.capital) + '</b>.');
+    } else {
+      out.push('I am <b>' + an(it.noun) + '</b>.');
+      if (it.at) out.push((it.noun === 'dish' ? 'I come from ' : it.noun === 'animal' ? 'I live in ' : 'I am in ') + '<b>' + esc(it.at) + '</b>.');
+      out.push((it.plural ? 'We are ' : 'I am ') + esc(it.note.split(it.name).join('…')));
+      if (pool.filter((p) => p.icon === it.icon).length === 1) out.push('This is my picture: <span class="bigflag" aria-hidden="true">' + esc(it.icon) + '</span>');
+    }
+    out.push('MAP');
+    return out;
+  }
+  function renderClues(it) {
+    const last = clueN >= clueList.length;
+    $('clues').innerHTML = clueList.slice(0, clueN).map((c) => '<li>' + (c === 'MAP' ? 'Here I am on the map!' : c) + '</li>').join('');
+    if (last) { MapView.mark('hl', [it.key], shapeOf(it)); MapView.show(it); }
+    $('moreClue').hidden = last;
+    $('say').textContent = last ? 'Last clue! Who am I?' : 'Who am I? Read the clues.';
+  }
+  function askWho(it) {
+    clueList = cluesFor(it); clueN = 1;
+    const q = qs[qi], box = $('answers');
+    box.innerHTML = '<ol class="clues" id="clues" aria-live="polite"></ol><button type="button" class="btn ghost moreclue" id="moreClue">Another clue</button>';
+    const opts = document.createElement('div'); opts.className = 'opts';
+    choicesFor(q).forEach((v, k) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'opt'; b.dataset.v = v; b.textContent = v; b.style.animationDelay = k * 0.05 + 's';
+      b.addEventListener('click', () => answer(v === target(q), b));
+      opts.appendChild(b);
+    });
+    box.appendChild(opts);
+    $('moreClue').addEventListener('click', () => { if (locked) return; sfx.tap(); clueN = Math.min(clueN + 1, clueList.length); renderClues(it); });
+    renderClues(it);
+  }
+
+  // ---- Neighbours: tap every country that shares a border ----
+  // A first wrong tap is a miss and a second one shows the answer. Tapping the country itself or a neighbour twice does nothing.
+  let nbWant = [], nbFound = new Set();
+  const listOf = (items) => items.map(named).join(', ').replace(/, ([^,]*)$/, items.length > 1 ? ' and $1' : ', $1');
+  const cap = (t) => t[0].toUpperCase() + t.slice(1);
+  const nbNote = () => { $('nbNote').textContent = '👆 Found ' + nbFound.size + ' of ' + nbWant.length; };
+  function askNeigh(it) {
+    nbWant = neighboursOf(it); nbFound = new Set();
+    MapView.mark('hl', [it.key], shapeOf(it)); MapView.show(it);
+    $('say').textContent = 'Which countries share a border with ' + named(it) + '? Tap them all.';
+    $('answers').innerHTML = '<p class="tapnote" id="nbNote"></p>';
+    nbNote();
+  }
+  function tapNeigh({ dot, shape }) {
+    const it = qs[qi].it;
+    const got = (dot && COUNTRIES.find((c) => c.key === dot)) || (shape && BY_SHAPE.get(shape));
+    if (!got || nbFound.has(got)) return;
+    if (got === it) { $('say').textContent = 'That is ' + named(it) + ' itself. Tap its neighbours!'; return; }
+    if (nbWant.includes(got)) {
+      nbFound.add(got); sfx.good();
+      const have = [...nbFound];
+      MapView.mark('no'); MapView.mark('ok', have.map((c) => c.key), have.flatMap(shapeOf));
+      MapView.say(got.name, got.x, got.y); nbNote();
+      if (nbFound.size < nbWant.length) { $('say').textContent = 'Yes, ' + named(got) + '! Keep going.'; return; }
+      locked = true; results.push(tries === 0); mood('cheer');
+      $('say').textContent = pick(PRAISE);
+      renderProg();
+      const r = roundNo; setTimeout(() => { if (r === roundNo) next(); }, 1300);
+      return;
+    }
+    tries++; sfx.bad(); mood('oops');
+    MapView.mark('no', [got.key], shapeOf(got)); MapView.say(got.name, got.x, got.y);
+    if (tries === 1) {
+      CD.weak('omnia', stageOf(curLevel) + ': ' + it.name);
+      $('say').textContent = cap(named(got)) + ' is not next to ' + named(it) + '. Try again!';
+      return;
+    }
+    locked = true; results.push(false); renderProg();
+    MapView.mark('no'); MapView.mark('ok', nbWant.map((c) => c.key), nbWant.flatMap(shapeOf));
+    $('say').textContent = 'Here they are!';
+    $('whyText').textContent = cap(named(it)) + ' shares a border with ' + listOf(nbWant) + '.';
+    $('why').hidden = false;
+    $('whyNext').focus();
+  }
+
   function answer(right, btn, wrongPlace) {
     if (locked) return;
     const q = qs[qi], it = q.it;
     if (right) {
       locked = true;
-      results.push(tries === 0);
+      results.push(tries === 0 && !(q.kind === 'who' && clueN > FREE_CLUES));
       sfx.good(); mood('cheer');
       $('say').textContent = pick(PRAISE);
+      $('answers').querySelectorAll('.piece').forEach((c) => c.classList.add('placed'));
       if (btn) btn.classList.add('ok');
       MapView.mark('hl'); MapView.mark('no');
       MapView.mark('ok', [it.key], shapeOf(it));

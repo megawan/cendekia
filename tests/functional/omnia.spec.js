@@ -1,7 +1,8 @@
 const { test, expect } = require('../support/fixtures');
 
 // Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
-// "Culture of Indonesia", "Animals of the World", "Volcanoes and Disasters", "Islands and Straits" or "Peoples and Languages").
+// "Culture of Indonesia", "Animals of the World", "Volcanoes and Disasters", "Islands and Straits", "Peoples and Languages",
+// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?" or "Neighbours").
 async function openTopic(page, name) {
   await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
@@ -26,15 +27,16 @@ const onAnyLand = (page, place) => page.evaluate((place) => {
   return [...svg.querySelectorAll('path')].some((p) => p.isPointInFill(pt));
 }, place);
 
-// Plays the open level to its result: answers with the first choice or the first dots; a second miss shows the answer and a Next button.
+// Plays the open level to its result: answers with the first choice, or presses on dots, and a second miss shows the answer and a Next button.
 async function playRound(page) {
   await expect(page.locator('#play')).toBeVisible();
-  for (let step = 0; step < 40 && !(await page.locator('#result').isVisible()); step++) {
+  for (let step = 0; step < 150 && !(await page.locator('#result').isVisible()); step++) {
     if (await page.locator('#whyNext').isVisible()) { await page.locator('#whyNext').click(); continue; }
     const opt = page.locator('.opt:not([disabled])').first();
-    if (await opt.count()) await opt.click();
-    else await page.locator('#map circle').nth(step % 2).press('Enter');
-    await page.waitForTimeout(1500);
+    if (await opt.count()) { await opt.click(); await page.waitForTimeout(1500); continue; }
+    const dots = page.locator('#map circle');
+    await dots.nth((step * 7) % await dots.count()).press('Enter');
+    await page.waitForTimeout(250);
   }
   await expect(page.locator('#result')).toBeVisible();
 }
@@ -42,14 +44,14 @@ const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(wind
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
-  test('lists the nine topics and their levels', async ({ page }) => {
+  test('lists the fourteen topics and their levels', async ({ page }) => {
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Capitals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
-    await expect(page.locator('#topics .card')).toHaveCount(10); // nine topics and the stickers
+    await expect(page.locator('#topics .card')).toHaveCount(15); // fourteen topics and the stickers
     await page.locator('#topics .card', { hasText: 'Flags of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
@@ -70,6 +72,11 @@ test.describe('Omnia', () => {
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Peoples and Languages' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
+    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 6], ['Neighbours', 4]]) { // a game has no Explore card
+      await page.getByRole('button', { name: '← Home' }).click();
+      await page.locator('#topics .card', { hasText: topic }).click();
+      await expect(page.locator('#levels .card')).toHaveCount(levels);
+    }
   });
 
   test('mountains, rivers and deserts lie on land and oceans and seas do not', async ({ page }) => {
@@ -142,6 +149,34 @@ test.describe('Omnia', () => {
       'Toraja', 'Mandar', 'Minahasa', 'Gorontalo', 'Sasak', 'Tetun', 'Ambonese', 'Dani', 'Asmat']) expect(await onAnyLand(page, place), place).toBe(true);
     await page.locator('#map circle[aria-label="Balinese"]').press('Enter');
     await expect(page.locator('#xInfo')).toContainText('suksma');
+  });
+
+  test('landmarks and foods are on land, and each says its country', async ({ page }) => {
+    await openTopic(page, 'Landmarks of the World');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    for (const place of ['Borobudur', 'Great Wall', 'Taj Mahal', 'Angkor Wat', 'Petronas Towers', 'Burj Khalifa', 'Petra', 'Eiffel Tower', 'Colosseum', 'Big Ben', 'Sagrada Família',
+      'Acropolis', 'Brandenburg Gate', 'St Basil’s Cathedral', 'Pyramids of Giza', 'Lalibela', 'Great Zimbabwe', 'Sydney Opera House', 'Uluru', 'Mount Rushmore', 'CN Tower',
+      'Chichen Itza', 'Panama Canal', 'Christ the Redeemer', 'Machu Picchu']) expect(await onAnyLand(page, place), place).toBe(true);
+    await page.locator('#map circle[aria-label="Eiffel Tower"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('France');
+    await page.getByRole('button', { name: '← Back' }).click();
+    await page.getByRole('button', { name: '← Home' }).click();
+    await page.locator('#topics .card', { hasText: 'Foods of the World' }).click();
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    for (const place of ['Sushi', 'Kimchi', 'Dumplings', 'Biryani', 'Pad Thai', 'Pho', 'Nasi lemak', 'Kebab', 'Adobo', 'Pizza', 'Croissant', 'Paella', 'Fish and chips', 'Pierogi',
+      'Pretzel', 'Moussaka', 'Waffles', 'Goulash', 'Fondue', 'Couscous', 'Injera', 'Koshari', 'Bobotie', 'Ugali', 'Jollof rice', 'Meat pie', 'Tacos', 'Hamburger', 'Ceviche',
+      'Feijoada', 'Empanadas', 'Arepas', 'Jerk chicken']) expect(await onAnyLand(page, place), place).toBe(true);
+    await page.locator('#map circle[aria-label="Sushi"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('Japan');
+  });
+
+  test('the land borders are right, without the overseas ones', async ({ page }) => {
+    await page.goto('/omnia/');
+    const b = await page.evaluate(() => window.OMNIA_BORDERS);
+    expect(b['458']).toEqual(['096', '360', '764']); // Malaysia: Brunei, Indonesia, Thailand
+    expect(b['250']).not.toContain('076'); // France does not touch Brazil
+    expect(b['076']).not.toContain('250');
+    expect(b['392']).toEqual([]); // Japan is an island country
   });
 
   test('flags are shown for the countries, and Israel is not among them', async ({ page }) => {
@@ -238,5 +273,73 @@ test.describe('Omnia', () => {
     await playRound(page);
     expect((await saved(page)).best['p.all']).toBeGreaterThanOrEqual(1);
     expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Peoples: All peoples' });
+  });
+
+  test('a landmarks round and a foods round are saved under their own ids', async ({ page }) => {
+    await openTopic(page, 'Landmarks of the World');
+    await page.locator('#levels .card', { hasText: 'Landmarks of Europe' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['l.europe']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Landmarks: Landmarks of Europe' });
+  });
+
+  test('a foods round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Foods of the World');
+    await page.locator('#levels .card', { hasText: 'Foods of Asia' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['fd.asia']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Foods: Foods of Asia' });
+  });
+
+  test('a jigsaw piece dropped on its place is right, and a wrong place is not', async ({ page }) => {
+    await openTopic(page, 'Map Jigsaw');
+    await page.locator('#levels .card', { hasText: 'South America' }).click();
+    const piece = page.locator('.piece');
+    const box = await piece.boundingBox();
+    const grab = async () => {
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await expect(piece).toHaveAttribute('data-tx', /\d+/); // where the piece belongs on the screen
+      return [+(await piece.getAttribute('data-tx')), +(await piece.getAttribute('data-ty'))];
+    };
+    // Dropped on the sea at the corner of the map first: no country there, so it is a miss with a second try.
+    await grab();
+    const map = await page.locator('#mapbox').boundingBox();
+    await page.mouse.move(map.x + 8, map.y + map.height - 8, { steps: 4 });
+    await page.mouse.up();
+    await expect(page.locator('#say')).toContainText('Not quite');
+    const [tx, ty] = await grab();
+    await page.mouse.move(tx, ty, { steps: 6 });
+    await page.mouse.up();
+    await expect(piece).toHaveClass(/placed/); // after the miss, so it counts as one miss but is placed
+    await expect(page.locator('.prog i.miss')).toHaveCount(1);
+  });
+
+  test('a jigsaw round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Map Jigsaw');
+    await page.locator('#levels .card', { hasText: 'Southeast Asia' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['j.sea']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Jigsaw: Southeast Asia' });
+  });
+
+  test('Who Am I? gives clues one at a time and a round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Who Am I?');
+    await page.locator('#levels .card', { hasText: 'Well-known countries' }).click();
+    await expect(page.locator('#clues li')).toHaveCount(1);
+    await page.getByRole('button', { name: 'Another clue' }).click();
+    await expect(page.locator('#clues li')).toHaveCount(2);
+    await playRound(page);
+    expect((await saved(page)).best['q.w1']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Who am I: Well-known countries' });
+  });
+
+  test('a neighbours round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Neighbours');
+    await page.locator('#levels .card', { hasText: 'Europe' }).click();
+    await expect(page.locator('#nbNote')).toContainText('Found 0 of');
+    await playRound(page);
+    expect((await saved(page)).best['b.europe']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Neighbours: Europe' });
   });
 });
