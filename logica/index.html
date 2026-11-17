@@ -1231,7 +1231,8 @@
     S.day = today;
   }
   // What a player did in each level, for the parents' summary: q questions with ok right on the first try,
-  // runs of a robot program with wins reaching the flag and fails not, and hints. days counts puzzles solved per day.
+  // runs of a robot program with wins reaching the flag and fails not, and hints. slips counts the kind of mistake behind
+  // wrong answers, for the worlds whose wrong answers stand for a known slip. days counts puzzles solved per day.
   function logOf(w, i) {
     S.log = S.log || {};
     const k = S.diff + '/' + w + '/' + i;
@@ -1545,6 +1546,17 @@
 
   // Accuracy: questions right on the first try, or robot runs that reached the flag.
   const tries = (L) => L.q + L.runs;
+  // What each kind of slip means, in words for a grown-up, with something to try. Only the worlds listed here record slips.
+  const SLIPS = {
+    pack: {
+      'put-add': 'Mixes up Put and Add. Put makes the pocket exactly that number, while Add keeps what is already there. The 📖 Steps guide shows the difference.',
+      'skip-step': 'Skips a step while following the program. Pointing at each step with a finger, one at a time, helps.',
+      'other-pocket': 'Answers with the number from the other pocket. Check which pocket the ? is on before answering.',
+      start: 'Answers with the number the pocket started with, as if no step had changed it.',
+      'copy-reverse': 'Copies the wrong way round. In Copy A into B, it is B that gets the number from A.',
+      'off-by-one': 'Is often one or two away from the answer. Counting each step aloud can help.'
+    }
+  };
   const goodOnes = (L) => L.ok + L.wins;
   function statusOf(n, rate, got) {
     if (n < 3) return { cls: 'none', text: n || got ? '🌱 Just started' : '○ Not started' };
@@ -1613,6 +1625,17 @@
       ? '<ul class="plist2">' + hard.map((x) => '<li><b>' + x.w.name + ', level ' + (x.i + 1) + '</b> (' + levelName(x.w, x.diff, x.i) + ', ' + DIFFS[x.diff].name + '): '
         + pct(x.rate) + ' right on the first try in ' + x.n + ' tries</li>').join('') + '</ul>'
       : '<p class="muted">Nothing stands out yet. Levels show up here after a few tries with many mistakes.</p>') + '</div>';
+
+    // The slips behind wrong answers, for the worlds that record them: the two seen most often, at least three times.
+    const slipRows = WORLDS.filter((w) => SLIPS[w.id]).map((w) => {
+      const seen = {};
+      Object.entries(log).filter(([k]) => k.split('/')[1] === w.id).forEach(([, L]) => Object.entries(L.slips || {}).forEach(([t, n]) => { seen[t] = (seen[t] || 0) + n; }));
+      return { w, top: Object.entries(seen).filter(([t, n]) => n >= 3 && SLIPS[w.id][t]).sort((a, b) => b[1] - a[1]).slice(0, 2) };
+    }).filter((x) => x.top.length);
+    if (slipRows.length) {
+      h += '<div class="box"><h3>Common slips</h3><ul class="plist2">' + slipRows.map((x) => x.top.map(([t, n]) => '<li><b>' + x.w.name + '</b>: ' + SLIPS[x.w.id][t]
+        + ' <span class="muted">(' + n + ' times)</span></li>').join('')).join('') + '</ul></div>';
+    }
 
     // Suggestions.
     const tips = [];
@@ -2459,13 +2482,15 @@
     setTimeout(() => { if (my === runToken) nextQ(); }, delay || 1300);
   }
   // A wrong answer. After two, onHint shows the right one.
-  function wrong(onHint) {
+  // slip names the kind of mistake behind this answer, for the parents' summary.
+  function wrong(onHint, slip) {
     if (!Q.missed) CD.weak('logika', Q.w.name + ' · ' + Q.w.levels[Q.i]);
+    if (slip) { const L = logOf(Q.w.id, Q.i); L.slips = L.slips || {}; L.slips[slip] = (L.slips[slip] || 0) + 1; save(); }
     Q.missed = true; Q.tries++; Q.combo = 0; $('combo').textContent = '';
     sfx.bad(); qSay(P.again, 'oops');
     if (Q.tries >= 2 && onHint) onHint();
   }
-  // Option buttons. Each option is {html, ok, label}.
+  // Option buttons. Each option is {html, ok, label, slip}.
   // After two wrong answers, onHint runs; without it the right option glows.
   function options(list, onOk, onHint) {
     const box = document.createElement('div');
@@ -2483,7 +2508,7 @@
           onOk(b);
         } else {
           b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); b.disabled = true;
-          wrong(onHint || (() => { const right = [...box.children][list.findIndex((x) => x.ok)]; right.classList.add('hint'); }));
+          wrong(onHint || (() => { const right = [...box.children][list.findIndex((x) => x.ok)]; right.classList.add('hint'); }), o.slip);
         }
       });
       box.appendChild(b);
@@ -3492,7 +3517,7 @@
     ]);
   }
   // A number pad for the Hard answers: up to two digits, then ✓.
-  function packKeypad(ans, onOk, onHint) {
+  function packKeypad(ans, onOk, onHint, tags) {
     let val = '';
     const wrap = document.createElement('div');
     wrap.className = 'keypad';
@@ -3506,9 +3531,10 @@
       if (k === '✓') {
         if (!val) return;
         if (+val === ans) { wrap.classList.add('done'); onOk(); return; }
+        const typed = +val;
         val = ''; out.textContent = '?';
         wrap.classList.remove('no'); void wrap.offsetWidth; wrap.classList.add('no');
-        wrong(onHint);
+        wrong(onHint, tags[typed] || 'other');
         return;
       }
       if (k === '⌫') val = val.slice(0, -1); else if (val.length < 2) val += k;
@@ -3563,14 +3589,22 @@
       qSay('Look at the table: it shows the pockets after the steps. Now do the last step!', 'happy');
     };
     const done = () => { packPaint(run.final); solved(1500); };
-    if (S.diff === 'hard') { packKeypad(ans, done, showTrace); return; }
+    // The wrong answers are the slips a child makes. When two slips give the same number, the first one listed names it.
+    const slips = new Map();
+    const slip = (tag, v) => { if (v !== ans && v >= 0 && v <= max + 5 && !slips.has(v)) slips.set(v, tag); };
+    slip('put-add', packRun(start, prog.map((o) => (o.op === 'put' ? { op: 'add', p: o.p, v: o.v } : o)), true).final[ask]); // Put taken for Add
+    slip('copy-reverse', packRun(start, prog.map((o) => (o.op === 'copy' ? { op: 'copy', p: o.to, to: o.p } : o)), true).final[ask]);
+    prog.forEach((_, k) => slip('skip-step', packRun(start, prog.filter((__, j) => j !== k), true).final[ask]));
+    run.final.forEach((v, p) => { if (p !== ask) slip('other-pocket', v); });
+    slip('start', start[ask]);
+    [ans + 1, ans - 1, ans + 2, ans - 2].forEach((v) => slip('off-by-one', v));
+    if (S.diff === 'hard') { packKeypad(ans, done, showTrace, Object.fromEntries(slips)); return; }
     const need = S.diff === 'easy' ? 3 : 4;
-    const slips = new Set([ans + 1, ans - 1, ans + 2, start[ask], packRun(start, prog.map((o) => (o.op === 'copy' ? { op: 'copy', p: o.to, to: o.p } : o)), true).final[ask]]);
-    run.final.forEach((v, p) => { if (p !== ask) slips.add(v); });
-    prog.forEach((_, k) => slips.add(packRun(start, prog.filter((__, j) => j !== k), true).final[ask]));
-    const bad = shuffle([...slips].filter((v) => v !== ans && v >= 0 && v <= max + 5)).slice(0, need - 1);
-    for (let d = 3; bad.length < need - 1; d++) [ans + d, ans - d].forEach((v) => { if (v >= 0 && v !== ans && !bad.includes(v) && bad.length < need - 1) bad.push(v); });
-    options(shuffle([ans, ...bad]).map((v) => ({ html: '<b>' + v + '</b>', ok: v === ans, label: String(v) })), done, showTrace);
+    // A put taken for an add is the slip worth showing, so it always makes the list when there is one.
+    const pool = shuffle([...slips.keys()]), mix = pool.filter((v) => slips.get(v) === 'put-add').concat(pool.filter((v) => slips.get(v) !== 'put-add'));
+    const bad = mix.slice(0, need - 1);
+    for (let d = 3; bad.length < need - 1; d++) [ans + d, ans - d].forEach((v) => { if (v >= 0 && v !== ans && !bad.includes(v) && bad.length < need - 1) { bad.push(v); slips.set(v, 'off-by-one'); } });
+    options(shuffle([ans, ...bad]).map((v) => ({ html: '<b>' + v + '</b>', ok: v === ans, label: String(v), slip: v === ans ? undefined : slips.get(v) })), done, showTrace);
   }
 
   // ---- Poka's Backpack: build the steps ----

@@ -30,12 +30,12 @@ const readPuzzle = (page) => page.evaluate(() => ({
 }));
 
 // Follows the steps. A step that takes more than a pocket holds throws.
-function follow({ start, prog }) {
+function follow({ start, prog }, lenient) {
   const s = start.slice();
   prog.forEach((o) => {
     if (o.op === 'put') s[o.p] = o.v;
     else if (o.op === 'add') s[o.p] += o.v;
-    else if (o.op === 'take') { if (s[o.p] < o.v) throw new Error('takes more than the pocket holds'); s[o.p] -= o.v; }
+    else if (o.op === 'take') { if (s[o.p] < o.v && !lenient) throw new Error('takes more than the pocket holds'); s[o.p] = Math.max(0, s[o.p] - o.v); }
     else s[o.to] = s[o.p];
   });
   return s;
@@ -271,5 +271,68 @@ test.describe("Poka's Backpack", () => {
     await expect(page.locator('.pouch').first()).toBeVisible();
     await page.getByRole('button', { name: '📖 Steps' }).click();
     await expect(page.getByRole('dialog', { name: 'Backpack steps' }).locator('.tsteps')).toContainText('Like emptying your bag');
+  });
+
+  // What the page stored for this player: the log of every level.
+  const storedLog = (page) => page.evaluate(() => JSON.parse(localStorage.getItem('logika.v3.' + window.Cendekia.profile().id)).log);
+
+  test('a wrong answer is recorded with the slip behind it, even before the puzzle is solved', async ({ page }) => {
+    let tagged = false;
+    for (let k = 0; k < 15 && !tagged; k++) {
+      await openLogica(page, 'medium');
+      await openLevel(page, 1);
+      const puzzle = await readPuzzle(page), ans = follow(puzzle)[puzzle.ask];
+      // The answer of a child who takes every Put for an Add.
+      const putAdd = follow({ start: puzzle.start, prog: puzzle.prog.map((o) => (o.op === 'put' ? { ...o, op: 'add' } : o)).filter(Boolean) }, true)[puzzle.ask];
+      if (!puzzle.prog.some((o) => o.op === 'put') || putAdd === ans) continue;
+      const option = page.locator('.opt[aria-label="' + putAdd + '"]');
+      if (!(await option.count())) continue; // a number far above what a pocket holds is not offered
+      await option.click();
+      expect((await storedLog(page))['medium/pack/0'].slips).toEqual({ 'put-add': 1 });
+      tagged = true;
+    }
+    expect(tagged).toBe(true);
+  });
+
+  test('on hard a typed number is recorded as a slip too', async ({ page }) => {
+    await openLogica(page, 'hard');
+    await openLevel(page, 1);
+    const puzzle = await readPuzzle(page), ans = follow(puzzle)[puzzle.ask];
+    await answer(page, 'hard', ans < 50 ? ans + 1 : ans - 1);
+    const slips = (await storedLog(page))['hard/pack/0'].slips;
+    expect(Object.values(slips)).toEqual([1]);
+    expect(['put-add', 'copy-reverse', 'skip-step', 'other-pocket', 'start', 'off-by-one', 'other']).toContain(Object.keys(slips)[0]);
+  });
+
+  // Opens the parents' summary for a player whose log holds these slips.
+  async function parentsWith(page, slips) {
+    await openLogica(page, 'medium');
+    await page.evaluate((sl) => {
+      const key = 'logika.v3.' + window.Cendekia.profile().id, st = JSON.parse(localStorage.getItem(key));
+      st.log = { 'medium/pack/0': { q: 6, ok: 2, runs: 0, wins: 0, fails: 0, hints: 0, slips: sl } };
+      localStorage.setItem(key, JSON.stringify(st));
+    }, slips);
+    await page.reload();
+    await page.locator('#toParents').click();
+    const [a, b] = (await page.locator('#gateQ').textContent()).match(/\d+/g).map(Number);
+    await page.locator('#gateA').fill(String(a * b));
+    await page.getByRole('button', { name: 'Open the summary' }).click();
+    return page.locator('#rep');
+  }
+
+  test('the parents summary names the two slips seen most often, at least three times', async ({ page }) => {
+    const rep = await parentsWith(page, { 'put-add': 5, 'copy-reverse': 4, 'skip-step': 3, 'off-by-one': 2 });
+    await expect(rep).toContainText('Common slips');
+    await expect(rep).toContainText('Mixes up Put and Add');
+    await expect(rep).toContainText('(5 times)');
+    await expect(rep).toContainText('Copies the wrong way round');
+    await expect(rep).not.toContainText('Skips a step'); // a third slip is left out
+    await expect(rep).not.toContainText('one or two away'); // seen only twice
+  });
+
+  test('the parents summary has no slips box until a slip has been seen three times', async ({ page }) => {
+    const rep = await parentsWith(page, { 'put-add': 2, other: 9 });
+    await expect(rep).toContainText('Worth practicing');
+    await expect(rep).not.toContainText('Common slips');
   });
 });
