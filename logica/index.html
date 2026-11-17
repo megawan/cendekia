@@ -451,6 +451,8 @@
   .recipe .lhead button { min-width: 36px; min-height: 36px; padding: 0 6px; border: 0; border-radius: 50%; background: rgba(255,255,255,.3); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
   .recipe .lhead .tg { flex: 1; display: flex; align-items: center; gap: 10px; border-radius: 10px; background: none; text-align: left; }
   .recipe .lhead .rn { font-weight: 800; }
+  .recipe li.fixed { outline: 3px solid var(--good); }
+  .opts.stack { display: grid; align-items: stretch; grid-template-columns: minmax(0, 1fr); width: 100%; } .opts.stack .opt { justify-self: stretch; min-height: 56px; font-size: 1.05rem; line-height: 1.4; }
   .recipe li.tap { cursor: pointer; } .recipe li.tap:focus-visible { outline: 3px solid var(--c-blue); outline-offset: 2px; }
   .keypad.no { animation: shake .3s; } .keypad.done .key { opacity: .5; }
   .demo .recipe { gap: 3px; } .demo .pb { font-size: .75rem; padding: 3px 8px; } .demo .pouches { gap: 6px; } .demo .pouch .cnt { font-size: 1.2rem; }
@@ -1296,7 +1298,7 @@
       levels: ['Small tower', 'Taller tower', 'Middle peg', 'Messy start', 'Rebuild', 'Big tower', 'Mixed up'] },
     { id: 'pack', name: 'Poka\'s Backpack', skill: 'Variables', icon: '🎒', c: 'var(--c-rose)', kind: 'quiz', total: 3,
       desc: 'Follow the steps and work out what is in each pocket of the backpack.',
-      levels: ['Put in, take out', 'Two pockets', 'Copy', 'Build it', 'Swap', 'Repeat'] },
+      levels: ['Put in, take out', 'Two pockets', 'Copy', 'Build it', 'Swap', 'Repeat', 'Mixed up'] },
     { id: 'circuit', name: "Poka's Workshop", skill: 'Logic gates', icon: '🔌', c: 'var(--c-amber)', kind: 'quiz', total: 3,
       desc: 'Follow the wires through switches and gates, and light the lamp.',
       levels: ['Switch and flip', 'Both keys', 'Either key', 'Mixed wires', 'Fill the gate', 'Build a circuit'] }
@@ -1533,7 +1535,7 @@
     clues: 'Combining several clues, including "not", "or" and facts about things, to find the only answer that fits them all.',
     train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.',
     hanoi: 'Planning several moves ahead, and solving a big job by solving smaller copies of it first: to move the biggest disk, the smaller tower has to get out of the way.',
-    pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later. Later, building the steps to reach a number, swapping two pockets with a spare one, and repeating steps instead of writing them again and again.',
+    pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later. Later, building the steps to reach a number, swapping two pockets with a spare one, repeating steps instead of writing them again and again, and finding the one wrong step in a program.',
     circuit: 'Logic gates: AND, OR and NOT decide whether power gets through, the way computers combine simple yes-or-no decisions. Tracing a circuit from the switches to the lamp, and working back from the lamp to the switches. Later, choosing the gates that make a circuit match a table.'
   };
   let viewed = null, gateAns = 0;
@@ -1566,7 +1568,9 @@
       'off-by-one': 'Is often one or two away from the answer. Counting each step aloud can help.',
       'repeat-once': 'Does the steps inside a repeat only once. Saying each round aloud ("one... two... three...") helps.',
       'repeat-count': 'Repeats the wrong number of times, often one too many or too few. Tick off each round on the screen.',
-      'loop-first-only': 'Repeats only the first step inside a repeat, not all of them. Everything inside the repeat is done again each round.'
+      'loop-first-only': 'Repeats only the first step inside a repeat, not all of them. Everything inside the repeat is done again each round.',
+      'wrong-step': 'Changes a step that was fine. Following the program one step at a time shows where the numbers go wrong.',
+      'wrong-value': 'Finds the wrong step but fixes it the wrong way. Ask what the step should do to the pocket.'
     }
   };
   const goodOnes = (L) => L.ok + L.wins;
@@ -1749,7 +1753,8 @@
       ['<div class="demo"><div class="pouches">' + pouchHtml(0, 3) + pouchHtml(1, 1) + '</div></div>', 'The backpack has pockets, and each pocket holds a number of things. Here: 3 🍎 and 1 🍪.'],
       ['<div class="demo">' + progHtml([{ op: 'add', p: 0, v: 2 }, { op: 'take', p: 1, v: 1 }]) + '</div>', 'A program is a list of steps. Do them from the top, one at a time. Tap a step to hear what it does.'],
       ['<div class="demo"><div class="pouches">' + pouchHtml(0, 5) + pouchHtml(1, 0) + '</div></div>', 'After every step the numbers change. What is in the pocket at the end? 📖 Steps explains Put, Add, Take and Copy.'],
-      ['<div class="demo"><span class="pb pbtn add">➕ Add 1 to 🍎</span> <span class="pb pbtn take">➖ Take 1 from 🍎</span></div>', 'Later you build the steps yourself: tap blocks, then press ▶ Run.']
+      ['<div class="demo"><span class="pb pbtn add">➕ Add 1 to 🍎</span> <span class="pb pbtn take">➖ Take 1 from 🍎</span></div>', 'Later you build the steps yourself: tap blocks, then press ▶ Run.'],
+      ['<div class="demo"><span class="pb pbtn take">➖ Take 5 from 🍎</span></div>', 'Sometimes a program has one wrong step. Pick the change that makes it come out right.']
     ],
     circuit: [
       ['<div class="demo circ">' + cDemo({ t: 'in', i: 0 }, [true], true) + '</div>', 'A switch is ON or OFF. When it is ON, power flows along the wire.'],
@@ -2505,7 +2510,7 @@
     sfx.bad(); qSay(P.again, 'oops');
     if (Q.tries >= 2 && onHint) onHint();
   }
-  // Option buttons. Each option is {html, ok, label, slip}.
+  // Option buttons. Each option is {html, ok, label, slip, data}.
   // After two wrong answers, onHint runs; without it the right option glows.
   function options(list, onOk, onHint) {
     const box = document.createElement('div');
@@ -2514,6 +2519,7 @@
     list.forEach((o) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'opt'; b.innerHTML = o.html;
+      if (o.data) Object.assign(b.dataset, o.data);
       b.setAttribute('aria-label', o.label || 'Choice');
       b.addEventListener('click', () => {
         if (b.disabled || box.classList.contains('done') || b.classList.contains('wait')) return;
@@ -3584,6 +3590,7 @@
   // overflows, and the pocket asked about really changes. The wrong answers are the slips a child makes: one step too
   // many or too few, the other pocket, the start, or a copy going the wrong way.
   function genPack(lvl) {
+    if (lvl === 6) { genPackMixed(); return; }
     if (lvl === 5 && (S.diff === 'easy' || Q.n === 0)) { genPackRepeat(); return; } // Medium and Hard: one to read, then two to build
     if (lvl >= 3) { genPackBuild(lvl); return; }
     const cfg = PACK[S.diff], max = cfg.max, len = cfg.len[lvl], pockets = lvl === 0 ? 1 : 2;
@@ -3624,6 +3631,17 @@
     }
     packAsk({ lvl: 5, start, prog, ask, run, max });
   }
+  // A tap on a step card (Enter and Space too) says what the step does.
+  function packTap(recipe) {
+    recipe.querySelectorAll('li').forEach((li) => { li.tabIndex = 0; li.setAttribute('role', 'button'); li.classList.add('tap'); });
+    recipe.addEventListener('click', (e) => {
+      const li = e.target.closest('li');
+      if (li) { sfx.tap(); qSay(packHelp({ op: li.dataset.op, n: +li.dataset.n, p: +li.dataset.p, v: +li.dataset.v, to: li.dataset.to === '' ? null : +li.dataset.to }), 'happy'); }
+    });
+    recipe.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('li')) { e.preventDefault(); e.target.click(); }
+    });
+  }
   // The question for a program: how many are in the pocket asked about at the end? Easy and Medium offer choices, Hard a number pad.
   function packAsk({ lvl, start, prog, ask, run, max }) {
     const item = PACK_ITEMS[ask], ans = run.final[ask];
@@ -3633,15 +3651,7 @@
     $('ask').innerHTML = '<div class="pouches">' + start.map((v, p) => pouchHtml(p, v, p === ask)).join('') + '</div>' + progHtml(prog) + '<div id="traceBox"></div>'
       + '<div class="check"><button type="button" class="btn ghost" id="pGuide">📖 Steps</button></div>';
     $('pGuide').addEventListener('click', packGuide);
-    const recipe = $('ask').querySelector('.recipe');
-    recipe.querySelectorAll('li').forEach((li) => { li.tabIndex = 0; li.setAttribute('role', 'button'); li.classList.add('tap'); });
-    recipe.addEventListener('click', (e) => {
-      const li = e.target.closest('li');
-      if (li) { sfx.tap(); qSay(packHelp({ op: li.dataset.op, n: +li.dataset.n, p: +li.dataset.p, v: +li.dataset.v, to: li.dataset.to === '' ? null : +li.dataset.to }), 'happy'); }
-    });
-    recipe.addEventListener('keydown', (e) => {
-      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('li')) { e.preventDefault(); e.target.click(); }
-    });
+    packTap($('ask').querySelector('.recipe'));
     // The hint after two wrong answers: the pockets after every step but the last.
     const showTrace = () => {
       const box = $('traceBox');
@@ -3672,6 +3682,78 @@
     const bad = mix.slice(0, need - 1);
     for (let d = 3; bad.length < need - 1; d++) [ans + d, ans - d].forEach((v) => { if (v >= 0 && v !== ans && !bad.includes(v) && bad.length < need - 1) { bad.push(v); slips.set(v, 'off-by-one'); } });
     options(shuffle([ans, ...bad]).map((v) => ({ html: '<b>' + v + '</b>', ok: v === ans, label: String(v), slip: v === ans ? undefined : slips.get(v) })), done, showTrace);
+  }
+
+  // Level 7: the kinds of puzzle from the levels before, one after another. Medium and Hard end with one to debug.
+  function genPackMixed() {
+    const k = Q.n;
+    const kind = S.diff === 'easy' ? (k === 0 ? pick(['two', 'copy']) : 'build')
+      : k === 0 ? pick(['copy', 'repeat']) : k === 1 ? pick(['build', 'swap', 'repeatBuild']) : 'debug';
+    ({ two: () => genPack(1), copy: () => genPack(2), repeat: genPackRepeat, build: () => genPackBuild(3), swap: () => genPackBuild(4), repeatBuild: () => genPackBuild(5), debug: genPackDebug })[kind]();
+  }
+  // Debug: Poka's program has one wrong step, so it ends with the wrong number. The child picks the change that fixes it. Every
+  // puzzle is made fresh: a good program, then one step made a little wrong (a number off, an Add for a Take, a Put for an Add,
+  // a copy the wrong way). Of the changes offered, exactly one makes the program end right (each was run to check).
+  function genPackDebug() {
+    const d = S.diff, cfg = PACK[d], max = cfg.max, need = d === 'medium' ? 3 : 4;
+    const step = () => {
+      const p = rnd(0, 1), kind = pick(['add', 'take', 'put', 'copy']);
+      return kind === 'copy' ? { op: 'copy', p, to: 1 - p } : { op: kind, p, v: kind === 'put' ? rnd(0, Math.min(max, cfg.step * 2)) : rnd(1, cfg.step) };
+    };
+    // Steps a little different from o: a number off by a little, the other kind of step, a copy the other way.
+    const near = (o) => (o.op === 'copy' ? [{ op: 'copy', p: o.to, to: o.p }]
+      : [-2, -1, 1, 2, 3].map((x) => ({ ...o, v: o.v + x })).filter((x) => x.v >= (o.op === 'put' ? 0 : 1) && x.v <= max)
+        .concat([{ op: o.op === 'add' ? 'take' : 'add', p: o.p, v: o.v }]));
+    const key = (o) => packText(o, true), tooBig = (r) => r.trace.some((st) => st.some((v) => v > max));
+    let start, good, bad, b, runGood, runBad, ask, fixes;
+    for (let tries = 0; ; tries++) {
+      if (tries === 800) { // cannot happen in practice
+        start = [3, 0]; good = [{ op: 'add', p: 0, v: 2 }, { op: 'copy', p: 0, to: 1 }, { op: 'take', p: 1, v: 1 }]; b = 0; ask = 1;
+        bad = [{ op: 'add', p: 0, v: 3 }, good[1], good[2]];
+      } else {
+        start = [rnd(0, Math.floor(max / 2)), rnd(0, Math.floor(max / 2))];
+        good = Array.from({ length: d === 'medium' ? rnd(3, 4) : rnd(4, 5) }, step);
+        ask = rnd(0, 1); b = rnd(0, good.length - 1);
+        bad = good.map((o, j) => (j === b ? pick(near(o)) : o));
+      }
+      runGood = packRun(start, good); runBad = packRun(start, bad);
+      if (tries < 800 && (runGood.err || runBad.err || tooBig(runGood) || tooBig(runBad) || runGood.final[ask] === start[ask] || runBad.final[ask] === runGood.final[ask])) continue;
+      const T = runGood.final[ask];
+      const works = (at, o) => { const r = packRun(start, bad.map((x, j) => (j === at ? o : x))); return !r.err && r.final[ask] === T; };
+      // The changes that do not work: another number or kind for the wrong step, and changes to steps that were fine.
+      const pool = [...near(good[b]).map((o) => ({ at: b, step: o, slip: 'wrong-value' })),
+        ...bad.flatMap((o, j) => (j === b ? [] : near(o).map((x) => ({ at: j, step: x, slip: 'wrong-step' }))))]
+        .filter((f) => key(f.step) !== key(bad[f.at]) && !works(f.at, f.step));
+      const byKind = (slip) => shuffle(pool.filter((f) => f.slip === slip));
+      const first = [byKind('wrong-step')[0], byKind('wrong-value')[0]].filter(Boolean);
+      fixes = first.concat(shuffle(pool.filter((f) => !first.includes(f)))).slice(0, need - 1);
+      if (fixes.length === need - 1 || tries === 800) break;
+    }
+    const T = runGood.final[ask], item = PACK_ITEMS[ask], got = runBad.final[ask];
+    qSay('Poka made this program so that ' + item.e + ' ' + item.n + ' ends with ' + T + ', but it ends with ' + got + '. One step is not right. Which change fixes it? Tap a step to hear what it does.');
+    $('ask').innerHTML = '<div class="pouches">' + start.map((v, p) => pouchHtml(p, v, p === ask)).join('') + '</div>' + progHtml(bad)
+      + '<p class="swaps" id="dbg" data-ask="' + ask + '" data-target="' + T + '">🎯 It should end with ' + item.e + ' ' + T + '. It ends with ' + item.e + ' ' + got + '.</p><div id="traceBox"></div>'
+      + '<div class="check"><button type="button" class="btn ghost" id="pGuide">📖 Steps</button></div>';
+    $('pGuide').addEventListener('click', packGuide);
+    const recipe = $('ask').querySelector('.recipe');
+    packTap(recipe);
+    // The hint after two wrong answers: the pockets after every step of the wrong program.
+    const showTrace = () => {
+      const box = $('traceBox');
+      if (box.firstChild) return;
+      box.innerHTML = packTable(runBad.trace, ask, runBad.flat.map(packLabel));
+      qSay('The table shows the pockets after each step of this program. Where do the numbers stop being what they should be?', 'happy');
+    };
+    const right = { at: b, step: good[b] };
+    const list = shuffle([right, ...fixes]).map((f) => ({
+      html: '<span><b>Step ' + (f.at + 1) + '</b> · ' + PACK_ICON[f.step.op] + ' ' + packText(f.step) + '</span>', ok: f === right, slip: f.slip,
+      label: 'Change step ' + (f.at + 1) + ' to ' + packText(f.step, true), data: { at: f.at, op: f.step.op, p: attr(f.step.p), v: attr(f.step.v), to: attr(f.step.to) }
+    }));
+    options(list, () => {
+      recipe.children[b].outerHTML = stepHtml(good[b], b + 1);
+      $('ask').querySelectorAll('.recipe > li')[b].classList.add('fixed');
+      packPaint(runGood.final); solved(1800);
+    }, showTrace).classList.add('stack');
   }
 
   // ---- Poka's Backpack: build the steps ----
