@@ -8,6 +8,7 @@
 //   Cendekia.fx.pop(element)                 the element swells and settles, for something that was just finished
 //   Cendekia.fx.hop(element, left, top)      an absolutely placed element jumps to a new place in an arc
 //   Cendekia.fx.drop(element)                the element falls into place from a little above
+//   Cendekia.fx.reveal(stars, gift)          the earned stars (.on) pop in one by one, then the new-sticker box drops in
 //   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its marked parts move
 //   Cendekia.fx.react(svg, 'cheer' | 'oops') the mascot hops and flaps, or shakes its head
 //
@@ -120,6 +121,22 @@
     });
   }
 
+  // Earned stars and the sticker box are hidden at once, so they do not show for a moment before the animation starts,
+  // and shown again if the library cannot load.
+  function reveal(starsEl, giftEl) {
+    if (reduce.matches) return;
+    var on = starsEl ? Array.prototype.slice.call(starsEl.querySelectorAll('.on')) : [];
+    var gift = giftEl && !giftEl.hidden ? giftEl : null;
+    var held = gift ? on.concat(gift) : on;
+    if (!held.length) return;
+    held.forEach(function (e) { e.style.opacity = '0'; });
+    load().then(function (a) {
+      if (!a) { held.forEach(function (e) { e.style.opacity = ''; }); return; }
+      if (on.length) a.animate(on, { scale: [0, 1], rotate: [-40, 0], opacity: [0, 1], duration: 650, delay: a.stagger(240, { start: 300 }), ease: 'outBack' });
+      if (gift) a.animate(gift, { translateY: [28, 0], scale: [0.85, 1], opacity: [0, 1], duration: 520, delay: 300 + on.length * 240 + 200, ease: 'outBack' });
+    });
+  }
+
   // The parts a mascot can have. A part turns around its own box, so `hinge` is the point it hangs from. `idle` is its
   // slow movement while the mascot waits, and `cheer` how far it swings (rotate, in degrees) when the mascot hops.
   var PARTS = {
@@ -169,5 +186,5 @@
   }
 
   window.Cendekia = window.Cendekia || {};
-  window.Cendekia.fx = { confetti: confetti, burst: burst, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react };
+  window.Cendekia.fx = { confetti: confetti, burst: burst, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react };
 })();

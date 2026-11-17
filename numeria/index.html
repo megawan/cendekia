@@ -1269,6 +1269,7 @@
     const hasNext = i + 1 < w.levels.length;
     $('resNext').hidden = !hasNext;
     if (stars === 3) Cendekia.fx.confetti(24, { glyphs: CONFETTI });
+    Cendekia.fx.reveal($('resStars'), $('resGift'));
   }
   $('resNext').addEventListener('click', () => { sfx.tap(); startLevel(curWorld, curLevel + 1); });
   $('resAgain').addEventListener('click', () => { sfx.tap(); startLevel(curWorld, curLevel); });

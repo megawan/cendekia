@@ -19,6 +19,19 @@ for (const dir of APPS) {
   });
 }
 
+// The earned stars pop in one by one. Stars are small SVGs with the class "on" when earned.
+test('result stars pop in and are all visible afterwards', async ({ page }) => {
+  await page.goto('/lexica/');
+  await page.evaluate(() => {
+    document.body.insertAdjacentHTML('beforeend', '<div id="t"><div id="ts"><i class="on"></i><i class="on"></i><i></i></div><div id="tg"></div></div>');
+    window.Cendekia.fx.reveal(document.getElementById('ts'), document.getElementById('tg'));
+  });
+  const stars = page.locator('#ts .on');
+  await expect(stars.first()).toHaveCSS('opacity', '0');
+  await expect.poll(() => stars.evaluateAll((els) => els.every((e) => getComputedStyle(e).opacity === '1')), { timeout: 5000 }).toBe(true);
+  await expect(page.locator('#ts i:not(.on)')).toHaveCSS('opacity', '1');
+});
+
 test('nothing is drawn when the device asks for reduced motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/lexica/');

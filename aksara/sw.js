@@ -1,5 +1,5 @@
 // Offline support for Aksara. Bump CACHE when the precached files change.
-const CACHE = 'aksara-v26';
+const CACHE = 'aksara-v27';
 const FONTS = 'aksara-fonts-v1';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js', '../shared/trace.js'];
 
