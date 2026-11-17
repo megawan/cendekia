@@ -101,6 +101,7 @@
   .tile:active { transform: scale(.95); }
   .tile.on { border-color: var(--accent); background: #dff5f3; }
   .tile small { display: block; font-size: .8rem; font-weight: 500; opacity: .75; }
+  #cards { perspective: 1000px; }
   .stage { position: relative; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius);
     padding: 16px; text-align: center; margin-bottom: 14px; }
   .stage .big { font-size: 5.5rem; font-weight: 800; line-height: 1.05; }
@@ -957,7 +958,7 @@
       b.innerHTML = '<span class="pic" aria-hidden="true"></span><span class="w"></span>';
       b.firstChild.innerHTML = picHtml(w); b.lastChild.textContent = w.en;
       b.setAttribute('aria-label', w.en + ', ' + w.id);
-      b.addEventListener('click', () => { cWord = w; renderCards(); speakSeq([en(w), id(w)], null, 250); });
+      b.addEventListener('click', () => { cWord = w; renderCards(); Cendekia.fx.flip(document.querySelector('#cards .stage')); speakSeq([en(w), id(w)], null, 250); });
       $('cGrid').appendChild(b);
     });
   }
@@ -965,11 +966,11 @@
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'chip'; b.dataset.cat = c.id;
     b.textContent = c.icon; b.setAttribute('aria-label', c.title);
-    b.addEventListener('click', () => { cCat = c; cWord = c.list[0]; renderCards(); });
+    b.addEventListener('click', () => { cCat = c; cWord = c.list[0]; renderCards(); Cendekia.fx.flip(document.querySelector('#cards .stage')); Cendekia.fx.cascade($('cGrid').children, 25); });
     $('cCats').appendChild(b);
   });
-  $('cEn').addEventListener('click', () => speak(en(cWord)));
-  $('cId').addEventListener('click', () => speak(id(cWord)));
+  $('cEn').addEventListener('click', () => { Cendekia.fx.pop($('cEn')); speak(en(cWord)); });
+  $('cId').addEventListener('click', () => { Cendekia.fx.pop($('cId')); speak(id(cWord)); });
   renderCards();
 
   // ---- Quiz ----
