@@ -442,6 +442,7 @@
   .recipe li.now { outline: 4px solid #facc15; }
   .recipe:empty::before { content: "Tap a block below"; display: block; padding: 10px; border: 3px dashed var(--line); border-radius: 14px; text-align: center; opacity: .6; }
   .pkTools { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 4px 0; }
+  .recipe li.tap { cursor: pointer; } .recipe li.tap:focus-visible { outline: 3px solid var(--c-blue); outline-offset: 2px; }
   .keypad.no { animation: shake .3s; } .keypad.done .key { opacity: .5; }
   .demo .recipe { gap: 3px; } .demo .pb { font-size: .75rem; padding: 3px 8px; } .demo .pouches { gap: 6px; } .demo .pouch .cnt { font-size: 1.2rem; }
 
@@ -647,9 +648,11 @@
   .tsteps li { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-radius: 18px;
     padding: 10px; animation: popIn .4s both; }
   .tsteps li:nth-child(2) { animation-delay: .15s; } .tsteps li:nth-child(3) { animation-delay: .3s; } .tsteps li:nth-child(4) { animation-delay: .45s; }
-  .tsteps .n { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: grid; place-items: center; }
+  .tsteps li > .n { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: grid; place-items: center; }
   .tsteps p { margin: 0; font-weight: 700; line-height: 1.3; }
-  .tsteps li.stack { flex-direction: column; align-items: stretch; text-align: center; } .tsteps li.stack .n { align-self: flex-start; }
+  .tsteps li.stack { flex-direction: column; align-items: stretch; text-align: center; } .tsteps li.stack > .n { align-self: flex-start; }
+  .tsteps li.stack .demo { width: 100%; height: auto; min-height: 74px; padding: 8px 6px; }
+  .tsteps li.stack .demo .pouch { flex: 0 1 84px; padding: 4px 3px 2px; } .tsteps li.stack .demo .pouch .things { font-size: .65rem; }
   .tcard .btn { width: 100%; }
   .demo { flex: none; width: 112px; height: 74px; position: relative; display: flex; align-items: center; justify-content: center; gap: 4px;
     background: #fbf7f1; border-radius: 14px; overflow: hidden; }
@@ -1464,13 +1467,14 @@
     $('wTitle').textContent = w.name;
     $('wStars').textContent = worldStars(w) + '/' + maxStars(w);
     const ab = $('wAbout');
+    const ref = { circuit: ['📖 Gates', gateGuide, 'wGates'], pack: ['📖 Steps', packGuide, 'wSteps'] }[w.id]; // a guide to the kinds of block or gate
     ab.style.setProperty('--c', w.c);
     ab.innerHTML = '<span class="badge" aria-hidden="true">' + w.icon + '</span><p><small>' + w.skill + ' · ' + DIFFS[S.diff].name + '</small><br>' + w.desc + '</p>'
-      + (w.id === 'circuit' ? '<span class="helps"><button type="button" class="help" id="wHelp">❓ How</button><button type="button" class="help" id="wGates">📖 Gates</button></span>'
+      + (ref ? '<span class="helps"><button type="button" class="help" id="wHelp">❓ How</button><button type="button" class="help" id="' + ref[2] + '">' + ref[0] + '</button></span>'
         : '<button type="button" class="help" id="wHelp">❓ How</button>');
-    ab.classList.toggle('twoHelp', w.id === 'circuit'); // two buttons: they go on a row of their own
+    ab.classList.toggle('twoHelp', !!ref); // two buttons: they go on a row of their own
     $('wHelp').addEventListener('click', () => tutorial(w));
-    if (w.id === 'circuit') $('wGates').addEventListener('click', gateGuide);
+    if (ref) $(ref[2]).addEventListener('click', ref[1]);
     const box = $('wLevels');
     box.innerHTML = '';
     const next = names.findIndex((_, i) => !best(w.id, i));
@@ -1707,9 +1711,9 @@
       ['<div class="demo">' + miniTower([[], [0], [1]], 2) + '</div>', 'A big disk never sits on a small one. Use the middle peg to make room!']
     ],
     pack: [
-      ['<div class="demo"><div class="pouches">' + pouchHtml(0, 3) + pouchHtml(1, 1) + '</div></div>', 'The backpack has pockets. Each pocket holds some things.'],
-      ['<div class="demo">' + progHtml([{ op: 'add', p: 0, v: 2 }, { op: 'take', p: 1, v: 1 }]) + '</div>', 'Follow the steps from the top, one at a time.'],
-      ['<div class="demo"><div class="pouches">' + pouchHtml(0, 5) + pouchHtml(1, 0) + '</div></div>', 'After every step the numbers change. What is in the pocket at the end?'],
+      ['<div class="demo"><div class="pouches">' + pouchHtml(0, 3) + pouchHtml(1, 1) + '</div></div>', 'The backpack has pockets, and each pocket holds a number of things. Here: 3 🍎 and 1 🍪.'],
+      ['<div class="demo">' + progHtml([{ op: 'add', p: 0, v: 2 }, { op: 'take', p: 1, v: 1 }]) + '</div>', 'A program is a list of steps. Do them from the top, one at a time. Tap a step to hear what it does.'],
+      ['<div class="demo"><div class="pouches">' + pouchHtml(0, 5) + pouchHtml(1, 0) + '</div></div>', 'After every step the numbers change. What is in the pocket at the end? 📖 Steps explains Put, Add, Take and Copy.'],
       ['<div class="demo"><span class="pb pbtn add">➕ Add 1 to 🍎</span> <span class="pb pbtn take">➖ Take 1 from 🍎</span></div>', 'Later you build the steps yourself: tap blocks, then press ▶ Run.']
     ],
     circuit: [
@@ -3463,6 +3467,30 @@
     + rows[0].map((_, p) => '<th scope="col">' + PACK_ITEMS[p].e + ' ' + PACK_ITEMS[p].n + '</th>').join('') + '</tr></thead><tbody>'
     + rows.map((s, k) => '<tr><th scope="row">' + (k || 'Start') + '</th>' + s.map((v, p) => '<td' + (p === ask ? ' class="ask"' : '') + '>' + v + '</td>').join('') + '</tr>').join('')
     + '</tbody></table>';
+  // What a step does, in a sentence: said when a step or a block is tapped.
+  const packHelp = (o) => {
+    const a = PACK_ITEMS[o.p].n, b = o.to === undefined || o.to === null ? '' : PACK_ITEMS[o.to].n;
+    return o.op === 'put' ? 'Put ' + o.v + ' in ' + a + ': the ' + a + ' pocket now has exactly ' + o.v + ', whatever it had before.'
+      : o.op === 'add' ? 'Add ' + o.v + ' to ' + a + ': ' + o.v + ' more go into the ' + a + ' pocket, on top of what is already there.'
+        : o.op === 'take' ? 'Take ' + o.v + ' from ' + a + ': ' + o.v + ' come out of the ' + a + ' pocket. You cannot take more than it holds.'
+          : 'Copy ' + a + ' into ' + b + ': the ' + b + ' pocket gets the same number as ' + a + '. ' + a + ' keeps its number, and the two are not linked afterwards.';
+  };
+  // The step guide: each step with a before and an after, a sentence and an everyday example.
+  function packGuide() {
+    const pair = (before, after) => '<div class="demo"><div class="pouches">' + before + '</div><b aria-hidden="true">→</b><div class="pouches">' + after + '</div></div>';
+    openSheet('Backpack steps', [
+      ['<div class="demo">' + progHtml([{ op: 'add', p: 0, v: 2 }, { op: 'take', p: 0, v: 1 }]) + '</div>',
+        'A program is a list of steps. Do them from the top, one at a time. After each step the numbers in the pockets change.', 'stack'],
+      [pair(pouchHtml(0, 7), pouchHtml(0, 5)),
+        '<b>Put 5 in 🍎</b>: the pocket becomes exactly 5, whatever was in it. Had 7? Now 5. Like emptying your bag and putting in exactly 5 apples. It is not the same as Add: Add 5 would make 12.', 'stack'],
+      [pair(pouchHtml(0, 2), pouchHtml(0, 5)),
+        '<b>Add 3 to 🍎</b>: 3 more go in, on top of what is there. 2 and 3 more make 5. Like getting 3 more stickers when you already have 2.', 'stack'],
+      [pair(pouchHtml(0, 5), pouchHtml(0, 2)),
+        '<b>Take 3 from 🍎</b>: 3 come out. You cannot take more than there is. Like eating 3 of your 5 cookies.', 'stack'],
+      [pair(pouchHtml(0, 4) + pouchHtml(1, 1), pouchHtml(0, 4) + pouchHtml(1, 4)),
+        '<b>Copy 🍎 into 🍪</b>: the second pocket gets the same number as the first, and the first keeps its number. Later steps change only the pocket they name. Like writing a number on a second piece of paper.', 'stack']
+    ]);
+  }
   // A number pad for the Hard answers: up to two digits, then ✓.
   function packKeypad(ans, onOk, onHint) {
     let val = '';
@@ -3514,8 +3542,19 @@
     }
     const item = PACK_ITEMS[ask], ans = run.final[ask];
     qSay('Follow the steps in order. How many ' + item.e + ' ' + item.n + ' will be in the pocket at the end?'
-      + (lvl === 2 ? ' A copy stays a copy, even if the other pocket changes later.' : ''));
-    $('ask').innerHTML = '<div class="pouches">' + start.map((v, p) => pouchHtml(p, v, p === ask)).join('') + '</div>' + progHtml(prog) + '<div id="traceBox"></div>';
+      + (lvl === 2 ? ' A copy stays a copy, even if the other pocket changes later.' : '') + ' Tap a step to hear what it does.');
+    $('ask').innerHTML = '<div class="pouches">' + start.map((v, p) => pouchHtml(p, v, p === ask)).join('') + '</div>' + progHtml(prog) + '<div id="traceBox"></div>'
+      + '<div class="check"><button type="button" class="btn ghost" id="pGuide">📖 Steps</button></div>';
+    $('pGuide').addEventListener('click', packGuide);
+    const recipe = $('ask').querySelector('.recipe');
+    recipe.querySelectorAll('li').forEach((li) => { li.tabIndex = 0; li.setAttribute('role', 'button'); li.classList.add('tap'); });
+    recipe.addEventListener('click', (e) => {
+      const li = e.target.closest('li');
+      if (li) { sfx.tap(); qSay(packHelp({ op: li.dataset.op, p: +li.dataset.p, v: +li.dataset.v, to: li.dataset.to === '' ? null : +li.dataset.to }), 'happy'); }
+    });
+    recipe.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('li')) { e.preventDefault(); e.target.click(); }
+    });
     // The hint after two wrong answers: the pockets after every step but the last.
     const showTrace = () => {
       const box = $('traceBox');
@@ -3587,9 +3626,11 @@
     $('ask').innerHTML = '<div class="pouches">' + start.map((v, p) => pouchHtml(p, v, false, goal[p])).join('') + '</div>'
       + '<ol class="recipe" id="bTray" aria-label="Your steps"></ol><p class="swaps" id="blocks" aria-live="polite"></p>'
       + '<div class="palette2" id="bPal" role="group" aria-label="Blocks"></div>'
-      + '<div class="pkTools"><button type="button" class="btn ghost" id="bUndo" aria-label="Remove the last block">⌫</button>'
+      + '<div class="pkTools"><button type="button" class="btn ghost" id="bGuide">📖 Steps</button>'
+      + '<button type="button" class="btn ghost" id="bUndo" aria-label="Remove the last block">⌫</button>'
       + '<button type="button" class="btn ghost" id="bClear" aria-label="Remove all blocks">🗑️</button>'
       + '<button type="button" class="btn go" id="bRun">▶ Run</button></div><div id="traceBox"></div>';
+    $('bGuide').addEventListener('click', packGuide);
     let tray = [], running = false, hints = 0;
     const my = runToken;
     $('bPal').innerHTML = palette.map((o, k) => '<button type="button" class="pb pbtn ' + o.op + '" data-k="' + k + '" data-op="' + o.op + '" data-p="' + o.p + '" data-v="' + (o.v === undefined ? '' : o.v)
@@ -3606,7 +3647,7 @@
       const b = e.target.closest('.pbtn');
       if (!b || running) return;
       if (tray.length >= limit) { sfx.bad(); qSay('You can use at most ' + limit + ' blocks here. Take one out, or think of a shorter way.', 'oops'); return; }
-      tray.push(palette[+b.dataset.k]); sfx.tap(); paintTray();
+      const block = palette[+b.dataset.k]; tray.push(block); sfx.tap(); paintTray(); qSay(packHelp(block), 'happy');
     });
     $('bTray').addEventListener('click', (e) => {
       const b = e.target.closest('button');
