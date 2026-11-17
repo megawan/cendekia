@@ -419,7 +419,8 @@ test.describe("Poka's Backpack", () => {
         const final = follow(puzzle); // throws if a step takes too much
         expect(final[puzzle.ask]).not.toBe(puzzle.start[puzzle.ask]);
         // Doing the repeat only once must give another answer, or the count would not matter.
-        const once = follow({ start: puzzle.start, prog: puzzle.prog.map((o) => (o.op === 'loop' ? { ...o, n: 1 } : o)) });
+        // (A step after the repeat may take more than the pocket holds when the repeat is done once, so a pocket stops at zero.)
+        const once = follow({ start: puzzle.start, prog: puzzle.prog.map((o) => (o.op === 'loop' ? { ...o, n: 1 } : o)) }, true);
         expect(once[puzzle.ask]).not.toBe(final[puzzle.ask]);
       }
     });
