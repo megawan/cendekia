@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { circuit: Array(4).fill(1) };
+    for (const x of ['easy', 'medium', 'hard']) best[x] = { circuit: Array(6).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { circuit: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -57,6 +57,40 @@ async function solveOne(page, diff, lvl) {
   } else {
     await guessLamps(page, trees.map((t) => evalTree(t, inp)));
     await check(page).click();
+  }
+}
+
+// Fill the gate: the boxes (slots) of the circuit, and the lamp column of the table.
+const slotsOf = (n) => [...(n.slot !== undefined ? [n] : []), ...(n.a ? slotsOf(n.a) : []), ...(n.b ? slotsOf(n.b) : [])];
+const choices = (slot) => (slot.b ? ['and', 'or'] : ['not', 'wire']);
+function evalFill(n, inp, fill) {
+  if (n.t === 'in') return inp[n.i];
+  const t = n.slot !== undefined ? fill[n.slot] : n.t;
+  if (t === 'not') return !evalFill(n.a, inp, fill);
+  if (t === 'wire') return evalFill(n.a, inp, fill);
+  return t === 'and' ? evalFill(n.a, inp, fill) && evalFill(n.b, inp, fill) : evalFill(n.a, inp, fill) || evalFill(n.b, inp, fill);
+}
+const readFill = (page) => page.evaluate(() => ({
+  tree: JSON.parse(document.querySelector('.circ').dataset.tree),
+  want: [...document.querySelectorAll('#tt tbody tr')].map((r) => r.dataset.want === '1')
+}));
+// Every choice of gates that matches the table.
+function fits({ tree, want }) {
+  const slots = slotsOf(tree), n = want.length === 4 ? 2 : 3, inputs = assignments(n), out = [];
+  for (let m = 0; m < 1 << slots.length; m++) {
+    const fill = {};
+    slots.forEach((sl, j) => { fill[sl.slot] = choices(sl)[(m >> j) & 1]; });
+    out.push({ fill, ok: inputs.every((x, k) => evalFill(tree, x, fill) === want[k]) });
+  }
+  return { slots, all: out, good: out.filter((o) => o.ok) };
+}
+// Taps each box until it shows the wanted gate (the first tap on an empty box shows the first choice).
+async function setBoxes(page, fill) {
+  const { tree } = await readFill(page);
+  for (const sl of slotsOf(tree)) {
+    const opts = choices(sl), now = opts.indexOf(sl.t), clicks = (opts.indexOf(fill[sl.slot]) - now + opts.length) % opts.length || (now < 0 ? 0 : 0);
+    const taps = now < 0 ? opts.indexOf(fill[sl.slot]) + 1 : clicks;
+    for (let k = 0; k < taps; k++) await page.locator('.circ .gate.slot[data-slot="' + sl.slot + '"]').click();
   }
 }
 
@@ -158,5 +192,102 @@ test.describe("Poka's Workshop", () => {
     await expect(page.getByRole('button', { name: '✓ Check' })).toHaveCount(0);
     await solveOne(page, 'easy', 1);
     await expect(page.locator('.circ .lamp.lit')).toHaveCount(1);
+  });
+
+  for (const diff of ['easy', 'medium', 'hard']) {
+    for (const n of [5, 6]) {
+      test(`level ${n} is solved by filling the gates on ${diff}`, async ({ page }) => {
+        await openLogica(page, diff);
+        await openLevel(page, n);
+        for (let k = 0; k < (diff === 'easy' ? 2 : 3); k++) {
+          await nextPuzzle(page);
+          await setBoxes(page, fits(await readFill(page)).good[0].fill);
+          await check(page).click();
+        }
+        await expect(page.locator('#resStars .star.on')).toHaveCount(3, { timeout: 10000 });
+      });
+    }
+  }
+
+  for (const diff of ['easy', 'medium', 'hard']) {
+    test(`fill-the-gate puzzles are valid on ${diff}`, async ({ page }) => {
+      for (let k = 0; k < 5; k++) {
+        for (const n of [5, 6]) {
+          await openLogica(page, diff);
+          await openLevel(page, n);
+          const f = fits(await readFill(page));
+          if (n === 5) expect(f.slots).toHaveLength(1);
+          else expect(f.slots.length).toBeGreaterThanOrEqual(diff === 'easy' ? 2 : 3);
+          expect(f.good.length).toBeGreaterThanOrEqual(1);
+          expect(f.good.length).toBeLessThan(f.all.length); // the table must tell the gates apart
+          if (diff === 'hard') expect(f.good).toHaveLength(1);
+          const { want } = await readFill(page);
+          expect(new Set(want).size).toBe(2); // the lamp is not always on or always off
+        }
+      }
+    });
+  }
+
+  test('tapping a box shows each gate in turn and says what it does', async ({ page }) => {
+    await openLogica(page, 'easy');
+    await openLevel(page, 5);
+    await nextPuzzle(page);
+    const box = page.locator('.circ .gate.slot').first();
+    await expect(box).toHaveAttribute('data-t', 'blank');
+    await box.click();
+    await expect(page.locator('#qSay')).toContainText('AND: power gets through only when both');
+    await box.click();
+    await expect(page.locator('#qSay')).toContainText('OR: power gets through when at least one');
+    await box.click();
+    await expect(page.locator('#qSay')).toContainText('AND:');
+  });
+
+  test('empty boxes must be filled before checking', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await openLevel(page, 6);
+    await nextPuzzle(page);
+    await check(page).click();
+    await expect(page.locator('#qSay')).toContainText('Fill every ? box');
+    await expect(page.locator('#tt tr.bad')).toHaveCount(0);
+  });
+
+  test('a wrong try marks the rows, a second puts a gate in, and the stars drop', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await openLevel(page, 6);
+    await nextPuzzle(page);
+    const f = fits(await readFill(page)), wrongFill = f.all.find((o) => !o.ok).fill;
+    await setBoxes(page, wrongFill);
+    await check(page).click();
+    await expect(page.locator('#qSay')).toContainText('Not quite');
+    expect(await page.locator('#tt tr.bad').count()).toBeGreaterThan(0);
+    await expect(page.locator('#tt tr.bad .mine').first()).toContainText('✗');
+    await check(page).click();
+    await expect(page.locator('#qSay')).toContainText('Poka filled in a box for you');
+    // Fix the boxes and carry on.
+    await setBoxes(page, fits(await readFill(page)).good[0].fill);
+    await check(page).click();
+    for (let k = 0; k < 2; k++) {
+      await nextPuzzle(page);
+      await setBoxes(page, fits(await readFill(page)).good[0].fill);
+      await check(page).click();
+    }
+    await expect(page.locator('#resStars .star.on')).toHaveCount(2, { timeout: 10000 });
+  });
+
+  test('the gate guide explains every gate, from a puzzle and from the world screen', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await page.locator('#worlds .card', { hasText: 'Workshop' }).click();
+    await page.locator('#wGates').click();
+    const steps = page.getByRole('dialog', { name: 'Logic gates' }).locator('.tsteps');
+    await expect(steps).toContainText('both wires need power');
+    await expect(steps).toContainText('at least one wire needs power');
+    await expect(steps).toContainText('NOT');
+    await expect(steps).toContainText('WIRE');
+    await expect(steps.locator('table.tt')).toHaveCount(4);
+    await page.keyboard.press('Escape');
+    await page.locator('#wLevels .lv button').first().click();
+    await expect(page.locator('.circ').first()).toBeVisible();
+    await page.getByRole('button', { name: '📖 Gates' }).click();
+    await expect(page.getByRole('dialog', { name: 'Logic gates' }).locator('.tsteps')).toContainText('red key AND the blue key');
   });
 });
