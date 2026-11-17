@@ -2,7 +2,7 @@ const { test, expect } = require('../support/fixtures');
 
 // Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
 // "Culture of Indonesia", "Animals of the World", "Volcanoes and Disasters", "Islands and Straits", "Peoples and Languages",
-// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?" or "Island Routes").
+// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?", "Island Routes" or "The Solar System").
 async function openTopic(page, name) {
   await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
@@ -44,14 +44,15 @@ const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(wind
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
-  test('lists the seventeen topics and their levels', async ({ page }) => {
+  test('lists the eighteen topics and their levels', async ({ page }) => {
+    test.setTimeout(90000); // every return to the home screen waits for its cards to appear
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Capitals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
-    await expect(page.locator('#topics .card')).toHaveCount(18); // seventeen topics and the stickers
+    await expect(page.locator('#topics .card')).toHaveCount(19); // eighteen topics and the stickers
     await page.locator('#topics .card', { hasText: 'Flags of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
@@ -72,7 +73,7 @@ test.describe('Omnia', () => {
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Peoples and Languages' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
-    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 6], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3]]) { // a game has no Explore card
+    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 7], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3], ['The Solar System', 6]]) { // a game has no Explore card
       await page.getByRole('button', { name: '← Home' }).click();
       await page.locator('#topics .card', { hasText: topic }).click();
       await expect(page.locator('#levels .card')).toHaveCount(levels);
@@ -406,5 +407,58 @@ test.describe('Omnia', () => {
     await playRound(page);
     expect((await saved(page)).best['r.river']).toBeGreaterThanOrEqual(1);
     expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Rivers: Rivers of Indonesia' });
+  });
+
+  test('the solar system is a map of the Sun and the planets', async ({ page }) => {
+    await openTopic(page, 'The Solar System');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    await expect(page.locator('#map')).toHaveClass(/space/);
+    await expect(page.locator('#map circle')).toHaveCount(10); // the Sun, eight planets and Pluto
+    await page.locator('#map circle[aria-label="Earth"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('our home');
+  });
+
+  test('planets put in order, nearest to the Sun first, are right', async ({ page }) => {
+    const order = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
+    await openTopic(page, 'The Solar System');
+    await page.locator('#levels .card', { hasText: 'Put in order' }).click();
+    const names = (await page.locator('#say').innerText()).split(': ')[1].replace(/\.$/, '').split(', ');
+    const sorted = names.slice().sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    for (const n of sorted) await page.locator('#map circle[aria-label="' + n + '"]').press('Enter');
+    await expect(page.locator('.prog i.ok')).toHaveCount(1);
+    await expect(page.locator('#map path.route')).toHaveAttribute('d', /^M/);
+  });
+
+  test('a planet out of order is a miss, and a bigger planet is a right answer', async ({ page }) => {
+    const order = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
+    const diam = { Mercury: 4879, Venus: 12104, Earth: 12742, Mars: 6779, Jupiter: 139820, Saturn: 116460, Uranus: 50724, Neptune: 49244 };
+    await openTopic(page, 'The Solar System');
+    await page.locator('#levels .card', { hasText: 'Put in order' }).click();
+    const names = (await page.locator('#say').innerText()).split(': ')[1].replace(/\.$/, '').split(', ');
+    const last = names.slice().sort((a, b) => order.indexOf(a) - order.indexOf(b)).pop();
+    await page.locator('#map circle[aria-label="' + last + '"]').press('Enter');
+    await expect(page.locator('#say')).toContainText('comes later');
+    await page.getByRole('button', { name: '← Levels' }).click();
+    await page.locator('#levels .card', { hasText: 'Bigger planets' }).click();
+    const pair = await page.locator('.opt').allInnerTexts();
+    await page.locator('.opt', { hasText: new RegExp('^' + pair.reduce((a, b) => (diam[a] >= diam[b] ? a : b)) + '$') }).click();
+    await expect(page.locator('.prog i.ok')).toHaveCount(1);
+    await expect(page.locator('#say')).toContainText('km wide');
+  });
+
+  test('a solar system round and a space round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'The Solar System');
+    await page.locator('#levels .card', { hasText: 'The planets' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['s.planets']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Space: The planets' });
+  });
+
+  test('a Who Am I? space round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Who Am I?');
+    await page.locator('#levels .card b', { hasText: /^Space$/ }).click();
+    await playRound(page);
+    expect((await saved(page)).best['q.space']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Who am I: Space' });
   });
 });

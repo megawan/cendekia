@@ -136,6 +136,13 @@
   .bigflag { text-align: center; font-size: 5rem; line-height: 1.15; margin: 0; }
   .opt.flagopt { font-size: 2.6rem; line-height: 1; }
   .topics .sec { grid-column: 1 / -1; margin: 6px 0 -4px; font-size: 1.05rem; opacity: .75; text-transform: uppercase; letter-spacing: .06em; }
+  /* The solar system: dark space, orbits as thin rings, the Sun in yellow */
+  #map.space .sea { fill: #0d1236; }
+  #map.space path { fill: none; stroke: rgba(255,255,255,.22); stroke-width: 1; }
+  #map.space path[data-id="sun"] { fill: #ffcf40; stroke: #ffe9a0; stroke-width: 3; }
+  #map.space path.hl { stroke: #fff; stroke-width: 4; }
+  #map.space text { fill: #fff; stroke: #0d1236; }
+  #map.space circle:not(.hl):not(.ok):not(.no):not(.on) { fill: #cfd6ff; stroke: #fff; }
   #map.nodots circle { opacity: 0; }
   #map.nodots circle.hl, #map.nodots circle.on { opacity: 1; }
   #map path.route { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 7 6; stroke-linecap: round; pointer-events: none; }
@@ -221,7 +228,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/30</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/33</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -812,6 +819,40 @@
   };
   const routesOf = (level) => ROUTES[level].map(([from, to, via]) => ({ key: from + '>' + to, name: from + ' to ' + to, from, to, via }));
 
+  // The solar system, on a map made here (not to scale): the Sun in the middle, an orbit for each planet, and the planets in a row.
+  // Orbit radius and the angle of the planet on it. dist is in million km from the Sun, diam in km, order counts the planets.
+  const SOLAR_ORBIT = { Mercury: [60, 10], Venus: [100, -15], Earth: [140, 20], Mars: [180, -10], Jupiter: [240, 15], Saturn: [300, -20], Uranus: [360, 10], Neptune: [420, -15], Pluto: [470, 20] };
+  const ring = (r) => 'M' + (500 - r) + ',500a' + r + ',' + r + ' 0 1,0 ' + 2 * r + ',0a' + r + ',' + r + ' 0 1,0 ' + (-2 * r) + ',0Z';
+  MAPS.solar = { w: 1000, h: 1000, proj: 'flat', k: 1, tx: 0, ty: 0, shapes: Object.values(SOLAR_ORBIT).map(([r]) => ['', ring(r)]).concat([['sun', ring(34)]]) };
+  const SOLAR_DATA = 'Sun|☀️|star|0|1392700|0|the star in the middle of the solar system. It gives us light and heat.;'
+    + 'Mercury|🌑|planet|57.9|4879|1|the smallest planet and the closest to the Sun. A year there lasts only 88 days.;'
+    + 'Venus|🟡|planet|108.2|12104|2|the hottest planet, wrapped in thick clouds. It spins backwards.;'
+    + 'Earth|🌍|planet|149.6|12742|3|our home, the only planet we know with life. Most of it is covered by water.;'
+    + 'Mars|🔴|planet|227.9|6779|4|the red planet, with the biggest volcano in the solar system.;'
+    + 'Jupiter|🟠|planet|778.5|139820|5|the biggest planet. Its Great Red Spot is a storm bigger than Earth.;'
+    + 'Saturn|🪐|planet|1434|116460|6|the planet with the beautiful rings, made of ice and rock.;'
+    + 'Uranus|🔵|planet|2871|50724|7|an ice giant that spins on its side.;'
+    + 'Neptune|🔷|planet|4495|49244|8|the farthest planet from the Sun. It is dark, cold and very windy.;'
+    + 'Pluto|⚪|dwarf|5906|2377|0|a small dwarf planet that was once called the ninth planet.';
+  const SOLAR = SOLAR_DATA.split(';').map((row) => {
+    const [name, icon, group, dist, diam, order, note] = row.split('|');
+    let x = 500, y = 500;
+    if (SOLAR_ORBIT[name]) { const [r, a] = SOLAR_ORBIT[name]; x = 500 + r * Math.cos(a * Math.PI / 180); y = 500 - r * Math.sin(a * Math.PI / 180); }
+    return { key: name, name, group, noun: group === 'dwarf' ? 'dwarf planet' : group, icon, dist: +dist, diam: +diam, order: +order, note, plural: false,
+      ref: name === 'Sun' ? 'the Sun' : name, shape: name === 'Sun' ? 'sun' : undefined, x, y };
+  });
+  const ORDINAL = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'];
+  // Put in order: tasks of planets to tap, nearest to the Sun first. They use the same tapping as a route.
+  function sortTasks(n) {
+    const planets = group(SOLAR, 'planet');
+    return Array.from({ length: n }, () => {
+      const some = shuffle(planets).slice(0, 3 + Math.floor(Math.random() * 2)), via = some.slice().sort((a, b) => a.order - b.order).map((p) => p.name);
+      return { key: some.map((p) => p.name).join(), name: 'Sort ' + via.join(', '), via, unit: 'Planets found', badge: '🪐',
+        text: 'Tap these planets in order, the nearest to the Sun first: ' + some.map((p) => p.name).join(', ') + '.', outside: 'is not in your list',
+        reveal: 'From the Sun outwards: ' + via.join(', ') + '.' };
+    });
+  }
+
   // ---- Levels ----
   // Every level is open from the start. Its id is the key of its stars in the save, so ids never change.
   const cities = (region) => CITIES.filter((c) => !region || c.region === region);
@@ -830,7 +871,7 @@
   const borderSubjects = (continent) => nations(continent).filter((c) => { const n = neighboursOf(c); return n && n.length >= 1 && n.length <= 6; });
   // Per topic: unit (what a level counts), hint (the line before a tap while exploring), all (what exploring shows),
   // stage (a prefix for the shared log, so the parents' page can tell two topics' levels apart).
-  const SECTIONS = ['Indonesia', 'The world', 'Map games'];
+  const SECTIONS = ['Indonesia', 'The world', 'Space', 'Map games'];
   const TOPICS = [
     { id: 'indonesia', section: 'Indonesia', map: 'indonesia', icon: '🏝️', c: 'var(--c-green)', name: 'Cities of Indonesia', blurb: 'Find the cities of every island and the capital of every province.',
       unit: 'cities', sub: 'Tap any place to see its name and province', hint: 'Tap a dot on the map.', all: () => CITIES,
@@ -945,6 +986,18 @@
         { id: 'fd.america', name: 'Foods of the Americas', items: () => group(FOODS, 'america') },
         { id: 'fd.all', name: 'All foods', items: () => FOODS }
       ] },
+    { id: 'solar', section: 'Space', map: 'solar', icon: '🪐', c: '#5b50c9', name: 'The Solar System', blurb: 'Meet the Sun and its planets: find them, put them in order and compare them.',
+      unit: 'bodies', sub: 'Tap the Sun or a planet to meet it', hint: 'Tap the Sun or a planet.', all: () => SOLAR, stage: 'Space: ',
+      say: { find: (it) => 'Where is ' + it.ref + '? Tap it.', which: (it) => 'Which ' + it.noun + ' is this?', order: (it) => 'Which planet is ' + ORDINAL[it.order - 1] + ' from the Sun?' },
+      kinds: ['find', 'which', 'order'], levels: [
+        { id: 's.planets', name: 'The planets', items: () => group(SOLAR, 'planet') },
+        { id: 's.bigger', name: 'Bigger planets', items: () => group(SOLAR, 'planet'), kinds: ['cmp'],
+          cmp: { metric: (it) => it.diam, ratio: 1.3, text: 'Which planet is bigger?', unit: 'km wide' } },
+        { id: 's.farther', name: 'Farther from the Sun', items: () => group(SOLAR, 'planet'), kinds: ['cmp'],
+          cmp: { metric: (it) => it.dist, ratio: 1.3, text: 'Which planet is farther from the Sun?', unit: 'million km from the Sun' } },
+        { id: 's.sort', name: 'Put in order', items: () => group(SOLAR, 'planet'), kinds: ['route'], namedDots: true, subjects: () => sortTasks(6) },
+        { id: 's.all', name: 'Sun, planets and Pluto', items: () => SOLAR }
+      ] },
     // Games on the map: not a way to explore, so no Explore card. Their dots are hidden (still there for the keyboard).
     { id: 'jigsaw', section: 'Map games', map: 'world', icon: '🧩', c: '#2f9e7d', name: 'Map Jigsaw', blurb: 'Drag the shape of a country to its place on the map.',
       unit: 'countries', noExplore: true, hideDots: true, stage: 'Jigsaw: ', kinds: ['drag'], levels: [
@@ -961,7 +1014,8 @@
         { id: 'q.animals', name: 'Animals', items: () => ANIMALS },
         { id: 'q.landmarks', name: 'Landmarks', items: () => LANDMARKS },
         { id: 'q.foods', name: 'Foods', items: () => FOODS },
-        { id: 'q.nature', name: 'Nature', items: () => NATURE }
+        { id: 'q.nature', name: 'Nature', items: () => NATURE },
+        { id: 'q.space', name: 'Space', map: 'solar', items: () => SOLAR }
       ] },
     { id: 'neighbours', section: 'Map games', map: 'world', icon: '🏘️', c: '#e0558a', name: 'Neighbours', blurb: 'Tap every country that shares a border with a country.',
       unit: 'countries', noExplore: true, hideDots: true, round: 5, stage: 'Neighbours: ', kinds: ['neigh'], levels: [
@@ -1016,7 +1070,7 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (300 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (318 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
@@ -1033,7 +1087,8 @@
     { at: 205, name: 'Monument', pic: '🗿', c: '#ece6ff' }, { at: 220, name: 'Noodles', pic: '🍜', c: '#ffe3c2' },
     { at: 238, name: 'Puzzle', pic: '🧩', c: '#d9f5e8' }, { at: 252, name: 'Detective', pic: '🔍', c: '#d6ebff' },
     { at: 267, name: 'Good neighbour', pic: '🏘️', c: '#ffe0ec' },
-    { at: 275, name: 'Riverside', pic: '🏞️', c: '#d9f5e8' }, { at: 288, name: 'Ruler', pic: '📏', c: '#fff1c2' }, { at: 300, name: 'Ship', pic: '🚢', c: '#d6ebff' }
+    { at: 275, name: 'Riverside', pic: '🏞️', c: '#d9f5e8' }, { at: 288, name: 'Ruler', pic: '📏', c: '#fff1c2' }, { at: 300, name: 'Ship', pic: '🚢', c: '#d6ebff' },
+    { at: 304, name: 'Saturn', pic: '🪐', c: '#ece6ff' }, { at: 311, name: 'Rocket', pic: '🚀', c: '#ffe3c2' }, { at: 318, name: 'Galaxy', pic: '🌌', c: '#d6ebff' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -1296,7 +1351,7 @@
   // Country names that take "the" in a sentence ("Where is the Netherlands?").
   const THE = /^(United |Netherlands|Philippines|Bahamas|Gambia|Maldives|Marshall|Solomon|Comoros|Seychelles|Central African|Dominican Republic|DR Congo)/;
   const named = (it) => (isFeature(it) ? it.ref : (isWorld(it) && THE.test(it.name) ? 'the ' : '') + it.name);
-  const shapeOf = (it) => (isWorld(it) && MapView.has(it.shape) ? [it.shape] : []);
+  const shapeOf = (it) => (it.shape && MapView.has(it.shape) ? [it.shape] : []);
   function about(it) {
     if (isFeature(it)) {
       const n = it.ref, from = it.locate && it.at ? ' ' + esc(it.locate).replace('{}', '<b>' + esc(it.at) + '</b>') : '';
@@ -1317,6 +1372,7 @@
     const items = t.all();
     MapView.clear();
     $('map').classList.remove('nodots');
+    $('map').classList.toggle('space', t.map === 'solar');
     MapView.setDots(items, true);
     MapView.fit(t.map === 'world' ? [{ x: 0, y: 0 }, { x: MAPS.world.w, y: MAPS.world.h }] : items);
     $('xInfo').innerHTML = '<p>' + t.hint + '</p>';
@@ -1363,6 +1419,7 @@
       const kind = kinds[out.length % kinds.length];
       // A province's capital is only asked for a provincial capital.
       if (kind === 'capital' && !isWorld(it) && !it.cap) continue;
+      if (kind === 'order' && !it.order) continue; // the Sun and Pluto are not numbered
       if (kind === 'where' && !it.at) continue; // an ocean, or a place on no single continent
       if (kind === 'speak' && !it.lang) continue; // a people with many languages
       if (out.some((q) => q.it === it)) continue;
@@ -1416,7 +1473,8 @@
     MapView.use(lv.map || curTopic.map);
     MapView.clear();
     $('map').classList.toggle('nodots', !!curTopic.hideDots);
-    MapView.setDots(pool, !!curTopic.namedDots);
+    $('map').classList.toggle('space', (lv.map || curTopic.map) === 'solar');
+    MapView.setDots(pool, lv.namedDots !== undefined ? lv.namedDots : !!curTopic.namedDots);
     MapView.mark('pool', [], pool.flatMap(shapeOf));
     MapView.fit(pool);
     MapView.onTap(onMapTap);
@@ -1449,7 +1507,7 @@
         + '<p class="tapnote">👆 Tap the map' + (world ? ' (the country or its capital dot)' : '') + '</p>';
       return;
     }
-    const flagQ = q.kind === 'flag' || q.kind === 'pickflag';
+    const flagQ = q.kind === 'flag' || q.kind === 'pickflag' || q.kind === 'order'; // these do not light up the answer
     if (!flagQ) MapView.mark('hl', [it.key], shapeOf(it));
     if (!flagQ) MapView.show(it);
     $('say').textContent = q.kind === 'flag' ? 'Which country has this flag?'
@@ -1661,10 +1719,10 @@
   // ---- Island Routes: tap the islands of a trip, in order ----
   // A right island in its place is a step; any other island is a miss, and a second miss shows the whole way.
   let rtWant = [], rtI = 0;
-  const rtNote = () => { $('rtNote').textContent = '⛵ Islands crossed: ' + rtI + ' of ' + rtWant.length; };
+  const rtNote = () => { $('rtNote').textContent = (qs[qi].it.badge || '⛵') + ' ' + (qs[qi].it.unit || 'Islands crossed') + ': ' + rtI + ' of ' + rtWant.length; };
   function askRoute(r) {
     rtWant = r.via.map((n) => byName(pool, n)); rtI = 0;
-    $('say').textContent = 'Travel from ' + r.from + ' to ' + r.to + '. Tap each island you cross, in order.';
+    $('say').textContent = r.text || 'Travel from ' + r.from + ' to ' + r.to + '. Tap each island you cross, in order.';
     $('answers').innerHTML = '<p class="tapnote" id="rtNote"></p>';
     rtNote();
   }
@@ -1675,7 +1733,7 @@
       rtI++; sfx.good();
       const done = rtWant.slice(0, rtI);
       MapView.mark('no'); MapView.mark('ok', done.map((c) => c.key)); MapView.trace(done); MapView.say(got.name, got.x, got.y); rtNote();
-      if (rtI < rtWant.length) { $('say').textContent = 'Yes, ' + got.name + '! Where next?'; return; }
+      if (rtI < rtWant.length) { $('say').textContent = 'Yes, ' + got.name + '! Which one next?'; return; }
       locked = true; results.push(tries === 0); mood('cheer');
       $('say').textContent = pick(PRAISE);
       renderProg();
@@ -1686,13 +1744,13 @@
     MapView.mark('no', [got.key]); MapView.say(got.name, got.x, got.y);
     if (tries === 1) {
       CD.weak('omnia', stageOf(curLevel) + ': ' + r.name);
-      $('say').textContent = rtWant.includes(got) ? got.name + ' comes later. Which island is next?' : got.name + ' is not on the way. Try again!';
+      $('say').textContent = rtWant.includes(got) ? got.name + ' comes later. Which one is next?' : got.name + ' ' + (r.outside || 'is not on the way') + '. Try again!';
       return;
     }
     locked = true; results.push(false); renderProg();
     MapView.mark('no'); MapView.mark('ok', rtWant.map((c) => c.key)); MapView.trace(rtWant);
     $('say').textContent = 'Here is the way!';
-    $('whyText').textContent = r.from + ' is on ' + rtWant[0].name + ' and ' + r.to + ' is on ' + rtWant[rtWant.length - 1].name + '. The way is ' + rtWant.map((c) => c.name).join(' → ') + '.';
+    $('whyText').textContent = r.reveal || r.from + ' is on ' + rtWant[0].name + ' and ' + r.to + ' is on ' + rtWant[rtWant.length - 1].name + '. The way is ' + rtWant.map((c) => c.name).join(' → ') + '.';
     $('why').hidden = false;
     $('whyNext').focus();
   }
