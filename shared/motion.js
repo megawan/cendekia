@@ -9,6 +9,8 @@
 //   Cendekia.fx.hop(element, left, top)      an absolutely placed element jumps to a new place in an arc
 //   Cendekia.fx.drop(element)                the element falls into place from a little above
 //   Cendekia.fx.reveal(stars, gift)          the earned stars (.on) pop in one by one, then the new-sticker box drops in
+//   Cendekia.fx.flip(element)                the element turns over like a card (its parent needs CSS `perspective`)
+//   Cendekia.fx.cascade(elements)            the elements rise in one after another
 //   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its marked parts move
 //   Cendekia.fx.react(svg, 'cheer' | 'oops') the mascot hops and flaps, or shakes its head
 //
@@ -190,17 +192,29 @@
     });
   }
 
-  // The first children of the section are hidden before the browser paints, so the screen does not show for a moment
-  // before it animates, and shown again if the library cannot load.
-  function enter(sec) {
-    var kids = Array.prototype.slice.call(sec.children, 0, 8).filter(function (e) { return !e.hidden; });
-    if (!kids.length) return;
+  // The elements are hidden before the browser paints, so they do not show for a moment before they animate, and
+  // shown again if the library cannot load. Their inline opacity and transform are cleared when the animation ends.
+  function cascade(els, gap) {
+    var kids = Array.prototype.slice.call(els || []);
+    if (!kids.length || reduce.matches) return;
     kids.forEach(function (e) { e.style.opacity = '0'; });
     function clear() { kids.forEach(function (e) { e.style.opacity = ''; e.style.transform = ''; }); }
     load().then(function (a) {
       if (!a) { clear(); return; }
       a.remove(kids);
-      a.animate(kids, { translateY: [14, 0], opacity: [0, 1], duration: 320, delay: a.stagger(35), ease: 'outCubic', onComplete: clear });
+      a.animate(kids, { translateY: [14, 0], opacity: [0, 1], duration: 320, delay: a.stagger(gap || 35), ease: 'outCubic', onComplete: clear });
+    });
+  }
+  function enter(sec) {
+    cascade(Array.prototype.slice.call(sec.children, 0, 8).filter(function (e) { return !e.hidden; }));
+  }
+
+  function flip(el) {
+    if (!el || reduce.matches) return;
+    load().then(function (a) {
+      if (!a) return;
+      a.remove(el);
+      a.animate(el, { rotateY: [90, 0], scale: [0.92, 1], duration: 460, ease: 'outBack', onComplete: function () { el.style.transform = ''; } });
     });
   }
   function watchScreens() {
@@ -217,5 +231,5 @@
   if (document.readyState === 'complete') watchScreens(); else window.addEventListener('load', watchScreens);
 
   window.Cendekia = window.Cendekia || {};
-  window.Cendekia.fx = { confetti: confetti, burst: burst, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react };
+  window.Cendekia.fx = { confetti: confetti, burst: burst, flip: flip, cascade: cascade, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react };
 })();

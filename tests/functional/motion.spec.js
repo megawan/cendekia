@@ -43,6 +43,16 @@ test('screens do not animate when the device asks for reduced motion', async ({ 
   await expect(page.locator('#map > *').first()).toHaveCSS('opacity', '1');
 });
 
+// Lexica's word cards: choosing a word turns the stage over.
+test('lexica: the stage flips when another word is chosen', async ({ page }) => {
+  await page.goto('/lexica/');
+  await page.getByRole('button', { name: /Word cards/ }).click();
+  await expect(page.locator('#cGrid .wcard').nth(1)).toBeVisible();
+  await page.locator('#cGrid .wcard').nth(1).evaluate((b) => b.click());
+  await expect.poll(() => page.locator('#cards .stage').evaluate((e) => e.style.transform)).toContain('rotateY');
+  await expect.poll(() => page.locator('#cards .stage').evaluate((e) => e.style.transform), { timeout: 5000 }).toBe('');
+});
+
 // The earned stars pop in one by one. Stars are small SVGs with the class "on" when earned.
 test('result stars pop in and are all visible afterwards', async ({ page }) => {
   await page.goto('/lexica/');
