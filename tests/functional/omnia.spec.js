@@ -1,6 +1,7 @@
 const { test, expect } = require('../support/fixtures');
 
-// Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World" or "Nature of the World").
+// Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
+// "Culture of Indonesia" or "Animals of the World").
 async function openTopic(page, name) {
   await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
@@ -41,18 +42,24 @@ const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(wind
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
-  test('lists the four topics and their levels', async ({ page }) => {
+  test('lists the six topics and their levels', async ({ page }) => {
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Capitals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
-    await expect(page.locator('#topics .card')).toHaveCount(5); // four topics and the stickers
+    await expect(page.locator('#topics .card')).toHaveCount(7); // six topics and the stickers
     await page.locator('#topics .card', { hasText: 'Flags of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Nature of the World' }).click();
+    await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
+    await page.getByRole('button', { name: '← Home' }).click();
+    await page.locator('#topics .card', { hasText: 'Culture of Indonesia' }).click();
+    await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
+    await page.getByRole('button', { name: '← Home' }).click();
+    await page.locator('#topics .card', { hasText: 'Animals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
   });
 
@@ -70,6 +77,31 @@ test.describe('Omnia', () => {
     }
     await page.locator('#map circle[aria-label="Mount Everest"]').press('Enter');
     await expect(page.locator('#xInfo')).toContainText('highest mountain on Earth');
+  });
+
+  test('culture is placed in Indonesia and says where it is from', async ({ page }) => {
+    await openTopic(page, 'Culture of Indonesia');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    for (const place of ['Rumah Gadang', 'Rumah Bolon', 'Tongkonan', 'Honai', 'Rumah Betang', 'Rumah Joglo', 'Kecak', 'Saman', 'Reog Ponorogo', 'Jaipong', 'Pakarena',
+      'Cakalele', 'Yospan', 'Rendang', 'Pempek', 'Gudeg', 'Soto Banjar', 'Papeda', 'Tinutuan', 'Angklung', 'Gamelan', 'Sasando', 'Kolintang', 'Sape', 'Tifa',
+      'Batik', 'Ulos', 'Songket', 'Tenun Ikat Sumba', 'Noken', 'Sasirangan']) {
+      expect(await onLand(page, place, '360'), place).toBe(true);
+    }
+    await page.locator('#map circle[aria-label="Tongkonan"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('Sulawesi Selatan');
+  });
+
+  test('land animals are on land and sea animals are not', async ({ page }) => {
+    await openTopic(page, 'Animals of the World');
+    await page.getByRole('button', { name: /Explore the map/ }).click();
+    for (const place of ['Orangutan', 'Jaguar', 'Gorilla', 'Macaw', 'Sloth', 'Bird of paradise', 'Lion', 'Elephant', 'Giraffe', 'Kangaroo', 'Bison', 'Komodo dragon',
+      'Arabian camel', 'Bactrian camel', 'Fennec fox', 'Roadrunner', 'Dingo', 'Polar bear', 'Arctic fox', 'Reindeer', 'Snowy owl',
+      'Giant panda', 'Tiger', 'Snow leopard', 'Llama', 'Koala', 'Grizzly bear']) {
+      expect(await onAnyLand(page, place), place).toBe(true);
+    }
+    for (const place of ['Blue whale', 'Dolphin', 'Great white shark', 'Sea turtle', 'Clownfish']) expect(await onAnyLand(page, place), place).toBe(false);
+    await page.locator('#map circle[aria-label="Lion"]').press('Enter');
+    await expect(page.locator('#xInfo')).toContainText('king of the savanna');
   });
 
   test('flags are shown for the countries, and Israel is not among them', async ({ page }) => {
@@ -126,5 +158,21 @@ test.describe('Omnia', () => {
     await playRound(page);
     expect((await saved(page)).best['n.mountain']).toBeGreaterThanOrEqual(1);
     expect(await lastRound(page)).toMatchObject({ app: 'mundia', stage: 'Mountains' });
+  });
+
+  test('a culture round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Culture of Indonesia');
+    await page.locator('#levels .card', { hasText: 'Dances' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['c.dance']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'mundia', stage: 'Culture: Dances' });
+  });
+
+  test('an all-animals round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Animals of the World');
+    await page.locator('#levels .card', { hasText: 'All animals' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['a.all']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'mundia', stage: 'Animals: All animals' });
   });
 });

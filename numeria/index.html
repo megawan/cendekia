@@ -230,7 +230,7 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
   /* Number Lab tools */
-  .tool { background: #fff; border: 3px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 12px; justify-items: center; }
+  .tool { position: relative; background: #fff; border: 3px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 12px; justify-items: center; }
   .tool.ok { border-color: var(--good); background: #e3f7ec; }
   .tool.no { border-color: var(--bad); animation: shake .35s; }
   .tf { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; width: min(100%, 300px); padding: 6px; background: #e8f1ff; border: 3px solid #9bbcf0; border-radius: 12px; }
@@ -243,7 +243,7 @@
   .tick { position: relative; font: inherit; font-weight: 800; color: var(--ink); background: none; border: 0; cursor: pointer; padding: 24px 0 6px; font-size: .95rem; min-height: 56px; }
   .tick::before { content: ""; position: absolute; left: 50%; top: 6px; width: 4px; height: 14px; margin-left: -2px; background: var(--ink); opacity: .55; border-radius: 2px; }
   .tick.sel { color: #fff; background: var(--accent); border-radius: 10px; }
-  .tick.from::after { content: "🐸"; position: absolute; left: 50%; top: -22px; transform: translateX(-50%); font-size: 1.4rem; }
+  .frog { position: absolute; left: 0; top: 0; font-size: 1.4rem; line-height: 1; pointer-events: none; }
   .tblocks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
   .tcol { display: grid; gap: 8px; justify-items: center; align-content: start; background: #f6f8fd; border-radius: 14px; padding: 8px; }
   .tcol h3 { margin: 0; font-size: 1rem; opacity: .75; }
@@ -1098,7 +1098,17 @@
       paint();
     } else if (q.tool === 'line') {
       let sel = null; const ticks = [];
-      const paint = () => ticks.forEach((t, n) => { t.classList.toggle('sel', n === sel); t.setAttribute('aria-pressed', n === sel); });
+      // The frog sits above its tick and hops to the one the child taps. It is placed again if the box changes size.
+      const frog = q.spec.from === undefined ? null : Object.assign(document.createElement('span'), { className: 'frog', textContent: '🐸' });
+      if (frog) frog.setAttribute('aria-hidden', 'true');
+      const spot = (n) => {
+        const w = wrap.getBoundingClientRect(), r = ticks[n].getBoundingClientRect();
+        return [r.left - w.left + r.width / 2 - frog.offsetWidth / 2, r.top - w.top - 22];
+      };
+      const paint = () => {
+        ticks.forEach((t, n) => { t.classList.toggle('sel', n === sel); t.setAttribute('aria-pressed', n === sel); });
+        if (frog) Cendekia.fx.hop(frog, ...spot(sel));
+      };
       for (let start = 0; start <= q.spec.max; start += 11) {
         const row = document.createElement('div'); row.className = 'tline'; wrap.appendChild(row);
         for (let n = start; n < start + 11 && n <= q.spec.max; n++) {
@@ -1107,6 +1117,10 @@
           t.addEventListener('click', () => { if (locked) return; sel = n; sfx.tap(); paint(); });
           row.appendChild(t); ticks[n] = t;
         }
+      }
+      if (frog) {
+        wrap.appendChild(frog);
+        new ResizeObserver(() => { const [x, y] = spot(sel === null ? q.spec.from : sel); frog.style.left = x + 'px'; frog.style.top = y + 'px'; }).observe(wrap);
       }
       get = () => (sel === null ? '' : sel);
       set = (n) => { sel = n; paint(); };
@@ -1124,12 +1138,13 @@
         c.appendChild(st); grid.appendChild(c); return st.children[1];
       };
       let tn, on;
-      const paint = () => {
+      const paint = (grew) => {
         tens.innerHTML = '<span class="rod"></span>'.repeat(t); ones.innerHTML = '<span class="cube"></span>'.repeat(o);
         tn.textContent = t; on.textContent = o;
+        if (grew) Cendekia.fx.drop(grew.lastElementChild); // the block that was just added falls into place
       };
-      tn = col('Tens', tens, (d) => { t = Math.min(9, Math.max(0, t + d)); paint(); });
-      on = col('Ones', ones, (d) => { o = Math.min(9, Math.max(0, o + d)); paint(); });
+      tn = col('Tens', tens, (d) => { const was = t; t = Math.min(9, Math.max(0, t + d)); paint(t > was && tens); });
+      on = col('Ones', ones, (d) => { const was = o; o = Math.min(9, Math.max(0, o + d)); paint(o > was && ones); });
       get = () => t * 10 + o;
       set = (n) => { t = Math.floor(n / 10); o = n % 10; paint(); };
       paint();
@@ -1203,6 +1218,7 @@
       sfx.good(); mood('cheer');
       $('say').textContent = pick(PRAISE);
       if (btn) btn.classList.add('ok'); else if (curTool) curTool.box.classList.add('ok'); else $('disp').classList.add('ok');
+      if (!curTool) Cendekia.fx.burst(btn || $('disp'));
       renderProg();
       setTimeout(next, 900);
       return;

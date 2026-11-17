@@ -67,6 +67,22 @@ test.describe('Numeria: Number Lab', () => {
     expect((await stored(page)).best['lab.3']).toBe(3);
   });
 
+  test('number line: the frog hops to the number that was tapped', async ({ page }) => {
+    await openLevel(page, 4);
+    await playRound(page, async (say) => {
+      const h = say.match(/starts at (\d+) and hops (\d+) (forward|back)/);
+      const n = +h[1] + (h[3] === 'forward' ? 1 : -1) * +h[2];
+      const frog = page.locator('.frog');
+      await expect(frog).toHaveCount(1);
+      await page.locator('.tick').nth(n).click();
+      await expect.poll(async () => {
+        const f = await frog.boundingBox(), t = await page.locator('.tick').nth(n).boundingBox();
+        return Math.abs(f.x + f.width / 2 - (t.x + t.width / 2));
+      }).toBeLessThan(3);
+    });
+    expect((await stored(page)).best['lab.4']).toBe(3);
+  });
+
   test('blocks: build a number with tens and ones', async ({ page }) => {
     test.setTimeout(60000);
     await openLevel(page, 5);
