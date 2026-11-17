@@ -19,6 +19,30 @@ for (const dir of APPS) {
   });
 }
 
+// Screens: a section that was hidden and appears has its children rise in one after another.
+test('a screen that appears animates in, and is fully visible afterwards', async ({ page }) => {
+  await page.goto('/lexica/');
+  await page.waitForTimeout(200);
+  // Read straight after the section is shown, before the first frame: the children start hidden, with no flash.
+  const start = await page.evaluate(async () => {
+    document.getElementById('home').hidden = true; document.getElementById('map').hidden = false;
+    await Promise.resolve();
+    return getComputedStyle(document.querySelector('#map > *')).opacity;
+  });
+  expect(start).toBe('0');
+  const first = page.locator('#map > *').first();
+  await expect.poll(() => page.locator('#map > *').evaluateAll((els) => els.every((e) => e.style.opacity === '' && e.style.transform === '')), { timeout: 5000 }).toBe(true);
+  await expect(first).toHaveCSS('opacity', '1');
+});
+
+test('screens do not animate when the device asks for reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/lexica/');
+  await page.waitForTimeout(200);
+  await page.evaluate(() => { document.getElementById('home').hidden = true; document.getElementById('map').hidden = false; });
+  await expect(page.locator('#map > *').first()).toHaveCSS('opacity', '1');
+});
+
 // The earned stars pop in one by one. Stars are small SVGs with the class "on" when earned.
 test('result stars pop in and are all visible afterwards', async ({ page }) => {
   await page.goto('/lexica/');
