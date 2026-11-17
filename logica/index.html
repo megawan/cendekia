@@ -3969,7 +3969,7 @@
     $('resNext').hidden = i >= 0 && i + 1 >= levelsOf(w).length;
     $('resNext').textContent = last.def && last.def.custom ? '✎ Change the map' : i < 0 ? 'New map' : 'Next level';
     show('result');
-    sfx.win(); Cendekia.fx.confetti(stars * 25 + (gained.length ? 40 : 0));
+    sfx.win(); Cendekia.fx.confetti(stars * 25 + (gained.length ? 40 : 0)); Cendekia.fx.reveal($('resStars'), $('resGift'));
     if (gained.length) UI.toast({ type: 'success', title: 'New sticker!', description: gained.map((k) => k.name).join(', ') });
   }
   $('resNext').addEventListener('click', () => {
