@@ -447,10 +447,10 @@
     padding: 0; border: 0; background: none; cursor: pointer; z-index: 3; }
   .pdest::before { content: ""; position: absolute; inset: 26%; border-radius: 50%; background: rgba(46,144,250,.35); border: 3px dashed var(--c-blue); }
   .pdest.hint::before { animation: blink .8s ease-in-out infinite; }
-  .lot.mini { width: 132px; border-width: 3px; border-radius: 8px; margin: 0 auto; }
-  .lot.mini .pcar { cursor: default; }
-  .lot.mini .lotexit { height: 20px; top: calc(100% + 3px); font-size: .8rem; }
-  .lot.mini.demoBox { margin-bottom: 26px; }
+  .lot.lotmini { width: 150px; border-width: 3px; border-radius: 8px; margin: 0 auto; }
+  .lot.lotmini .pcar { cursor: default; }
+  .lot.lotmini .lotexit { height: 20px; top: calc(100% + 3px); font-size: .8rem; }
+  .lot.lotmini { margin-bottom: 26px; }
 
   /* Poka's Backpack */
   .pouches { display: flex; justify-content: center; gap: 10px; margin: 8px 0; }
@@ -1795,9 +1795,9 @@
       ['<div class="demo">' + miniTower([[], [0], [1]], 2) + '</div>', 'A big disk never sits on a small one. Use the middle peg to make room!']
     ],
     park: [
-      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [0, 0]) + '</div>', 'The 🚓 police car wants to drive out of the exit at the bottom. But another car is in the way.'],
-      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [0, 0], 1, [[2, 2], [3, 2]]) + '</div>', 'Tap a car, then tap a dot to slide it there. A car only goes straight, forward or back.'],
-      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [2, 2]) + '</div>', 'Clear the way and the police car drives out. The fewer moves, the better!']
+      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [0, 0]) + '</div>', 'The 🚓 police car wants to drive out of the exit at the bottom. But another car is in the way.', 'stack'],
+      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [0, 0], 1, [[2, 2], [3, 2]]) + '</div>', 'Tap a car, then tap a dot to slide it there. A car only goes straight, forward or back.', 'stack'],
+      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [2, 2]) + '</div>', 'Clear the way and the police car drives out. The fewer moves, the better!', 'stack']
     ],
     pack: [
       ['<div class="demo"><div class="pouches">' + pouchHtml(0, 3) + pouchHtml(1, 1) + '</div></div>', 'The backpack has pockets, and each pocket holds a number of things. Here: 3 🍎 and 1 🍪.'],
@@ -3622,7 +3622,7 @@
       : '<svg class="cs" viewBox="0 0 ' + L + ' 60" preserveAspectRatio="none" aria-hidden="true"><g transform="translate(0 60) rotate(-90)">' + turned + '</g></svg>';
   }
   // Small still picture of a lot for the guide. sel is a car to mark and dots are cells to show as places to slide to.
-  const parkMini = (n, cars, pos, sel, dots) => '<div class="lot mini demoBox" style="--n:' + n + '">'
+  const parkMini = (n, cars, pos, sel, dots) => '<div class="lot lotmini" style="--n:' + n + '">'
     + '<span class="lotexit" style="--x:' + cars[0].f + '" aria-hidden="true">⬇</span>'
     + cars.map((c, i) => { const v = parkVars(c, pos[i]); return '<span class="pcar' + (i === 0 ? ' t' : '') + (i === sel ? ' sel' : '') + '" style="--x:' + v.x + ';--y:' + v.y
       + ';--w:' + v.w + ';--h:' + v.h + ';--c:' + PARK_COLORS[i] + '">' + parkCarSvg(c, i) + '</span>'; }).join('')

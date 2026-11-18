@@ -219,4 +219,24 @@ test.describe("Poka's Parking Lot", () => {
     await page.mouse.up();
     await expect(page.locator('#lot.done')).toBeVisible({ timeout: 5000 });
   });
+
+  test('the guide pictures show the lot with cars big enough to see', async ({ page }) => {
+    await page.goto('/logica/');
+    await page.evaluate(() => {
+      const id = window.Cendekia.profile().id, best = {};
+      for (const x of ['easy', 'medium', 'hard']) best[x] = { park: Array(7).fill(1) };
+      localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: 'medium', best, day: '', streak: 0, seen: {}, log: {}, days: {} }));
+    });
+    await page.reload();
+    await page.evaluate(() => window.dispatchEvent(new Event('pointerdown')));
+    await page.waitForFunction(() => window.LogicaUI);
+    await page.locator('#worlds .card', { hasText: "Poka's Parking Lot" }).click();
+    const lots = page.locator('.tsteps .lotmini');
+    await expect(lots).toHaveCount(3);
+    for (let k = 0; k < 3; k++) {
+      const lot = await lots.nth(k).boundingBox(), car = await lots.nth(k).locator('.pcar').first().boundingBox();
+      expect(lot.width).toBeGreaterThan(120);
+      expect(car.height).toBeGreaterThan(lot.width / 4); // a car is about two cells of a four-cell lot
+    }
+  });
 });
