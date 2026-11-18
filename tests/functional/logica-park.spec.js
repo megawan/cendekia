@@ -198,4 +198,25 @@ test.describe("Poka's Parking Lot", () => {
     expect(box.width).toBeGreaterThan(20);
     expect(box.height).toBeGreaterThan(20);
   });
+
+  test('the police car can be dragged all the way to the exit, even in a short window', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 545 });
+    await openLogica(page, 'medium');
+    await openLevel(page, 1);
+    const lot = await readLot(page), { start, dist } = analyse(lot);
+    let pos = start;
+    while (dist(pos) > 1) {
+      const m = slides(lot.cars, pos, lot.n).find((s) => { const q = pos.slice(); q[s.i] = s.to; return dist(q) === dist(pos) - 1; });
+      await slide(page, lot.cars, lot.n, pos, m);
+      pos = pos.slice(); pos[m.i] = m.to;
+    }
+    const last = slides(lot.cars, pos, lot.n).find((s) => s.i === 0 && s.to === lot.n - lot.cars[0].len);
+    const from = await page.locator('#lot .pcar').first().boundingBox(), cell = (await page.locator('#lot').boundingBox()).height / lot.n;
+    const cx = from.x + from.width / 2, cy = from.y + from.height / 2;
+    await page.mouse.move(cx, cy);
+    await page.mouse.down();
+    await page.mouse.move(cx, cy + (last.to - pos[0]) * cell, { steps: 10 });
+    await page.mouse.up();
+    await expect(page.locator('#lot.done')).toBeVisible({ timeout: 5000 });
+  });
 });
