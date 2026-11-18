@@ -136,6 +136,44 @@
   .bigflag { text-align: center; font-size: 5rem; line-height: 1.15; margin: 0; }
   .opt.flagopt { font-size: 2.6rem; line-height: 1; }
   .topics .sec { grid-column: 1 / -1; margin: 6px 0 -4px; font-size: 1.05rem; opacity: .75; text-transform: uppercase; letter-spacing: .06em; }
+  /* Science scenes: the water cycle and food chains */
+  .slot .scene { display: block; width: 100%; max-width: calc(clamp(220px, 46vh, 440px) * var(--ar)); height: auto; border-radius: var(--radius); border: 2px solid var(--line); background: #fff; margin: 0 auto 12px; }
+  .scene .lbl { font-size: 12px; font-weight: 800; fill: var(--ink); stroke: #fff; stroke-width: 3.5px; paint-order: stroke; }
+  .scene.water [data-stage] { transition: opacity .3s; }
+  .scene.water [data-stage].dim { opacity: .18; }
+  .scene.water [data-stage].lit { filter: drop-shadow(0 0 5px #f2a33a); }
+  .scene.water .sun circle { fill: #ffd23f; transform-box: fill-box; transform-origin: center; }
+  .scene.water .rays { transform-box: fill-box; transform-origin: center; }
+  .scene.water .rays line { stroke: #ffd23f; stroke-width: 4; stroke-linecap: round; }
+  .scene.water .vap { fill: #fff; }
+  .scene.water .cloud { fill: #fff; }
+  .scene.water .drop { stroke: #2e90fa; stroke-width: 3; stroke-linecap: round; }
+  .scene.water .land { fill: #8fcf8a; }
+  .scene.water .snow { fill: #fff; }
+  .scene.water .waves { fill: #3b9be0; }
+  .scene.water .river { fill: none; stroke: #5fb4f0; stroke-width: 7; stroke-linecap: round; }
+  .scene.water .flow { fill: none; stroke: #fff; stroke-width: 2; stroke-dasharray: 6 8; stroke-linecap: round; opacity: .8; }
+  .scene.water .hit { fill: transparent; cursor: pointer; }
+  .scene.chain { background: #f7fbff; }
+  .scene.chain .arrow { fill: none; stroke: #7a86b8; stroke-width: 3; stroke-linecap: round; }
+  .scene.chain .head { fill: #7a86b8; }
+  .scene.chain .spk { fill: #f2a33a; }
+  .scene.chain .sun { transform-box: fill-box; transform-origin: center; }
+  .scene.chain .face { transform-box: fill-box; transform-origin: center; }
+  .scene.chain .nd circle { stroke-width: 3; }
+  .scene.chain .nd.hl circle { stroke: var(--warm); stroke-width: 5; }
+  .scene.chain .nd[role="button"] { cursor: pointer; }
+  .scene.chain .pic { font-size: 34px; }
+  .scene.chain .q { fill: #fff; stroke: #9aa5d6; stroke-dasharray: 5 4; }
+  .scene.chain .qm { font-size: 34px; font-weight: 800; fill: #9aa5d6; }
+  .scene.chain .nm { font-size: 13px; font-weight: 800; fill: var(--ink); }
+  .scene.chain .rl { font-size: 11px; font-weight: 700; }
+  .scene [role="button"]:focus-visible { outline: 3px solid var(--accent); }
+  .picks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 12px; }
+  .pick { font: inherit; font-weight: 700; font-size: .95rem; min-height: 46px; border-radius: 999px; background: #fff; color: var(--ink);
+    border: 2px solid var(--line); padding: 6px 14px; cursor: pointer; }
+  .pick[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #wTour { width: 100%; margin-top: 12px; }
   /* The solar system: dark space, orbits as thin rings, the Sun in yellow */
   #map.space .sea { fill: #0d1236; }
   #map.space path { fill: none; stroke: rgba(255,255,255,.22); stroke-width: 1; }
@@ -228,7 +266,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/33</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/36</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -241,6 +279,18 @@
       <h2 id="tTitle">Levels</h2><span class="spacer"></span>
     </div>
     <div class="levels" id="levels"></div>
+  </section>
+
+  <!-- Watch: a scene that moves (the water cycle, food chains) -->
+  <section id="watch" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="topic">← Back</button>
+      <h2 id="wTitle">Watch</h2><span class="spacer"></span>
+    </div>
+    <div class="slot" id="wSlot"></div>
+    <div class="picks" id="wTabs"></div>
+    <div class="info" id="wInfo" aria-live="polite"></div>
+    <button type="button" class="btn go" id="wTour">▶ Show me one by one</button>
   </section>
 
   <!-- Explore: tap anything on the map -->
@@ -276,6 +326,7 @@
       <div class="bubble" id="say" aria-live="polite"></div>
     </div>
     <div class="slot" id="pSlot"></div>
+    <div class="slot" id="sSlot" hidden></div>
     <div id="answers"></div>
     <div class="why" id="why" hidden aria-live="polite">
       <p id="whyText"></p>
@@ -316,11 +367,12 @@
 <script src="../shared/mascot.js"></script>
 <script src="maps.js"></script>
 <script src="borders.js"></script>
+<script src="science.js"></script>
 <script>
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
-  const CD = window.Cendekia, MAPS = window.OMNIA_MAPS;
+  const CD = window.Cendekia, MAPS = window.OMNIA_MAPS, SCI = window.OMNIA_SCIENCE;
   const pick = (a) => a[Math.floor(Math.random() * a.length)];
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -873,7 +925,7 @@
   const borderSubjects = (continent) => nations(continent).filter((c) => { const n = neighboursOf(c); return n && n.length >= 1 && n.length <= 6; });
   // Per topic: unit (what a level counts), hint (the line before a tap while exploring), all (what exploring shows),
   // stage (a prefix for the shared log, so the parents' page can tell two topics' levels apart).
-  const SECTIONS = ['Indonesia', 'The world', 'Space', 'Map games'];
+  const SECTIONS = ['Indonesia', 'The world', 'Space', 'Science', 'Map games'];
   const TOPICS = [
     { id: 'indonesia', section: 'Indonesia', map: 'indonesia', icon: '🏝️', c: 'var(--c-green)', name: 'Cities of Indonesia', blurb: 'Find the cities of every island and the capital of every province.',
       unit: 'cities', sub: 'Tap any place to see its name and province', hint: 'Tap a dot on the map.', all: () => CITIES,
@@ -1000,6 +1052,22 @@
         { id: 's.sort', name: 'Put in order', items: () => group(SOLAR, 'planet'), kinds: ['route'], namedDots: true, subjects: () => sortTasks(6) },
         { id: 's.all', name: 'Sun, planets and Pluto', items: () => SOLAR }
       ] },
+    // Science: a scene that moves (science.js) in place of the map. Questions come ready-made (science.js, by level id); the answers are choices.
+    { id: 'water', section: 'Science', sci: 'water', icon: '💧', c: '#2e90fa', name: 'The Water Cycle', blurb: 'Watch the water go round and round, from the sea to the clouds and back.',
+      unit: 'questions', sub: 'See how the Sun, clouds and rain make the water cycle go round', stage: 'Water: ', kinds: ['sci'], levels: [
+        { id: 'w.steps', name: 'The four steps', items: () => SCI.questions['w.steps']() },
+        { id: 'w.order', name: 'What comes next?', items: () => SCI.questions['w.order']() },
+        { id: 'w.facts', name: 'Water facts', items: () => SCI.questions['w.facts']() },
+        { id: 'w.all', name: 'The whole water cycle', items: () => SCI.questions['w.all']() }
+      ] },
+    { id: 'chains', section: 'Science', sci: 'chain', icon: '🦎', c: '#1f9d6b', name: 'Food Chains', blurb: 'Who eats what? Follow the energy from the Sun to a Komodo dragon, an eagle and a shark.',
+      unit: 'questions', sub: 'See who eats whom in four food chains, and tap each one to meet it', stage: 'Food chains: ', kinds: ['sci'], levels: [
+        { id: 'c.eats', name: 'Who eats whom?', items: () => SCI.questions['c.eats']() },
+        { id: 'c.whatif', name: 'What if…?', items: () => SCI.questions['c.whatif']() },
+        { id: 'c.roles', name: 'Producers and eaters', items: () => SCI.questions['c.roles']() },
+        { id: 'c.facts', name: 'Food chain facts', items: () => SCI.questions['c.facts']() },
+        { id: 'c.all', name: 'All food chains', items: () => SCI.questions['c.all']() }
+      ] },
     // Games on the map: not a way to explore, so no Explore card. Their dots are hidden (still there for the keyboard).
     { id: 'jigsaw', section: 'Map games', map: 'world', icon: '🧩', c: '#2f9e7d', name: 'Map Jigsaw', blurb: 'Drag the shape of a country to its place on the map.',
       unit: 'countries', noExplore: true, hideDots: true, stage: 'Jigsaw: ', kinds: ['drag'], levels: [
@@ -1072,7 +1140,7 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (318 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (345 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
@@ -1090,7 +1158,8 @@
     { at: 238, name: 'Puzzle', pic: '🧩', c: '#d9f5e8' }, { at: 252, name: 'Detective', pic: '🔍', c: '#d6ebff' },
     { at: 267, name: 'Good neighbour', pic: '🏘️', c: '#ffe0ec' },
     { at: 275, name: 'Riverside', pic: '🏞️', c: '#d9f5e8' }, { at: 288, name: 'Ruler', pic: '📏', c: '#fff1c2' }, { at: 300, name: 'Ship', pic: '🚢', c: '#d6ebff' },
-    { at: 304, name: 'Saturn', pic: '🪐', c: '#ece6ff' }, { at: 311, name: 'Rocket', pic: '🚀', c: '#ffe3c2' }, { at: 318, name: 'Galaxy', pic: '🌌', c: '#d6ebff' }
+    { at: 304, name: 'Saturn', pic: '🪐', c: '#ece6ff' }, { at: 311, name: 'Rocket', pic: '🚀', c: '#ffe3c2' }, { at: 318, name: 'Galaxy', pic: '🌌', c: '#d6ebff' },
+    { at: 326, name: 'Raindrop', pic: '💧', c: '#d6ebff' }, { at: 336, name: 'Food chain', pic: '🦅', c: '#fff1c2' }, { at: 345, name: 'Scientist', pic: '🔬', c: '#d9f5e8' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -1300,8 +1369,9 @@
   // ---- Screens ----
   let curTopic = TOPICS[0], curLevel = null;
   function show(id) {
-    ['home', 'topic', 'explore', 'play', 'result', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
+    ['home', 'topic', 'watch', 'explore', 'play', 'result', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
     if (id !== 'explore') MapView.orbit([]);
+    if (id !== 'watch' && id !== 'play') dropScene();
     if (id === 'home') renderHome();
     if (id === 'topic') renderTopic();
     if (id === 'stickers') renderStickers();
@@ -1343,8 +1413,10 @@
     const box = $('levels'); box.innerHTML = '';
     const x = document.createElement('button');
     x.type = 'button'; x.className = 'card wide'; x.style.setProperty('--c', t.c);
-    x.innerHTML = '<span class="badge" aria-hidden="true">🔎</span><span><b>Explore the map</b><small>' + t.sub + '</small></span>';
-    x.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); startExplore(t); });
+    x.innerHTML = t.sci
+      ? '<span class="badge" aria-hidden="true">🎬</span><span><b>' + SCI.kinds[t.sci].title + '</b><small>' + t.sub + '</small></span>'
+      : '<span class="badge" aria-hidden="true">🔎</span><span><b>Explore the map</b><small>' + t.sub + '</small></span>';
+    x.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); if (t.sci) startWatch(t); else startExplore(t); });
     if (!t.noExplore) box.appendChild(x);
     t.levels.forEach((lv, i) => {
       const b = document.createElement('button'), n = lv.items().length;
@@ -1374,6 +1446,7 @@
   const named = (it) => (isFeature(it) ? it.ref : (isWorld(it) && THE.test(it.name) ? 'the ' : '') + it.name);
   const shapeOf = (it) => (it.shape && MapView.has(it.shape) ? [it.shape] : []);
   function about(it) {
+    if (it.sci) return esc(it.note);
     if (isFeature(it)) {
       const n = it.ref, from = it.locate && it.at ? ' ' + esc(it.locate).replace('{}', '<b>' + esc(it.at) + '</b>') : '';
       return esc(n[0].toUpperCase() + n.slice(1)) + (it.plural ? ' are ' : ' is ') + esc(it.note) + from;
@@ -1381,6 +1454,47 @@
     if (isWorld(it)) return 'The capital of ' + esc(named(it)) + ' is <b>' + esc(it.capital) + '</b>.';
     if (NOTES[it.name]) return esc(it.name) + ' is ' + esc(NOTES[it.name]);
     return esc(it.name) + (it.cap ? ' is the capital of <b>' + esc(it.prov) + '</b>.' : ' is a city in <b>' + esc(it.prov) + '</b>.');
+  }
+
+  // ---- Watch: a scene that moves, with a tab for each step or chain ----
+  // The scene (science.js) is also used by a quiz, which shows it without names.
+  let scene = null, tour = 0;
+  function dropScene() {
+    if (scene) { scene.stop(); scene = null; }
+    stopTour();
+  }
+  function stopTour() { clearTimeout(tour); tour = 0; $('wTour').textContent = '▶ Show me one by one'; }
+  // The same view with the hidden place shown, and lit up.
+  const revealed = (v) => Object.assign({}, v, { hide: undefined, hl: v.hide !== undefined ? v.hide : v.hl });
+  function startWatch(t) {
+    curTopic = t;
+    show('watch');
+    const W = SCI.kinds[t.sci];
+    $('wTitle').textContent = '🎬 ' + t.name;
+    const pressTab = (id) => document.querySelectorAll('#wTabs .pick').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.id === id)));
+    const choose = (id) => { pressTab(id); scene.show(W.view(id)); $('wInfo').innerHTML = W.info(id); };
+    scene = SCI.mount(t.sci, $('wSlot'), { labels: true, onPick: (p) => {
+      stopTour(); sfx.tap();
+      if (p.tab) { choose(p.tab); return; }
+      pressTab(p.chain); scene.show({ chain: p.chain, hl: p.node }); $('wInfo').innerHTML = W.nodeInfo(p.chain, p.node);
+      document.querySelector('#wSlot [data-i="' + p.node + '"]').focus();
+    } });
+    $('wTabs').innerHTML = '';
+    W.tabs.forEach((tab) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'pick'; b.dataset.id = tab.id; b.setAttribute('aria-pressed', 'false'); b.textContent = tab.pic + ' ' + tab.label;
+      b.addEventListener('click', () => { stopTour(); sfx.tap(); choose(tab.id); });
+      $('wTabs').appendChild(b);
+    });
+    scene.show(W.view(W.tabs[0].id));
+    $('wInfo').innerHTML = W.intro;
+    $('wTour').onclick = () => {
+      if (tour) { stopTour(); return; }
+      let k = 0;
+      const step = () => { choose(W.tabs[k % W.tabs.length].id); k++; tour = setTimeout(step, 4500); };
+      $('wTour').textContent = '⏸ Stop';
+      step();
+    };
   }
 
   // ---- Explore ----
@@ -1450,7 +1564,7 @@
     return shuffle(out);
   }
   // What the right answer to a question is. Choices are these values; a flag is chosen by its two-letter code.
-  const target = (q) => (q.kind === 'where' ? q.it.at : q.kind === 'speak' ? q.it.lang : q.kind === 'cmp' ? labelOf(q.it) : q.kind === 'habitat' ? HABITAT[q.it.group] : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
+  const target = (q) => (q.kind === 'sci' ? q.it.right : q.kind === 'where' ? q.it.at : q.kind === 'speak' ? q.it.lang : q.kind === 'cmp' ? labelOf(q.it) : q.kind === 'habitat' ? HABITAT[q.it.group] : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
   const labelOf = (it) => (curLevel && curLevel.cmp && curLevel.cmp.label ? curLevel.cmp.label(it) : it.name);
   const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
   // Flags that are too alike to be offered together.
@@ -1459,6 +1573,7 @@
   function choicesFor(q) {
     const it = q.it, want = target(q), same = pool.filter((p) => p !== it);
     let others;
+    if (q.kind === 'sci') return shuffle([want].concat(shuffle(it.wrong).slice(0, 3)));
     if (q.kind === 'habitat') others = shuffle(Object.keys(HABITAT).filter((h) => h !== it.group)).map((h) => HABITAT[h]);
     else if (q.kind === 'where' && it.scope === 'province') {
       const region = PROV_REGION.get(it.at), provs = [...PROV_REGION.keys()].filter((v) => v !== it.at);
@@ -1491,15 +1606,20 @@
     pool = lv.items();
     qs = makeRound(lv); qi = 0; results = []; started = Date.now(); roundNo++;
     show('play');
-    MapView.place($('pSlot'));
-    MapView.use(lv.map || curTopic.map);
-    MapView.clear();
-    $('map').classList.toggle('nodots', !!curTopic.hideDots);
-    $('map').classList.toggle('space', (lv.map || curTopic.map) === 'solar');
-    MapView.setDots(pool, lv.namedDots !== undefined ? lv.namedDots : !!curTopic.namedDots);
-    MapView.mark('pool', [], pool.flatMap(shapeOf));
-    MapView.fit(pool);
-    MapView.onTap(onMapTap);
+    dropScene();
+    $('pSlot').hidden = !!curTopic.sci; $('sSlot').hidden = !curTopic.sci;
+    if (curTopic.sci) scene = SCI.mount(curTopic.sci, $('sSlot'));
+    else {
+      MapView.place($('pSlot'));
+      MapView.use(lv.map || curTopic.map);
+      MapView.clear();
+      $('map').classList.toggle('nodots', !!curTopic.hideDots);
+      $('map').classList.toggle('space', (lv.map || curTopic.map) === 'solar');
+      MapView.setDots(pool, lv.namedDots !== undefined ? lv.namedDots : !!curTopic.namedDots);
+      MapView.mark('pool', [], pool.flatMap(shapeOf));
+      MapView.fit(pool);
+      MapView.onTap(onMapTap);
+    }
     ask();
   }
   function renderProg() {
@@ -1513,10 +1633,12 @@
     const q = qs[qi], it = q.it, world = isWorld(it);
     tries = 0; locked = false;
     renderProg(); mood();
-    ['hl', 'ok', 'no', 'on'].forEach((c) => MapView.mark(c));
-    MapView.say(null); MapView.trace([]);
     $('why').hidden = true;
     const box = $('answers'); box.innerHTML = '';
+    if (q.kind === 'sci') { scene.show(it.view); $('say').textContent = it.text; } else {
+      ['hl', 'ok', 'no', 'on'].forEach((c) => MapView.mark(c));
+      MapView.say(null); MapView.trace([]);
+    }
     if (q.kind === 'drag') { askDrag(it); return; }
     if (q.kind === 'who') { askWho(it); return; }
     if (q.kind === 'neigh') { askNeigh(it); return; }
@@ -1529,10 +1651,10 @@
         + '<p class="tapnote">👆 Tap the map' + (world ? ' (the country or its capital dot)' : '') + '</p>';
       return;
     }
-    const flagQ = q.kind === 'flag' || q.kind === 'pickflag' || q.kind === 'order'; // these do not light up the answer
+    const flagQ = q.kind === 'flag' || q.kind === 'pickflag' || q.kind === 'order' || q.kind === 'sci'; // these do not light up the answer
     if (!flagQ) MapView.mark('hl', [it.key], shapeOf(it));
     if (!flagQ) MapView.show(it);
-    $('say').textContent = q.kind === 'flag' ? 'Which country has this flag?'
+    $('say').textContent = q.kind === 'sci' ? it.text : q.kind === 'flag' ? 'Which country has this flag?'
       : q.kind === 'pickflag' ? 'Which one is the flag of ' + named(it) + '?'
       : curTopic.say && curTopic.say[q.kind] ? curTopic.say[q.kind](it)
       : q.kind === 'which' ? 'Which ' + (world ? 'country' : 'city') + ' is this?'
@@ -1787,9 +1909,12 @@
       $('say').textContent = pick(PRAISE);
       $('answers').querySelectorAll('.piece').forEach((c) => c.classList.add('placed'));
       if (btn) btn.classList.add('ok');
-      MapView.mark('hl'); MapView.mark('no');
-      MapView.mark('ok', [it.key], shapeOf(it));
-      MapView.say(it.name, it.x, it.y);
+      if (q.kind === 'sci') scene.show(revealed(it.view));
+      else {
+        MapView.mark('hl'); MapView.mark('no');
+        MapView.mark('ok', [it.key], shapeOf(it));
+        MapView.say(it.name, it.x, it.y);
+      }
       renderProg();
       const r = roundNo; setTimeout(() => { if (r === roundNo) next(); }, 1300);
       return;
@@ -1807,11 +1932,14 @@
     results.push(false);
     renderProg();
     $('answers').querySelectorAll('.opt').forEach((b) => { if (b.dataset.v === target(q)) b.classList.add('ok'); b.disabled = true; });
-    MapView.mark('hl'); MapView.mark('no');
-    MapView.mark('ok', [it.key], shapeOf(it));
-    MapView.say(it.name, it.x, it.y);
-    MapView.show(it);
-    $('say').textContent = 'Here it is!';
+    if (q.kind === 'sci') scene.show(revealed(it.view));
+    else {
+      MapView.mark('hl'); MapView.mark('no');
+      MapView.mark('ok', [it.key], shapeOf(it));
+      MapView.say(it.name, it.x, it.y);
+      MapView.show(it);
+    }
+    $('say').textContent = q.kind === 'sci' ? 'This is the answer.' : 'Here it is!';
     $('whyText').innerHTML = about(it);
     $('why').hidden = false;
     $('whyNext').focus();

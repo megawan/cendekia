@@ -2,7 +2,7 @@ const { test, expect } = require('../support/fixtures');
 
 // Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
 // "Culture of Indonesia", "Animals of the World", "Volcanoes and Disasters", "Islands and Straits", "Peoples and Languages",
-// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?", "Island Routes" or "The Solar System").
+// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?", "Island Routes", "The Solar System", "The Water Cycle" or "Food Chains").
 async function openTopic(page, name) {
   await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
@@ -44,7 +44,7 @@ const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(wind
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
-  test('lists the eighteen topics and their levels', async ({ page }) => {
+  test('lists the twenty topics and their levels', async ({ page }) => {
     test.setTimeout(90000); // every return to the home screen waits for its cards to appear
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
@@ -52,7 +52,7 @@ test.describe('Omnia', () => {
     await page.locator('#topics .card', { hasText: 'Capitals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
-    await expect(page.locator('#topics .card')).toHaveCount(19); // eighteen topics and the stickers
+    await expect(page.locator('#topics .card')).toHaveCount(21); // twenty topics and the stickers
     await page.locator('#topics .card', { hasText: 'Flags of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
@@ -73,7 +73,7 @@ test.describe('Omnia', () => {
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Peoples and Languages' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
-    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 7], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3], ['The Solar System', 6]]) { // a game has no Explore card
+    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 7], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3], ['The Solar System', 6], ['The Water Cycle', 5], ['Food Chains', 6]]) { // a game has no Explore card; the water cycle and food chains have Watch
       await page.getByRole('button', { name: '← Home' }).click();
       await page.locator('#topics .card', { hasText: topic }).click();
       await expect(page.locator('#levels .card')).toHaveCount(levels);
@@ -477,5 +477,81 @@ test.describe('Omnia', () => {
     await playRound(page);
     expect((await saved(page)).best['q.space']).toBeGreaterThanOrEqual(1);
     expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Who am I: Space' });
+  });
+
+  test('watching the water cycle, a step lights up and says what happens, and the water moves', async ({ page }) => {
+    await openTopic(page, 'The Water Cycle');
+    await page.getByRole('button', { name: /Watch the water cycle/ }).click();
+    await expect(page.locator('#watch')).toBeVisible();
+    await page.locator('#wSlot .hit[data-tab="condensation"]').press('Enter');
+    await expect(page.locator('#wInfo')).toContainText('tiny drops of water');
+    await expect(page.locator('#wSlot [data-stage="condensation"]')).toHaveClass(/lit/);
+    await expect(page.locator('#wSlot [data-stage="evaporation"]')).toHaveClass(/dim/);
+    await page.getByRole('button', { name: /3\. Precipitation/ }).click();
+    await expect(page.locator('#wInfo')).toContainText('fall as rain');
+    const vapour = page.locator('#wSlot .vap').first();
+    const at = () => vapour.evaluate((c) => c.getAttribute('cy'));
+    const first = await at();
+    await expect.poll(at).not.toBe(first);
+  });
+
+  test('watching food chains, an animal can be tapped to meet it, and sparks run along the arrows', async ({ page }) => {
+    await openTopic(page, 'Food Chains');
+    await page.getByRole('button', { name: /Watch the food chains/ }).click();
+    await page.getByRole('button', { name: /Rice field/ }).click();
+    await expect(page.locator('#wSlot .nd')).toHaveCount(4);
+    await page.locator('#wSlot .nd[aria-label="Snake"]').press('Enter');
+    await expect(page.locator('#wInfo')).toContainText('Carnivore');
+    await expect(page.locator('#wInfo')).toContainText('eaten by the eagle');
+    const spark = page.locator('#wSlot .spk').first();
+    const at = () => spark.evaluate((c) => c.getAttribute('cx'));
+    const first = await at();
+    await expect.poll(at).not.toBe(first);
+  });
+
+  test('every science question has one right choice and three different wrong ones', async ({ page }) => {
+    await page.goto('/omnia/');
+    const bad = await page.evaluate(() => {
+      const out = [], S = window.OMNIA_SCIENCE;
+      for (const id of Object.keys(S.questions)) {
+        for (const q of S.questions[id]()) {
+          const all = [q.right, ...q.wrong];
+          if (q.wrong.length !== 3 || new Set(all).size !== 4 || all.some((a) => !a) || !q.text || !q.note) out.push(id + ': ' + q.text);
+        }
+      }
+      return out;
+    });
+    expect(bad).toEqual([]);
+  });
+
+  test('a food chain question hides its answer until it is answered', async ({ page }) => {
+    await openTopic(page, 'Food Chains');
+    await page.locator('#levels .card', { hasText: 'Who eats whom?' }).click();
+    await expect(page.locator('#sSlot .qm')).toHaveCount(1);
+    const say = await page.locator('#say').innerText();
+    const want = await page.evaluate((say) => {
+      const S = window.OMNIA_SCIENCE;
+      return S.questions['c.eats']().find((q) => q.text === say).right;
+    }, say);
+    await page.locator('.opt', { hasText: new RegExp('^' + want + '$') }).click();
+    await expect(page.locator('.prog i.ok')).toHaveCount(1);
+    await expect(page.locator('#sSlot .qm')).toHaveCount(0);
+  });
+
+  test('a water cycle round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'The Water Cycle');
+    await page.locator('#levels .card', { hasText: 'The four steps' }).click();
+    await expect(page.locator('#sSlot svg.water')).toBeVisible();
+    await playRound(page);
+    expect((await saved(page)).best['w.steps']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Water: The four steps' });
+  });
+
+  test('a food chain round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Food Chains');
+    await page.locator('#levels .card', { hasText: 'Producers and eaters' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['c.roles']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Food chains: Producers and eaters' });
   });
 });
