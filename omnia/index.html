@@ -154,6 +154,17 @@
   .scene.water .river { fill: none; stroke: #5fb4f0; stroke-width: 7; stroke-linecap: round; }
   .scene.water .flow { fill: none; stroke: #fff; stroke-width: 2; stroke-dasharray: 6 8; stroke-linecap: round; opacity: .8; }
   .scene.water .hit { fill: transparent; cursor: pointer; }
+  .scene.life .stg { transform-box: fill-box; transform-origin: center; transition: transform .35s, opacity .35s; }
+  .scene.life .stg.lit { transform: scale(1.14); filter: drop-shadow(0 0 6px #f2a33a); }
+  .scene.life .stg.dim { opacity: .35; }
+  .scene.life .nm { font-size: 14px; font-weight: 800; fill: var(--ink); stroke: #fff; stroke-width: 4px; paint-order: stroke; }
+  .scene.life .ctr { font-size: 22px; font-weight: 800; fill: var(--ink); }
+  .scene.life .ctr2 { font-size: 14px; font-weight: 700; fill: var(--ink); opacity: .65; }
+  .scene.life .egg, .scene.life .seg, .scene.life .wingL, .scene.life .wingR, .scene.life .throat { transform-box: fill-box; transform-origin: center; }
+  .scene.life .wingL { transform-origin: 100% 50%; }
+  .scene.life .wingR { transform-origin: 0% 50%; }
+  .scene.life .chry { transform-box: fill-box; transform-origin: 50% 0%; }
+  .scene.life .tail { transform-box: fill-box; transform-origin: 0% 50%; }
   .scene.sky { border-color: #1b2150; background: #080c2c; }
   .scene.chain { background: #f7fbff; }
   .scene.chain .arrow { fill: none; stroke: #7a86b8; stroke-width: 3; stroke-linecap: round; }
@@ -267,7 +278,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/38</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/40</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -371,6 +382,7 @@
 <script src="borders.js"></script>
 <script src="science.js"></script>
 <script src="sky.js"></script>
+<script src="life.js"></script>
 <script>
 (() => {
   'use strict';
@@ -1078,6 +1090,13 @@
         { id: 'd.moon', name: 'Phases of the Moon', items: () => SCI.questions['d.moon']() },
         { id: 'd.all', name: 'Earth, Sun and Moon', items: () => SCI.questions['d.all']() }
       ] },
+    { id: 'life', section: 'Science', sci: 'life', icon: '🦋', c: '#4aa84a', name: 'Life Cycles', blurb: 'See how a caterpillar becomes a butterfly and a tadpole becomes a frog.',
+      unit: 'questions', sub: 'Watch a butterfly and a frog grow, stage by stage', stage: 'Life cycles: ', kinds: ['sci'], levels: [
+        { id: 'lc.butterfly', name: 'The butterfly', items: () => SCI.questions['lc.butterfly']() },
+        { id: 'lc.frog', name: 'The frog', items: () => SCI.questions['lc.frog']() },
+        { id: 'lc.order', name: 'What comes next?', items: () => SCI.questions['lc.order']() },
+        { id: 'lc.all', name: 'All life cycles', items: () => SCI.questions['lc.all']() }
+      ] },
     // Games on the map: not a way to explore, so no Explore card. Their dots are hidden (still there for the keyboard).
     { id: 'jigsaw', section: 'Map games', map: 'world', icon: '🧩', c: '#2f9e7d', name: 'Map Jigsaw', blurb: 'Drag the shape of a country to its place on the map.',
       unit: 'countries', noExplore: true, hideDots: true, stage: 'Jigsaw: ', kinds: ['drag'], levels: [
@@ -1150,7 +1169,7 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (357 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (369 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
@@ -1170,7 +1189,8 @@
     { at: 275, name: 'Riverside', pic: '🏞️', c: '#d9f5e8' }, { at: 288, name: 'Ruler', pic: '📏', c: '#fff1c2' }, { at: 300, name: 'Ship', pic: '🚢', c: '#d6ebff' },
     { at: 304, name: 'Saturn', pic: '🪐', c: '#ece6ff' }, { at: 311, name: 'Rocket', pic: '🚀', c: '#ffe3c2' }, { at: 318, name: 'Galaxy', pic: '🌌', c: '#d6ebff' },
     { at: 326, name: 'Raindrop', pic: '💧', c: '#d6ebff' }, { at: 336, name: 'Food chain', pic: '🦅', c: '#fff1c2' }, { at: 345, name: 'Scientist', pic: '🔬', c: '#d9f5e8' },
-    { at: 351, name: 'Moon', pic: '🌙', c: '#ece6ff' }, { at: 357, name: 'Four seasons', pic: '🍂', c: '#ffe3c2' }
+    { at: 351, name: 'Moon', pic: '🌙', c: '#ece6ff' }, { at: 357, name: 'Four seasons', pic: '🍂', c: '#ffe3c2' },
+    { at: 363, name: 'Butterfly', pic: '🦋', c: '#ffe0ec' }, { at: 369, name: 'Frog', pic: '🐸', c: '#d9f5e8' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 

@@ -2,7 +2,7 @@ const { test, expect } = require('../support/fixtures');
 
 // Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
 // "Culture of Indonesia", "Animals of the World", "Volcanoes and Disasters", "Islands and Straits", "Peoples and Languages",
-// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?", "Island Routes", "The Solar System", "The Water Cycle", "Food Chains" or "Day, Night and Seasons").
+// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?", "Island Routes", "The Solar System", "The Water Cycle", "Food Chains", "Day, Night and Seasons" or "Life Cycles").
 async function openTopic(page, name) {
   await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
@@ -44,7 +44,7 @@ const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(wind
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
-  test('lists the twenty-one topics and their levels', async ({ page }) => {
+  test('lists the twenty-two topics and their levels', async ({ page }) => {
     test.setTimeout(90000); // every return to the home screen waits for its cards to appear
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
@@ -52,7 +52,7 @@ test.describe('Omnia', () => {
     await page.locator('#topics .card', { hasText: 'Capitals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
-    await expect(page.locator('#topics .card')).toHaveCount(22); // twenty-one topics and the stickers
+    await expect(page.locator('#topics .card')).toHaveCount(23); // twenty-two topics and the stickers
     await page.locator('#topics .card', { hasText: 'Flags of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
@@ -73,7 +73,7 @@ test.describe('Omnia', () => {
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Peoples and Languages' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
-    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 7], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3], ['The Solar System', 6], ['The Water Cycle', 5], ['Food Chains', 6], ['Day, Night and Seasons', 5]]) { // a game has no Explore card; the water cycle and food chains have Watch
+    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 7], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3], ['The Solar System', 6], ['The Water Cycle', 5], ['Food Chains', 6], ['Day, Night and Seasons', 5], ['Life Cycles', 5]]) { // a game has no Explore card; the water cycle and food chains have Watch
       await page.getByRole('button', { name: '← Home' }).click();
       await page.locator('#topics .card', { hasText: topic }).click();
       await expect(page.locator('#levels .card')).toHaveCount(levels);
@@ -604,5 +604,41 @@ test.describe('Omnia', () => {
     await playRound(page);
     expect((await saved(page)).best['d.seasons']).toBeGreaterThanOrEqual(1);
     expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Sky: The seasons' });
+  });
+
+  test('watching life cycles, a stage lights up and says what happens, and the butterfly flaps its wings', async ({ page }) => {
+    await openTopic(page, 'Life Cycles');
+    await page.getByRole('button', { name: /Watch the life cycles/ }).click();
+    await expect(page.locator('#wSlot .stg')).toHaveCount(4);
+    await page.getByRole('button', { name: 'Caterpillar', exact: true }).click();
+    await expect(page.locator('#wInfo')).toContainText('eats leaves all day');
+    await expect(page.locator('#wSlot .stg[data-i="1"]')).toHaveClass(/lit/);
+    await expect(page.locator('#wSlot .stg[data-i="0"]')).toHaveClass(/dim/);
+    const wing = page.locator('#wSlot .wingL');
+    const at = () => wing.evaluate((w) => getComputedStyle(w).transform);
+    const first = await at();
+    await expect.poll(at).not.toBe(first);
+    await page.getByRole('button', { name: /Frog/ }).first().click();
+    await expect(page.locator('#wSlot .stg')).toHaveCount(5);
+    await page.getByRole('button', { name: 'Tadpole', exact: true }).click();
+    await expect(page.locator('#wInfo')).toContainText('breathes with gills');
+    await page.getByRole('button', { name: /Keep going/ }).click();
+    await expect(page.locator('#wInfo')).toContainText('frogspawn, tadpole, tadpole with legs, froglet, frog');
+  });
+
+  test('a life cycle question shows the stage without its name', async ({ page }) => {
+    await openTopic(page, 'Life Cycles');
+    await page.locator('#levels .card', { hasText: 'The frog' }).click();
+    await expect(page.locator('#sSlot svg.life')).toBeVisible();
+    await expect(page.locator('#sSlot svg.life .nm')).toHaveCount(0);
+    await expect(page.locator('.opt')).toHaveCount(4);
+  });
+
+  test('a life cycle round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'Life Cycles');
+    await page.locator('#levels .card', { hasText: 'What comes next?' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['lc.order']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Life cycles: What comes next?' });
   });
 });
