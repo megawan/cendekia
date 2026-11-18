@@ -26,7 +26,7 @@
 // wing-r, ear-l, ear-r, tail, mane and eyes inside the symbol (see PARTS); a part a mascot does not have is skipped.
 (function () {
   var COLORS = ['#1f9d6b', '#f2a33a', '#e0558a', '#7a5af8', '#2e90fa', '#0e9aa7'];
-  var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var reduce = { get matches() { return window.Cendekia ? window.Cendekia.calm() : false; } }; // device setting or Accessibility > Calm
   var lib = null;
   var layer = null;
 

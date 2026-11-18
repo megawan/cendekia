@@ -6,6 +6,8 @@
 //   Cendekia.weak(app, label)      counts one wrong first answer on an item, for the parent page
 //   Cendekia.gate()                false, and a message, when the child's daily time limit is used up
 //   Cendekia.select(id)            makes another child the current one (for apps with their own child picker)
+//   Cendekia.calm()                true when animation should be off (the device asks for it, or Accessibility has "Calm")
+//   Cendekia.access()              opens the Accessibility panel (text size, contrast, readable letters, calm)
 //
 // Everything stays in this browser. The first time the script runs it creates one child, "Child 1", and copies the
 // progress the apps saved before profiles existed into it, so nothing is lost.
@@ -52,6 +54,36 @@
   var logKey = function (id) { return 'cendekia.log.v1.' + id; };
   var weakKey = function (id) { return 'cendekia.weak.v1.' + id; };
 
+  // ---- Accessibility ----
+  // Settings belong to the device, not to a child, and are applied as data-a11y-* attributes on <html>.
+  var A11Y = 'cendekia.a11y.v1';
+  var access = load(A11Y, {});
+  function applyAccess() {
+    var root = document.documentElement;
+    ['size', 'contrast', 'font', 'calm'].forEach(function (k) {
+      if (access[k]) root.setAttribute('data-a11y-' + k, access[k]); else root.removeAttribute('data-a11y-' + k);
+    });
+  }
+  applyAccess();
+  var reducedQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  function calm() { return access.calm === 'on' || reducedQuery.matches; }
+  var accessCss =
+    'html[data-a11y-size="large"]{font-size:118%}html[data-a11y-size="xl"]{font-size:136%}' +
+    'html[data-a11y-font="clear"],html[data-a11y-font="clear"] body,html[data-a11y-font="clear"] button,html[data-a11y-font="clear"] input,html[data-a11y-font="clear"] select,html[data-a11y-font="clear"] textarea{font-family:Verdana,"Atkinson Hyperlegible",system-ui,sans-serif!important;letter-spacing:.04em!important;word-spacing:.12em}' +
+    'html[data-a11y-font="clear"] p,html[data-a11y-font="clear"] li{line-height:1.7}' +
+    'html[data-a11y-contrast="high"]{--ink:#000;--arc-hair:rgba(0,0,0,.65);background-image:none!important}' +
+    'html[data-a11y-contrast="high"] body{background:#fff!important;color:#000!important}' +
+    'html[data-a11y-contrast="high"] .card,html[data-a11y-contrast="high"] .tile,html[data-a11y-contrast="high"] .tab,html[data-a11y-contrast="high"] .opt,html[data-a11y-contrast="high"] .btn,html[data-a11y-contrast="high"] .key,html[data-a11y-contrast="high"] .app,html[data-a11y-contrast="high"] .stage,html[data-a11y-contrast="high"] .mcard,html[data-a11y-contrast="high"] .fcard,html[data-a11y-contrast="high"] .pcard,html[data-a11y-contrast="high"] .bubble{border:2px solid #000!important}' +
+    'html[data-a11y-contrast="high"] a{text-decoration:underline}' +
+    'html[data-a11y-contrast="high"] :focus-visible{outline:4px solid #000!important;outline-offset:3px!important}' +
+    'html[data-a11y-calm="on"] *,html[data-a11y-calm="on"] *::before,html[data-a11y-calm="on"] *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}';
+  var accessStyled = false;
+  function accessStyle() {
+    if (accessStyled) return; accessStyled = true;
+    var css = document.createElement('style'); css.textContent = accessCss; document.head.appendChild(css);
+  }
+  accessStyle();
+
   // ---- Days ----
   function dayStr(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   function minutesOn(id, day) {
@@ -81,6 +113,7 @@
     var css = document.createElement('style');
     css.textContent =
       '.cd-chip{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:700;color:inherit;background:rgba(255,255,255,.75);border:1px solid rgba(28,32,56,.1);box-shadow:0 2px 6px -2px rgba(28,32,56,.14);border-radius:999px;padding:4px 12px 4px 6px;cursor:pointer;min-height:44px}' +
+      '.cd-access{font:inherit;font-weight:800;color:inherit;background:rgba(255,255,255,.75);border:1px solid rgba(28,32,56,.1);box-shadow:0 2px 6px -2px rgba(28,32,56,.14);border-radius:999px;cursor:pointer;min-height:44px;min-width:44px}' +
       '.cd-chip .cd-av{font-size:1.5rem;line-height:1}' +
       '.cd-modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(20,24,40,.4);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-family:inherit;color:#1c2038}' +
       '.cd-card{background:#fff;border-radius:26px;padding:20px;width:min(420px,100%);max-height:90vh;overflow:auto;box-shadow:0 30px 60px -20px rgba(20,24,40,.45)}' +
@@ -97,7 +130,10 @@
       '.cd-avs button{font-size:1.7rem;line-height:1;background:#fff;border:1px solid rgba(28,32,56,.1);border-radius:50%;width:48px;height:48px;cursor:pointer}' +
       '.cd-avs button.on{border-color:#2e90fa;background:#eaf3ff;box-shadow:0 0 0 3px rgba(46,144,250,.18)}' +
       '.cd-row{display:flex;gap:8px;margin-top:8px}' +
-      '.cd-big{font-size:3.5rem;text-align:center;line-height:1.1}';
+      '.cd-big{font-size:3.5rem;text-align:center;line-height:1.1}' +
+      '.cd-opt-label{font-weight:800;margin:12px 0 4px!important;text-align:left!important}' +
+      '.cd-seg{display:flex;flex-wrap:wrap;gap:6px}.cd-seg .cd-btn{flex:1 1 90px;width:auto;font-size:1rem;padding:8px 10px}' +
+      '.cd-note{font-size:.9rem;opacity:.75}';
     document.head.appendChild(css);
   }
   function modal(build) {
@@ -161,6 +197,43 @@
     b.lastChild.setAttribute('aria-hidden', 'true');
     b.addEventListener('click', picker);
     target.appendChild(b);
+    var a = el('button', 'cd-access', 'Aa'); a.type = 'button';
+    a.setAttribute('aria-label', 'Accessibility settings');
+    a.style.marginLeft = '8px';
+    a.addEventListener('click', accessPanel);
+    target.appendChild(a);
+  }
+
+  var ACCESS_OPTIONS = [
+    { key: 'size', label: 'Text size', choices: [['', 'Normal'], ['large', 'Large'], ['xl', 'Extra large']] },
+    { key: 'contrast', label: 'Colours', choices: [['', 'Normal'], ['high', 'High contrast']] },
+    { key: 'font', label: 'Letters', choices: [['', 'Normal'], ['clear', 'Easy to read']] },
+    { key: 'calm', label: 'Animations', choices: [['', 'Normal'], ['on', 'Calm (off)']] }
+  ];
+  function accessPanel() {
+    modal(function (card, close) {
+      card.setAttribute('aria-label', 'Accessibility');
+      card.appendChild(el('h2', '', 'Accessibility'));
+      ACCESS_OPTIONS.forEach(function (o) {
+        var group = el('div'); group.setAttribute('role', 'group'); group.setAttribute('aria-label', o.label);
+        group.appendChild(el('p', 'cd-opt-label', o.label));
+        var row = el('div', 'cd-seg');
+        o.choices.forEach(function (c) {
+          var b = el('button', 'cd-btn' + ((access[o.key] || '') === c[0] ? ' main' : ''), c[1]); b.type = 'button';
+          b.setAttribute('aria-pressed', (access[o.key] || '') === c[0] ? 'true' : 'false');
+          b.addEventListener('click', function () {
+            if (c[0]) access[o.key] = c[0]; else delete access[o.key];
+            save(A11Y, access); applyAccess();
+            Array.prototype.forEach.call(row.children, function (x) { var on = x === b; x.classList.toggle('main', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+          });
+          row.appendChild(b);
+        });
+        group.appendChild(row); card.appendChild(group);
+      });
+      card.appendChild(el('p', 'cd-note', 'These settings stay on this device and apply to every child.'));
+      var shut = el('button', 'cd-btn', 'Close'); shut.type = 'button'; shut.style.marginTop = '10px';
+      shut.addEventListener('click', close); card.appendChild(shut);
+    });
   }
 
   // Returns false, and says so, when the child has used up the daily time the parent set.
@@ -192,6 +265,7 @@
     profile: function () { return current(); },
     profiles: function () { return data.list.slice(); },
     key: function (base) { return base + '.' + data.cur; },
+    calm: calm, access: accessPanel,
     chip: chip, gate: gate, round: round, weak: weak,
     select: function (id) { if (find(id)) { data.cur = id; save(PROFILES, data); } },
     add: function (name, avatar) { var p = add(name, avatar); save(PROFILES, data); return p; },
