@@ -40,7 +40,8 @@
   .app small { display: block; font-size: .88rem; color: rgba(28,32,56,.64); line-height: 1.4; margin-top: 3px; font-weight: 500; }
   .who { display: flex; justify-content: center; margin: -12px 0 24px; }
   .foot { text-align: center; margin: 32px 0 0; font-size: .95rem; }
-  .foot a { color: rgba(28,32,56,.65); text-underline-offset: 3px; }
+  .foot a, .foot button { color: rgba(28,32,56,.65); text-underline-offset: 3px; }
+  .foot button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
 </style>
 <link rel="stylesheet" href="shared/arc.css">
 </head>
@@ -174,10 +175,11 @@
       </a>
     </li>
   </ul>
-  <p class="foot"><a href="parents/">👪 For parents</a> · <a href="https://buymeacoffee.com/megawan" target="_blank" rel="noopener">☕ Buy me a coffee</a></p>
+  <p class="foot"><a href="parents/">👪 For parents</a> · <span id="whatsNewWrap" hidden><button type="button" id="whatsNew">What’s new</button> · </span><a href="https://buymeacoffee.com/megawan" target="_blank" rel="noopener">☕ Buy me a coffee</a></p>
 </main>
 <script src="shared/profile.js"></script>
 <script src="shared/motion.js"></script>
+<script src="shared/whatsnew.js"></script>
 <script>Cendekia.chip(document.getElementById('who'));Cendekia.fx.cascade(document.querySelectorAll('.apps li'));</script>
 <script data-goatcounter="https://megawan.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
