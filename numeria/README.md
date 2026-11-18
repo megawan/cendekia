@@ -36,7 +36,11 @@ A wrong answer gets a second try. A second miss shows the answer with a short ex
 
 ## Fraction tiles
 
-🧩 "Fraction tiles" on the home screen shows the whole and its pieces (halves, thirds, quarters, fifths, sixths, eighths and tenths) as colored tiles in the same lane, each with its decimal, fraction and percent. The tiles grow in one after another. Tapping a tile slides a dashed guide line to the end of it, hatches the part of every longer tile that sticks out past the line, and says in words whether the piece is bigger or smaller than its neighbors. It is a place to play with, so it gives no stars and the daily time limit applies when it opens.
+🧩 "Fraction tiles" on the home screen shows the whole and its pieces (halves, thirds, quarters, fifths, sixths, eighths, tenths and twelfths) as colored tiles in the same lane, each with its decimal, fraction and percent. The tiles grow in one after another. Tapping a tile slides a dashed guide line to the end of it, hatches the part of every longer tile that sticks out past the line, and says in words whether the piece is bigger or smaller than its neighbors. It is a place to play with, so it gives no stars and the daily time limit applies when it opens.
+
+## Fraction circles
+
+🥧 "Fraction circles" on the home screen is a circle to fill with pieces: halves, thirds, quarters, fifths, sixths, eighths, tenths and twelfths, of any mix. Each piece spins in next to the last one. The sum is shown as a fraction, a decimal and a percent, with how much is still to go; a piece that is too big for what is left shakes the circle instead. Sums are counted in 120ths, so they are exact and the child can find that 1/4 and 2/8 fill the same space. A whole circle gets confetti. Undo takes the last piece back. Like the tiles, it gives no stars.
 
 ## Stars and stickers
 

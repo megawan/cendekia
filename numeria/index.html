@@ -281,6 +281,24 @@
     border-left: 3px dashed var(--ink); opacity: 0; pointer-events: none; z-index: 2; transition: opacity .2s; }
   .ftGuide.on { opacity: .75; }
 
+  /* Fraction circles */
+  .fcBoard { display: grid; justify-items: center; gap: 10px; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; }
+  .fcSvg { width: min(100%, 300px); height: auto; overflow: visible; }
+  .fcSvg.no { animation: shake .35s; }
+  .fcRing { fill: none; stroke: var(--line); stroke-width: 2; stroke-dasharray: 6 6; }
+  .fcw { transform-box: view-box; transform-origin: 100px 100px; }
+  .fcw path { stroke: #fff; stroke-width: 2; stroke-linejoin: round; }
+  .fcw text { fill: #fff; font-weight: 800; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+  .fcw.new { animation: fcIn .5s cubic-bezier(.2,.9,.3,1.2) both; }
+  @keyframes fcIn { from { transform: rotate(-80deg) scale(.4); opacity: 0; } }
+  .fcSum { min-height: 4.2em; text-align: center; font-weight: 800; line-height: 1.4; }
+  .fcSum small { display: block; font-weight: 700; opacity: .75; }
+  .fcChips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+  .fcChip { font: inherit; color: #fff; font-size: 1.1rem; font-weight: 800; min-height: 56px; border: 0; border-radius: 14px; background: var(--c); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,.22); }
+  .fcChip:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,.22); }
+  .fcActs { display: flex; gap: 10px; justify-content: center; }
+  .fcActs .btn { min-height: 46px; padding: 8px 18px; font-size: 1rem; box-shadow: none; }
+
   /* Trace numbers */
   .tstage { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 14px; text-align: center; margin-bottom: 14px; display: grid; gap: 8px; justify-items: center; }
   #trBox { width: 100%; }
@@ -409,6 +427,24 @@
     <p class="ftSay" id="ftSay" aria-live="polite"></p>
     <div class="ftRows" id="ftRows"></div>
     <p class="note">The bigger the number at the bottom, the smaller the piece.</p>
+  </section>
+
+  <!-- Fraction circles -->
+  <section id="circles" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Town</button>
+      <h2>Fraction circles</h2>
+      <span class="spacer"></span>
+    </div>
+    <div class="fcBoard">
+      <svg class="fcSvg" id="fcSvg" viewBox="0 0 200 200" role="img" aria-label="A circle to fill with pieces"></svg>
+      <div class="fcSum" id="fcSum" aria-live="polite"></div>
+    </div>
+    <div class="fcChips" id="fcChips"></div>
+    <div class="fcActs">
+      <button type="button" class="btn ghost" id="fcUndo">↶ Undo</button>
+      <button type="button" class="btn ghost" id="fcClear">Start again</button>
+    </div>
   </section>
 
   <!-- Stickers -->
@@ -1024,12 +1060,13 @@
   // ---- Screens ----
   let curWorld = null, curLevel = 0;
   function show(id) {
-    ['home', 'world', 'play', 'result', 'trace', 'tiles', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
+    ['home', 'world', 'play', 'result', 'trace', 'tiles', 'circles', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
     if (id === 'home') renderHome();
     if (id === 'world') renderWorld();
     if (id === 'stickers') renderStickers();
     if (id === 'trace') renderTrace();
     if (id === 'tiles') openTiles();
+    if (id === 'circles') openCircles();
     window.scrollTo(0, 0);
   }
   document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => { sfx.tap(); show(b.dataset.go); }));
@@ -1061,6 +1098,11 @@
     f.innerHTML = '<span class="badge" aria-hidden="true">🧩</span><span><b>Fraction tiles</b><br><small>Which piece is bigger? Halves, thirds, quarters</small></span>';
     f.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); show('tiles'); });
     box.appendChild(f);
+    const o = document.createElement('button');
+    o.type = 'button'; o.className = 'card wide'; o.style.setProperty('--c', 'var(--c-teal)'); o.style.animationDelay = '.39s';
+    o.innerHTML = '<span class="badge" aria-hidden="true">🥧</span><span><b>Fraction circles</b><br><small>Fill a circle with pieces to make one whole</small></span>';
+    o.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); show('circles'); });
+    box.appendChild(o);
     const s = document.createElement('button');
     s.type = 'button'; s.className = 'card wide'; s.style.setProperty('--c', 'var(--c-orange)'); s.style.animationDelay = '.4s';
     s.innerHTML = '<span class="badge" aria-hidden="true">🏠</span><span><b>Town Stickers</b><br><small>Collect stars to build your town</small></span>';
@@ -1326,7 +1368,8 @@
   const TILES = [
     [1, 'one whole', '1', '100%', '#4c5fd5'], [2, 'one half', '0.5', '50%', '#d6403f'], [3, 'one third', '0.33', '33%', '#b8780a'],
     [4, 'one quarter', '0.25', '25%', '#1f8a5e'], [5, 'one fifth', '0.2', '20%', '#0c8590'], [6, 'one sixth', '0.17', '17%', '#2478d6'],
-    [8, 'one eighth', '0.125', '12.5%', '#6d4de0'], [10, 'one tenth', '0.1', '10%', '#c9437a']
+    [8, 'one eighth', '0.125', '12.5%', '#6d4de0'], [10, 'one tenth', '0.1', '10%', '#c9437a'],
+    [12, 'one twelfth', '0.083', '8.3%', '#a3306f']
   ];
   const tileText = (den) => (den === 1 ? '1' : '1/' + den);
   const ftRows = $('ftRows'), ftGuide = document.createElement('i');
@@ -1365,6 +1408,52 @@
     void ftRows.offsetWidth; // the tiles start at zero width before they grow
     ftEls.forEach((r, i) => { r.firstChild.style.setProperty('--delay', i * 80 + 'ms'); r.classList.add('in'); });
   }
+
+  // ---- Fraction circles ----
+  // Pieces of any size are added to one circle, one after another, until it is whole. Sizes are counted in 120ths
+  // (the smallest unit every piece is a whole number of), so the sum is exact and 1/4 = 2/8 shows up by itself.
+  const UNIT = 120;
+  let fcPieces = [], fcNew = false;
+  const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+  const fcTotal = () => fcPieces.reduce((a, d) => a + UNIT / d, 0);
+  const unitText = (n) => { if (n === UNIT) return '1 whole'; const g = gcd(n, UNIT); return n / g + '/' + UNIT / g; };
+  function fcDraw() {
+    const pt = (a, r) => (100 + r * Math.cos(a)).toFixed(2) + ' ' + (100 + r * Math.sin(a)).toFixed(2);
+    let svg = '<circle class="fcRing" cx="100" cy="100" r="92"/>', at = 0;
+    fcPieces.forEach((d, i) => {
+      const a0 = -Math.PI / 2 + at / UNIT * 2 * Math.PI, a1 = a0 + 2 * Math.PI / d, mid = (a0 + a1) / 2;
+      const c = TILES.find((t) => t[0] === d)[4], m = pt(mid, 62).split(' ');
+      svg += '<g class="fcw' + (fcNew && i === fcPieces.length - 1 ? ' new' : '') + '"><path fill="' + c + '" d="M100 100 L' + pt(a0, 92) + ' A92 92 0 0 1 ' + pt(a1, 92) + 'Z"/>'
+        + '<text x="' + m[0] + '" y="' + m[1] + '" font-size="' + (d > 8 ? 11 : 15) + '">1/' + d + '</text></g>';
+      at += UNIT / d;
+    });
+    $('fcSvg').innerHTML = svg;
+    $('fcSvg').setAttribute('aria-label', fcPieces.length ? 'A circle filled with ' + fcPieces.map((d) => 'one ' + TILES.find((t) => t[0] === d)[1].replace('one ', '')).join(', ') : 'An empty circle');
+    const n = fcTotal();
+    if (!fcPieces.length) { $('fcSum').textContent = 'Tap a piece to start filling the circle.'; return; }
+    const dec = +(n / UNIT).toFixed(3), pct = +(n * 100 / UNIT).toFixed(1);
+    $('fcSum').innerHTML = esc(fcPieces.map((d) => '1/' + d).join(' + ')) + ' = ' + unitText(n)
+      + '<small>' + (n === UNIT ? 'Whole! It is 1, or 100%.' : dec + ' · ' + pct + '% · ' + unitText(UNIT - n) + ' to go') + '</small>';
+  }
+  function fcAdd(d) {
+    if (fcTotal() + UNIT / d > UNIT) {
+      sfx.bad(); $('fcSvg').classList.remove('no'); void $('fcSvg').getBoundingClientRect(); $('fcSvg').classList.add('no');
+      $('fcSum').innerHTML = 'That piece is too big for what is left. Try a smaller one!<small>' + unitText(UNIT - fcTotal()) + ' to go</small>';
+      return;
+    }
+    sfx.good(); fcPieces.push(d); fcNew = true; fcDraw();
+    if (fcTotal() === UNIT) { sfx.win(); CD.fx.confetti(24, { glyphs: CONFETTI }); CD.fx.pop($('fcSvg')); }
+  }
+  function openCircles() { fcPieces = []; fcNew = false; fcDraw(); }
+  TILES.slice(1).forEach(([d, , , , c]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'fcChip'; b.style.setProperty('--c', c);
+    b.innerHTML = frac(1, d); b.setAttribute('aria-label', 'Add one ' + TILES.find((t) => t[0] === d)[1].replace('one ', ''));
+    b.addEventListener('click', () => fcAdd(d));
+    $('fcChips').appendChild(b);
+  });
+  $('fcUndo').addEventListener('click', () => { sfx.tap(); fcPieces.pop(); fcNew = false; fcDraw(); });
+  $('fcClear').addEventListener('click', () => { sfx.tap(); openCircles(); });
 
   // ---- Trace numbers ----
   // S.traced holds the best stars for each number the child traced. They are shown here and do not count toward the
