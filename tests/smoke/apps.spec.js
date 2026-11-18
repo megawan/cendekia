@@ -2,7 +2,7 @@ const { test, expect } = require('../support/fixtures');
 
 // App folder, the title its page must have.
 const APPS = [
-  ['hijaiyah', /Hijaiyah/],
+  ['iqra', /Iqra/],
   ['aksara', /Aksara/],
   ['lexica', /Lexica/],
   ['logica', /Logica/],

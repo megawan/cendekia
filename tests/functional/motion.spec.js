@@ -1,6 +1,6 @@
 const { test, expect } = require('../support/fixtures');
 
-const APPS = ['hijaiyah', 'aksara', 'lexica', 'logica', 'numeria'];
+const APPS = ['iqra', 'aksara', 'lexica', 'logica', 'numeria'];
 
 // The confetti used to be copied into every app. They now share shared/motion.js, which draws it with anime.js.
 for (const dir of APPS) {
@@ -153,7 +153,7 @@ test('lexica: Pochi stays still when the device asks for reduced motion', async 
 });
 
 // Each mascot's drawing is marked with the parts that move. The coach mascot is the one that reacts to answers.
-for (const [dir, part, coach] of [['hijaiyah', '.mane', '#coachMascot'], ['aksara', '.wing-l', '#coachMascot'], ['numeria', '.tail', '#coach'], ['omnia', '.ear-l', '#coach']]) {
+for (const [dir, part, coach] of [['iqra', '.mane', '#coachMascot'], ['aksara', '.wing-l', '#coachMascot'], ['numeria', '.tail', '#coach'], ['omnia', '.ear-l', '#coach']]) {
   test(`${dir}: the mascot idles and hops`, async ({ page }) => {
     await page.goto(`/${dir}/`);
     const first = page.locator('.mascot').first();

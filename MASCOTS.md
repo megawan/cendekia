@@ -4,14 +4,14 @@ Each app has a mascot with a name borrowed from a word in another language.
 
 | App | Mascot | Word |
 | --- | --- | --- |
-| [`hijaiyah/`](hijaiyah) | Sada | Arabic, "echo" |
+| [`iqra/`](iqra) | Sada | Arabic, "echo" |
 | [`aksara/`](aksara) | Renjana | Indonesian, "a deep, heartfelt longing" |
 | [`logica/`](logica) | Poka | Japanese, from *poka-yoke* |
 | [`lexica/`](lexica) | Pochi | Russian, from *pochemuchka* |
 | [`numeria/`](numeria) | Myria | Greek, "ten thousand" |
 | [`omnia/`](omnia) | Pacha | Quechua, "world" |
 
-## Sada (Hijaiyah)
+## Sada (Iqra)
 
 Sada is a little lion. The name comes from the Arabic word *ṣadā* (صدى), meaning "echo". Just like an echo, Sada repeats every letter sound back to you, so you can listen, say it, and hear it again until it feels easy.
 

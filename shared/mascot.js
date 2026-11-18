@@ -3,7 +3,7 @@
 // of the name. The longer texts are also written out in MASCOTS.md.
 (function () {
   var MASCOTS = {
-    hijaiyah: {
+    iqra: {
       name: 'Sada',
       origin: 'Arabic for “echo”',
       story: 'I am a little lion, and my name comes from the Arabic word ṣadā (⁨صدى⁩), which means “echo”. Like an echo, I repeat every letter sound back to you, so you can listen, say it and hear it again until it feels easy.'
