@@ -240,4 +240,28 @@ test.describe("Poka's Parking Lot", () => {
       expect(car.height).toBeGreaterThan(lot.width / 4); // a car is about two cells of a four-cell lot
     }
   });
+
+  test('a drag that ends between cells puts the car back on its cell, so it can still be picked and moved', async ({ page }) => {
+    await openLogica(page, 'medium');
+    await openLevel(page, 1);
+    const lot = await readLot(page), start = lot.cars.map((c) => c.at);
+    const m = slides(lot.cars, start, lot.n)[0], car = lot.cars[m.i], dir = Math.sign(m.to - start[m.i]);
+    const cell = ((await page.locator('#lot').boundingBox()).width - 8) / lot.n;
+    const place = async () => { const c = await page.locator('#lot .pcar').nth(m.i).boundingBox(), l = await page.locator('#lot').boundingBox(); return { x: c.x - l.x, y: c.y - l.y, width: c.width, height: c.height }; }; // from the lot, which can shift on the page
+    for (const frac of [0.3, 0.45]) {
+      const before = await place();
+      const at = await page.locator('#lot .pcar').nth(m.i).boundingBox(), cx = at.x + at.width / 2, cy = at.y + at.height / 2;
+      await page.mouse.move(cx, cy);
+      await page.mouse.down();
+      await page.mouse.move(cx + (car.v ? 0 : dir * frac * cell), cy + (car.v ? dir * frac * cell : 0), { steps: 8 });
+      await page.waitForTimeout(250); // held still, so the release has no push in it
+      await page.mouse.up();
+      await page.waitForTimeout(900);
+      const now = await place();
+      expect(Math.abs(now.x - before.x) + Math.abs(now.y - before.y)).toBeLessThan(2);
+    }
+    await expect(page.locator('#moves')).toContainText('Moves: 0');
+    await slide(page, lot.cars, lot.n, start, m); // and a tap still moves it
+    await expect(page.locator('#moves')).toContainText('Moves: 1');
+  });
 });
