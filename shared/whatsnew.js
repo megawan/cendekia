@@ -1,5 +1,5 @@
 // "What's new" popup on the landing page. It opens by itself once for each release, for a device that has
-// visited before (a first visit only records the release), and opens again from the "✨ What’s new" button
+// visited before (a first visit only records the release), and opens again from the "What’s new" link
 // in the footer. To announce a new week, change RELEASE.id and the items.
 (function () {
   var KEY = 'cendekia.whatsnew.v1';
@@ -7,11 +7,11 @@
     id: '2026-11-18',
     title: 'What’s new this week',
     items: [
-      { icon: '🌙', title: 'Night colours and easier reading', text: 'The Aa button now has a Night mode, plus bigger text, high contrast, easy-to-read letters and a calm mode with no animation.' },
-      { icon: '🌍', title: 'Omnia has a lot more to explore', text: 'The solar system, the water cycle, food chains, day, night and seasons, life cycles, flags, volcanoes, landmarks, and new games on the map.' },
-      { icon: '🚗', title: 'Poka’s Parking Lot', text: 'Slide the cars out of the lot. Poka’s Backpack also has Repeat and Mixed up levels now.' },
-      { icon: '🤲', title: 'Hijaiyah is now Iqra', text: 'The same 28 letters with a new name, and a new prayer to learn: the prayer for rain.' },
-      { icon: '✨', title: 'Everything moves a little', text: 'Mascots blink and cheer, stars pop in, cards flip, and letters sparkle when you trace them.' }
+      { title: 'Night colours and easier reading', text: 'The Aa button now has a Night mode, plus bigger text, high contrast, easy-to-read letters and a calm mode with no animation.' },
+      { title: 'Omnia has a lot more to explore', text: 'The solar system, the water cycle, food chains, day, night and seasons, life cycles, flags, volcanoes, landmarks, and new games on the map.' },
+      { title: 'Poka’s Parking Lot', text: 'Slide the cars out of the lot. Poka’s Backpack also has Repeat and Mixed up levels now.' },
+      { title: 'Hijaiyah is now Iqra', text: 'The same 28 letters with a new name, and a new prayer to learn: the prayer for rain.' },
+      { title: 'Everything moves a little', text: 'Mascots blink and cheer, stars pop in, cards flip, and letters sparkle when you trace them.' }
     ]
   };
 
@@ -28,16 +28,10 @@
   var list = document.createElement('ul');
   RELEASE.items.forEach(function (item) {
     var li = document.createElement('li');
-    var icon = document.createElement('span');
-    icon.setAttribute('aria-hidden', 'true');
-    icon.textContent = item.icon;
-    var text = document.createElement('span');
     var strong = document.createElement('b');
     strong.textContent = item.title;
-    text.appendChild(strong);
-    text.appendChild(document.createTextNode(item.text));
-    li.appendChild(icon);
-    li.appendChild(text);
+    li.appendChild(strong);
+    li.appendChild(document.createTextNode(item.text));
     list.appendChild(li);
   });
   var close = document.createElement('button');

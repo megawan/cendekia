@@ -102,9 +102,8 @@ body::before { display: none; }
 @media (min-width: 560px) { .new-sheet { margin: auto; border-radius: 26px; } }
 .new-sheet::backdrop { background: rgba(28, 32, 56, .45); }
 .new-sheet h2 { margin: 0 0 14px; font-size: 1.5rem; text-align: center; }
-.new-sheet ul { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 12px; }
-.new-sheet li { display: flex; gap: 12px; align-items: flex-start; font-size: 1rem; line-height: 1.45; }
-.new-sheet li > span:first-child { flex: none; font-size: 1.6rem; line-height: 1.2; }
+.new-sheet ul { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 14px; }
+.new-sheet li { font-size: 1rem; line-height: 1.45; }
 .new-sheet li b { display: block; }
 .new-sheet-close {
   width: 100%; padding: 12px; border: 0; border-radius: 999px; cursor: pointer;
