@@ -1,7 +1,7 @@
 // Science for Omnia: the water cycle and food chains. Animated scenes (anime.js, loaded from ../shared the first time one is drawn),
 // what to say about them, and the questions of every level.
 //
-//   OMNIA_SCIENCE.mount(kind, host, { labels, onPick })  draws a scene ('water' or 'chain') in host; returns { show(view), stop() }
+//   OMNIA_SCIENCE.mount(kind, host, { labels, onPick })  draws a scene ('water', 'chain' or, from sky.js, 'sky') in host; returns { show(view), stop() }
 //       water: show({ stage })              lights up one step of the cycle (no stage lights none)
 //       chain: show({ chain, hide, hl })    draws a food chain; hide is the number of a place left as "?", hl one to light up
 //       labels: names and numbers are written on the scene (to watch); onPick({ tab }) or onPick({ chain, node }) makes it tappable
@@ -139,8 +139,10 @@
   }
 
   // ---- Mounting a scene ----
+  var scenes = {}; // scenes drawn elsewhere (sky.js), by kind: scenes[kind](host, opts) returns { show, stop }
   function mount(kind, host, opts) {
     opts = opts || {};
+    if (scenes[kind]) return scenes[kind](host, opts);
     var svg = document.createElementNS(NS, 'svg'), anims = [], token = 0, cur = null;
     svg.setAttribute('class', 'scene ' + kind);
     // A food chain without names (in a quiz) is shorter, since there is no text under the animals.
@@ -323,5 +325,5 @@
     'c.all': function () { return chainEats().concat(chainWhatIf(), chainRoles(), FACTS); }
   };
 
-  window.OMNIA_SCIENCE = { mount: mount, kinds: kinds, questions: questions };
+  window.OMNIA_SCIENCE = { mount: mount, kinds: kinds, questions: questions, scenes: scenes, ask: ask, tabInfo: tabInfo, cap: cap, shuffle: shuffle, esc: esc };
 })();
