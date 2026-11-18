@@ -1,15 +1,15 @@
 const { test, expect } = require('../support/fixtures');
 
-const M = require('../../hijaiyah/more.js');
+const M = require('../../iqra/more.js');
 
-test.describe('Hijaiyah: more harakat', () => {
+test.describe('Iqra: more harakat', () => {
   test('every form has a recording', async ({ request }) => {
     for (const kind of M.KINDS) {
       for (let i = 0; i < M.LETTER_COUNT; i++) {
         if (kind.skipAlif && i === 0) continue;
         for (let v = 0; v < 3; v++) {
           const f = M.form(kind.key, i, v);
-          const res = await request.get(`/hijaiyah/audio/${f.file}`);
+          const res = await request.get(`/iqra/audio/${f.file}`);
           expect(res.status(), f.file).toBe(200);
           expect((await res.body()).length, f.file).toBeGreaterThan(500);
         }
@@ -28,7 +28,7 @@ test.describe('Hijaiyah: more harakat', () => {
   });
 
   test('the lesson shows three forms, and sukun and tasydid leave out alif', async ({ page }) => {
-    await page.goto('/hijaiyah/');
+    await page.goto('/iqra/');
     await page.getByRole('button', { name: /More harakat/ }).click();
     await expect(page.locator('#mRow .mbtn')).toHaveCount(3);
     await expect(page.locator('#mRow .mbtn b')).toHaveText(['ban', 'bin', 'bun']);
@@ -41,7 +41,7 @@ test.describe('Hijaiyah: more harakat', () => {
   });
 
   test('a practice round can be finished and is logged under the kind', async ({ page }) => {
-    await page.goto('/hijaiyah/');
+    await page.goto('/iqra/');
     await page.getByRole('button', { name: /More harakat/ }).click();
     await page.locator('#mTabs .tab').nth(3).click();
     await page.getByRole('button', { name: 'Practise' }).click();

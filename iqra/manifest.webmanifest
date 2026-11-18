@@ -1,7 +1,7 @@
 {
-  "name": "Hijaiyah",
-  "short_name": "Hijaiyah",
-  "description": "A simple game for children to learn the 28 hijaiyah letters, with sound.",
+  "name": "Iqra",
+  "short_name": "Iqra",
+  "description": "A simple game for children to learn the 28 hijaiyah letters and a first prayer, with sound.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

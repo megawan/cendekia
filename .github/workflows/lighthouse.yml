@@ -17,7 +17,7 @@ jobs:
     with:
       urls: |
         /index.html
-        /hijaiyah/index.html
+        /iqra/index.html
         /aksara/index.html
         /lexica/index.html
         /logica/index.html

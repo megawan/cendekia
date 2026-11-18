@@ -7,7 +7,7 @@ The apps are static pages with no build step, served with GitHub Pages at https:
 
 | Folder | App |
 | --- | --- |
-| [`hijaiyah/`](hijaiyah) | Learn the 28 hijaiyah letters, their harakat and sounds. Moved here from `megawan.github.io/games/hijaiyah/`. |
+| [`iqra/`](iqra) | Iqra: learn the 28 hijaiyah letters, their harakat and sounds, and a first prayer. Moved here from `megawan.github.io/games/hijaiyah/`; `hijaiyah/` redirects. |
 | [`aksara/`](aksara) | Aksara: early reading in Indonesian, from letters and syllables to words, sentences and short stories with questions, in four levels, with stars and stickers. |
 | [`lexica/`](lexica) | Lexica: English vocabulary for Indonesian speakers, in 24 themes (including body parts, organs and street furniture), with sound in both languages and the same stars, stickers and streaks. |
 | [`logica/`](logica) | Logica: logical and computational thinking games in English, with Poka the beaver. Program a robot (with loops), find patterns, work out a machine's rule, read balances, fix a buggy program, pick items with AND, OR and NOT, crack codes in binary and letters, solve mini sudokus, work out who has which pet from clues, sort a train, slide cars out of a parking lot, and build robot maps to share. With animations, stars and stickers. |
@@ -28,7 +28,7 @@ If Cendekia is useful to your family, you can [buy me a coffee](https://buymeaco
 
 ## Children and the parent page
 
-Several children can share one device. `shared/profile.js` is loaded by every app and by the landing page. `shared/trace.js` (letter tracing, used by Aksara and Hijaiyah) is loaded after it and must be in those apps' service worker `CORE` list too.
+Several children can share one device. `shared/profile.js` is loaded by every app and by the landing page. `shared/trace.js` (letter tracing, used by Aksara and Iqra) is loaded after it and must be in those apps' service worker `CORE` list too.
 
 `shared/profile.js` gives:
 
@@ -79,7 +79,7 @@ Three more workflows run on every pull request: `Smoke` (pages, manifests and se
 Every change goes through its own branch and pull request.
 
 - Branch names use the change type as a prefix: `feat/…`, `fix/…`, `docs/…`, `refactor/…`, `chore/…`.
-- PR titles follow Conventional Commits, for example `feat(hijaiyah): add a new quiz`. The `PR Title` workflow checks this.
+- PR titles follow Conventional Commits, for example `feat(iqra): add a new prayer`. The `PR Title` workflow checks this.
 - Fill in [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md).
 
 These rules match [gha-shared-workflows](https://github.com/megawan/gha-shared-workflows), which also provides the HTML, link and PR title checks.

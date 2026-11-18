@@ -1,6 +1,6 @@
-# Hijaiyah
+# Iqra
 
-A small game for children to learn the 28 hijaiyah letters and their harakat.
+A small game for children to learn the 28 hijaiyah letters, their harakat and a first prayer (doa). It used to be called Hijaiyah; the old `hijaiyah/` path redirects here, and saved progress keeps its `hijaiyah.*` keys.
 
 ## Modes
 
@@ -22,6 +22,7 @@ A small game for children to learn the 28 hijaiyah letters and their harakat.
   Sukun and tasydid leave out alif, since it has no consonant to close or double. Every form, its reading and its sound file are defined once in `more.js`, which the page, the service worker and the recording script all load.
 - Match pairs: flip cards to match each letter with its name (easy, medium, hard).
 - Read syllables: pick two letters and a vowel for each, then hear the two sounds together. The practice quiz asks you to read a written pair or pick the pair you heard. It reuses the existing letter and harakat recordings, so no new audio is needed.
+- Prayers: a short doa with its Arabic text, how it is read, and the meaning in Indonesian and English, with a Listen button. There is no quiz. The first prayer is the one for when it rains (*Allahumma shayyiban nafi'an*, reported in Sahih al-Bukhari). Prayers are defined once in `prayers.js`, which the page, the service worker and the recording script all load, so adding one is a new entry there plus `node tools/make-audio.mjs` for its sound (`audio/doa-<id>.mp3`). Its recording was not listened to by someone who reads Arabic either.
 - My stickers: 12 stickers unlock as the total star count grows (thresholds in the `STICKERS` constant). Stars are kept even when progress is reset.
 - Progress map: shows how well each letter is known. Weak letters appear more often in quizzes.
 

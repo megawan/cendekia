@@ -80,9 +80,9 @@ test.describe('Aksara: trace letters', () => {
   });
 });
 
-test.describe('Hijaiyah: trace letters', () => {
+test.describe('Iqra: trace letters', () => {
   test('tracing a letter marks it and is saved for the child', async ({ page }) => {
-    await app(page, 'hijaiyah');
+    await app(page, 'iqra');
     await page.getByRole('button', { name: /Trace letters/ }).click();
     await expect(page.locator('#trace')).toBeVisible();
     await traceLetter(page);
@@ -117,7 +117,7 @@ test.describe('Numeria: trace numbers', () => {
 });
 
 test.describe('the daily time limit', () => {
-  for (const dir of ['aksara', 'hijaiyah', 'numeria']) {
+  for (const dir of ['aksara', 'iqra', 'numeria']) {
     test(`${dir}: tracing does not open once the time is used up`, async ({ page }) => {
       await app(page, dir);
       await page.evaluate(() => {
