@@ -1,6 +1,5 @@
-// "What's new" popup on the landing page. It opens by itself once for each release, for a device that has
-// visited before (a first visit only records the release), and opens again from the "What’s new" link
-// in the footer. To announce a new week, change RELEASE.id and the items.
+// "What's new" popup on the landing page. It opens by itself the first time a device loads the page after
+// each release (including a first visit), and opens again from the "What’s new" link in the footer. To announce a new week, change RELEASE.id and the items.
 (function () {
   var KEY = 'cendekia.whatsnew.v1';
   var RELEASE = {
@@ -51,6 +50,5 @@
 
   var last = null;
   try { last = localStorage.getItem(KEY); } catch (e) {}
-  if (last === null) seen();
-  else if (last !== RELEASE.id) open();
+  if (last !== RELEASE.id) open();
 })();
