@@ -13,12 +13,21 @@ test('the panel changes text size, colours and letters, and the choice survives 
   await page.getByRole('group', { name: 'Colours' }).getByRole('button', { name: 'High contrast' }).click();
   await page.getByRole('group', { name: 'Letters' }).getByRole('button', { name: 'Easy to read' }).click();
   expect(await html(page, 'data-a11y-size')).toBe('large');
-  expect(await html(page, 'data-a11y-contrast')).toBe('high');
+  expect(await html(page, 'data-a11y-theme')).toBe('high');
   expect(await html(page, 'data-a11y-font')).toBe('clear');
 
   await page.reload();
   expect(await html(page, 'data-a11y-size')).toBe('large');
-  expect(await page.evaluate((k) => JSON.parse(localStorage.getItem(k)), KEY)).toEqual({ size: 'large', contrast: 'high', font: 'clear' });
+  expect(await page.evaluate((k) => JSON.parse(localStorage.getItem(k)), KEY)).toEqual({ size: 'large', theme: 'high', font: 'clear' });
+});
+
+test('Night replaces High contrast, and picking Normal clears it', async ({ page }) => {
+  const colours = page.getByRole('group', { name: 'Colours' });
+  await colours.getByRole('button', { name: 'High contrast' }).click();
+  await colours.getByRole('button', { name: 'Night' }).click();
+  expect(await html(page, 'data-a11y-theme')).toBe('night');
+  await colours.getByRole('button', { name: 'Normal' }).click();
+  expect(await html(page, 'data-a11y-theme')).toBeNull();
 });
 
 test('choosing Normal again clears a setting', async ({ page }) => {
