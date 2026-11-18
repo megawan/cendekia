@@ -60,7 +60,7 @@
   var access = load(A11Y, {});
   function applyAccess() {
     var root = document.documentElement;
-    ['size', 'contrast', 'font', 'calm'].forEach(function (k) {
+    ['size', 'theme', 'font', 'calm'].forEach(function (k) {
       if (access[k]) root.setAttribute('data-a11y-' + k, access[k]); else root.removeAttribute('data-a11y-' + k);
     });
   }
@@ -71,11 +71,13 @@
     'html[data-a11y-size="large"]{font-size:118%}html[data-a11y-size="xl"]{font-size:136%}' +
     'html[data-a11y-font="clear"],html[data-a11y-font="clear"] body,html[data-a11y-font="clear"] button,html[data-a11y-font="clear"] input,html[data-a11y-font="clear"] select,html[data-a11y-font="clear"] textarea{font-family:Verdana,"Atkinson Hyperlegible",system-ui,sans-serif!important;letter-spacing:.04em!important;word-spacing:.12em}' +
     'html[data-a11y-font="clear"] p,html[data-a11y-font="clear"] li{line-height:1.7}' +
-    'html[data-a11y-contrast="high"]{--ink:#000;--arc-hair:rgba(0,0,0,.65);background-image:none!important}' +
-    'html[data-a11y-contrast="high"] body{background:#fff!important;color:#000!important}' +
-    'html[data-a11y-contrast="high"] .card,html[data-a11y-contrast="high"] .tile,html[data-a11y-contrast="high"] .tab,html[data-a11y-contrast="high"] .opt,html[data-a11y-contrast="high"] .btn,html[data-a11y-contrast="high"] .key,html[data-a11y-contrast="high"] .app,html[data-a11y-contrast="high"] .stage,html[data-a11y-contrast="high"] .mcard,html[data-a11y-contrast="high"] .fcard,html[data-a11y-contrast="high"] .pcard,html[data-a11y-contrast="high"] .bubble{border:2px solid #000!important}' +
-    'html[data-a11y-contrast="high"] a{text-decoration:underline}' +
-    'html[data-a11y-contrast="high"] :focus-visible{outline:4px solid #000!important;outline-offset:3px!important}' +
+    'html[data-a11y-theme="high"]{--ink:#000;--arc-hair:rgba(0,0,0,.65);background-image:none!important}' +
+    'html[data-a11y-theme="high"] body{background:#fff!important;color:#000!important}' +
+    'html[data-a11y-theme="high"] .card,html[data-a11y-theme="high"] .tile,html[data-a11y-theme="high"] .tab,html[data-a11y-theme="high"] .opt,html[data-a11y-theme="high"] .btn,html[data-a11y-theme="high"] .key,html[data-a11y-theme="high"] .app,html[data-a11y-theme="high"] .stage,html[data-a11y-theme="high"] .mcard,html[data-a11y-theme="high"] .fcard,html[data-a11y-theme="high"] .pcard,html[data-a11y-theme="high"] .bubble{border:2px solid #000!important}' +
+    'html[data-a11y-theme="high"] a{text-decoration:underline}' +
+    'html[data-a11y-theme="high"] :focus-visible{outline:4px solid #000!important;outline-offset:3px!important}' +
+    'html[data-a11y-theme="night"]{filter:invert(1) hue-rotate(180deg);background-color:#fff}' +
+    'html[data-a11y-theme="night"] img,html[data-a11y-theme="night"] svg,html[data-a11y-theme="night"] canvas,html[data-a11y-theme="night"] video{filter:invert(1) hue-rotate(180deg)}' +
     'html[data-a11y-calm="on"] *,html[data-a11y-calm="on"] *::before,html[data-a11y-calm="on"] *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}';
   var accessStyled = false;
   function accessStyle() {
@@ -206,7 +208,7 @@
 
   var ACCESS_OPTIONS = [
     { key: 'size', label: 'Text size', choices: [['', 'Normal'], ['large', 'Large'], ['xl', 'Extra large']] },
-    { key: 'contrast', label: 'Colours', choices: [['', 'Normal'], ['high', 'High contrast']] },
+    { key: 'theme', label: 'Colours', choices: [['', 'Normal'], ['high', 'High contrast'], ['night', 'Night']] },
     { key: 'font', label: 'Letters', choices: [['', 'Normal'], ['clear', 'Easy to read']] },
     { key: 'calm', label: 'Animations', choices: [['', 'Normal'], ['on', 'Calm (off)']] }
   ];
