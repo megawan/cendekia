@@ -11,7 +11,8 @@
 //   Cendekia.fx.reveal(stars, gift)          the earned stars (.on) pop in one by one, then the new-sticker box drops in
 //   Cendekia.fx.flip(element)                the element turns over like a card (its parent needs CSS `perspective`)
 //   Cendekia.fx.loop(ms, step)               calls step(0..1) each frame, once round every ms, forever; returns a function that stops it
-//   Cendekia.fx.cascade(elements)           the elements rise in one after another
+//   Cendekia.fx.drag(element, opts)          lets the element be dragged along one axis in steps (opts: axis, step, onGrab, onDrag, onSettle)
+//   Cendekia.fx.cascade(elements)         the elements rise in one after another
 //   Cendekia.fx.count(element)               the first number in the element counts up from 0 ("12 stars" keeps its words)
 //   Cendekia.fx.flame(element)               the element flickers like a flame, for the days in a row
 //   Cendekia.fx.mascot(svg)                  makes a mascot idle: it blinks and its marked parts move
@@ -274,9 +275,37 @@
     });
     return function () { stopped = true; if (anim) anim.pause(); };
   }
+  // Lets a finger or mouse drag the element along one axis, in steps of o.step pixels, with anime.js's draggable. The caller
+  // keeps the element's real place (CSS left and top), the drag only moves it by a transform. o.axis is 'x' or 'y'.
+  // The returned object: range(min, max) limits how far it may go (pixels from where it is, set when it is grabbed);
+  // reset() puts it back at zero once the caller has moved it for real; enable(false) stops it being dragged.
+  // o.onGrab() and o.onDrag(px) run while it is held and o.onSettle(px) when it has come to rest on a step.
+  // Dragging is a way to play, not a decoration, so it works with reduced motion too; without the library nothing is draggable.
+  function drag(el, o) {
+    var lo = 0, hi = 0, d = null, on = true, axis = o.axis === 'y' ? 'y' : 'x';
+    var api = {
+      range: function (a, b) { lo = a; hi = b; },
+      reset: function () { if (d) { if (axis === 'x') d.setX(0, true); else d.setY(0, true); } },
+      enable: function (yes) { on = yes; if (d) { if (yes) d.enable(); else d.disable(); } }
+    };
+    load().then(function (a) {
+      if (!a) return;
+      var spec = { snap: o.step, modifier: function (v) { return Math.max(lo, Math.min(hi, v)); } };
+      d = a.createDraggable(el, {
+        x: axis === 'x' ? spec : false,
+        y: axis === 'y' ? spec : false,
+        releaseEase: 'outQuad', releaseStiffness: 120,
+        onGrab: function () { if (o.onGrab) o.onGrab(); },
+        onDrag: function (s) { if (o.onDrag) o.onDrag(axis === 'x' ? s.x : s.y); },
+        onSettle: function (s) { if (o.onSettle) o.onSettle(axis === 'x' ? s.x : s.y); }
+      });
+      if (!on) d.disable();
+    });
+    return api;
+  }
   function start() { watchScreens(); lightFlame(document); }
   if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
 
   window.Cendekia = window.Cendekia || {};
-  window.Cendekia.fx = { confetti: confetti, burst: burst, count: count, flame: flame, flip: flip, cascade: cascade, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react, loop: loop };
+  window.Cendekia.fx = { confetti: confetti, burst: burst, count: count, flame: flame, flip: flip, cascade: cascade, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react, loop: loop, drag: drag };
 })();

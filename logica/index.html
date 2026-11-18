@@ -411,6 +411,47 @@
     border-bottom: 4px solid #c9a27a; }
   .mpeg .disk { height: 12px; margin: 1px 0; line-height: 12px; font-size: 0; border-radius: 4px; box-shadow: none; }
 
+  /* Poka's Parking Lot */
+  .lotwrap { width: min(100%, 420px); margin: 6px auto 44px; }
+  .lot { position: relative; width: 100%; aspect-ratio: 1; box-sizing: border-box; border: 4px solid #6b7280; border-radius: 12px; background-color: #e5e7eb;
+    background-image: linear-gradient(90deg, rgba(0,0,0,.13) 2px, transparent 2px), linear-gradient(rgba(0,0,0,.13) 2px, transparent 2px);
+    background-size: calc(100% / var(--n)) calc(100% / var(--n)); }
+  .lotexit { position: absolute; top: calc(100% + 4px); left: calc(var(--x) * 100% / var(--n)); width: calc(100% / var(--n)); height: 36px; display: flex;
+    align-items: center; justify-content: center; border-radius: 0 0 10px 10px; font-size: 1.2rem; font-weight: 800;
+    background: repeating-linear-gradient(135deg, #fde68a 0 8px, #fff7d1 8px 16px); color: #92400e; }
+  .pcar { position: absolute; left: calc(var(--x) * 100% / var(--n)); top: calc(var(--y) * 100% / var(--n)); width: calc(var(--w) * 100% / var(--n));
+    height: calc(var(--h) * 100% / var(--n)); padding: 0; border: 0; background: none; cursor: grab; z-index: 2; font: inherit; touch-action: none;
+    transition: left .22s ease, top .22s ease, opacity .5s; }
+  .pcar.jump { transition: none; }
+  .pcar:active { cursor: grabbing; z-index: 4; }
+  .pcar .cs { position: absolute; left: 6%; top: 6%; width: 88%; height: 88%; overflow: visible; pointer-events: none; transition: filter .15s; }
+  .cs .sh { fill: rgba(0,0,0,.2); }
+  .cs .cb { fill: var(--c); stroke: rgba(0,0,0,.3); stroke-width: 1.5; }
+  .cs .cg { fill: #f1f5f9; stroke: rgba(0,0,0,.3); stroke-width: 1.5; }
+  .cs .gl { fill: #2b3b4f; }
+  .cs .cr { fill: rgba(255,255,255,.26); }
+  .cs .pw { fill: #f8fafc; stroke: rgba(0,0,0,.25); stroke-width: 1; }
+  .cs .gh { fill: rgba(255,255,255,.3); }
+  .cs .ln { fill: none; stroke: rgba(0,0,0,.2); stroke-width: 1.5; }
+  .cs .wh { fill: #111827; }
+  .cs .lt { fill: #fff4b0; }
+  .cs .tl { fill: #ef4444; }
+  .cs .lb1 { fill: #ef4444; animation: lightbar 1s steps(1) infinite; }
+  .cs .lb2 { fill: #3b82f6; animation: lightbar 1s steps(1) infinite reverse; }
+  @keyframes lightbar { 0% { opacity: 1; } 50% { opacity: .25; } }
+  .pcar.sel .cs { filter: drop-shadow(0 0 3px var(--c-blue)) drop-shadow(0 0 1px var(--c-blue)); }
+  .pcar.hint .cs { animation: carglow .8s ease-in-out infinite; }
+  @keyframes carglow { 50% { filter: drop-shadow(0 0 7px #f59e0b) brightness(1.2); } }
+  .pcar.out { opacity: 0; }
+  .pdest { position: absolute; left: calc(var(--x) * 100% / var(--n)); top: calc(var(--y) * 100% / var(--n)); width: calc(100% / var(--n)); height: calc(100% / var(--n));
+    padding: 0; border: 0; background: none; cursor: pointer; z-index: 3; }
+  .pdest::before { content: ""; position: absolute; inset: 26%; border-radius: 50%; background: rgba(46,144,250,.35); border: 3px dashed var(--c-blue); }
+  .pdest.hint::before { animation: blink .8s ease-in-out infinite; }
+  .lot.mini { width: 132px; border-width: 3px; border-radius: 8px; margin: 0 auto; }
+  .lot.mini .pcar { cursor: default; }
+  .lot.mini .lotexit { height: 20px; top: calc(100% + 3px); font-size: .8rem; }
+  .lot.mini.demoBox { margin-bottom: 26px; }
+
   /* Poka's Backpack */
   .pouches { display: flex; justify-content: center; gap: 10px; margin: 8px 0; }
   .pouch { position: relative; flex: 1 1 0; max-width: 170px; min-width: 0; padding: 8px 6px 6px; background: #fff; border: 3px solid var(--line);
@@ -1296,6 +1337,9 @@
     { id: 'hanoi', name: 'Tower of Poka', skill: 'Planning ahead', icon: '🗼', c: 'var(--c-brown)', kind: 'quiz', total: 3,
       desc: 'Move the tower of disks to another peg, one disk at a time. A big disk never sits on a small one.',
       levels: ['Small tower', 'Taller tower', 'Middle peg', 'Messy start', 'Rebuild', 'Big tower', 'Mixed up'] },
+    { id: 'park', name: "Poka's Parking Lot", skill: 'Planning ahead', icon: '🚓', c: 'var(--c-orange)', kind: 'quiz', total: 3,
+      desc: 'The police car is stuck in a full parking lot. Slide the other cars out of the way and drive it out of the exit.',
+      levels: ['Few cars', 'More cars', 'Trucks', 'Tight spot', 'Busy lot', 'Rush hour', 'Mixed up'] },
     { id: 'pack', name: 'Poka\'s Backpack', skill: 'Variables', icon: '🎒', c: 'var(--c-rose)', kind: 'quiz', total: 3,
       desc: 'Follow the steps and work out what is in each pocket of the backpack.',
       levels: ['Put in, take out', 'Two pockets', 'Copy', 'Build it', 'Swap', 'Repeat', 'Mixed up'] },
@@ -1535,6 +1579,7 @@
     clues: 'Combining several clues, including "not", "or" and facts about things, to find the only answer that fits them all.',
     train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.',
     hanoi: 'Planning several moves ahead, and solving a big job by solving smaller copies of it first: to move the biggest disk, the smaller tower has to get out of the way.',
+    park: 'Planning a way out backwards: to free the police car, first ask which car is in the way, then which car blocks that one. Every move changes what other cars can do, so thinking a few moves ahead beats pushing cars at random.',
     pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later. Later, building the steps to reach a number, swapping two pockets with a spare one, repeating steps instead of writing them again and again, and finding the one wrong step in a program.',
     circuit: 'Logic gates: AND, OR and NOT decide whether power gets through, the way computers combine simple yes-or-no decisions. Tracing a circuit from the switches to the lamp, and working back from the lamp to the switches. Later, choosing the gates that make a circuit match a table.'
   };
@@ -1748,6 +1793,11 @@
       ['<div class="demo">' + miniTower([[0, 1], [], []], 2) + '<b>→</b>' + miniTower([[], [], [0, 1]], 2) + '</div>', 'Move the whole tower to the 🏁 peg, one disk at a time.'],
       ['<div class="demo">' + miniTower([[1], [0], []], 2) + '</div>', 'Tap a peg to lift its top disk, then tap the peg to put it on.'],
       ['<div class="demo">' + miniTower([[], [0], [1]], 2) + '</div>', 'A big disk never sits on a small one. Use the middle peg to make room!']
+    ],
+    park: [
+      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [0, 0]) + '</div>', 'The 🚓 police car wants to drive out of the exit at the bottom. But another car is in the way.'],
+      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [0, 0], 1, [[2, 2], [3, 2]]) + '</div>', 'Tap a car, then tap a dot to slide it there. A car only goes straight, forward or back.'],
+      ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [2, 2]) + '</div>', 'Clear the way and the police car drives out. The fewer moves, the better!']
     ],
     pack: [
       ['<div class="demo"><div class="pouches">' + pouchHtml(0, 3) + pouchHtml(1, 1) + '</div></div>', 'The backpack has pockets, and each pocket holds a number of things. Here: 3 🍎 and 1 🍪.'],
@@ -3442,7 +3492,7 @@
       sfx.drop();
       const now = dist.get(cur.join(''));
       if (!now) {
-        done = true; paint(); box.classList.add('done');
+        done = true; paint(); box.classList.add('done'); drags.forEach((d) => d.enable(false));
         sfx.whir(); solved(standard ? 3200 : 1600);
         if (standard) qSay('The fewest for ' + n + ' disks is ' + par + ' moves. One more disk doubles that and adds one!', 'cheer');
         return;
@@ -3460,6 +3510,221 @@
     $('hUndo').addEventListener('click', () => {
       if (done || !history.length) return;
       cur = history.pop(); moves--; sel = -1; hint = []; sfx.tap(); paint();
+    });
+    paint();
+  }
+
+  // ---- Poka's Parking Lot ----
+  // A car cannot leave its lane: v is true for a car that goes up and down, f is the column (or row) of its lane and len is
+  // how many cells it covers. Where a car is, is one number, its place along the lane. Car 0 is the police car; it goes up
+  // and down and the exit is under its lane. A state is the list of places. A move slides one car any number of free cells.
+  // A search from the start finds every position the cars can reach, and a search outward from the positions where the
+  // police car is at the exit gives the fewest moves from each one: the "fewest" shown, the check for a wrong turn and the hint.
+  // Per difficulty: n is the size of the lot and each level is [cars, trucks allowed, fewest moves at least, at most].
+  const PARK = {
+    easy: { n: 5, lv: [[4, 0, 2, 3], [4, 0, 3, 4], [5, 1, 4, 5], [5, 1, 5, 6], [6, 1, 6, 7], [6, 1, 7, 8]] },
+    medium: { n: 6, lv: [[5, 0, 3, 4], [6, 0, 4, 6], [6, 1, 5, 7], [7, 1, 6, 8], [7, 1, 7, 9], [8, 1, 8, 10]] },
+    hard: { n: 6, lv: [[6, 0, 4, 6], [7, 1, 6, 8], [8, 1, 8, 10], [8, 1, 9, 11], [9, 1, 10, 12], [8, 1, 10, 13]] }
+  };
+  const PARK_COLORS = ['#1f2937', 'var(--c-red)', 'var(--c-orange)', '#ca8a04', 'var(--c-green)', 'var(--c-blue)', 'var(--c-purple)', 'var(--c-pink)', 'var(--c-teal)', 'var(--c-lime)', 'var(--c-rose)', 'var(--c-indigo)'];
+  const PARK_STATES = 6000; // a lot with more positions than this is dropped: it would take too long to search
+  const parkCell = (c, p, k) => (c.v ? [c.f, p + k] : [p + k, c.f]);
+  const parkVars = (c, p) => ({ x: c.v ? c.f : p, y: c.v ? p : c.f, w: c.v ? 1 : c.len, h: c.v ? c.len : 1 });
+  const parkName = (c, i) => (i === 0 ? 'Police car' : c.len === 3 ? 'Truck' : 'Car');
+  // The car that fills each cell, or -1.
+  function parkOcc(cars, pos, n) {
+    const g = new Int8Array(n * n).fill(-1);
+    cars.forEach((c, i) => { for (let k = 0; k < c.len; k++) { const [x, y] = parkCell(c, pos[i], k); g[y * n + x] = i; } });
+    return g;
+  }
+  // Every slide a car can make: {i: car, to: its new place}.
+  function parkSlides(cars, pos, n, occ) {
+    const out = [];
+    cars.forEach((c, i) => {
+      const empty = (p, k) => { const [x, y] = parkCell(c, p, k); return occ[y * n + x] < 0; };
+      for (let p = pos[i] - 1; p >= 0 && empty(p, 0); p--) out.push({ i, to: p });
+      for (let p = pos[i] + 1; p + c.len <= n && empty(p, c.len - 1); p++) out.push({ i, to: p });
+    });
+    return out;
+  }
+  const parkKey = (pos, n) => pos.reduce((a, p) => a * n + p, 0);
+  // Every position reachable from start and the fewest moves from each to the exit; null when there are too many
+  // positions or the police car can never get out.
+  function parkSolve(cars, start, n, cap) {
+    const index = new Map([[parkKey(start, n), 0]]), states = [start], edges = [];
+    for (let h = 0; h < states.length; h++) {
+      if (states.length > cap) return null;
+      const s = states[h], list = [];
+      parkSlides(cars, s, n, parkOcc(cars, s, n)).forEach((m) => {
+        const next = s.slice(); next[m.i] = m.to;
+        const key = parkKey(next, n);
+        if (!index.has(key)) { index.set(key, states.length); states.push(next); }
+        list.push(index.get(key));
+      });
+      edges.push(list);
+    }
+    const goalAt = n - cars[0].len, dist = new Int32Array(states.length).fill(-1), queue = [];
+    states.forEach((s, k) => { if (s[0] === goalAt) { dist[k] = 0; queue.push(k); } });
+    if (!queue.length) return null;
+    // Every slide can be slid back, so the lot is one connected piece and every position gets a distance.
+    for (let h = 0; h < queue.length; h++) edges[queue[h]].forEach((k) => { if (dist[k] < 0) { dist[k] = dist[queue[h]] + 1; queue.push(k); } });
+    return { states, index, dist };
+  }
+  // A random lot with the police car and count - 1 other cars (up and down or left and right), none on top of another.
+  function parkLayout(n, count, trucks) {
+    const cars = [], pos = [], taken = new Uint8Array(n * n);
+    const put = (c, p) => {
+      const cells = Array.from({ length: c.len }, (_, k) => parkCell(c, p, k));
+      if (cells.some(([x, y]) => taken[y * n + x])) return;
+      cells.forEach(([x, y]) => { taken[y * n + x] = 1; });
+      cars.push(c); pos.push(p);
+    };
+    put({ v: true, f: rnd(0, n - 1), len: 2 }, rnd(0, n - 2));
+    for (let tries = 0; cars.length < count && tries < 80; tries++) {
+      const len = trucks && rnd(1, 10) <= 3 ? 3 : 2;
+      put({ v: rnd(0, 1) === 1, f: rnd(0, n - 1), len }, rnd(0, n - len));
+    }
+    return cars.length === count ? { cars, pos } : null;
+  }
+  // A car seen from above, as a small drawing. It is drawn upright (front at the top) in a box 60 wide and 60 per cell long, turned
+  // sideways for a car that goes left and right, and turned the other way round for some, so not every car looks to the same side.
+  // The police car (0) has a white roof and a flashing light bar; a car of three cells is a bus or a truck.
+  function parkCarSvg(c, i) {
+    const L = 60 * c.len, flip = i === 0 || i % 2 === 1, r = (k) => Math.round(k * 10) / 10;
+    const shape = (j) => '<rect class="sh" x="10" y="9" width="46" height="' + (L - 8) + '" rx="16"/>'
+      + [0.18, 1 - 0.18 - 16 / L].map((k) => '<rect class="wh" x="3" y="' + r(L * k) + '" width="6" height="16" rx="3"/><rect class="wh" x="51" y="' + r(L * k) + '" width="6" height="16" rx="3"/>').join('')
+      + j;
+    const lights = '<ellipse class="lt" cx="16" cy="9" rx="5" ry="3"/><ellipse class="lt" cx="44" cy="9" rx="5" ry="3"/>'
+      + '<rect class="tl" x="11" y="' + (L - 11) + '" width="9" height="4" rx="2"/><rect class="tl" x="40" y="' + (L - 11) + '" width="9" height="4" rx="2"/>';
+    const glass = (a) => '<path class="gl" d="M15 ' + r(a) + ' Q30 ' + r(a - 5) + ' 45 ' + r(a) + ' L41 ' + r(a + 15) + ' Q30 ' + r(a + 12) + ' 19 ' + r(a + 15) + ' Z"/>'
+      + '<path class="gh" d="M19 ' + r(a + 3) + ' L26 ' + r(a + 3) + ' L24 ' + r(a + 10) + ' L20 ' + r(a + 10) + ' Z"/>';
+    const mirrors = (a) => '<rect class="cb" x="1" y="' + r(a - 2) + '" width="7" height="9" rx="2.5"/><rect class="cb" x="52" y="' + r(a - 2) + '" width="7" height="9" rx="2.5"/>';
+    let art;
+    if (c.len === 2) {
+      const a = 0.3 * L, roof = 0.17 * L, b = a + 15 + roof;
+      art = shape('<rect class="cb" x="7" y="4" width="46" height="' + (L - 8) + '" rx="16"/>' + mirrors(a) + glass(a)
+        + (i === 0 ? '<rect class="pw" x="16" y="' + r(a + 15) + '" width="28" height="' + r(roof + 4) + '" rx="6"/><rect class="lb1" x="19" y="' + r(a + 26) + '" width="11" height="6" rx="2"/><rect class="lb2" x="30" y="' + r(a + 26) + '" width="11" height="6" rx="2"/>'
+          : '<rect class="cr" x="17" y="' + r(a + 15) + '" width="26" height="' + r(roof) + '" rx="5"/>')
+        + '<path class="gl" d="M19 ' + r(b + 4) + ' L41 ' + r(b + 4) + ' L45 ' + r(b + 16) + ' L15 ' + r(b + 16) + ' Z"/>' + lights);
+    } else if (i % 2 === 0) { // a bus: a long roof with windows along it
+      const a = 0.08 * L;
+      art = shape('<rect class="cb" x="7" y="4" width="46" height="' + (L - 8) + '" rx="12"/>' + glass(a) + mirrors(a + 2)
+        + '<rect class="cr" x="13" y="' + r(a + 20) + '" width="34" height="' + r(L - a - 36) + '" rx="6"/>'
+        + [0, 1, 2, 3].map((k) => '<rect class="gh" x="17" y="' + r(a + 26 + k * 30) + '" width="26" height="14" rx="3"/>').join('') + lights);
+    } else { // a truck: a cab at the front and a box behind it
+      art = shape('<rect class="cb" x="7" y="4" width="46" height="62" rx="14"/>' + glass(14) + mirrors(16)
+        + '<rect class="cr" x="17" y="29" width="26" height="14" rx="4"/>'
+        + '<rect class="cg" x="5" y="70" width="50" height="' + (L - 76) + '" rx="6"/>'
+        + [0, 1, 2].map((k) => '<path class="ln" d="M12 ' + (82 + k * 28) + ' H48"/>').join('') + lights);
+    }
+    const turned = flip ? '<g transform="rotate(180 30 ' + L / 2 + ')">' + art + '</g>' : art;
+    return c.v ? '<svg class="cs" viewBox="0 0 60 ' + L + '" preserveAspectRatio="none" aria-hidden="true">' + turned + '</svg>'
+      : '<svg class="cs" viewBox="0 0 ' + L + ' 60" preserveAspectRatio="none" aria-hidden="true"><g transform="translate(0 60) rotate(-90)">' + turned + '</g></svg>';
+  }
+  // Small still picture of a lot for the guide. sel is a car to mark and dots are cells to show as places to slide to.
+  const parkMini = (n, cars, pos, sel, dots) => '<div class="lot mini demoBox" style="--n:' + n + '">'
+    + '<span class="lotexit" style="--x:' + cars[0].f + '" aria-hidden="true">⬇</span>'
+    + cars.map((c, i) => { const v = parkVars(c, pos[i]); return '<span class="pcar' + (i === 0 ? ' t' : '') + (i === sel ? ' sel' : '') + '" style="--x:' + v.x + ';--y:' + v.y
+      + ';--w:' + v.w + ';--h:' + v.h + ';--c:' + PARK_COLORS[i] + '">' + parkCarSvg(c, i) + '</span>'; }).join('')
+    + (dots || []).map(([x, y]) => '<span class="pdest" style="--x:' + x + ';--y:' + y + '"></span>').join('') + '</div>';
+  function genPark(lvl) {
+    const { n, lv } = PARK[S.diff];
+    let [count, trucks, lo, hi] = lv[lvl === 6 ? rnd(2, 5) : lvl], lay, sol, from = -1;
+    for (let tries = 1; from < 0; tries++) {
+      if (tries % 100 === 0) { count = Math.max(3, count - 1); lo = Math.max(1, lo - 1); hi++; } // cannot happen in practice; never loop forever
+      lay = parkLayout(n, count, trucks);
+      sol = lay && parkSolve(lay.cars, lay.pos, n, PARK_STATES);
+      const fit = [];
+      if (sol) sol.dist.forEach((d, k) => { if (d >= lo && d <= hi) fit.push(k); });
+      if (fit.length) from = pick(fit);
+    }
+    const cars = lay.cars, par = sol.dist[from], showPar = S.diff !== 'hard';
+    let cur = sol.states[from].slice(), moves = 0, sel = -1, hint = null, done = false;
+    const history = [];
+    const distOf = (s) => sol.dist[sol.index.get(parkKey(s, n))];
+    const slidesNow = () => parkSlides(cars, cur, n, parkOcc(cars, cur, n));
+    qSay('Slide the cars out of the way and drive the 🚓 police car out of the exit. Tap a car, then tap where it should go.');
+    $('ask').innerHTML = '<div class="lotwrap"><div class="lot" id="lot" style="--n:' + n + '"><span class="lotexit" style="--x:' + cars[0].f
+      + '" aria-hidden="true">⬇ 🏁</span></div></div><p class="swaps" id="moves" aria-live="polite"></p>'
+      + '<button type="button" class="btn ghost hUndo" id="pUndo">↩ Undo</button>';
+    const box = $('lot');
+    const els = cars.map((c, i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'pcar' + (i === 0 ? ' t' : '');
+      b.style.setProperty('--c', PARK_COLORS[i]); b.innerHTML = parkCarSvg(c, i);
+      b.addEventListener('click', () => { if (done || dragged) return; sel = sel === i ? -1 : i; sfx.tap(); paint(); });
+      box.appendChild(b);
+      return b;
+    });
+    // Dragging: a car follows the finger along its lane, no further than it can go, and settles on a cell. That is one move.
+    // The tap that ends a drag must not also pick the car, so `dragged` stays up until the next time a car is grabbed.
+    let dragged = false;
+    const cell = () => box.clientWidth / n;
+    const drags = cars.map((c, i) => Cendekia.fx.drag(els[i], {
+      axis: c.v ? 'y' : 'x', step: box.clientWidth / n,
+      onGrab: () => {
+        dragged = false;
+        const to = slidesNow().filter((m) => m.i === i).map((m) => m.to);
+        drags[i].range((Math.min(cur[i], ...to) - cur[i]) * cell(), (Math.max(cur[i], ...to) - cur[i]) * cell());
+      },
+      onDrag: (px) => { if (Math.abs(px) > 4) dragged = true; },
+      onSettle: (px) => {
+        const k = Math.round(px / cell());
+        if (!dragged || !k || done) return;
+        els[i].classList.add('jump'); drags[i].reset(); // the real place changes, so the drag's own shift goes back to zero
+        move({ i, to: cur[i] + k });
+        els[i].offsetWidth; els[i].classList.remove('jump');
+      }
+    }));
+    function paint() {
+      cars.forEach((c, i) => {
+        const v = parkVars(c, cur[i]), b = els[i];
+        Object.entries(v).forEach(([k, val]) => b.style.setProperty('--' + k, val));
+        b.classList.toggle('sel', i === sel);
+        b.classList.toggle('hint', !!hint && hint.i === i);
+        b.setAttribute('aria-label', parkName(c, i) + (c.v ? ', goes up and down' : ', goes left and right') + ', row ' + (v.y + 1) + ', column ' + (v.x + 1) + (i === sel ? ', picked' : ''));
+      });
+      box.querySelectorAll('.pdest').forEach((d) => d.remove());
+      if (sel >= 0 && !done) {
+        slidesNow().filter((m) => m.i === sel).forEach((m) => {
+          const c = cars[m.i], far = m.to > cur[m.i] ? m.to + c.len - 1 : m.to, [x, y] = c.v ? [c.f, far] : [far, c.f];
+          const d = document.createElement('button');
+          d.type = 'button'; d.className = 'pdest' + (hint && hint.i === m.i && hint.to === m.to ? ' hint' : '');
+          d.style.setProperty('--x', x); d.style.setProperty('--y', y);
+          d.setAttribute('aria-label', 'Slide ' + parkName(c, m.i).toLowerCase() + ' to row ' + (y + 1) + ', column ' + (x + 1));
+          d.addEventListener('click', () => move(m));
+          box.appendChild(d);
+        });
+      }
+      $('moves').textContent = 'Moves: ' + moves + (showPar ? ' · Fewest: ' + par : '');
+      $('pUndo').disabled = done || !history.length;
+    }
+    function move(m) {
+      if (done) return;
+      const was = distOf(cur);
+      history.push(cur); cur = cur.slice(); cur[m.i] = m.to; moves++; sel = -1; hint = null;
+      sfx.drop();
+      const now = distOf(cur);
+      if (now === 0) { // the police car is at the exit: it drives out
+        done = true; paint(); box.classList.add('done'); drags.forEach((d) => d.enable(false));
+        els[0].style.setProperty('--y', n); els[0].classList.add('out');
+        sfx.whir(); solved(2200);
+        qSay(moves === par ? 'Out in ' + moves + ' moves, the fewest there is!' : 'Out in ' + moves + ' moves. The fewest is ' + par + '.', 'cheer');
+        return;
+      }
+      if (now > was) { // a wrong turn: the exit is now further away
+        let hinted = false;
+        wrong(() => {
+          const best = slidesNow().reduce((a, s) => { const t = cur.slice(); t[s.i] = s.to; const u = cur.slice(); u[a.i] = a.to; return distOf(t) < distOf(u) ? s : a; });
+          hint = best; sel = best.i; hinted = true;
+        });
+        qSay(hinted ? 'That moved you further away. Look at the glowing car and the glowing spot, or press ↩ Undo.' : 'That moved you further away. Press ↩ Undo, or keep thinking!', 'oops');
+      }
+      paint();
+    }
+    $('pUndo').addEventListener('click', () => {
+      if (done || !history.length) return;
+      cur = history.pop(); moves--; sel = -1; hint = null; sfx.tap(); paint();
     });
     paint();
   }
@@ -4170,7 +4435,7 @@
     });
   }
 
-  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi, pack: genPack, circuit: genCircuit };
+  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi, park: genPark, pack: genPack, circuit: genCircuit };
 
   // =====================================================================
   // Result and stickers
