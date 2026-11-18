@@ -452,6 +452,21 @@
   .lot.lotmini .lotexit { height: 20px; top: calc(100% + 3px); font-size: .8rem; }
   .lot.lotmini { margin-bottom: 26px; }
 
+  /* Poka's Maze */
+  .mzwrap { width: min(100%, 420px); margin: 6px auto 4px; }
+  .maze { position: relative; width: 100%; aspect-ratio: 1; border-radius: 12px; background: #fff3d6; box-shadow: 0 0 0 1px var(--line); touch-action: manipulation; cursor: pointer; }
+  .maze svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+  .maze .mzw { fill: none; stroke: #7a5230; stroke-width: .14; stroke-linecap: round; }
+  .maze .mzt { fill: rgba(250,204,21,.4); }
+  .maze .mzh { fill: rgba(245,158,11,.7); animation: mzpulse .8s ease-in-out infinite; }
+  @keyframes mzpulse { 50% { opacity: .3; } }
+  .maze .mzg { font-size: .72px; }
+  .maze.mini { width: 120px; margin: 0 auto; cursor: default; }
+  .dpad { display: grid; grid-template-columns: repeat(3, 58px); grid-template-rows: repeat(2, 54px); gap: 6px; justify-content: center; margin: 8px auto 4px; }
+  .dpad button { font: inherit; font-size: 1.4rem; line-height: 1; border-radius: 14px; border: 3px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+  .dpad button:active { background: #fff1d6; }
+  .dpad .u { grid-column: 2; grid-row: 1; } .dpad .l { grid-column: 1; grid-row: 2; } .dpad .d { grid-column: 2; grid-row: 2; } .dpad .r { grid-column: 3; grid-row: 2; }
+
   /* Poka's Backpack */
   .pouches { display: flex; justify-content: center; gap: 10px; margin: 8px 0; }
   .pouch { position: relative; flex: 1 1 0; max-width: 170px; min-width: 0; padding: 8px 6px 6px; background: #fff; border: 3px solid var(--line);
@@ -1340,6 +1355,9 @@
     { id: 'park', name: "Poka's Parking Lot", skill: 'Planning ahead', icon: '🚓', c: 'var(--c-orange)', kind: 'quiz', total: 3,
       desc: 'The police car is stuck in a full parking lot. Slide the other cars out of the way and drive it out of the exit.',
       levels: ['Few cars', 'More cars', 'Trucks', 'Tight spot', 'Busy lot', 'Rush hour', 'Mixed up'] },
+    { id: 'maze', name: "Poka's Maze", skill: 'Finding a way', icon: '🧭', c: 'var(--c-teal)', kind: 'quiz', total: 3,
+      desc: 'Poka is lost in a maze. Walk to the house, and back up when you reach a dead end.',
+      levels: ['Small maze', 'Bigger maze', 'Shortcuts', 'Big maze', 'Many ways', 'Huge maze', 'Mixed up'] },
     { id: 'pack', name: 'Poka\'s Backpack', skill: 'Variables', icon: '🎒', c: 'var(--c-rose)', kind: 'quiz', total: 3,
       desc: 'Follow the steps and work out what is in each pocket of the backpack.',
       levels: ['Put in, take out', 'Two pockets', 'Copy', 'Build it', 'Swap', 'Repeat', 'Mixed up'] },
@@ -1580,6 +1598,7 @@
     train: 'Putting things in order step by step, the way a computer sorts: every swap of two neighbours should fix something.',
     hanoi: 'Planning several moves ahead, and solving a big job by solving smaller copies of it first: to move the biggest disk, the smaller tower has to get out of the way.',
     park: 'Planning a way out backwards: to free the police car, first ask which car is in the way, then which car blocks that one. Every move changes what other cars can do, so thinking a few moves ahead beats pushing cars at random.',
+    maze: 'Finding a way through: looking ahead to spot a dead end before walking into it, backing up when one is reached, and comparing routes to find the shortest, the way a computer searches a map.',
     pack: 'Variables: a named pocket holds a number that changes as the steps run. Following a program line by line, and knowing that a copy stays a copy when the original changes later. Later, building the steps to reach a number, swapping two pockets with a spare one, repeating steps instead of writing them again and again, and finding the one wrong step in a program.',
     circuit: 'Logic gates: AND, OR and NOT decide whether power gets through, the way computers combine simple yes-or-no decisions. Tracing a circuit from the switches to the lamp, and working back from the lamp to the switches. Later, choosing the gates that make a circuit match a table.'
   };
@@ -1798,6 +1817,11 @@
       ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [0, 0]) + '</div>', 'The 🚓 police car wants to drive out of the exit at the bottom. But another car is in the way.', 'stack'],
       ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [0, 0], 1, [[2, 2], [3, 2]]) + '</div>', 'Tap a car, then tap a dot to slide it there. A car only goes straight, forward or back.', 'stack'],
       ['<div class="demo">' + parkMini(4, [{ v: true, f: 1, len: 2 }, { v: false, f: 2, len: 2 }], [2, 2]) + '</div>', 'Clear the way and the police car drives out. The fewer moves, the better!', 'stack']
+    ],
+    maze: [
+      ['<div class="demo">' + mzMini(MZ_DEMO, 0, [0], 8) + '</div>', 'Poka wants to go home 🏠. The brown lines are walls. Poka cannot walk through them.', 'stack'],
+      ['<div class="demo">' + mzMini(MZ_DEMO, 4, [0, 1, 4], 8) + '</div>', 'Tap the arrows, or the next square, to walk. This way ends at a wall: a dead end. Walk back and try another way!', 'stack'],
+      ['<div class="demo">' + mzMini(MZ_DEMO, 8, [0, 1, 2, 5], 8) + '</div>', 'Poka is home! Look ahead before you step: fewer steps is better.', 'stack']
     ],
     pack: [
       ['<div class="demo"><div class="pouches">' + pouchHtml(0, 3) + pouchHtml(1, 1) + '</div></div>', 'The backpack has pockets, and each pocket holds a number of things. Here: 3 🍎 and 1 🍪.'],
@@ -3732,6 +3756,143 @@
     paint();
   }
 
+  // ---- Poka's Maze ----
+  // The maze is n by n squares and open[c] says which sides of square c have no wall: bit d is set for d = 0 up, 1 right, 2 down,
+  // 3 left. It is dug by a walk that never enters a square twice, so at first there is exactly one way between any two squares; then
+  // a few walls are knocked down, which gives some mazes more than one way home. A search from the start and one from the house give
+  // every square's distance from each. A square is on a shortest route when the two add up to the fewest steps. Stepping off a shortest
+  // route is a wrong turn, counted once however far the child goes on; the hint is the next square toward the house.
+  // Per difficulty and level: [n, walls knocked down, fewest steps at least, at most].
+  const MAZE = {
+    easy: [[4, 0, 4, 7], [5, 0, 6, 10], [5, 2, 5, 9], [6, 0, 9, 15], [6, 3, 8, 13], [6, 2, 10, 16]],
+    medium: [[6, 0, 9, 15], [7, 0, 13, 21], [7, 3, 11, 19], [8, 0, 17, 27], [8, 4, 15, 25], [8, 3, 19, 29]],
+    hard: [[8, 0, 17, 27], [9, 0, 23, 35], [9, 4, 21, 33], [10, 0, 29, 43], [10, 5, 27, 41], [10, 4, 31, 45]]
+  };
+  const MZ = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // up, right, down, left
+  const mzNext = (n, c, d) => { const x = (c % n) + MZ[d][0], y = Math.floor(c / n) + MZ[d][1]; return x < 0 || y < 0 || x >= n || y >= n ? -1 : y * n + x; };
+  const mzLink = (open, n, c, d) => { open[c] |= 1 << d; open[mzNext(n, c, d)] |= 1 << ((d + 2) % 4); };
+  function mzDig(n, loops) {
+    const open = new Uint8Array(n * n), seen = new Uint8Array(n * n), walk = [rnd(0, n * n - 1)];
+    seen[walk[0]] = 1;
+    while (walk.length) {
+      const c = walk[walk.length - 1], to = shuffle([0, 1, 2, 3]).filter((d) => { const b = mzNext(n, c, d); return b >= 0 && !seen[b]; });
+      if (!to.length) { walk.pop(); continue; }
+      const b = mzNext(n, c, to[0]);
+      mzLink(open, n, c, to[0]); seen[b] = 1; walk.push(b);
+    }
+    for (let k = 0, made = 0; made < loops && k < 200; k++) {
+      const c = rnd(0, n * n - 1), d = rnd(0, 3);
+      if (mzNext(n, c, d) >= 0 && !(open[c] >> d & 1)) { mzLink(open, n, c, d); made++; }
+    }
+    return open;
+  }
+  // Fewest steps from `from` to every square.
+  function mzDist(open, n, from) {
+    const dist = new Int16Array(n * n).fill(-1), queue = [from];
+    dist[from] = 0;
+    for (let h = 0; h < queue.length; h++) {
+      for (let d = 0; d < 4; d++) {
+        const b = open[queue[h]] >> d & 1 ? mzNext(n, queue[h], d) : -1;
+        if (b >= 0 && dist[b] < 0) { dist[b] = dist[queue[h]] + 1; queue.push(b); }
+      }
+    }
+    return dist;
+  }
+  // The maze as a drawing: squares walked on (trail), one square to glow (hint), the walls and the house.
+  function mzSvg(open, n, trail, goal, hint) {
+    const sq = (c, cls) => '<rect class="' + cls + '" x="' + (c % n) + '" y="' + Math.floor(c / n) + '" width="1" height="1"/>';
+    let walls = '';
+    for (let c = 0; c < n * n; c++) {
+      const x = c % n, y = Math.floor(c / n);
+      if (!(open[c] & 1)) walls += 'M' + x + ' ' + y + 'h1';
+      if (!(open[c] & 8)) walls += 'M' + x + ' ' + y + 'v1';
+      if (x === n - 1) walls += 'M' + (x + 1) + ' ' + y + 'v1';
+      if (y === n - 1) walls += 'M' + x + ' ' + (y + 1) + 'h1';
+    }
+    return '<svg viewBox="0 0 ' + n + ' ' + n + '" aria-hidden="true">' + trail.map((c) => sq(c, 'mzt')).join('') + (hint >= 0 ? sq(hint, 'mzh') : '')
+      + '<path class="mzw" d="' + walls + '"/><text class="mzg" x="' + (goal % n + 0.5) + '" y="' + (Math.floor(goal / n) + 0.54) + '" text-anchor="middle" dominant-baseline="central">🏠</text></svg>';
+  }
+  const mzBot = (c, n) => '<div class="bot" style="--x:' + (c % n) + ';--y:' + Math.floor(c / n) + '">' + pokaSvg('happy') + '</div>';
+  // A small fixed maze for the guide: the way home is 0, 1, 2, 5, 8 and square 4 is a dead end.
+  const MZ_DEMO = (() => { const o = new Uint8Array(9); [[0, 1], [1, 1], [2, 2], [5, 2], [1, 2], [0, 2], [3, 2], [6, 1]].forEach(([c, d]) => mzLink(o, 3, c, d)); return o; })();
+  const mzMini = (open, at, trail, goal) => '<div class="maze mini" style="--w:3">' + mzSvg(open, 3, trail, goal, -1) + mzBot(at, 3) + '</div>';
+  function genMaze(lvl) {
+    let [n, loops, lo, hi] = MAZE[S.diff][lvl === 6 ? rnd(1, 5) : lvl];
+    const more = loops > 0;
+    let open, from, goal, ds;
+    for (let tries = 1; goal === undefined; tries++) {
+      if (tries % 100 === 0) lo = Math.max(2, lo - 2); // cannot happen in practice; never loop forever
+      open = mzDig(n, loops); from = rnd(0, n * n - 1); ds = mzDist(open, n, from);
+      const fit = [];
+      ds.forEach((d, c) => { if (d >= lo && d <= hi) fit.push(c); });
+      if (fit.length) goal = pick(fit);
+    }
+    const par = ds[goal], de = mzDist(open, n, goal), onRoute = (c) => ds[c] + de[c] === par, showPar = S.diff !== 'hard';
+    let cur = from, hint = -1, done = false;
+    const trail = [];
+    qSay(more ? 'There is more than one way home. Find the shortest!' : 'Walk Poka home to the 🏠. Use the arrows, or tap the next square.');
+    $('ask').innerHTML = '<div class="mzwrap"><div class="maze" id="maze" style="--w:' + n + '" data-open="' + open.join(',') + '" data-goal="' + goal + '"><div class="bot" id="mzBot">'
+      + pokaSvg('happy') + '</div></div></div><p class="swaps" id="moves" aria-live="polite"></p>'
+      + '<div class="dpad">' + ['Up', 'Right', 'Down', 'Left'].map((name, d) => '<button type="button" class="' + 'urdl'[d] + '" data-d="' + d + '" aria-label="' + name + '">' + '▲▶▼◀'[d] + '</button>').join('') + '</div>'
+      + '<button type="button" class="btn ghost hUndo" id="mUndo">↩ Undo</button>';
+    const box = $('maze'), bot = $('mzBot');
+    Cendekia.fx.mascot(bot.firstChild);
+    function paint() {
+      const old = box.querySelector(':scope > svg');
+      if (old) old.remove();
+      box.insertAdjacentHTML('afterbegin', mzSvg(open, n, trail.concat(cur), goal, hint));
+      bot.style.setProperty('--x', cur % n); bot.style.setProperty('--y', Math.floor(cur / n));
+      box.setAttribute('aria-label', 'Maze, ' + n + ' squares wide. Poka is in row ' + (Math.floor(cur / n) + 1) + ', column ' + (cur % n + 1) + '. The house is in row ' + (Math.floor(goal / n) + 1) + ', column ' + (goal % n + 1) + '.');
+      $('moves').textContent = 'Steps: ' + trail.length + (showPar ? ' · Fewest: ' + par : '');
+      $('mUndo').disabled = done || !trail.length;
+    }
+    function step(d) {
+      if (done) return;
+      if (d === 1 || d === 3) bot.classList.toggle('face-L', d === 3);
+      const b = open[cur] >> d & 1 ? mzNext(n, cur, d) : -1;
+      if (b < 0) { // a wall: Poka bumps into it, and it does not count as a wrong turn
+        bot.style.setProperty('--bx', MZ[d][0] * 30 + '%'); bot.style.setProperty('--by', MZ[d][1] * 30 + '%');
+        bot.classList.remove('walk', 'bump'); void bot.offsetWidth; bot.classList.add('bump');
+        sfx.bump();
+        return;
+      }
+      const leaves = onRoute(cur) && !onRoute(b);
+      trail.push(cur); cur = b; hint = -1;
+      bot.classList.remove('walk', 'bump'); void bot.offsetWidth; bot.classList.add('walk');
+      sfx.step();
+      if (cur === goal) {
+        done = true; paint(); box.classList.add('done'); bot.classList.add('dance');
+        sfx.whir(); solved(2200);
+        qSay(trail.length === par ? 'Home in ' + par + ' steps, the fewest there is!' : 'Home in ' + trail.length + ' steps. The fewest is ' + par + '.', 'cheer');
+        return;
+      }
+      if (leaves) { // off every shortest route
+        let hinted = false;
+        wrong(() => { hint = mzNext(n, cur, [0, 1, 2, 3].find((k) => open[cur] >> k & 1 && de[mzNext(n, cur, k)] === de[cur] - 1)); hinted = true; });
+        qSay(hinted ? 'That is not the shortest way. Look at the glowing square, or press ↩ Undo.' : (more ? 'That is a longer way, or a dead end. Press ↩ Undo, or walk back!' : 'A dead end is coming. Press ↩ Undo, or walk back!'), 'oops');
+      }
+      paint();
+    }
+    box.addEventListener('click', (e) => {
+      const r = box.getBoundingClientRect(), x = Math.floor((e.clientX - r.left) / r.width * n), y = Math.floor((e.clientY - r.top) / r.height * n);
+      const d = MZ.findIndex(([dx, dy]) => x === cur % n + dx && y === Math.floor(cur / n) + dy);
+      if (d >= 0) step(d);
+    });
+    $('ask').querySelectorAll('.dpad button').forEach((b) => b.addEventListener('click', () => step(+b.dataset.d)));
+    const onKey = (e) => {
+      if (!box.isConnected) { document.removeEventListener('keydown', onKey); return; }
+      const d = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'].indexOf(e.key);
+      if (d < 0 || !box.offsetParent) return;
+      e.preventDefault(); step(d);
+    };
+    document.addEventListener('keydown', onKey);
+    $('mUndo').addEventListener('click', () => {
+      if (done || !trail.length) return;
+      cur = trail.pop(); hint = -1; sfx.tap(); paint();
+    });
+    paint();
+  }
+
   // ---- Poka's Backpack ----
   // The pockets are variables and a program is a list of steps that change them. packRun follows the steps and gives
   // every state it passed through, or err when a step tried to take more than a pocket holds.
@@ -4438,7 +4599,7 @@
     });
   }
 
-  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi, park: genPark, pack: genPack, circuit: genCircuit };
+  const GEN = { patterns: genPatterns, machine: genMachine, balance: genBalance, filter: genFilter, code: genCode, sudoku: genSudoku, clues: genClues, train: genTrain, hanoi: genHanoi, park: genPark, maze: genMaze, pack: genPack, circuit: genCircuit };
 
   // =====================================================================
   // Result and stickers

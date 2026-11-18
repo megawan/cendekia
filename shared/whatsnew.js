@@ -9,7 +9,7 @@
     items: [
       { title: 'Night colours and easier reading', text: 'The Aa button now has a Night mode, plus bigger text, high contrast, easy-to-read letters and a calm mode with no animation.' },
       { title: 'Omnia has a lot more to explore', text: 'The solar system, the water cycle, food chains, day, night and seasons, life cycles, flags, volcanoes, landmarks, and new games on the map.' },
-      { title: 'Poka’s Parking Lot', text: 'Slide the cars out of the lot. Poka’s Backpack also has Repeat and Mixed up levels now.' },
+      { title: 'Poka’s Parking Lot and Poka’s Maze', text: 'Slide the cars out of the lot, and help Poka find the way home through a maze. Poka’s Backpack also has Repeat and Mixed up levels now.' },
       { title: 'Hijaiyah is now Iqra', text: 'The same 28 letters with a new name, and a new prayer to learn: the prayer for rain.' },
       { title: 'Everything moves a little', text: 'Mascots blink and cheer, stars pop in, cards flip, and letters sparkle when you trace them.' }
     ]
