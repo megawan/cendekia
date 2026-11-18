@@ -82,7 +82,10 @@
   <section id="app" hidden>
     <div class="top">
       <h1>For parents</h1>
-      <a class="btn ghost" href="../" style="text-decoration:none;white-space:nowrap">← Cendekia</a>
+      <span style="display:flex;gap:8px;align-items:center">
+        <button class="btn ghost" type="button" id="access" aria-label="Accessibility settings">Aa</button>
+        <a class="btn ghost" href="../" style="text-decoration:none;white-space:nowrap">← Cendekia</a>
+      </span>
     </div>
     <p class="muted">Everything is kept on this device only and is never sent anywhere.</p>
     <div class="tabs" id="tabs"></div>
@@ -98,6 +101,7 @@
 </main>
 <script src="../shared/profile.js"></script>
 <script>
+  document.getElementById('access').addEventListener('click', Cendekia.access);
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);

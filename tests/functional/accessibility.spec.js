@@ -40,3 +40,14 @@ test('every app home has the button', async ({ page }) => {
     await expect(page.getByRole('button', { name: 'Accessibility settings' })).toBeVisible();
   }
 });
+
+test('the parent page has the button too', async ({ page }) => {
+  await page.goto('/parents/');
+  const q = (await page.locator('#q').textContent()).match(/(\d+)\s*[+×x-]\s*(\d+)/);
+  const [a, b] = [+q[1], +q[2]];
+  const op = (await page.locator('#q').textContent()).match(/[+×x-]/)[0];
+  await page.locator('#a').fill(String(op === '+' ? a + b : op === '-' ? a - b : a * b));
+  await page.getByRole('button', { name: 'Open' }).click();
+  await page.getByRole('button', { name: 'Accessibility settings' }).click();
+  await expect(page.getByRole('heading', { name: 'Accessibility' })).toBeVisible();
+});

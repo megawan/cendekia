@@ -82,7 +82,7 @@
     if (accessStyled) return; accessStyled = true;
     var css = document.createElement('style'); css.textContent = accessCss; document.head.appendChild(css);
   }
-  accessStyle();
+  if (Object.keys(access).length) accessStyle(); // nothing to style until a setting is on
 
   // ---- Days ----
   function dayStr(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -211,6 +211,7 @@
     { key: 'calm', label: 'Animations', choices: [['', 'Normal'], ['on', 'Calm (off)']] }
   ];
   function accessPanel() {
+    accessStyle();
     modal(function (card, close) {
       card.setAttribute('aria-label', 'Accessibility');
       card.appendChild(el('h2', '', 'Accessibility'));
