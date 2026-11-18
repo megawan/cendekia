@@ -233,6 +233,7 @@ test.describe("Poka's Parking Lot", () => {
     await page.locator('#worlds .card', { hasText: "Poka's Parking Lot" }).click();
     const lots = page.locator('.tsteps .lotmini');
     await expect(lots).toHaveCount(3);
+    await page.waitForTimeout(1200); // the steps pop in one after another
     for (let k = 0; k < 3; k++) {
       const lot = await lots.nth(k).boundingBox(), car = await lots.nth(k).locator('.pcar').first().boundingBox();
       expect(lot.width).toBeGreaterThan(120);
