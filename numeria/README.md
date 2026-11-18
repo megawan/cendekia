@@ -34,6 +34,10 @@ A wrong answer gets a second try. A second miss shows the answer with a short ex
 
 ✏️ "Trace numbers" on the home screen, under the nine places, lets a child draw over the numbers 0 to 10, each with the matching number of apples and its word. The scoring, three stars for a neat line and the `shared/trace.js` code are described in [Aksara's README](../aksara/README.md#tracing). Numbers are drawn in the Andika font. The best stars for each number are kept in `traced` in the child's save, each traced number goes to the shared log as a round called "Tracing", and the daily time limit applies. These stars are shown on the tracing screen only and do not count toward the town stars, so the town stickers still mean that the levels were played.
 
+## Fraction tiles
+
+🧩 "Fraction tiles" on the home screen shows the whole and its pieces (halves, thirds, quarters, fifths, sixths, eighths and tenths) as colored tiles in the same lane, each with its decimal, fraction and percent. The tiles grow in one after another. Tapping a tile slides a dashed guide line to the end of it, hatches the part of every longer tile that sticks out past the line, and says in words whether the piece is bigger or smaller than its neighbors. It is a place to play with, so it gives no stars and the daily time limit applies when it opens.
+
 ## Stars and stickers
 
 Three stars for every question right on the first try, two for up to two misses, one for finishing. Twelve town stickers unlock as the total star count grows (162 stars at most). Days in a row are counted as in the other apps.
