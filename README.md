@@ -40,6 +40,10 @@ Several children can share one device. `shared/profile.js` is loaded by every ap
 
 Everything stays in the browser of the device: nothing is sent anywhere, and clearing the browser's site data clears it. To add an app, add its storage key to `APP_KEYS` in `shared/profile.js` (or move the app's old saves itself, as Logica does) and to the list of app keys removed with a child in `remove()`, add a row to `APPS` in `parents/index.html`, and add `../shared/profile.js` to the app's service worker `CORE` list.
 
+## Accessibility
+
+Every home screen has an **Aa** button beside the child chip (`Cendekia.access()` opens the same panel). It sets, for the whole device and every child: text size (normal, large, extra large, by scaling the root font size), high contrast, easy-to-read letters (Verdana-style font with more spacing) and calm (no animation). The choices are saved in `cendekia.a11y.v1` and applied as `data-a11y-*` attributes on `<html>`, styled from `shared/profile.js`. Animation code should ask `Cendekia.calm()`, which is also true when the device asks for reduced motion.
+
 ## Running locally
 
 Any static file server works, for example:
