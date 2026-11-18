@@ -2,7 +2,7 @@ const { test, expect } = require('../support/fixtures');
 
 // Opens one topic of Omnia ("Cities of Indonesia", "Capitals of the World", "Flags of the World", "Nature of the World",
 // "Culture of Indonesia", "Animals of the World", "Volcanoes and Disasters", "Islands and Straits", "Peoples and Languages",
-// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?", "Island Routes", "The Solar System", "The Water Cycle", "Food Chains", "Day, Night and Seasons" or "Life Cycles").
+// "Landmarks of the World", "Foods of the World", "Map Jigsaw", "Who Am I?", "Neighbours", "Rivers and Lakes", "Bigger or Farther?", "Island Routes", "The Solar System", "The Water Cycle", "Food Chains", "Day, Night and Seasons", "Life Cycles" or "How Volcanoes Erupt").
 async function openTopic(page, name) {
   await page.goto('/omnia/');
   await page.locator('#topics .card', { hasText: name }).click();
@@ -44,7 +44,7 @@ const saved = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(wind
 const lastRound = (page) => page.evaluate(() => window.Cendekia.log(window.Cendekia.profile().id).at(-1));
 
 test.describe('Omnia', () => {
-  test('lists the twenty-two topics and their levels', async ({ page }) => {
+  test('lists the twenty-three topics and their levels', async ({ page }) => {
     test.setTimeout(90000); // every return to the home screen waits for its cards to appear
     await openTopic(page, 'Cities of Indonesia');
     await expect(page.locator('#levels .card')).toHaveCount(8); // Explore and seven levels
@@ -52,7 +52,7 @@ test.describe('Omnia', () => {
     await page.locator('#topics .card', { hasText: 'Capitals of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
-    await expect(page.locator('#topics .card')).toHaveCount(23); // twenty-two topics and the stickers
+    await expect(page.locator('#topics .card')).toHaveCount(24); // twenty-three topics and the stickers
     await page.locator('#topics .card', { hasText: 'Flags of the World' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(11);
     await page.getByRole('button', { name: '← Home' }).click();
@@ -73,7 +73,7 @@ test.describe('Omnia', () => {
     await page.getByRole('button', { name: '← Home' }).click();
     await page.locator('#topics .card', { hasText: 'Peoples and Languages' }).click();
     await expect(page.locator('#levels .card')).toHaveCount(7); // Explore and six levels
-    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 7], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3], ['The Solar System', 6], ['The Water Cycle', 5], ['Food Chains', 6], ['Day, Night and Seasons', 5], ['Life Cycles', 5]]) { // a game has no Explore card; the water cycle and food chains have Watch
+    for (const [topic, levels] of [['Landmarks of the World', 6], ['Foods of the World', 6], ['Map Jigsaw', 5], ['Who Am I?', 7], ['Neighbours', 4], ['Rivers and Lakes', 5], ['Bigger or Farther?', 4], ['Island Routes', 3], ['The Solar System', 6], ['The Water Cycle', 5], ['Food Chains', 6], ['Day, Night and Seasons', 5], ['Life Cycles', 5], ['How Volcanoes Erupt', 5]]) { // a game has no Explore card; the water cycle and food chains have Watch
       await page.getByRole('button', { name: '← Home' }).click();
       await page.locator('#topics .card', { hasText: topic }).click();
       await expect(page.locator('#levels .card')).toHaveCount(levels);
@@ -640,5 +640,43 @@ test.describe('Omnia', () => {
     await playRound(page);
     expect((await saved(page)).best['lc.order']).toBeGreaterThanOrEqual(1);
     expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Life cycles: What comes next?' });
+  });
+
+  test('watching a volcano erupt, the magma rises, ash comes out and plants grow back', async ({ page }) => {
+    await openTopic(page, 'How Volcanoes Erupt');
+    await page.getByRole('button', { name: /Watch a volcano erupt/ }).click();
+    await expect(page.locator('#wSlot svg.volcano')).toBeVisible();
+    const style = (sel) => page.locator('#wSlot ' + sel).first().evaluate((e) => e.getAttribute('transform') || e.style.transform);
+    await page.getByRole('button', { name: 'Magma rises', exact: true }).click();
+    await expect(page.locator('#wInfo')).toContainText('Gas bubbles');
+    await expect.poll(() => style('.rise')).toMatch(/^translateY\(0(\.0)?px\)$/);
+    await page.getByRole('button', { name: 'Eruption', exact: true }).click();
+    await expect(page.locator('#wInfo')).toContainText('blast out of the crater');
+    await expect.poll(() => style('.plumeWrap')).toContain('scale(0.62');
+    await page.getByRole('button', { name: 'Calm again', exact: true }).click();
+    await expect.poll(() => style('.plant')).toMatch(/^scale\(1(\.000)?\)$/);
+    await expect.poll(() => page.locator('#wSlot .flow').first().getAttribute('stroke')).toBe('rgb(74,64,64)');
+  });
+
+  test('a part of the volcano can be lit up, and a question shows it without names', async ({ page }) => {
+    await openTopic(page, 'How Volcanoes Erupt');
+    await page.getByRole('button', { name: /Watch a volcano erupt/ }).click();
+    await page.getByRole('button', { name: /Parts of a volcano/ }).click();
+    await page.getByRole('button', { name: 'Vent', exact: true }).click();
+    await expect(page.locator('#wSlot .hl[data-part="vent"]')).toHaveClass(/on/);
+    await expect(page.locator('#wInfo')).toContainText('Magma rushes up');
+    await page.getByRole('button', { name: '← Back' }).click();
+    await page.locator('#levels .card', { hasText: 'Parts of a volcano' }).click();
+    await expect(page.locator('#sSlot svg.volcano')).toBeVisible();
+    await expect(page.locator('#sSlot svg.volcano .pn')).toHaveCount(0);
+    await expect(page.locator('.opt')).toHaveCount(4);
+  });
+
+  test('an eruption round can be played to the end', async ({ page }) => {
+    await openTopic(page, 'How Volcanoes Erupt');
+    await page.locator('#levels .card', { hasText: 'Volcano facts' }).click();
+    await playRound(page);
+    expect((await saved(page)).best['ve.facts']).toBeGreaterThanOrEqual(1);
+    expect(await lastRound(page)).toMatchObject({ app: 'omnia', stage: 'Eruptions: Volcano facts' });
   });
 });

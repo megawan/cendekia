@@ -1,7 +1,7 @@
 // Offline support for Omnia. Bump CACHE when the precached files change.
-const CACHE = 'omnia-v11';
+const CACHE = 'omnia-v12';
 const FONTS = 'omnia-fonts-v1';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js', 'maps.js', 'borders.js', 'science.js', 'sky.js', 'life.js'];
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js', 'maps.js', 'borders.js', 'science.js', 'sky.js', 'life.js', 'volcano.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
