@@ -58,7 +58,7 @@ Then open `http://localhost:8000/`.
 | --- | --- |
 | [`tests/smoke/`](tests/smoke) | Landing page links, every app opens, manifests, icons and service workers exist |
 | [`tests/functional/`](tests/functional) | Child profiles (add, switch, persist), the parent page gate, the daily time limit |
-| [`tests/regression/`](tests/regression) | One test per past bug or change, such as the old `baca/` and `kosakata/` addresses |
+| [`tests/regression/`](tests/regression) | One test per past bug or change |
 
 ```bash
 npm ci

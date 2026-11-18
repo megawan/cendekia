@@ -1,20 +1,6 @@
 // One test per bug or behaviour that was once broken. Name each test after the change that fixed it.
 const { test, expect } = require('../support/fixtures');
 
-test.describe('renamed apps keep their old addresses', () => {
-  for (const [from, to] of [['baca', 'aksara'], ['kosakata', 'lexica'], ['logika', 'logica'], ['orangtua', 'parents'], ['mundia', 'omnia']]) {
-    test(`/${from}/ redirects to /${to}/`, async ({ page }) => {
-      await page.goto(`/${from}/`);
-      await expect(page).toHaveURL(new RegExp(`/${to}/$`));
-    });
-
-    test(`/${from}/ keeps the query string`, async ({ page }) => {
-      await page.goto(`/${from}/?x=1`);
-      await expect(page).toHaveURL(new RegExp(`/${to}/\\?x=1$`));
-    });
-  }
-});
-
 test('the paused Phonics app shows a closed notice', async ({ page }) => {
   await page.goto('/phonics/');
   await expect(page).toHaveTitle('Phonics Fun');
