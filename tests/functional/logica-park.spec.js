@@ -185,4 +185,17 @@ test.describe("Poka's Parking Lot", () => {
     expect(after.cars[m.i].at).toBe(far.to);
     await expect(page.locator('#lot .pcar').nth(m.i)).not.toHaveClass(/\bsel\b/); // the end of a drag is not a tap
   });
+
+  test('the cars still show, and tapping works, when an older cached motion.js has no drag', async ({ page }) => {
+    await page.route('**/shared/motion.js', async (route) => {
+      const res = await route.fetch(), body = await res.text();
+      await route.fulfill({ response: res, body: body + '\n;delete window.Cendekia.fx.drag;' });
+    });
+    await openLogica(page, 'easy');
+    await openLevel(page, 1);
+    await expect(page.locator('#lot .pcar').first()).toBeVisible();
+    const box = await page.locator('#lot .pcar').first().boundingBox();
+    expect(box.width).toBeGreaterThan(20);
+    expect(box.height).toBeGreaterThan(20);
+  });
 });
