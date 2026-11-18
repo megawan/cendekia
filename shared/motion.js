@@ -11,7 +11,7 @@
 //   Cendekia.fx.reveal(stars, gift)          the earned stars (.on) pop in one by one, then the new-sticker box drops in
 //   Cendekia.fx.flip(element)                the element turns over like a card (its parent needs CSS `perspective`)
 //   Cendekia.fx.loop(ms, step)               calls step(0..1) each frame, once round every ms, forever; returns a function that stops it
-//   Cendekia.fx.drag(element, opts)          lets the element be dragged along one axis in steps (opts: axis, step, onGrab, onDrag, onSettle)
+//   Cendekia.fx.drag(element, opts)          lets the element be dragged along one axis in steps (opts: axis, step (pixels or a function returning them), onGrab, onDrag, onSettle)
 //   Cendekia.fx.cascade(elements)         the elements rise in one after another
 //   Cendekia.fx.count(element)               the first number in the element counts up from 0 ("12 stars" keeps its words)
 //   Cendekia.fx.flame(element)               the element flickers like a flame, for the days in a row
@@ -290,10 +290,13 @@
     };
     load().then(function (a) {
       if (!a) return;
-      var spec = { snap: o.step, modifier: function (v) { return Math.max(lo, Math.min(hi, v)); } };
+      // The step is read each time (o.step may be a function) so a lane that has been resized still snaps to its cells.
+      var spec = { modifier: function (v) { var st = typeof o.step === 'function' ? o.step() : o.step; return Math.max(lo, Math.min(hi, st ? Math.round(v / st) * st : v)); } };
       d = a.createDraggable(el, {
         x: axis === 'x' ? spec : false,
         y: axis === 'y' ? spec : false,
+        // Held inside its own lane's box, and the page must not scroll under a drag that ends near the window's edge.
+        container: el.parentNode, scrollSpeed: 0, scrollThreshold: 0,
         releaseEase: 'outQuad', releaseStiffness: 120,
         onGrab: function () { if (o.onGrab) o.onGrab(); },
         onDrag: function (s) { if (o.onDrag) o.onDrag(axis === 'x' ? s.x : s.y); },

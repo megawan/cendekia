@@ -3663,7 +3663,7 @@
     // An older cached motion.js has no drag: the lot then works by tapping alone instead of not drawing at all.
     const makeDrag = Cendekia.fx.drag || (() => ({ range() {}, reset() {}, enable() {} }));
     const drags = cars.map((c, i) => makeDrag(els[i], {
-      axis: c.v ? 'y' : 'x', step: box.clientWidth / n,
+      axis: c.v ? 'y' : 'x', step: cell,
       onGrab: () => {
         dragged = false;
         const to = slidesNow().filter((m) => m.i === i).map((m) => m.to);
