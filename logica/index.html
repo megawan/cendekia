@@ -3672,9 +3672,10 @@
       onDrag: (px) => { if (Math.abs(px) > 4) dragged = true; },
       onSettle: (px) => {
         const k = Math.round(px / cell());
-        if (!dragged || !k || done) return;
-        els[i].classList.add('jump'); drags[i].reset(); // the real place changes, so the drag's own shift goes back to zero
-        move({ i, to: cur[i] + k });
+        // The drag's own shift always goes back to zero, even when it ended between cells or on a spot the car cannot take,
+        // otherwise the car is drawn away from where it really is and looks stuck.
+        els[i].classList.add('jump'); drags[i].reset();
+        if (k && !done && slidesNow().some((m) => m.i === i && m.to === cur[i] + k)) move({ i, to: cur[i] + k });
         els[i].offsetWidth; els[i].classList.remove('jump');
       }
     }));
