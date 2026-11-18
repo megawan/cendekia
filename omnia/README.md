@@ -1,6 +1,6 @@
 # Omnia
 
-General knowledge for children, in English, with Pacha the llama. The topics are about places, flags, nature, culture, animals, volcanoes, islands, peoples, landmarks and foods, rivers and lakes, the solar system, the water cycle and food chains, and there are five games on the map (a jigsaw, Who Am I?, Neighbours, Bigger or Farther? and Island Routes). Most of it is on maps a child can drag, pinch and zoom (the solar system is on a made-up map of space); the water cycle and food chains are animated scenes instead.
+General knowledge for children, in English, with Pacha the llama. The topics are about places, flags, nature, culture, animals, volcanoes, islands, peoples, landmarks and foods, rivers and lakes, the solar system, the water cycle, food chains, and day, night and the seasons, and there are five games on the map (a jigsaw, Who Am I?, Neighbours, Bigger or Farther? and Island Routes). Most of it is on maps a child can drag, pinch and zoom (the solar system is on a made-up map of space); the science topics are animated scenes instead.
 
 ## Topics and levels
 
@@ -19,6 +19,7 @@ General knowledge for children, in English, with Pacha the llama. The topics are
 | 🪐 The Solar System | The planets, Bigger planets, Farther from the Sun, Put in order, Sun, planets and Pluto | The Sun, the 8 planets and Pluto on a made-up map of space (not to scale): the Sun in the middle, an orbit for each planet, the planets in their own colours. When exploring, the planets go round the Sun (anime.js, the farther the slower); in a game they stand still and are not coloured |
 | 💧 The Water Cycle | The four steps, What comes next?, Water facts, The whole water cycle | An animated scene (anime.js) of the Sun, the sea, a cloud, rain and a river. Watch it, tap a step (evaporation, condensation, precipitation, collection) to light it up and read what happens, or let it show the four steps one by one |
 | 🦎 Food Chains | Who eats whom?, What if…?, Producers and eaters, Food chain facts, All food chains | Four animated food chains: Komodo Island (grass, deer, Komodo dragon), a rice field (rice, rat, snake, eagle), the sea (plankton, shrimp, fish, shark) and the rainforest (leaves, langur, leopard). Sparks run along the arrows from the food to the one that eats it. Tap an animal to meet it |
+| 🌍 Day, Night and Seasons | Day and night, The seasons, Phases of the Moon, Earth, Sun and Moon | A real globe, drawn on a canvas and moved with anime.js: the Earth spins with the Sun's light on one side and a red dot for Indonesia, goes round the Sun with its axis tilted, and the Moon goes round the Earth while a second disc shows how it looks from the Earth. Stop it at a moment (morning, noon, sunset, night; March to December; each of the eight phases) to read what is happening |
 | 🗽 Landmarks of the World | Asia, Europe, Africa and Oceania, the Americas, All landmarks | 30 landmarks, from Borobudur to the Eiffel Tower, and the country of each |
 | 🍜 Foods of the World | Asia, Europe, Africa and Oceania, the Americas, All foods | 37 dishes, from sushi to tacos, and the country each comes from |
 
@@ -54,9 +55,12 @@ Where a country names more than one capital, the official one is used (Sucre for
 
 The water cycle and food chains have no map. Their Explore card is **Watch**, a scene drawn in `science.js` and moved with anime.js (the Sun's rays turn, vapour rises, rain falls, the river flows, sparks run along the arrows of a food chain). The same scene is shown in a quiz, without its names and numbers, and with the place that is asked about lit up or, in a food chain, left as a "?" that is filled in when it is answered.
 
-Questions are ready-made (`science.js`) and every one has four choices:
+The sky is a globe, not a picture: `sky.js` turns the coastlines of the world map back into latitude and longitude (the inverse of the Natural Earth projection in `project()`), places them on a sphere and draws that sphere in 3D every frame, with the Earth's axis tilted 23.4°. The night side is the half the Sun does not reach, bounded by the terminator, which seen from here is half an ellipse. The view turns round the Earth to keep Indonesia in sight (the Sun on the right for morning, on the left for evening, behind the Earth for night). The clock under the globe is the real local time in Indonesia for the spin shown. In the seasons the Earth is drawn at four places round the orbit (seen from a little above), lit on the side facing the Sun, and says which end leans towards it. The Moon is lit on the side facing the Sun, and the disc beside it shows the lit part as the Earth sees it, growing on the right and shrinking on the left.
+
+Questions are ready-made (`science.js`, and `sky.js` for the sky) and every one has four choices:
 
 - **Water cycle**: "Which step of the water cycle is lit up?", a clue to name ("The Sun warms the sea and the water rises into the air as vapour. What is this step called?"), "What comes right after condensation?" and ten facts (what clouds are made of, what water vapour is, whether water is used up).
+- **The sky**: "Why do we have day and night?", "The red dot is Indonesia. What part of the day is it there?" (the globe is stopped at that moment, without the clock), "Why do many countries have seasons?", "Which phase of the Moon is this?" (no name on the picture) and facts about the year, the equator, the Moon's light and the tides.
 - **Food chains**: "What does the deer eat?", "What eats the rat?", "What if all the rice plants disappeared? Who would soon go hungry?", "Is the shark a producer, a herbivore or a carnivore?" and facts about producers, predators, prey and what the arrows show. Every name is in one chain only, and the wrong choices are things that are not in that chain and that nothing in it eats or is eaten by (sea animals for a land chain, land animals for the sea), so there is never a second right answer.
 
 A wrong answer gets a second try, and a second miss shows the answer and a sentence to remember, as on a map.
@@ -81,14 +85,14 @@ The page has one map (`MapView` in `index.html`), moved into the screen that sho
 
 ## Stars and stickers
 
-Three stars for every question right on the first try, two for up to two misses, one for finishing. Thirty-six travel stickers unlock as the total star count grows (345 stars at most). Days in a row are counted as in the other apps.
+Three stars for every question right on the first try, two for up to two misses, one for finishing. Thirty-eight travel stickers unlock as the total star count grows (357 stars at most). Days in a row are counted as in the other apps.
 
 ## Children and parents
 
-Omnia uses the children shared by every Cendekia app (`shared/profile.js`). Each child's stars and days in a row are kept in `localStorage` under `omnia.v1.<child id>` (`best` holds the stars of each level by its id, such as `id.java`, `w.sea`, `f.sea`, `n.river`, `c.dance`, `a.savanna`, `v.java`, `i.strait`, `p.all`, `l.europe`, `fd.asia`, `j.sea`, `q.w1`, `b.europe`, `r.river`, `k.islands`, `t.west`, `s.planets`, `w.steps` or `c.eats`; never rename them). Every finished round goes to the shared log (`Cendekia.round`) and every first miss to the shared list of things that went wrong (`Cendekia.weak`, labelled with the level and the place; flags, culture, animals, volcanoes, islands and peoples levels start with "Flags: ", "Culture: ", "Animals: ", "Volcanoes: ", "Islands: ", "Peoples: ", "Landmarks: ", "Foods: ", "Jigsaw: ", "Who am I: ", "Neighbours: ", "Rivers: ", "Compare: ", "Routes: ", "Space: ", "Water: " and "Food chains: " so they are not mixed up with the others), so Omnia shows on the [parents' page](../parents/). The daily time limit set there applies here too.
+Omnia uses the children shared by every Cendekia app (`shared/profile.js`). Each child's stars and days in a row are kept in `localStorage` under `omnia.v1.<child id>` (`best` holds the stars of each level by its id, such as `id.java`, `w.sea`, `f.sea`, `n.river`, `c.dance`, `a.savanna`, `v.java`, `i.strait`, `p.all`, `l.europe`, `fd.asia`, `j.sea`, `q.w1`, `b.europe`, `r.river`, `k.islands`, `t.west`, `s.planets`, `w.steps`, `c.eats` or `d.day`; never rename them). Every finished round goes to the shared log (`Cendekia.round`) and every first miss to the shared list of things that went wrong (`Cendekia.weak`, labelled with the level and the place; flags, culture, animals, volcanoes, islands and peoples levels start with "Flags: ", "Culture: ", "Animals: ", "Volcanoes: ", "Islands: ", "Peoples: ", "Landmarks: ", "Foods: ", "Jigsaw: ", "Who am I: ", "Neighbours: ", "Rivers: ", "Compare: ", "Routes: ", "Space: ", "Water: ", "Food chains: " and "Sky: " so they are not mixed up with the others), so Omnia shows on the [parents' page](../parents/). The daily time limit set there applies here too.
 
 ## Sound, motion and offline
 
 Sound effects are made with the Web Audio API; there is no voice. With "reduce motion" turned on in the device settings, all animation is off, and the map jumps instead of gliding.
 
-`sw.js` precaches the page, `maps.js`, `borders.js`, `science.js`, the icons and the shared scripts. After changing them, bump `CACHE` in `sw.js` so installed copies refresh.
+`sw.js` precaches the page, `maps.js`, `borders.js`, `science.js`, `sky.js`, the icons and the shared scripts. After changing them, bump `CACHE` in `sw.js` so installed copies refresh.

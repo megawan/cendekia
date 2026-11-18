@@ -154,6 +154,7 @@
   .scene.water .river { fill: none; stroke: #5fb4f0; stroke-width: 7; stroke-linecap: round; }
   .scene.water .flow { fill: none; stroke: #fff; stroke-width: 2; stroke-dasharray: 6 8; stroke-linecap: round; opacity: .8; }
   .scene.water .hit { fill: transparent; cursor: pointer; }
+  .scene.sky { border-color: #1b2150; background: #080c2c; }
   .scene.chain { background: #f7fbff; }
   .scene.chain .arrow { fill: none; stroke: #7a86b8; stroke-width: 3; stroke-linecap: round; }
   .scene.chain .head { fill: #7a86b8; }
@@ -266,7 +267,7 @@
     <div class="pills">
       <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
       <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/36</span> stickers</span>
+      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/38</span> stickers</span>
     </div>
     <div class="topics" id="topics"></div>
     <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
@@ -289,6 +290,7 @@
     </div>
     <div class="slot" id="wSlot"></div>
     <div class="picks" id="wTabs"></div>
+    <div class="picks" id="wPicks"></div>
     <div class="info" id="wInfo" aria-live="polite"></div>
     <button type="button" class="btn go" id="wTour">▶ Show me one by one</button>
   </section>
@@ -368,6 +370,7 @@
 <script src="maps.js"></script>
 <script src="borders.js"></script>
 <script src="science.js"></script>
+<script src="sky.js"></script>
 <script>
 (() => {
   'use strict';
@@ -1068,6 +1071,13 @@
         { id: 'c.facts', name: 'Food chain facts', items: () => SCI.questions['c.facts']() },
         { id: 'c.all', name: 'All food chains', items: () => SCI.questions['c.all']() }
       ] },
+    { id: 'sky', section: 'Science', sci: 'sky', icon: '🌍', c: '#6a4fd6', name: 'Day, Night and Seasons', blurb: 'Watch the Earth spin, go round the Sun, and the Moon change its shape.',
+      unit: 'questions', sub: 'Spin the Earth, follow its year round the Sun and watch the Moon', stage: 'Sky: ', kinds: ['sci'], levels: [
+        { id: 'd.day', name: 'Day and night', items: () => SCI.questions['d.day']() },
+        { id: 'd.seasons', name: 'The seasons', items: () => SCI.questions['d.seasons']() },
+        { id: 'd.moon', name: 'Phases of the Moon', items: () => SCI.questions['d.moon']() },
+        { id: 'd.all', name: 'Earth, Sun and Moon', items: () => SCI.questions['d.all']() }
+      ] },
     // Games on the map: not a way to explore, so no Explore card. Their dots are hidden (still there for the keyboard).
     { id: 'jigsaw', section: 'Map games', map: 'world', icon: '🧩', c: '#2f9e7d', name: 'Map Jigsaw', blurb: 'Drag the shape of a country to its place on the map.',
       unit: 'countries', noExplore: true, hideDots: true, stage: 'Jigsaw: ', kinds: ['drag'], levels: [
@@ -1140,7 +1150,7 @@
   const topicStars = (t) => t.levels.reduce((a, lv) => a + best(lv), 0);
   const starSvg = (on) => '<svg class="' + (on ? 'on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
 
-  // ---- Stickers: places to visit, unlocked by the total star count (345 at most) ----
+  // ---- Stickers: places to visit, unlocked by the total star count (357 at most) ----
   const STICKERS = [
     { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
     { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
@@ -1159,7 +1169,8 @@
     { at: 267, name: 'Good neighbour', pic: '🏘️', c: '#ffe0ec' },
     { at: 275, name: 'Riverside', pic: '🏞️', c: '#d9f5e8' }, { at: 288, name: 'Ruler', pic: '📏', c: '#fff1c2' }, { at: 300, name: 'Ship', pic: '🚢', c: '#d6ebff' },
     { at: 304, name: 'Saturn', pic: '🪐', c: '#ece6ff' }, { at: 311, name: 'Rocket', pic: '🚀', c: '#ffe3c2' }, { at: 318, name: 'Galaxy', pic: '🌌', c: '#d6ebff' },
-    { at: 326, name: 'Raindrop', pic: '💧', c: '#d6ebff' }, { at: 336, name: 'Food chain', pic: '🦅', c: '#fff1c2' }, { at: 345, name: 'Scientist', pic: '🔬', c: '#d9f5e8' }
+    { at: 326, name: 'Raindrop', pic: '💧', c: '#d6ebff' }, { at: 336, name: 'Food chain', pic: '🦅', c: '#fff1c2' }, { at: 345, name: 'Scientist', pic: '🔬', c: '#d9f5e8' },
+    { at: 351, name: 'Moon', pic: '🌙', c: '#ece6ff' }, { at: 357, name: 'Four seasons', pic: '🍂', c: '#ffe3c2' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -1472,7 +1483,22 @@
     const W = SCI.kinds[t.sci];
     $('wTitle').textContent = '🎬 ' + t.name;
     const pressTab = (id) => document.querySelectorAll('#wTabs .pick').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.id === id)));
-    const choose = (id) => { pressTab(id); scene.show(W.view(id)); $('wInfo').innerHTML = W.info(id); };
+    // A second row of buttons, for a scene with moments to stop at (the first lets it move again).
+    const pickRow = (id) => {
+      const box = $('wPicks'); box.innerHTML = ''; box.hidden = !W.picks;
+      if (!W.picks) return;
+      W.picks(id).forEach((p, i) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'pick'; b.setAttribute('aria-pressed', String(i === 0)); b.textContent = p.label;
+        b.addEventListener('click', () => {
+          stopTour(); sfx.tap();
+          box.querySelectorAll('.pick').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+          scene.show({ mode: id, at: p.id }); $('wInfo').innerHTML = W.info(id, p.id);
+        });
+        box.appendChild(b);
+      });
+    };
+    const choose = (id) => { pressTab(id); scene.show(W.view(id)); $('wInfo').innerHTML = W.info(id); pickRow(id); };
     scene = SCI.mount(t.sci, $('wSlot'), { labels: true, onPick: (p) => {
       stopTour(); sfx.tap();
       if (p.tab) { choose(p.tab); return; }
@@ -1487,6 +1513,7 @@
       $('wTabs').appendChild(b);
     });
     scene.show(W.view(W.tabs[0].id));
+    pressTab(W.tabs[0].id); pickRow(W.tabs[0].id);
     $('wInfo').innerHTML = W.intro;
     $('wTour').onclick = () => {
       if (tour) { stopTour(); return; }
