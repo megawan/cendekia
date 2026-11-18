@@ -10,20 +10,58 @@ on:
 permissions: {}
 
 jobs:
+  pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      urls: ${{ steps.pages.outputs.urls }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      # Pull requests audit only the pages they touch. Anything outside a page folder, such as
+      # shared/ or this workflow, can affect every page, so it audits them all, as do the
+      # weekly run and manual runs. Folders without an audited page (tests, phonics, hijaiyah)
+      # are skipped.
+      - id: pages
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          all="/index.html /iqra/index.html /aksara/index.html /lexica/index.html /logica/index.html /numeria/index.html /omnia/index.html /parents/index.html"
+          urls=" $all "
+          if [[ "$EVENT" == "pull_request" ]]; then
+            urls=" "
+            # The checked-out merge commit has the base branch as its first parent.
+            while IFS= read -r file; do
+              case "$file" in
+                index.html) page=/index.html ;;
+                tests/*|phonics/*|hijaiyah/*) continue ;;
+                iqra/*|aksara/*|lexica/*|logica/*|numeria/*|omnia/*|parents/*) page="/${file%%/*}/index.html" ;;
+                *) urls=" $all "; break ;;
+              esac
+              [[ "$urls" == *" $page "* ]] || urls="$urls$page "
+            done < <(git diff --name-only HEAD^1 HEAD)
+          fi
+          urls="$(xargs -n1 <<< "$urls")"
+          echo "Auditing: ${urls:-nothing}"
+          {
+            echo 'urls<<EOF'
+            echo "$urls"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
   lighthouse:
+    needs: pages
+    if: needs.pages.outputs.urls != ''
     permissions:
       contents: read
     uses: megawan/gha-shared-workflows/.github/workflows/site-lighthouse.yml@v1
     with:
-      urls: |
-        /index.html
-        /iqra/index.html
-        /aksara/index.html
-        /lexica/index.html
-        /logica/index.html
-        /numeria/index.html
-        /omnia/index.html
-        /parents/index.html
+      urls: ${{ needs.pages.outputs.urls }}
       # Measured locally on 2026-10-25: performance 0.8+, accessibility 0.87 to 1, best practices 0.82.
       # The minimums sit just below that, so a drop fails and raising them is a later goal.
       min-performance: "0.8"
