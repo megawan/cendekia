@@ -42,7 +42,7 @@ Everything stays in the browser of the device: nothing is sent anywhere, and cle
 
 ## Accessibility
 
-Every home screen has an **Aa** button beside the child chip (`Cendekia.access()` opens the same panel). It sets, for the whole device and every child: text size (normal, large, extra large, by scaling the root font size), high contrast, easy-to-read letters (Verdana-style font with more spacing) and calm (no animation). The choices are saved in `cendekia.a11y.v1` and applied as `data-a11y-*` attributes on `<html>`, styled from `shared/profile.js`. Animation code should ask `Cendekia.calm()`, which is also true when the device asks for reduced motion.
+Every home screen has an **Aa** button beside the child chip (`Cendekia.access()` opens the same panel). It sets, for the whole device and every child: text size (normal, large, extra large, by scaling the root font size), high contrast or night colours, easy-to-read letters (Verdana-style font with more spacing) and calm (no animation). The choices are saved in `cendekia.a11y.v1` and applied as `data-a11y-*` attributes on `<html>`, styled from `shared/profile.js`. Animation code should ask `Cendekia.calm()`, which is also true when the device asks for reduced motion.
 
 ## Running locally
 
