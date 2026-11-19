@@ -1,10 +1,10 @@
 # Lexica
 
-An Indonesian–English vocabulary game. Children learn about 300 English words in 24 themes, hearing every word in both languages. Buttons, headings, theme names and messages are in English; Pochi's spoken instructions stay in Indonesian, the children's own language, and every word is shown and read in both languages.
+An Indonesian–English vocabulary game. Children learn about 370 English words in 27 themes, hearing every word in both languages. Buttons, headings, theme names and messages are in English; Pochi's spoken instructions stay in Indonesian, the children's own language, and every word is shown and read in both languages.
 
 ## Themes
 
-Farm animals, Wild animals, Sea animals, Insects & reptiles, Birds, Fruit, Vegetables, Food & drinks, **The face** (12 parts, from hair to chin), **The body** (19 parts, from head to toe), **Inside the body** (brain, heart, lungs, liver, stomach, kidneys, intestines ...), The house, The kitchen, School, Clothes, Vehicles, **On the street** (zebra crossing, bollard, traffic cone, speed bump, sidewalk, crossroads, manhole, traffic light, bus stop ...), Weather, Nature, Colors, Family, Jobs, Places in town, Toys & music.
+Farm animals, Wild animals, Sea animals, Insects & reptiles, Birds, Fruit, Vegetables, Food & drinks, **The face** (12 parts, from hair to chin), **The body** (19 parts, from head to toe), **Inside the body** (brain, heart, lungs, liver, stomach, kidneys, intestines ...), The house, The kitchen, School, Clothes, Vehicles, **On the street** (zebra crossing, bollard, traffic cone, speed bump, sidewalk, crossroads, manhole, traffic light, bus stop ...), Weather, Nature, Colors, Family, Jobs, Places in town, Toys & music, **Shapes**, **Tools** and **Sports**.
 
 ## Modes
 
@@ -31,7 +31,7 @@ A word's third value is its picture:
 | Value | Picture |
 | --- | --- |
 | an emoji, for example `🐱` | the emoji |
-| `art:<name>`, for example `art:bollard` | a small drawing from `ART` in `index.html`, for things that have no emoji (zebra crossing, bollard, traffic cone, speed bump, sidewalk, crossroads, manhole) |
+| `art:<name>`, for example `art:bollard` | a small flat drawing from `ART` in `index.html` (100×100, plain colours). Used for things that have no emoji (zebra crossing, bollard, speed bump ...) and for the whole of Shapes, Tools and Sports and the newer kitchen, house and school words, so those cards show a picture instead of an emoji |
 | `fig:<figure>:<part>`, for example `fig:face:eye` | a figure (`face`, `body` or `back`) with the part marked. The marks are ellipses in `HL`, as `[cx, cy, rx, ry, rotation]` in the figure's own units, so a new part is one line |
 
 ## Rewards
