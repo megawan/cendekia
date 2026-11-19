@@ -83,3 +83,31 @@ test('Logica home, a robot level and a quiz level follow the language', async ({
   await expect(page.locator('#qSay')).toContainText(/Apa yang (berikutnya|hilang)\?/);
   expect(errors).toEqual([]);
 });
+
+test('Omnia home, a map level and a science level follow the language', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/omnia/');
+  await page.evaluate(() => localStorage.setItem('cendekia.lang.v1', 'id'));
+  await page.reload();
+  await expect(page.getByText('Kenali duniamu bersama Pacha si llama')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Bahasa: Indonesia/ })).toBeVisible();
+  // A map level: the question, the countries and the capitals are Indonesian.
+  await page.locator('#topics .card', { hasText: 'Ibu Kota Dunia' }).click();
+  await page.locator('#levels .card', { hasText: 'Asia Tenggara' }).click();
+  await expect(page.locator('#say')).toContainText(/Di mana|Apa nama|Apa ibu kota/);
+  await expect(page.locator('#prog')).toHaveAttribute('aria-label', /Soal 1 dari 6/);
+  // The Explore card names a country the Indonesian way.
+  await page.goto('/omnia/');
+  await page.locator('#topics .card', { hasText: 'Ibu Kota Dunia' }).click();
+  await page.getByRole('button', { name: /Jelajahi peta/ }).click();
+  await page.locator('#map circle[aria-label="Filipina"]').press('Enter');
+  await expect(page.locator('#xInfo')).toContainText('Ibu kota: Manila');
+  // A science level.
+  await page.goto('/omnia/');
+  await page.locator('#topics .card', { hasText: 'Siklus Air' }).click();
+  await page.locator('#levels .card', { hasText: 'Empat tahap' }).click();
+  await expect(page.locator('#say')).toContainText(/Tahap siklus air|Apa nama tahap/);
+  expect(errors).toEqual([]);
+});
+

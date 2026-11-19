@@ -272,22 +272,22 @@
       <svg class="mascot" viewBox="0 0 100 100" aria-hidden="true"><use href="#llama"/><path class="m m-happy" d="M42 70 Q50 77 58 70"/><path class="m m-cheer" d="M41 68 Q50 81 59 68Z"/><path class="m m-oops" d="M43 74 Q46.5 69 50 74 T57 74"/></svg>
       <div>
         <h1>Omnia</h1>
-        <p class="sub">Know your world, with Pacha the llama</p>
+        <p class="sub" data-id="Kenali duniamu bersama Pacha si llama">Know your world, with Pacha the llama</p>
       </div>
     </div>
     <div class="pills">
-      <span class="pill" title="Stars"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
-      <span class="pill" title="Days in a row"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
-      <span class="pill" title="Stickers"><span aria-hidden="true">🗺️</span><span id="homeStk">0/40</span> stickers</span>
+      <span class="pill" title="Stars" data-id-title="Bintang"><span aria-hidden="true">⭐</span><span id="homeStars">0 stars</span></span>
+      <span class="pill" title="Days in a row" data-id-title="Hari berturut-turut"><span aria-hidden="true">🔥</span><span id="homeDays">0 days</span></span>
+      <span class="pill" title="Stickers" data-id-title="Stiker"><span aria-hidden="true">🗺️</span><span id="homeStk">0/40</span> <span data-id="stiker">stickers</span></span>
     </div>
     <div class="topics" id="topics"></div>
-    <p class="note"><a href="../parents/">👪 For parents</a> · <a href="../">← More apps in Cendekia</a></p>
+    <p class="note"><a href="../parents/" data-id="👪 Untuk orang tua">👪 For parents</a> · <a href="../" data-id="← Aplikasi lain di Cendekia">← More apps in Cendekia</a></p>
   </section>
 
   <!-- One topic: explore its map, or play a level -->
   <section id="topic" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Home</button>
+      <button type="button" class="btn ghost" data-go="home" data-id="← Beranda">← Home</button>
       <h2 id="tTitle">Levels</h2><span class="spacer"></span>
     </div>
     <div class="levels" id="levels"></div>
@@ -296,32 +296,32 @@
   <!-- Watch: a scene that moves (the water cycle, food chains) -->
   <section id="watch" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="topic">← Back</button>
+      <button type="button" class="btn ghost" data-go="topic" data-id="← Kembali">← Back</button>
       <h2 id="wTitle">Watch</h2><span class="spacer"></span>
     </div>
     <div class="slot" id="wSlot"></div>
     <div class="picks" id="wTabs"></div>
     <div class="picks" id="wPicks"></div>
     <div class="info" id="wInfo" aria-live="polite"></div>
-    <button type="button" class="btn go" id="wTour">▶ Show me one by one</button>
+    <button type="button" class="btn go" id="wTour" data-id="▶ Tunjukkan satu per satu">▶ Show me one by one</button>
   </section>
 
   <!-- Explore: tap anything on the map -->
   <section id="explore" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="topic">← Back</button>
+      <button type="button" class="btn ghost" data-go="topic" data-id="← Kembali">← Back</button>
       <h2 id="xTitle">Explore</h2><span class="spacer"></span>
     </div>
     <!-- The one map, moved into the screen that shows it -->
     <div class="slot" id="xSlot">
       <div class="mapbox" id="mapbox">
-        <svg id="map" role="group" tabindex="0" aria-label="Map. Use the arrow keys to move it and plus or minus to zoom."></svg>
+        <svg id="map" role="group" tabindex="0" aria-label="Map. Use the arrow keys to move it and plus or minus to zoom." data-id-label="Peta. Pakai tombol panah untuk menggesernya dan tombol plus atau minus untuk memperbesar."></svg>
         <div class="zoom">
-          <button type="button" id="zIn" aria-label="Zoom in">+</button>
-          <button type="button" id="zOut" aria-label="Zoom out">−</button>
-          <button type="button" id="zFit" aria-label="Show the whole area">⤢</button>
+          <button type="button" id="zIn" aria-label="Zoom in" data-id-label="Perbesar">+</button>
+          <button type="button" id="zOut" aria-label="Zoom out" data-id-label="Perkecil">−</button>
+          <button type="button" id="zFit" aria-label="Show the whole area" data-id-label="Tampilkan seluruh area">⤢</button>
         </div>
-        <span class="hint" aria-hidden="true">Drag to move · pinch to zoom</span>
+        <span class="hint" aria-hidden="true" data-id="Seret untuk menggeser · cubit untuk memperbesar">Drag to move · pinch to zoom</span>
       </div>
     </div>
     <div class="info" id="xInfo" aria-live="polite"></div>
@@ -330,7 +330,7 @@
   <!-- A round of questions -->
   <section id="play" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="topic">← Levels</button>
+      <button type="button" class="btn ghost" data-go="topic" data-id="← Level">← Levels</button>
       <div class="prog" id="prog"></div>
       <span class="spacer"></span>
     </div>
@@ -343,7 +343,7 @@
     <div id="answers"></div>
     <div class="why" id="why" hidden aria-live="polite">
       <p id="whyText"></p>
-      <button type="button" class="btn go" id="whyNext">Next →</button>
+      <button type="button" class="btn go" id="whyNext" data-id="Lanjut →">Next →</button>
     </div>
   </section>
 
@@ -355,17 +355,17 @@
       <div class="stars" id="resStars"></div>
       <p class="summary" id="resText"></p>
       <div class="gift" id="resGift" hidden></div>
-      <button type="button" class="btn go" id="resNext">Next level</button>
-      <button type="button" class="btn" id="resAgain">Play again</button>
-      <button type="button" class="btn ghost" data-go="topic">Choose a level</button>
+      <button type="button" class="btn go" id="resNext" data-id="Level berikutnya">Next level</button>
+      <button type="button" class="btn" id="resAgain" data-id="Main lagi">Play again</button>
+      <button type="button" class="btn ghost" data-go="topic" data-id="Pilih level">Choose a level</button>
     </div>
   </section>
 
   <!-- Stickers -->
   <section id="stickers" hidden>
     <div class="bar">
-      <button type="button" class="btn ghost" data-go="home">← Back</button>
-      <h2>Travel Stickers</h2>
+      <button type="button" class="btn ghost" data-go="home" data-id="← Kembali">← Back</button>
+      <h2 data-id="Stiker Perjalanan">Travel Stickers</h2>
       <span class="pill"><span aria-hidden="true">⭐</span><span id="stkStars">0</span></span>
     </div>
     <p class="note" id="stkNext"></p>
@@ -383,11 +383,13 @@
 <script src="science.js"></script>
 <script src="sky.js"></script>
 <script src="life.js"></script>
+<script src="id.js"></script>
 <script>
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
   const CD = window.Cendekia, MAPS = window.OMNIA_MAPS, SCI = window.OMNIA_SCIENCE;
+  const tx = CD.t, IDL = CD.lang === 'id', ID = window.OMNIA_ID || {}; // OMNIA_ID (id.js) has the Indonesian names and sentences of the places
   const pick = (a) => a[Math.floor(Math.random() * a.length)];
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -428,14 +430,14 @@
       + 'Timika|Papua Tengah|-4.55|136.89|0'
   };
   const NOTES = {
-    Jakarta: 'the capital city of Indonesia, in the province of DKI Jakarta.',
-    Nusantara: 'the new capital city of Indonesia, being built in Kalimantan Timur.'
+    Jakarta: tx('the capital city of Indonesia, in the province of DKI Jakarta.', 'ibu kota Indonesia, di provinsi DKI Jakarta.'),
+    Nusantara: tx('the new capital city of Indonesia, being built in Kalimantan Timur.', 'ibu kota baru Indonesia, yang sedang dibangun di Kalimantan Timur.')
   };
   const CITIES = [];
   Object.keys(CITY_DATA).forEach((region) => CITY_DATA[region].split(';').forEach((row) => {
     const [name, prov, lat, lon, cap] = row.split('|');
     const [x, y] = project(MAPS.indonesia, +lat, +lon);
-    CITIES.push({ key: name, name, prov, cap: cap === '1', region, x, y, lat: +lat, lon: +lon, big: name === 'Jakarta' });
+    CITIES.push({ key: name, en: name, name, prov, cap: cap === '1', region, x, y, lat: +lat, lon: +lon, big: name === 'Jakarta' });
   }));
 
   // Countries: ISO number (its shape on the map) | name | capital | latitude and longitude of the capital |
@@ -498,24 +500,39 @@
       + '776|Tonga|Nuku’alofa|-21.14|-175.22|TO|1;798|Tuvalu|Funafuti|-8.52|179.22|TV|;548|Vanuatu|Port Vila|-17.73|168.32|VU|1'
   };
   const flag = (a2) => String.fromCodePoint(...[...a2].map((c) => 0x1f1a5 + c.charCodeAt(0)));
+  // In Indonesian a country has its own name and capital (id.js lists the ones that differ). en is the English name, which the
+  // tables of sizes and routes below use, and continent stays English too: contName() writes it.
+  const COUNTRY_ID = new Map(IDL ? ID.countries.split(';').map((r) => r.split('|')).map(([en, name, capital]) => [en, { name, capital }]) : []);
+  const contName = (c) => (IDL ? ID.continents[c] : c);
   const COUNTRIES = [];
   Object.keys(COUNTRY_DATA).forEach((continent) => COUNTRY_DATA[continent].split(';').forEach((row) => {
-    const [shape, name, capital, lat, lon, a2, tag] = row.split('|');
+    const [shape, en, capital, lat, lon, a2, tag] = row.split('|'), id = COUNTRY_ID.get(en) || {};
     const [x, y] = project(MAPS.world, +lat, +lon);
-    COUNTRIES.push({ key: a2, name, capital, continent, shape, x, y, lat: +lat, lon: +lon, a2, tag });
+    COUNTRIES.push({ key: a2, en, name: id.name || en, capital: id.capital || capital, continent, shape, x, y, lat: +lat, lon: +lon, a2, tag });
   }));
 
   // Features are dots with a name, a group, the continent or province they are in, and a sentence that finishes
   // "<name> is ...". Nature, culture and animals are all features. Rows: name | latitude | longitude | where
   // (empty when it is not one place) | the sentence | emoji (only when it differs from its group's) | language (peoples).
   // A river's dot marks one spot along it, and a desert's or a sea's dot its middle; an animal's dot is somewhere it lives.
-  function makeFeatures(data, mapName, o) {
+  // The Indonesian rows (idData, from id.js) come in the same order: name | where | sentence | language. The key and en stay English,
+  // since the saved stars and the sizes of the islands are looked up by them.
+  const NOUN_ID = { mountain: 'gunung', river: 'sungai', lake: 'danau', desert: 'gurun', ocean: 'samudra', sea: 'laut', house: 'rumah adat', dance: 'tarian', dish: 'hidangan',
+    instrument: 'alat musik', cloth: 'kain', animal: 'hewan', volcano: 'gunung berapi', disaster: 'bencana', island: 'pulau', strait: 'selat', people: 'suku',
+    landmark: 'tempat terkenal', star: 'bintang', planet: 'planet', 'dwarf planet': 'planet kerdil' };
+  const nounOf = (en) => (IDL ? NOUN_ID[en] : en);
+  function makeFeatures(data, mapName, o, idData) {
     const out = [];
-    Object.keys(data).forEach((group) => data[group].split(';').forEach((row) => {
-      const [name, lat, lon, at, note, icon, lang] = row.split('|');
-      const [x, y] = project(MAPS[mapName], +lat, +lon);
-      out.push({ key: name, name, group, noun: o.noun(group), icon: icon || o.icon[group], at, scope: o.scope, locate: o.locate, plural: typeof o.plural === 'function' ? o.plural(name) : !!o.plural, lang, note, ref: o.ref(name, group), x, y });
-    }));
+    Object.keys(data).forEach((group) => {
+      const idRows = idData && idData[group].split(';');
+      data[group].split(';').forEach((row, k) => {
+        const [en, lat, lon, at, note, icon, lang] = row.split('|');
+        const r = idRows ? idRows[k].split('|') : [en, at, note, lang];
+        const [x, y] = project(MAPS[mapName], +lat, +lon);
+        out.push({ key: en, en, name: r[0], group, noun: nounOf(o.noun(group)), nounEn: o.noun(group), icon: icon || o.icon[group], at: r[1], scope: o.scope, locate: o.locate,
+          plural: typeof o.plural === 'function' ? o.plural(en) : !!o.plural, lang: r[3], note: r[2], ref: o.ref(r[0], group), x, y });
+      });
+    });
     return out;
   }
   const NATURE_DATA = {
@@ -548,8 +565,8 @@
   };
   const NATURE = makeFeatures(NATURE_DATA, 'world', {
     scope: 'continent', noun: (g) => g, icon: { mountain: '⛰️', river: '🏞️', lake: '💧', desert: '🏜️', ocean: '🌊', sea: '🌊' },
-    ref: (name, g) => (['river', 'desert', 'ocean', 'sea'].includes(g) ? 'the ' : '') + name
-  });
+    ref: (name, g) => (!IDL && ['river', 'desert', 'ocean', 'sea'].includes(g) ? 'the ' : '') + name
+  }, IDL && ID.nature);
 
   // Culture of Indonesia, on the map of Indonesia. The province is what "where" asks for.
   const CULTURE_DATA = {
@@ -587,8 +604,8 @@
   };
   const CULTURE = makeFeatures(CULTURE_DATA, 'indonesia', {
     scope: 'province', noun: (g) => ({ house: 'house', dance: 'dance', food: 'dish', instrument: 'instrument', cloth: 'cloth' })[g],
-    icon: { house: '🏠', dance: '💃', food: '🍲', instrument: '🥁', cloth: '👘' }, ref: (name) => name, locate: 'It is from {}.'
-  });
+    icon: { house: '🏠', dance: '💃', food: '🍲', instrument: '🥁', cloth: '👘' }, ref: (name) => name, locate: tx('It is from {}.', 'Berasal dari {}.')
+  }, IDL && ID.culture);
   // The province of a feature is one of these, and its neighbours in a question are the provinces of the same region first.
   const PROV_REGION = new Map(CITIES.map((c) => [c.prov, c.region]));
 
@@ -628,10 +645,11 @@
       + 'Koala|-33.00|151.00|Oceania|a sleepy animal that lives in eucalyptus trees in Australia and eats their leaves.|🐨;'
       + 'Grizzly bear|46.00|-110.00|North America|a big brown bear that lives in the mountains and forests of North America.|🐻'
   };
-  const HABITAT = { rainforest: 'Rainforest', savanna: 'Savanna or grassland', desert: 'Desert', polar: 'Polar land', ocean: 'Ocean or coast', forest: 'Forest or mountains' };
+  const HABITAT = { rainforest: tx('Rainforest', 'Hutan hujan'), savanna: tx('Savanna or grassland', 'Savana atau padang rumput'), desert: tx('Desert', 'Gurun'), polar: tx('Polar land', 'Daerah kutub'),
+    ocean: tx('Ocean or coast', 'Laut atau pantai'), forest: tx('Forest or mountains', 'Hutan atau pegunungan') };
   const ANIMALS = makeFeatures(ANIMAL_DATA, 'world', {
-    scope: 'continent', noun: () => 'animal', icon: {}, ref: (name) => 'the ' + name.replace(/^(?!Komodo)\w/, (c) => c.toLowerCase())
-  });
+    scope: 'continent', noun: () => 'animal', icon: {}, ref: (name) => (IDL ? '' : 'the ') + name.replace(IDL ? /^\w/ : /^(?!Komodo)\w/, (c) => c.toLowerCase())
+  }, IDL && ID.animals);
 
   // Volcanoes and disasters of Indonesia. Where: the province.
   const DISASTER_DATA = {
@@ -662,8 +680,8 @@
   };
   const DISASTERS = makeFeatures(DISASTER_DATA, 'indonesia', {
     scope: 'province', noun: (g) => (g === 'disaster' ? 'disaster' : 'volcano'), icon: { sumatra: '🌋', java: '🌋', nusa: '🌋', east: '🌋', disaster: '🌊' },
-    ref: (name, g) => (g === 'disaster' ? 'the ' + name : /^(Krakatau|Toba|Banda Api)$/.test(name) ? name : 'Mount ' + name), locate: 'It is in {}.'
-  });
+    ref: (name, g) => (g === 'disaster' ? (IDL ? '' : 'the ') + name : /^(Krakatau|Toba|Banda Api)$/.test(name) ? name : (IDL ? 'Gunung ' : 'Mount ') + name), locate: tx('It is in {}.', 'Letaknya di {}.')
+  }, IDL && ID.disasters);
 
   // Islands, straits and seas of Indonesia. Where (straits only): the two places a strait lies between.
   const WATER_DATA = {
@@ -685,8 +703,8 @@
   };
   const WATER = makeFeatures(WATER_DATA, 'indonesia', {
     scope: 'between', noun: (g) => (g === 'strait' ? 'strait' : g === 'sea' ? 'sea' : 'island'), icon: { big: '🏝️', small: '🏝️', strait: '⛴️', sea: '🌊' },
-    ref: (name, g) => (g === 'strait' || g === 'sea' ? 'the ' : '') + name, locate: 'It lies between {}.'
-  });
+    ref: (name, g) => (!IDL && (g === 'strait' || g === 'sea') ? 'the ' : '') + name, locate: tx('It lies between {}.', 'Letaknya di antara {}.')
+  }, IDL && ID.water);
 
   // Peoples of Indonesia and the languages they speak. Where: the province; speak: the language.
   const PEOPLE_DATA = {
@@ -714,8 +732,8 @@
       + 'Asmat|-5.00|138.40|Papua Selatan|the people of the swamps of southern Papua, famous for their wood carving.|🪵|Asmat'
   };
   const PEOPLE = makeFeatures(PEOPLE_DATA, 'indonesia', {
-    scope: 'province', noun: () => 'people', icon: {}, ref: (name) => 'the ' + name, locate: 'They live in {}.', plural: true
-  });
+    scope: 'province', noun: () => 'people', icon: {}, ref: (name) => (IDL ? 'suku ' : 'the ') + name, locate: tx('They live in {}.', 'Mereka tinggal di {}.'), plural: true
+  }, IDL && ID.peoples);
 
   // Landmarks of the world, by continent. Where: the country.
   const LANDMARK_DATA = {
@@ -751,10 +769,10 @@
       + 'Moai|-27.11|-109.35|Chile|giant stone statues of heads on Easter Island.'
   };
   const LANDMARKS = makeFeatures(LANDMARK_DATA, 'world', {
-    scope: 'country', noun: () => 'landmark', icon: { asia: '🏯', europe: '🏰', africaoc: '🏛️', america: '🗽' }, locate: 'This is in {}.',
-    ref: (name) => (/^(Great Wall|Eiffel Tower|Colosseum|Acropolis|Brandenburg Gate|Pyramids of Giza|Statue of Liberty|Golden Gate Bridge|CN Tower|Panama Canal|Sydney Opera House|Burj Khalifa|Petronas Towers|Moai)$/.test(name) ? 'the ' : '') + name,
+    scope: 'country', noun: () => 'landmark', icon: { asia: '🏯', europe: '🏰', africaoc: '🏛️', america: '🗽' }, locate: tx('This is in {}.', 'Tempat ini ada di {}.'),
+    ref: (name) => (!IDL && /^(Great Wall|Eiffel Tower|Colosseum|Acropolis|Brandenburg Gate|Pyramids of Giza|Statue of Liberty|Golden Gate Bridge|CN Tower|Panama Canal|Sydney Opera House|Burj Khalifa|Petronas Towers|Moai)$/.test(name) ? 'the ' : '') + name,
     plural: (name) => /^(Pyramids of Giza|Petronas Towers|Moai)$/.test(name)
-  });
+  }, IDL && ID.landmarks);
 
   // Foods of the world, by continent. Where: the country the dish comes from.
   const FOOD_DATA = {
@@ -797,9 +815,9 @@
       + 'Jerk chicken|17.98|-76.79|Jamaica|chicken rubbed with hot spices and grilled.|🌶️'
   };
   const FOODS = makeFeatures(FOOD_DATA, 'world', {
-    scope: 'country', noun: () => 'dish', icon: {}, locate: 'This comes from {}.', ref: (name) => name.replace(/^./, (c) => c.toLowerCase()),
+    scope: 'country', noun: () => 'dish', icon: {}, locate: tx('This comes from {}.', 'Hidangan ini berasal dari {}.'), ref: (name) => name.replace(/^./, (c) => c.toLowerCase()),
     plural: (name) => /^(Dumplings|Tacos|Empanadas|Arepas|Waffles|Pierogi|Fish and chips)$/.test(name)
-  });
+  }, IDL && ID.foods);
 
   // The land borders between countries (borders.js, made by tools/make-borders.mjs). A list is only used when every
   // neighbour is a country of the game: Israel, Palestine, Kosovo and the like are not, so those lists are not the whole truth.
@@ -846,9 +864,9 @@
       + 'Lake Jempang|-0.30|115.97|Kalimantan Timur|a big lake in the wetlands of the Mahakam river.'
   };
   const RIVERS = makeFeatures(RIVER_DATA, 'indonesia', {
-    scope: 'province', noun: (g) => (g === 'river' ? 'river' : 'lake'), icon: { river: '🏞️', lakesw: '💧', lakese: '💧' }, locate: 'This is in {}.',
-    ref: (name, g) => (g === 'river' || name === 'Kelimutu lakes' ? 'the ' : '') + name, plural: (name) => name === 'Kelimutu lakes'
-  });
+    scope: 'province', noun: (g) => (g === 'river' ? 'river' : 'lake'), icon: { river: '🏞️', lakesw: '💧', lakese: '💧' }, locate: tx('This is in {}.', 'Tempat ini ada di {}.'),
+    ref: (name, g) => (!IDL && (g === 'river' || name === 'Kelimutu lakes') ? 'the ' : '') + name, plural: (name) => name === 'Kelimutu lakes'
+  }, IDL && ID.rivers);
 
   // Sizes for Bigger or Farther?, in square kilometres. An island is the island itself (Kalimantan and Papua: the Indonesian part).
   const ISLAND_AREA = { Sumatra: 443066, Java: 128297, Kalimantan: 539460, Sulawesi: 174600, Papua: 420540, Bali: 5780, Lombok: 4725, Sumbawa: 15448, Sumba: 10710,
@@ -865,8 +883,8 @@
     const h = Math.sin(dp / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dl / 2) ** 2;
     return 2 * 6371 * Math.asin(Math.sqrt(h));
   };
-  const approx = (n) => { const m = Math.pow(10, Math.max(0, Math.floor(Math.log10(n)) - 2)); return (Math.round(n / m) * m).toLocaleString('en-US'); }; // three figures
-  const byName = (list, name) => list.find((p) => p.name === name);
+  const approx = (n) => { const m = Math.pow(10, Math.max(0, Math.floor(Math.log10(n)) - 2)); return (Math.round(n / m) * m).toLocaleString(IDL ? 'id-ID' : 'en-US'); }; // three figures
+  const byName = (list, name) => list.find((p) => p.en === name); // the English name, as the routes and sizes have it
 
   // Island Routes: from one city to another, the islands you cross in order. Each level has the islands it shows.
   const ROUTE_ISLANDS = {
@@ -884,7 +902,7 @@
       ['Makassar', 'Surabaya', ['Sulawesi', 'Java']], ['Banjarmasin', 'Denpasar', ['Kalimantan', 'Java', 'Bali']], ['Samarinda', 'Surabaya', ['Kalimantan', 'Java']],
       ['Pontianak', 'Medan', ['Kalimantan', 'Sumatra']]]
   };
-  const routesOf = (level) => ROUTES[level].map(([from, to, via]) => ({ key: from + '>' + to, name: from + ' to ' + to, from, to, via }));
+  const routesOf = (level) => ROUTES[level].map(([from, to, via]) => ({ key: from + '>' + to, name: tx(from + ' to ' + to, from + ' ke ' + to), from, to, via }));
 
   // The solar system, on a map made here (not to scale): the Sun in the middle, an orbit for each planet, and the planets in a row.
   // Orbit radius and the angle of the planet on it. dist is in million km from the Sun, diam in km, order counts the planets.
@@ -903,22 +921,23 @@
     + 'Uranus|🔵|planet|2871|50724|7|an ice giant that spins on its side.;'
     + 'Neptune|🔷|planet|4495|49244|8|the farthest planet from the Sun. It is dark, cold and very windy.;'
     + 'Pluto|⚪|dwarf|5906|2377|0|a small dwarf planet that was once called the ninth planet.';
-  const SOLAR = SOLAR_DATA.split(';').map((row) => {
-    const [name, icon, group, dist, diam, order, note] = row.split('|');
+  const SOLAR = SOLAR_DATA.split(';').map((row, k) => {
+    const [name, icon, group, dist, diam, order, note] = row.split('|'), idRow = IDL ? ID.solar.split(';')[k].split('|') : null;
     let x = 500, y = 500;
     if (SOLAR_ORBIT[name]) { const [r, a] = SOLAR_ORBIT[name]; x = 500 + r * Math.cos(a * Math.PI / 180); y = 500 - r * Math.sin(a * Math.PI / 180); }
-    return { key: name, name, group, noun: group === 'dwarf' ? 'dwarf planet' : group, icon, dist: +dist, diam: +diam, order: +order, note, plural: false,
-      ref: name === 'Sun' ? 'the Sun' : name, shape: name === 'Sun' ? 'sun' : undefined, x, y, orbit: SOLAR_ORBIT[name], color: SOLAR_COLOR[name] };
+    return { key: name, en: name, name: idRow ? idRow[0] : name, group, noun: nounOf(group === 'dwarf' ? 'dwarf planet' : group), nounEn: group === 'dwarf' ? 'dwarf planet' : group,
+      icon, dist: +dist, diam: +diam, order: +order, note: idRow ? idRow[1] : note, plural: false,
+      ref: idRow ? idRow[0] : name === 'Sun' ? 'the Sun' : name, shape: name === 'Sun' ? 'sun' : undefined, x, y, orbit: SOLAR_ORBIT[name], color: SOLAR_COLOR[name] };
   });
-  const ORDINAL = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'];
+  const ORDINAL = IDL ? ['pertama', 'kedua', 'ketiga', 'keempat', 'kelima', 'keenam', 'ketujuh', 'kedelapan'] : ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'];
   // Put in order: tasks of planets to tap, nearest to the Sun first. They use the same tapping as a route.
   function sortTasks(n) {
-    const planets = group(SOLAR, 'planet');
+    const planets = group(SOLAR, 'planet'), names = (list) => list.map((p) => p.name).join(', ');
     return Array.from({ length: n }, () => {
-      const some = shuffle(planets).slice(0, 3 + Math.floor(Math.random() * 2)), via = some.slice().sort((a, b) => a.order - b.order).map((p) => p.name);
-      return { key: some.map((p) => p.name).join(), name: 'Sort ' + via.join(', '), via, unit: 'Planets found', badge: '🪐',
-        text: 'Tap these planets in order, the nearest to the Sun first: ' + some.map((p) => p.name).join(', ') + '.', outside: 'is not in your list',
-        reveal: 'From the Sun outwards: ' + via.join(', ') + '.' };
+      const some = shuffle(planets).slice(0, 3 + Math.floor(Math.random() * 2)), sorted = some.slice().sort((a, b) => a.order - b.order);
+      return { key: some.map((p) => p.en).join(), name: tx('Sort ', 'Urutkan ') + names(sorted), via: sorted.map((p) => p.en), unit: tx('Planets found', 'Planet ditemukan'), badge: '🪐',
+        text: tx('Tap these planets in order, the nearest to the Sun first: ', 'Ketuk planet-planet ini secara berurutan, dari yang paling dekat dengan Matahari: ') + names(some) + '.',
+        outside: tx('is not in your list', 'tidak ada di daftarmu'), reveal: tx('From the Sun outwards: ', 'Dari Matahari ke luar: ') + names(sorted) + '.' };
     });
   }
 
@@ -929,221 +948,232 @@
   const group = (list, g) => list.filter((p) => !g || p.group === g);
   // The same ten regions of countries serve the capitals and the flags; the prefix keeps their stars apart.
   const REGIONS = [
-    ['sea', 'Southeast Asia', () => nations('Asia', 'S')], ['asia', 'All of Asia', () => nations('Asia')],
-    ['eu1', 'Europe: well known', () => nations('Europe', '1')], ['eu', 'All of Europe', () => nations('Europe')],
-    ['af1', 'Africa: well known', () => nations('Africa', '1')], ['af', 'All of Africa', () => nations('Africa')],
-    ['na1', 'North America: well known', () => nations('North America', '1')], ['na', 'All of North America', () => nations('North America')],
-    ['sa', 'South America', () => nations('South America')], ['oc', 'Oceania', () => nations('Oceania')]
+    ['sea', tx('Southeast Asia', 'Asia Tenggara'), () => nations('Asia', 'S')], ['asia', tx('All of Asia', 'Seluruh Asia'), () => nations('Asia')],
+    ['eu1', tx('Europe: well known', 'Eropa: yang terkenal'), () => nations('Europe', '1')], ['eu', tx('All of Europe', 'Seluruh Eropa'), () => nations('Europe')],
+    ['af1', tx('Africa: well known', 'Afrika: yang terkenal'), () => nations('Africa', '1')], ['af', tx('All of Africa', 'Seluruh Afrika'), () => nations('Africa')],
+    ['na1', tx('North America: well known', 'Amerika Utara: yang terkenal'), () => nations('North America', '1')], ['na', tx('All of North America', 'Seluruh Amerika Utara'), () => nations('North America')],
+    ['sa', tx('South America', 'Amerika Selatan'), () => nations('South America')], ['oc', tx('Oceania', 'Oseania'), () => nations('Oceania')]
   ];
   const regionLevels = (prefix) => REGIONS.map(([id, name, items]) => ({ id: prefix + '.' + id, name, items }));
   // Countries whose whole list of neighbours is known, with one to six of them, so a round can ask for all of them.
   const borderSubjects = (continent) => nations(continent).filter((c) => { const n = neighboursOf(c); return n && n.length >= 1 && n.length <= 6; });
   // Per topic: unit (what a level counts), hint (the line before a tap while exploring), all (what exploring shows),
   // stage (a prefix for the shared log, so the parents' page can tell two topics' levels apart).
-  const SECTIONS = ['Indonesia', 'The world', 'Space', 'Science', 'Map games'];
+  const SECTIONS = ['Indonesia', 'The world', 'Space', 'Science', 'Map games']; // a topic names its section with one of these
+  const SEC_ID = { Indonesia: 'Indonesia', 'The world': 'Dunia', Space: 'Luar angkasa', Science: 'Sains', 'Map games': 'Permainan peta' };
   const TOPICS = [
-    { id: 'indonesia', section: 'Indonesia', map: 'indonesia', icon: '🏝️', c: 'var(--c-green)', name: 'Cities of Indonesia', blurb: 'Find the cities of every island and the capital of every province.',
-      unit: 'cities', sub: 'Tap any place to see its name and province', hint: 'Tap a dot on the map.', all: () => CITIES,
+    { id: 'indonesia', section: 'Indonesia', map: 'indonesia', icon: '🏝️', c: 'var(--c-green)', name: tx('Cities of Indonesia', 'Kota-Kota Indonesia'), blurb: tx('Find the cities of every island and the capital of every province.', 'Temukan kota di setiap pulau dan ibu kota setiap provinsi.'),
+      unit: tx('cities', 'kota'), sub: tx('Tap any place to see its name and province', 'Ketuk tempat mana saja untuk melihat nama dan provinsinya'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => CITIES,
       kinds: ['find', 'which', 'capital'], levels: [
         { id: 'id.sumatra', name: 'Sumatra', items: () => cities('sumatra') },
-        { id: 'id.java', name: 'Java', items: () => cities('java') },
-        { id: 'id.nusa', name: 'Bali and Nusa Tenggara', items: () => cities('nusa') },
+        { id: 'id.java', name: tx('Java', 'Jawa'), items: () => cities('java') },
+        { id: 'id.nusa', name: tx('Bali and Nusa Tenggara', 'Bali dan Nusa Tenggara'), items: () => cities('nusa') },
         { id: 'id.kalimantan', name: 'Kalimantan', items: () => cities('kalimantan') },
         { id: 'id.sulawesi', name: 'Sulawesi', items: () => cities('sulawesi') },
-        { id: 'id.east', name: 'Maluku and Papua', items: () => cities('east') },
-        { id: 'id.all', name: 'All of Indonesia', items: () => cities() }
+        { id: 'id.east', name: tx('Maluku and Papua', 'Maluku dan Papua'), items: () => cities('east') },
+        { id: 'id.all', name: tx('All of Indonesia', 'Seluruh Indonesia'), items: () => cities() }
       ] },
-    { id: 'world', section: 'The world', map: 'world', icon: '🌍', c: 'var(--c-indigo)', name: 'Capitals of the World', blurb: 'Find countries on the world map and learn their capital cities.',
-      unit: 'countries', sub: 'Tap any place to see its name, flag and capital', hint: 'Tap a country or a dot on the map.', all: () => COUNTRIES,
+    { id: 'world', section: 'The world', map: 'world', icon: '🌍', c: 'var(--c-indigo)', name: tx('Capitals of the World', 'Ibu Kota Dunia'), blurb: tx('Find countries on the world map and learn their capital cities.', 'Temukan negara di peta dunia dan pelajari ibu kotanya.'),
+      unit: tx('countries', 'negara'), sub: tx('Tap any place to see its name, flag and capital', 'Ketuk tempat mana saja untuk melihat nama, bendera, dan ibu kotanya'), hint: tx('Tap a country or a dot on the map.', 'Ketuk negara atau titik di peta.'), all: () => COUNTRIES,
       kinds: ['find', 'which', 'capital'], levels: regionLevels('w') },
-    { id: 'flags', section: 'The world', map: 'world', icon: '🚩', c: 'var(--c-pink)', name: 'Flags of the World', blurb: 'Match every flag with its country, on the map and in your head.',
-      unit: 'countries', sub: 'Tap any country to see its flag and name', hint: 'Tap a country or a dot on the map.', all: () => COUNTRIES, stage: 'Flags: ', flags: true,
+    { id: 'flags', section: 'The world', map: 'world', icon: '🚩', c: 'var(--c-pink)', name: tx('Flags of the World', 'Bendera Dunia'), blurb: tx('Match every flag with its country, on the map and in your head.', 'Cocokkan setiap bendera dengan negaranya, di peta dan di kepalamu.'),
+      unit: tx('countries', 'negara'), sub: tx('Tap any country to see its flag and name', 'Ketuk negara mana saja untuk melihat bendera dan namanya'), hint: tx('Tap a country or a dot on the map.', 'Ketuk negara atau titik di peta.'), all: () => COUNTRIES, stage: tx('Flags: ', 'Bendera: '), flags: true,
       kinds: ['flag', 'pickflag', 'find'], levels: regionLevels('f') },
-    { id: 'nature', section: 'The world', map: 'world', icon: '⛰️', c: 'var(--c-teal)', name: 'Nature of the World', blurb: 'Find the mountains, rivers, lakes, deserts, oceans and seas of our planet.',
-      unit: 'places', sub: 'Tap any dot to see what it is', hint: 'Tap a dot on the map.', all: () => NATURE,
-      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which continent is ' + it.ref + ' in?' },
+    { id: 'nature', section: 'The world', map: 'world', icon: '⛰️', c: 'var(--c-teal)', name: tx('Nature of the World', 'Alam Dunia'), blurb: tx('Find the mountains, rivers, lakes, deserts, oceans and seas of our planet.', 'Temukan gunung, sungai, danau, gurun, samudra, dan laut di planet kita.'),
+      unit: tx('places', 'tempat'), sub: tx('Tap any dot to see what it is', 'Ketuk titik mana saja untuk melihat apa itu'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => NATURE,
+      say: { find: (it) => tx('Where is ' + it.ref + '? Tap its dot.', 'Di mana ' + it.ref + '? Ketuk titiknya.'), which: (it) => tx('Which ' + it.noun + ' is this?', 'Apa nama ' + it.noun + ' ini?'),
+        where: (it) => tx('Which continent is ' + it.ref + ' in?', cap(it.ref) + ' ada di benua mana?') },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'n.mountain', name: 'Mountains', items: () => group(NATURE, 'mountain') },
-        { id: 'n.river', name: 'Rivers', items: () => group(NATURE, 'river') },
-        { id: 'n.lake', name: 'Lakes', items: () => group(NATURE, 'lake') },
-        { id: 'n.desert', name: 'Deserts', items: () => group(NATURE, 'desert') },
-        { id: 'n.ocean', name: 'Oceans', items: () => group(NATURE, 'ocean'), kinds: ['find', 'which'] },
-        { id: 'n.sea', name: 'Seas', items: () => group(NATURE, 'sea'), kinds: ['find', 'which'] },
-        { id: 'n.all', name: 'All of nature', items: () => NATURE }
+        { id: 'n.mountain', name: tx('Mountains', 'Gunung'), items: () => group(NATURE, 'mountain') },
+        { id: 'n.river', name: tx('Rivers', 'Sungai'), items: () => group(NATURE, 'river') },
+        { id: 'n.lake', name: tx('Lakes', 'Danau'), items: () => group(NATURE, 'lake') },
+        { id: 'n.desert', name: tx('Deserts', 'Gurun'), items: () => group(NATURE, 'desert') },
+        { id: 'n.ocean', name: tx('Oceans', 'Samudra'), items: () => group(NATURE, 'ocean'), kinds: ['find', 'which'] },
+        { id: 'n.sea', name: tx('Seas', 'Laut'), items: () => group(NATURE, 'sea'), kinds: ['find', 'which'] },
+        { id: 'n.all', name: tx('All of nature', 'Seluruh alam'), items: () => NATURE }
       ] },
-    { id: 'culture', section: 'Indonesia', map: 'indonesia', icon: '🎭', c: 'var(--c-orange)', name: 'Culture of Indonesia', blurb: 'Find the houses, dances, foods and music of every part of Indonesia.',
-      unit: 'things', sub: 'Tap any dot to see what it is and where it is from', hint: 'Tap a dot on the map.', all: () => CULTURE, stage: 'Culture: ',
-      say: { find: (it) => 'Where is ' + it.ref + ' from? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is from here?', where: (it) => 'Which province is ' + it.ref + ' from?' },
+    { id: 'culture', section: 'Indonesia', map: 'indonesia', icon: '🎭', c: 'var(--c-orange)', name: tx('Culture of Indonesia', 'Budaya Indonesia'), blurb: tx('Find the houses, dances, foods and music of every part of Indonesia.', 'Temukan rumah, tarian, makanan, dan musik dari setiap penjuru Indonesia.'),
+      unit: tx('things', 'hal'), sub: tx('Tap any dot to see what it is and where it is from', 'Ketuk titik mana saja untuk melihat apa itu dan dari mana asalnya'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => CULTURE, stage: tx('Culture: ', 'Budaya: '),
+      say: { find: (it) => tx('Where is ' + it.ref + ' from? Tap its dot.', cap(it.ref) + ' berasal dari mana? Ketuk titiknya.'), which: (it) => tx('Which ' + it.noun + ' is from here?', cap(it.noun) + ' apa yang berasal dari sini?'),
+        where: (it) => tx('Which province is ' + it.ref + ' from?', cap(it.ref) + ' berasal dari provinsi mana?') },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'c.house', name: 'Traditional houses', items: () => group(CULTURE, 'house') },
-        { id: 'c.dance', name: 'Dances', items: () => group(CULTURE, 'dance') },
-        { id: 'c.food', name: 'Foods', items: () => group(CULTURE, 'food') },
-        { id: 'c.instrument', name: 'Music instruments', items: () => group(CULTURE, 'instrument') },
-        { id: 'c.cloth', name: 'Clothes and cloth', items: () => group(CULTURE, 'cloth') },
-        { id: 'c.all', name: 'All of culture', items: () => CULTURE }
+        { id: 'c.house', name: tx('Traditional houses', 'Rumah adat'), items: () => group(CULTURE, 'house') },
+        { id: 'c.dance', name: tx('Dances', 'Tarian'), items: () => group(CULTURE, 'dance') },
+        { id: 'c.food', name: tx('Foods', 'Makanan'), items: () => group(CULTURE, 'food') },
+        { id: 'c.instrument', name: tx('Music instruments', 'Alat musik'), items: () => group(CULTURE, 'instrument') },
+        { id: 'c.cloth', name: tx('Clothes and cloth', 'Pakaian dan kain'), items: () => group(CULTURE, 'cloth') },
+        { id: 'c.all', name: tx('All of culture', 'Seluruh budaya'), items: () => CULTURE }
       ] },
-    { id: 'animals', section: 'The world', map: 'world', icon: '🦁', c: 'var(--c-blue)', name: 'Animals of the World', blurb: 'Find where animals live, from rainforests to the oceans.',
-      unit: 'animals', sub: 'Tap any dot to see an animal and where it lives', hint: 'Tap a dot on the map.', all: () => ANIMALS, stage: 'Animals: ',
-      say: { find: (it) => 'Where does ' + it.ref + ' live? Tap its dot.', which: () => 'Which animal lives here?', where: (it) => 'Which continent does ' + it.ref + ' live on?', habitat: (it) => 'Where does ' + it.ref + ' live?' },
+    { id: tx('animals', 'hewan'), section: 'The world', map: 'world', icon: '🦁', c: 'var(--c-blue)', name: tx('Animals of the World', 'Hewan Dunia'), blurb: tx('Find where animals live, from rainforests to the oceans.', 'Temukan tempat hidup hewan, dari hutan hujan sampai samudra.'),
+      unit: tx('animals', 'hewan'), sub: tx('Tap any dot to see an animal and where it lives', 'Ketuk titik mana saja untuk melihat hewan dan tempat hidupnya'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => ANIMALS, stage: tx('Animals: ', 'Hewan: '),
+      say: { find: (it) => tx('Where does ' + it.ref + ' live? Tap its dot.', cap(it.ref) + ' tinggal di mana? Ketuk titiknya.'), which: () => tx('Which animal lives here?', 'Hewan apa yang tinggal di sini?'),
+        where: (it) => tx('Which continent does ' + it.ref + ' live on?', cap(it.ref) + ' tinggal di benua mana?'), habitat: (it) => tx('Where does ' + it.ref + ' live?', cap(it.ref) + ' tinggal di mana?') },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'a.rainforest', name: 'Rainforests', items: () => group(ANIMALS, 'rainforest') },
-        { id: 'a.savanna', name: 'Savannas and grasslands', items: () => group(ANIMALS, 'savanna') },
-        { id: 'a.desert', name: 'Deserts', items: () => group(ANIMALS, 'desert') },
-        { id: 'a.polar', name: 'Polar lands', items: () => group(ANIMALS, 'polar'), kinds: ['find', 'which'] },
-        { id: 'a.ocean', name: 'Oceans and coasts', items: () => group(ANIMALS, 'ocean'), kinds: ['find', 'which'] },
-        { id: 'a.forest', name: 'Forests and mountains', items: () => group(ANIMALS, 'forest') },
-        { id: 'a.all', name: 'All animals', items: () => ANIMALS, kinds: ['find', 'which', 'where', 'habitat'] }
+        { id: 'a.rainforest', name: tx('Rainforests', 'Hutan hujan'), items: () => group(ANIMALS, 'rainforest') },
+        { id: 'a.savanna', name: tx('Savannas and grasslands', 'Savana dan padang rumput'), items: () => group(ANIMALS, 'savanna') },
+        { id: 'a.desert', name: tx('Deserts', 'Gurun'), items: () => group(ANIMALS, 'desert') },
+        { id: 'a.polar', name: tx('Polar lands', 'Daerah kutub'), items: () => group(ANIMALS, 'polar'), kinds: ['find', 'which'] },
+        { id: 'a.ocean', name: tx('Oceans and coasts', 'Laut dan pantai'), items: () => group(ANIMALS, 'ocean'), kinds: ['find', 'which'] },
+        { id: 'a.forest', name: tx('Forests and mountains', 'Hutan dan pegunungan'), items: () => group(ANIMALS, 'forest') },
+        { id: 'a.all', name: tx('All animals', 'Semua hewan'), items: () => ANIMALS, kinds: ['find', 'which', 'where', 'habitat'] }
       ] },
-    { id: 'disasters', section: 'Indonesia', map: 'indonesia', icon: '🌋', c: '#e5533d', name: 'Volcanoes and Disasters', blurb: 'Find the volcanoes of Indonesia and the places of its big earthquakes, floods and fires.',
-      unit: 'places', sub: 'Tap any dot to see what it is and where it is', hint: 'Tap a dot on the map.', all: () => DISASTERS, stage: 'Volcanoes: ',
-      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which province is ' + it.ref + ' in?' },
+    { id: 'disasters', section: 'Indonesia', map: 'indonesia', icon: '🌋', c: '#e5533d', name: tx('Volcanoes and Disasters', 'Gunung Berapi dan Bencana'), blurb: tx('Find the volcanoes of Indonesia and the places of its big earthquakes, floods and fires.', 'Temukan gunung berapi di Indonesia dan tempat terjadinya gempa bumi, banjir, dan kebakaran besar.'),
+      unit: tx('places', 'tempat'), sub: tx('Tap any dot to see what it is and where it is', 'Ketuk titik mana saja untuk melihat apa itu dan di mana letaknya'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => DISASTERS, stage: tx('Volcanoes: ', 'Gunung berapi: '),
+      say: { find: (it) => tx('Where is ' + it.ref + '? Tap its dot.', 'Di mana ' + it.ref + '? Ketuk titiknya.'), which: (it) => tx('Which ' + it.noun + ' is this?', 'Apa nama ' + it.noun + ' ini?'),
+        where: (it) => tx('Which province is ' + it.ref + ' in?', cap(it.ref) + ' ada di provinsi mana?') },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'v.sumatra', name: 'Volcanoes of Sumatra', items: () => group(DISASTERS, 'sumatra') },
-        { id: 'v.java', name: 'Volcanoes of Java', items: () => group(DISASTERS, 'java') },
-        { id: 'v.nusa', name: 'Volcanoes of Bali and Nusa Tenggara', items: () => group(DISASTERS, 'nusa') },
-        { id: 'v.east', name: 'Volcanoes of Sulawesi and Maluku', items: () => group(DISASTERS, 'east') },
-        { id: 'v.disaster', name: 'Disasters', items: () => group(DISASTERS, 'disaster') },
-        { id: 'v.all', name: 'All volcanoes and disasters', items: () => DISASTERS }
+        { id: 'v.sumatra', name: tx('Volcanoes of Sumatra', 'Gunung berapi di Sumatra'), items: () => group(DISASTERS, 'sumatra') },
+        { id: 'v.java', name: tx('Volcanoes of Java', 'Gunung berapi di Jawa'), items: () => group(DISASTERS, 'java') },
+        { id: 'v.nusa', name: tx('Volcanoes of Bali and Nusa Tenggara', 'Gunung berapi di Bali dan Nusa Tenggara'), items: () => group(DISASTERS, 'nusa') },
+        { id: 'v.east', name: tx('Volcanoes of Sulawesi and Maluku', 'Gunung berapi di Sulawesi dan Maluku'), items: () => group(DISASTERS, 'east') },
+        { id: 'v.disaster', name: tx('Disasters', 'Bencana'), items: () => group(DISASTERS, 'disaster') },
+        { id: 'v.all', name: tx('All volcanoes and disasters', 'Semua gunung berapi dan bencana'), items: () => DISASTERS }
       ] },
-    { id: 'water', section: 'Indonesia', map: 'indonesia', icon: '🏝️', c: '#2a8fb5', name: 'Islands and Straits', blurb: 'Find the islands, straits and seas of the Indonesian archipelago.',
-      unit: 'places', sub: 'Tap any dot to see what it is', hint: 'Tap a dot on the map.', all: () => WATER, stage: 'Islands: ',
-      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which two places does ' + it.ref + ' lie between?' },
+    { id: 'water', section: 'Indonesia', map: 'indonesia', icon: '🏝️', c: '#2a8fb5', name: tx('Islands and Straits', 'Pulau dan Selat'), blurb: tx('Find the islands, straits and seas of the Indonesian archipelago.', 'Temukan pulau, selat, dan laut di kepulauan Indonesia.'),
+      unit: tx('places', 'tempat'), sub: tx('Tap any dot to see what it is', 'Ketuk titik mana saja untuk melihat apa itu'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => WATER, stage: tx('Islands: ', 'Pulau: '),
+      say: { find: (it) => tx('Where is ' + it.ref + '? Tap its dot.', 'Di mana ' + it.ref + '? Ketuk titiknya.'), which: (it) => tx('Which ' + it.noun + ' is this?', 'Apa nama ' + it.noun + ' ini?'),
+        where: (it) => tx('Which two places does ' + it.ref + ' lie between?', cap(it.ref) + ' terletak di antara dua tempat mana?') },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'i.big', name: 'The biggest islands', items: () => group(WATER, 'big'), kinds: ['find', 'which'] },
-        { id: 'i.small', name: 'Smaller islands', items: () => group(WATER, 'small'), kinds: ['find', 'which'] },
-        { id: 'i.strait', name: 'Straits', items: () => group(WATER, 'strait') },
-        { id: 'i.sea', name: 'Seas', items: () => group(WATER, 'sea'), kinds: ['find', 'which'] },
-        { id: 'i.all', name: 'Islands, straits and seas', items: () => WATER }
+        { id: 'i.big', name: tx('The biggest islands', 'Pulau-pulau terbesar'), items: () => group(WATER, 'big'), kinds: ['find', 'which'] },
+        { id: 'i.small', name: tx('Smaller islands', 'Pulau-pulau yang lebih kecil'), items: () => group(WATER, 'small'), kinds: ['find', 'which'] },
+        { id: 'i.strait', name: tx('Straits', 'Selat'), items: () => group(WATER, 'strait') },
+        { id: 'i.sea', name: tx('Seas', 'Laut'), items: () => group(WATER, 'sea'), kinds: ['find', 'which'] },
+        { id: 'i.all', name: tx('Islands, straits and seas', 'Pulau, selat, dan laut'), items: () => WATER }
       ] },
-    { id: 'peoples', section: 'Indonesia', map: 'indonesia', icon: '🧑‍🤝‍🧑', c: '#a65fc2', name: 'Peoples and Languages', blurb: 'Find where the peoples of Indonesia live and the languages they speak.',
-      unit: 'peoples', sub: 'Tap any dot to see a people and where they live', hint: 'Tap a dot on the map.', all: () => PEOPLE, stage: 'Peoples: ',
-      say: { find: (it) => 'Where do ' + it.ref + ' live? Tap their dot.', which: () => 'Which people live here?', where: (it) => 'Which province do ' + it.ref + ' come from?', speak: (it) => 'Which language do ' + it.ref + ' speak?' },
+    { id: tx('peoples', 'suku'), section: 'Indonesia', map: 'indonesia', icon: '🧑‍🤝‍🧑', c: '#a65fc2', name: tx('Peoples and Languages', 'Suku dan Bahasa'), blurb: tx('Find where the peoples of Indonesia live and the languages they speak.', 'Temukan tempat tinggal suku-suku di Indonesia dan bahasa yang mereka gunakan.'),
+      unit: tx('peoples', 'suku'), sub: tx('Tap any dot to see a people and where they live', 'Ketuk titik mana saja untuk melihat suku dan tempat tinggalnya'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => PEOPLE, stage: tx('Peoples: ', 'Suku: '),
+      say: { find: (it) => tx('Where do ' + it.ref + ' live? Tap their dot.', 'Di mana ' + it.ref + ' tinggal? Ketuk titiknya.'), which: () => tx('Which people live here?', 'Suku apa yang tinggal di sini?'),
+        where: (it) => tx('Which province do ' + it.ref + ' come from?', cap(it.ref) + ' berasal dari provinsi mana?'), speak: (it) => tx('Which language do ' + it.ref + ' speak?', cap(it.ref) + ' berbicara dalam bahasa apa?') },
       kinds: ['find', 'which', 'where', 'speak'], levels: [
         { id: 'p.sumatra', name: 'Sumatra', items: () => group(PEOPLE, 'sumatra') },
-        { id: 'p.javabali', name: 'Java and Bali', items: () => group(PEOPLE, 'javabali') },
+        { id: 'p.javabali', name: tx('Java and Bali', 'Jawa dan Bali'), items: () => group(PEOPLE, 'javabali') },
         { id: 'p.kalimantan', name: 'Kalimantan', items: () => group(PEOPLE, 'kalimantan') },
         { id: 'p.sulawesi', name: 'Sulawesi', items: () => group(PEOPLE, 'sulawesi') },
-        { id: 'p.east', name: 'Nusa Tenggara, Maluku and Papua', items: () => group(PEOPLE, 'east') },
-        { id: 'p.all', name: 'All peoples', items: () => PEOPLE }
+        { id: 'p.east', name: tx('Nusa Tenggara, Maluku and Papua', 'Nusa Tenggara, Maluku, dan Papua'), items: () => group(PEOPLE, 'east') },
+        { id: 'p.all', name: tx('All peoples', 'Semua suku'), items: () => PEOPLE }
       ] },
-    { id: 'rivers', section: 'Indonesia', map: 'indonesia', icon: '🏞️', c: '#3a86c8', name: 'Rivers and Lakes', blurb: 'Find the rivers and lakes of Indonesia, from the Kapuas to Lake Toba.',
-      unit: 'places', sub: 'Tap any dot to see what it is and where it is', hint: 'Tap a dot on the map.', all: () => RIVERS, stage: 'Rivers: ',
-      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: (it) => 'Which ' + it.noun + ' is this?', where: (it) => 'Which province is ' + it.ref + ' in?' },
+    { id: 'rivers', section: 'Indonesia', map: 'indonesia', icon: '🏞️', c: '#3a86c8', name: tx('Rivers and Lakes', 'Sungai dan Danau'), blurb: tx('Find the rivers and lakes of Indonesia, from the Kapuas to Lake Toba.', 'Temukan sungai dan danau di Indonesia, dari Kapuas sampai Danau Toba.'),
+      unit: tx('places', 'tempat'), sub: tx('Tap any dot to see what it is and where it is', 'Ketuk titik mana saja untuk melihat apa itu dan di mana letaknya'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => RIVERS, stage: tx('Rivers: ', 'Sungai: '),
+      say: { find: (it) => tx('Where is ' + it.ref + '? Tap its dot.', 'Di mana ' + it.ref + '? Ketuk titiknya.'), which: (it) => tx('Which ' + it.noun + ' is this?', 'Apa nama ' + it.noun + ' ini?'),
+        where: (it) => tx('Which province is ' + it.ref + ' in?', cap(it.ref) + ' ada di provinsi mana?') },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'r.river', name: 'Rivers of Indonesia', items: () => group(RIVERS, 'river') },
-        { id: 'r.lakesw', name: 'Lakes of Sumatra, Java and Nusa Tenggara', items: () => group(RIVERS, 'lakesw') },
-        { id: 'r.lakese', name: 'Lakes of Kalimantan, Sulawesi and Papua', items: () => group(RIVERS, 'lakese') },
-        { id: 'r.all', name: 'All rivers and lakes', items: () => RIVERS }
+        { id: 'r.river', name: tx('Rivers of Indonesia', 'Sungai di Indonesia'), items: () => group(RIVERS, 'river') },
+        { id: 'r.lakesw', name: tx('Lakes of Sumatra, Java and Nusa Tenggara', 'Danau di Sumatra, Jawa, dan Nusa Tenggara'), items: () => group(RIVERS, 'lakesw') },
+        { id: 'r.lakese', name: tx('Lakes of Kalimantan, Sulawesi and Papua', 'Danau di Kalimantan, Sulawesi, dan Papua'), items: () => group(RIVERS, 'lakese') },
+        { id: 'r.all', name: tx('All rivers and lakes', 'Semua sungai dan danau'), items: () => RIVERS }
       ] },
-    { id: 'landmarks', section: 'The world', map: 'world', icon: '🗽', c: '#6a7fa8', name: 'Landmarks of the World', blurb: 'Find the famous buildings and wonders of the world, and the country of each.',
-      unit: 'landmarks', sub: 'Tap any dot to see a landmark and where it is', hint: 'Tap a dot on the map.', all: () => LANDMARKS, stage: 'Landmarks: ',
-      say: { find: (it) => 'Where is ' + it.ref + '? Tap its dot.', which: () => 'Which landmark is this?', where: (it) => 'Which country is ' + it.ref + ' in?' },
+    { id: tx('landmarks', 'tempat terkenal'), section: 'The world', map: 'world', icon: '🗽', c: '#6a7fa8', name: tx('Landmarks of the World', 'Tempat Terkenal di Dunia'), blurb: tx('Find the famous buildings and wonders of the world, and the country of each.', 'Temukan bangunan dan keajaiban terkenal di dunia, beserta negaranya.'),
+      unit: tx('landmarks', 'tempat terkenal'), sub: tx('Tap any dot to see a landmark and where it is', 'Ketuk titik mana saja untuk melihat tempat terkenal dan letaknya'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => LANDMARKS, stage: tx('Landmarks: ', 'Tempat terkenal: '),
+      say: { find: (it) => tx('Where is ' + it.ref + '? Tap its dot.', 'Di mana ' + it.ref + '? Ketuk titiknya.'), which: () => tx('Which landmark is this?', 'Tempat terkenal apakah ini?'),
+        where: (it) => tx('Which country is ' + it.ref + ' in?', cap(it.ref) + ' ada di negara mana?') },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'l.asia', name: 'Landmarks of Asia', items: () => group(LANDMARKS, 'asia') },
-        { id: 'l.europe', name: 'Landmarks of Europe', items: () => group(LANDMARKS, 'europe') },
-        { id: 'l.africaoc', name: 'Landmarks of Africa and Oceania', items: () => group(LANDMARKS, 'africaoc') },
-        { id: 'l.america', name: 'Landmarks of the Americas', items: () => group(LANDMARKS, 'america') },
-        { id: 'l.all', name: 'All landmarks', items: () => LANDMARKS }
+        { id: 'l.asia', name: tx('Landmarks of Asia', 'Tempat terkenal di Asia'), items: () => group(LANDMARKS, 'asia') },
+        { id: 'l.europe', name: tx('Landmarks of Europe', 'Tempat terkenal di Eropa'), items: () => group(LANDMARKS, 'europe') },
+        { id: 'l.africaoc', name: tx('Landmarks of Africa and Oceania', 'Tempat terkenal di Afrika dan Oseania'), items: () => group(LANDMARKS, 'africaoc') },
+        { id: 'l.america', name: tx('Landmarks of the Americas', 'Tempat terkenal di benua Amerika'), items: () => group(LANDMARKS, 'america') },
+        { id: 'l.all', name: tx('All landmarks', 'Semua tempat terkenal'), items: () => LANDMARKS }
       ] },
-    { id: 'foods', section: 'The world', map: 'world', icon: '🍜', c: '#d9822b', name: 'Foods of the World', blurb: 'Find where famous dishes come from, from sushi to tacos.',
-      unit: 'dishes', sub: 'Tap any dot to see a dish and where it comes from', hint: 'Tap a dot on the map.', all: () => FOODS, stage: 'Foods: ',
-      say: { find: (it) => 'Where does ' + it.ref + ' come from? Tap its dot.', which: () => 'Which dish comes from here?', where: (it) => 'Which country does ' + it.ref + ' come from?' },
+    { id: 'foods', section: 'The world', map: 'world', icon: '🍜', c: '#d9822b', name: tx('Foods of the World', 'Makanan Dunia'), blurb: tx('Find where famous dishes come from, from sushi to tacos.', 'Temukan asal hidangan terkenal, dari sushi sampai taco.'),
+      unit: tx('dishes', 'hidangan'), sub: tx('Tap any dot to see a dish and where it comes from', 'Ketuk titik mana saja untuk melihat hidangan dan asalnya'), hint: tx('Tap a dot on the map.', 'Ketuk titik di peta.'), all: () => FOODS, stage: tx('Foods: ', 'Makanan: '),
+      say: { find: (it) => tx('Where does ' + it.ref + ' come from? Tap its dot.', cap(it.ref) + ' berasal dari mana? Ketuk titiknya.'), which: () => tx('Which dish comes from here?', 'Hidangan apa yang berasal dari sini?'),
+        where: (it) => tx('Which country does ' + it.ref + ' come from?', cap(it.ref) + ' berasal dari negara mana?') },
       kinds: ['find', 'which', 'where'], levels: [
-        { id: 'fd.asia', name: 'Foods of Asia', items: () => group(FOODS, 'asia') },
-        { id: 'fd.europe', name: 'Foods of Europe', items: () => group(FOODS, 'europe') },
-        { id: 'fd.africaoc', name: 'Foods of Africa and Oceania', items: () => group(FOODS, 'africaoc') },
-        { id: 'fd.america', name: 'Foods of the Americas', items: () => group(FOODS, 'america') },
-        { id: 'fd.all', name: 'All foods', items: () => FOODS }
+        { id: 'fd.asia', name: tx('Foods of Asia', 'Makanan Asia'), items: () => group(FOODS, 'asia') },
+        { id: 'fd.europe', name: tx('Foods of Europe', 'Makanan Eropa'), items: () => group(FOODS, 'europe') },
+        { id: 'fd.africaoc', name: tx('Foods of Africa and Oceania', 'Makanan Afrika dan Oseania'), items: () => group(FOODS, 'africaoc') },
+        { id: 'fd.america', name: tx('Foods of the Americas', 'Makanan benua Amerika'), items: () => group(FOODS, 'america') },
+        { id: 'fd.all', name: tx('All foods', 'Semua makanan'), items: () => FOODS }
       ] },
-    { id: 'solar', section: 'Space', map: 'solar', icon: '🪐', c: '#5b50c9', name: 'The Solar System', blurb: 'Meet the Sun and its planets: find them, put them in order and compare them.',
-      unit: 'bodies', sub: 'Tap the Sun or a planet to meet it', hint: 'Tap the Sun or a planet.', all: () => SOLAR, stage: 'Space: ',
-      say: { find: (it) => 'Where is ' + it.ref + '? Tap it.', which: (it) => 'Which ' + it.noun + ' is this?', order: (it) => 'Which planet is ' + ORDINAL[it.order - 1] + ' from the Sun?' },
+    { id: 'solar', section: 'Space', map: 'solar', icon: '🪐', c: '#5b50c9', name: tx('The Solar System', 'Tata Surya'), blurb: tx('Meet the Sun and its planets: find them, put them in order and compare them.', 'Kenali Matahari dan planet-planetnya: temukan, urutkan, dan bandingkan.'),
+      unit: tx('bodies', 'benda langit'), sub: tx('Tap the Sun or a planet to meet it', 'Ketuk Matahari atau planet untuk mengenalnya'), hint: tx('Tap the Sun or a planet.', 'Ketuk Matahari atau planet.'), all: () => SOLAR, stage: tx('Space: ', 'Luar angkasa: '),
+      say: { find: (it) => tx('Where is ' + it.ref + '? Tap it.', 'Di mana ' + it.ref + '? Ketuklah.'), which: (it) => tx('Which ' + it.noun + ' is this?', 'Apa nama ' + it.noun + ' ini?'),
+        order: (it) => tx('Which planet is ' + ORDINAL[it.order - 1] + ' from the Sun?', 'Planet manakah yang urutannya ' + ORDINAL[it.order - 1] + ' dari Matahari?') },
       kinds: ['find', 'which', 'order'], levels: [
-        { id: 's.planets', name: 'The planets', items: () => group(SOLAR, 'planet') },
-        { id: 's.bigger', name: 'Bigger planets', items: () => group(SOLAR, 'planet'), kinds: ['cmp'],
-          cmp: { metric: (it) => it.diam, ratio: 1.3, text: 'Which planet is bigger?', unit: 'km wide' } },
-        { id: 's.farther', name: 'Farther from the Sun', items: () => group(SOLAR, 'planet'), kinds: ['cmp'],
-          cmp: { metric: (it) => it.dist, ratio: 1.3, text: 'Which planet is farther from the Sun?', unit: 'million km from the Sun' } },
-        { id: 's.sort', name: 'Put in order', items: () => group(SOLAR, 'planet'), kinds: ['route'], namedDots: true, subjects: () => sortTasks(6) },
-        { id: 's.all', name: 'Sun, planets and Pluto', items: () => SOLAR }
+        { id: 's.planets', name: tx('The planets', 'Planet'), items: () => group(SOLAR, 'planet') },
+        { id: 's.bigger', name: tx('Bigger planets', 'Planet yang lebih besar'), items: () => group(SOLAR, 'planet'), kinds: ['cmp'],
+          cmp: { metric: (it) => it.diam, ratio: 1.3, text: tx('Which planet is bigger?', 'Planet mana yang lebih besar?'), unit: 'km wide', fmt: 'Lebar {x} kira-kira {n} km.' } },
+        { id: 's.farther', name: tx('Farther from the Sun', 'Lebih jauh dari Matahari'), items: () => group(SOLAR, 'planet'), kinds: ['cmp'],
+          cmp: { metric: (it) => it.dist, ratio: 1.3, text: tx('Which planet is farther from the Sun?', 'Planet mana yang lebih jauh dari Matahari?'), unit: 'million km from the Sun', fmt: '{x} berjarak kira-kira {n} juta km dari Matahari.' } },
+        { id: 's.sort', name: tx('Put in order', 'Urutkan'), items: () => group(SOLAR, 'planet'), kinds: ['route'], namedDots: true, subjects: () => sortTasks(6) },
+        { id: 's.all', name: tx('Sun, planets and Pluto', 'Matahari, planet, dan Pluto'), items: () => SOLAR }
       ] },
     // Science: a scene that moves (science.js) in place of the map. Questions come ready-made (science.js, by level id); the answers are choices.
-    { id: 'water', section: 'Science', sci: 'water', icon: '💧', c: '#2e90fa', name: 'The Water Cycle', blurb: 'Watch the water go round and round, from the sea to the clouds and back.',
-      unit: 'questions', sub: 'See how the Sun, clouds and rain make the water cycle go round', stage: 'Water: ', kinds: ['sci'], levels: [
-        { id: 'w.steps', name: 'The four steps', items: () => SCI.questions['w.steps']() },
-        { id: 'w.order', name: 'What comes next?', items: () => SCI.questions['w.order']() },
-        { id: 'w.facts', name: 'Water facts', items: () => SCI.questions['w.facts']() },
-        { id: 'w.all', name: 'The whole water cycle', items: () => SCI.questions['w.all']() }
+    { id: 'water', section: 'Science', sci: 'water', icon: '💧', c: '#2e90fa', name: tx('The Water Cycle', 'Siklus Air'), blurb: tx('Watch the water go round and round, from the sea to the clouds and back.', 'Lihat air berputar terus, dari laut ke awan dan kembali lagi.'),
+      unit: tx('questions', 'soal'), sub: tx('See how the Sun, clouds and rain make the water cycle go round', 'Lihat bagaimana Matahari, awan, dan hujan membuat siklus air berputar'), stage: tx('Water: ', 'Air: '), kinds: ['sci'], levels: [
+        { id: 'w.steps', name: tx('The four steps', 'Empat tahap'), items: () => SCI.questions['w.steps']() },
+        { id: 'w.order', name: tx('What comes next?', 'Apa selanjutnya?'), items: () => SCI.questions['w.order']() },
+        { id: 'w.facts', name: tx('Water facts', 'Fakta tentang air'), items: () => SCI.questions['w.facts']() },
+        { id: 'w.all', name: tx('The whole water cycle', 'Seluruh siklus air'), items: () => SCI.questions['w.all']() }
       ] },
-    { id: 'chains', section: 'Science', sci: 'chain', icon: '🦎', c: '#1f9d6b', name: 'Food Chains', blurb: 'Who eats what? Follow the energy from the Sun to a Komodo dragon, an eagle and a shark.',
-      unit: 'questions', sub: 'See who eats whom in four food chains, and tap each one to meet it', stage: 'Food chains: ', kinds: ['sci'], levels: [
-        { id: 'c.eats', name: 'Who eats whom?', items: () => SCI.questions['c.eats']() },
-        { id: 'c.whatif', name: 'What if…?', items: () => SCI.questions['c.whatif']() },
-        { id: 'c.roles', name: 'Producers and eaters', items: () => SCI.questions['c.roles']() },
-        { id: 'c.facts', name: 'Food chain facts', items: () => SCI.questions['c.facts']() },
-        { id: 'c.all', name: 'All food chains', items: () => SCI.questions['c.all']() }
+    { id: 'chains', section: 'Science', sci: 'chain', icon: '🦎', c: '#1f9d6b', name: tx('Food Chains', 'Rantai Makanan'), blurb: tx('Who eats what? Follow the energy from the Sun to a Komodo dragon, an eagle and a shark.', 'Siapa makan apa? Ikuti energi dari Matahari sampai ke komodo, elang, dan hiu.'),
+      unit: tx('questions', 'soal'), sub: tx('See who eats whom in four food chains, and tap each one to meet it', 'Lihat siapa makan siapa dalam empat rantai makanan, lalu ketuk masing-masing untuk mengenalnya'), stage: tx('Food chains: ', 'Rantai makanan: '), kinds: ['sci'], levels: [
+        { id: 'c.eats', name: tx('Who eats whom?', 'Siapa makan siapa?'), items: () => SCI.questions['c.eats']() },
+        { id: 'c.whatif', name: tx('What if…?', 'Bagaimana jika…?'), items: () => SCI.questions['c.whatif']() },
+        { id: 'c.roles', name: tx('Producers and eaters', 'Produsen dan pemakan'), items: () => SCI.questions['c.roles']() },
+        { id: 'c.facts', name: tx('Food chain facts', 'Fakta rantai makanan'), items: () => SCI.questions['c.facts']() },
+        { id: 'c.all', name: tx('All food chains', 'Semua rantai makanan'), items: () => SCI.questions['c.all']() }
       ] },
-    { id: 'sky', section: 'Science', sci: 'sky', icon: '🌍', c: '#6a4fd6', name: 'Day, Night and Seasons', blurb: 'Watch the Earth spin, go round the Sun, and the Moon change its shape.',
-      unit: 'questions', sub: 'Spin the Earth, follow its year round the Sun and watch the Moon', stage: 'Sky: ', kinds: ['sci'], levels: [
-        { id: 'd.day', name: 'Day and night', items: () => SCI.questions['d.day']() },
-        { id: 'd.seasons', name: 'The seasons', items: () => SCI.questions['d.seasons']() },
-        { id: 'd.moon', name: 'Phases of the Moon', items: () => SCI.questions['d.moon']() },
-        { id: 'd.all', name: 'Earth, Sun and Moon', items: () => SCI.questions['d.all']() }
+    { id: 'sky', section: 'Science', sci: 'sky', icon: '🌍', c: '#6a4fd6', name: tx('Day, Night and Seasons', 'Siang, Malam, dan Musim'), blurb: tx('Watch the Earth spin, go round the Sun, and the Moon change its shape.', 'Lihat Bumi berputar, mengelilingi Matahari, dan Bulan berubah bentuk.'),
+      unit: tx('questions', 'soal'), sub: tx('Spin the Earth, follow its year round the Sun and watch the Moon', 'Putar Bumi, ikuti setahunnya mengelilingi Matahari, dan lihat Bulan'), stage: tx('Sky: ', 'Langit: '), kinds: ['sci'], levels: [
+        { id: 'd.day', name: tx('Day and night', 'Siang dan malam'), items: () => SCI.questions['d.day']() },
+        { id: 'd.seasons', name: tx('The seasons', 'Musim'), items: () => SCI.questions['d.seasons']() },
+        { id: 'd.moon', name: tx('Phases of the Moon', 'Fase Bulan'), items: () => SCI.questions['d.moon']() },
+        { id: 'd.all', name: tx('Earth, Sun and Moon', 'Bumi, Matahari, dan Bulan'), items: () => SCI.questions['d.all']() }
       ] },
-    { id: 'life', section: 'Science', sci: 'life', icon: '🦋', c: '#4aa84a', name: 'Life Cycles', blurb: 'See how a caterpillar becomes a butterfly and a tadpole becomes a frog.',
-      unit: 'questions', sub: 'Watch a butterfly and a frog grow, stage by stage', stage: 'Life cycles: ', kinds: ['sci'], levels: [
-        { id: 'lc.butterfly', name: 'The butterfly', items: () => SCI.questions['lc.butterfly']() },
-        { id: 'lc.frog', name: 'The frog', items: () => SCI.questions['lc.frog']() },
-        { id: 'lc.order', name: 'What comes next?', items: () => SCI.questions['lc.order']() },
-        { id: 'lc.all', name: 'All life cycles', items: () => SCI.questions['lc.all']() }
+    { id: 'life', section: 'Science', sci: 'life', icon: '🦋', c: '#4aa84a', name: tx('Life Cycles', 'Daur Hidup'), blurb: tx('See how a caterpillar becomes a butterfly and a tadpole becomes a frog.', 'Lihat bagaimana ulat menjadi kupu-kupu dan kecebong menjadi katak.'),
+      unit: tx('questions', 'soal'), sub: tx('Watch a butterfly and a frog grow, stage by stage', 'Lihat kupu-kupu dan katak tumbuh, tahap demi tahap'), stage: tx('Life cycles: ', 'Daur hidup: '), kinds: ['sci'], levels: [
+        { id: 'lc.butterfly', name: tx('The butterfly', 'Kupu-kupu'), items: () => SCI.questions['lc.butterfly']() },
+        { id: 'lc.frog', name: tx('The frog', 'Katak'), items: () => SCI.questions['lc.frog']() },
+        { id: 'lc.order', name: tx('What comes next?', 'Apa selanjutnya?'), items: () => SCI.questions['lc.order']() },
+        { id: 'lc.all', name: tx('All life cycles', 'Semua daur hidup'), items: () => SCI.questions['lc.all']() }
       ] },
     // Games on the map: not a way to explore, so no Explore card. Their dots are hidden (still there for the keyboard).
-    { id: 'jigsaw', section: 'Map games', map: 'world', icon: '🧩', c: '#2f9e7d', name: 'Map Jigsaw', blurb: 'Drag the shape of a country to its place on the map.',
-      unit: 'countries', noExplore: true, hideDots: true, stage: 'Jigsaw: ', kinds: ['drag'], levels: [
-        { id: 'j.sea', name: 'Southeast Asia', items: () => nations('Asia', 'S').filter((c) => HAS_SHAPE.has(c.shape)) },
-        { id: 'j.eu1', name: 'Europe: well known', items: () => nations('Europe', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
-        { id: 'j.af1', name: 'Africa: well known', items: () => nations('Africa', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
-        { id: 'j.na1', name: 'North America: well known', items: () => nations('North America', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
-        { id: 'j.sa', name: 'South America', items: () => nations('South America').filter((c) => HAS_SHAPE.has(c.shape)) }
+    { id: 'jigsaw', section: 'Map games', map: 'world', icon: '🧩', c: '#2f9e7d', name: tx('Map Jigsaw', 'Puzzle Peta'), blurb: tx('Drag the shape of a country to its place on the map.', 'Seret bentuk negara ke tempatnya di peta.'),
+      unit: tx('countries', 'negara'), noExplore: true, hideDots: true, stage: tx('Jigsaw: ', 'Puzzle: '), kinds: ['drag'], levels: [
+        { id: 'j.sea', name: tx('Southeast Asia', 'Asia Tenggara'), items: () => nations('Asia', 'S').filter((c) => HAS_SHAPE.has(c.shape)) },
+        { id: 'j.eu1', name: tx('Europe: well known', 'Eropa: yang terkenal'), items: () => nations('Europe', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
+        { id: 'j.af1', name: tx('Africa: well known', 'Afrika: yang terkenal'), items: () => nations('Africa', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
+        { id: 'j.na1', name: tx('North America: well known', 'Amerika Utara: yang terkenal'), items: () => nations('North America', '1').filter((c) => HAS_SHAPE.has(c.shape)) },
+        { id: 'j.sa', name: tx('South America', 'Amerika Selatan'), items: () => nations('South America').filter((c) => HAS_SHAPE.has(c.shape)) }
       ] },
-    { id: 'who', section: 'Map games', map: 'world', icon: '🕵️', c: '#8a5cc7', name: 'Who Am I?', blurb: 'Guess the place from clues. The fewer clues you need, the better!',
-      unit: 'to guess', noExplore: true, stage: 'Who am I: ', all: () => pool, kinds: ['who'], levels: [
-        { id: 'q.w1', name: 'Well-known countries', items: () => COUNTRIES.filter((c) => c.tag) },
-        { id: 'q.wall', name: 'All countries', items: () => COUNTRIES },
-        { id: 'q.animals', name: 'Animals', items: () => ANIMALS },
-        { id: 'q.landmarks', name: 'Landmarks', items: () => LANDMARKS },
-        { id: 'q.foods', name: 'Foods', items: () => FOODS },
-        { id: 'q.nature', name: 'Nature', items: () => NATURE },
+    { id: 'who', section: 'Map games', map: 'world', icon: '🕵️', c: '#8a5cc7', name: tx('Who Am I?', 'Siapa Aku?'), blurb: tx('Guess the place from clues. The fewer clues you need, the better!', 'Tebak tempatnya dari petunjuk. Makin sedikit petunjuk yang kamu pakai, makin bagus!'),
+      unit: tx('to guess', 'untuk ditebak'), noExplore: true, stage: tx('Who am I: ', 'Siapa aku: '), all: () => pool, kinds: ['who'], levels: [
+        { id: 'q.w1', name: tx('Well-known countries', 'Negara terkenal'), items: () => COUNTRIES.filter((c) => c.tag) },
+        { id: 'q.wall', name: tx('All countries', 'Semua negara'), items: () => COUNTRIES },
+        { id: 'q.animals', name: tx('Animals', 'Hewan'), items: () => ANIMALS },
+        { id: 'q.landmarks', name: tx('Landmarks', 'Tempat terkenal'), items: () => LANDMARKS },
+        { id: 'q.foods', name: tx('Foods', 'Makanan'), items: () => FOODS },
+        { id: 'q.nature', name: tx('Nature', 'Alam'), items: () => NATURE },
         { id: 'q.space', name: 'Space', map: 'solar', items: () => SOLAR }
       ] },
-    { id: 'neighbours', section: 'Map games', map: 'world', icon: '🏘️', c: '#e0558a', name: 'Neighbours', blurb: 'Tap every country that shares a border with a country.',
-      unit: 'countries', noExplore: true, hideDots: true, round: 5, stage: 'Neighbours: ', kinds: ['neigh'], levels: [
-        { id: 'b.europe', name: 'Europe', items: () => nations('Europe'), subjects: () => borderSubjects('Europe') },
+    { id: 'neighbours', section: 'Map games', map: 'world', icon: '🏘️', c: '#e0558a', name: tx('Neighbours', 'Tetangga'), blurb: tx('Tap every country that shares a border with a country.', 'Ketuk setiap negara yang berbatasan darat dengan sebuah negara.'),
+      unit: tx('countries', 'negara'), noExplore: true, hideDots: true, round: 5, stage: tx('Neighbours: ', 'Tetangga: '), kinds: ['neigh'], levels: [
+        { id: 'b.europe', name: tx('Europe', 'Eropa'), items: () => nations('Europe'), subjects: () => borderSubjects('Europe') },
         { id: 'b.asia', name: 'Asia', items: () => nations('Asia'), subjects: () => borderSubjects('Asia') },
-        { id: 'b.africa', name: 'Africa', items: () => nations('Africa'), subjects: () => borderSubjects('Africa') },
-        { id: 'b.america', name: 'The Americas', items: () => nations('North America').concat(nations('South America')),
+        { id: 'b.africa', name: tx('Africa', 'Afrika'), items: () => nations('Africa'), subjects: () => borderSubjects('Africa') },
+        { id: 'b.america', name: tx('The Americas', 'Benua Amerika'), items: () => nations('North America').concat(nations('South America')),
           subjects: () => borderSubjects('North America').concat(borderSubjects('South America')) }
       ] },
     // Bigger or Farther?: two places, tap the answer. Each level says how to compare (cmp): the number, how different the two must be
     // (ratio), the question, and what the number is. A level can use its own map, and can have a place to measure from.
-    { id: 'compare', section: 'Map games', map: 'indonesia', icon: '📏', c: '#c9892b', name: 'Bigger or Farther?', blurb: 'Which island is bigger? Which city is farther away? Guess, then see the numbers.',
-      unit: 'places', noExplore: true, hideDots: true, stage: 'Compare: ', kinds: ['cmp'], levels: [
-        { id: 'k.islands', name: 'Bigger islands', items: () => WATER.filter((p) => ISLAND_AREA[p.name]),
-          cmp: { metric: (it) => ISLAND_AREA[it.name], ratio: 1.2, text: 'Which island is bigger?', unit: 'km²' } },
-        { id: 'k.countries', name: 'Bigger countries', map: 'world', items: () => COUNTRIES.filter((c) => COUNTRY_AREA[c.name]),
-          cmp: { metric: (it) => COUNTRY_AREA[it.name], ratio: 1.3, text: 'Which country is bigger?', unit: 'km²' } },
-        { id: 'k.cities', name: 'Farther cities', items: () => CITIES,
+    { id: 'compare', section: 'Map games', map: 'indonesia', icon: '📏', c: '#c9892b', name: tx('Bigger or Farther?', 'Lebih Besar atau Lebih Jauh?'), blurb: tx('Which island is bigger? Which city is farther away? Guess, then see the numbers.', 'Pulau mana yang lebih besar? Kota mana yang lebih jauh? Tebak dulu, lalu lihat angkanya.'),
+      unit: tx('places', 'tempat'), noExplore: true, hideDots: true, stage: tx('Compare: ', 'Bandingkan: '), kinds: ['cmp'], levels: [
+        { id: 'k.islands', name: tx('Bigger islands', 'Pulau yang lebih besar'), items: () => WATER.filter((p) => ISLAND_AREA[p.en]),
+          cmp: { metric: (it) => ISLAND_AREA[it.en], ratio: 1.2, text: tx('Which island is bigger?', 'Pulau mana yang lebih besar?'), unit: 'km²', fmt: 'Luas {x} kira-kira {n} km².' } },
+        { id: 'k.countries', name: tx('Bigger countries', 'Negara yang lebih besar'), map: 'world', items: () => COUNTRIES.filter((c) => COUNTRY_AREA[c.en]),
+          cmp: { metric: (it) => COUNTRY_AREA[it.en], ratio: 1.3, text: tx('Which country is bigger?', 'Negara mana yang lebih besar?'), unit: 'km²', fmt: 'Luas {x} kira-kira {n} km².' } },
+        { id: 'k.cities', name: tx('Farther cities', 'Kota yang lebih jauh'), items: () => CITIES,
           cmp: { pairs: () => CITIES.filter((c) => c.name !== 'Jakarta'), from: () => byName(CITIES, 'Jakarta'), ratio: 1.4,
-            metric: (it) => km(byName(CITIES, 'Jakarta'), it), text: 'Which city is farther from Jakarta?', unit: 'km away' } },
-        { id: 'k.capitals', name: 'Farther capitals', map: 'world', items: () => COUNTRIES,
-          cmp: { pairs: () => COUNTRIES.filter((c) => c.name !== 'Indonesia'), from: () => byName(COUNTRIES, 'Indonesia'), ratio: 1.4, label: (it) => it.capital,
-            metric: (it) => km(byName(COUNTRIES, 'Indonesia'), it), text: 'Which capital is farther from Jakarta?', unit: 'km away' } }
+            metric: (it) => km(byName(CITIES, 'Jakarta'), it), text: tx('Which city is farther from Jakarta?', 'Kota mana yang lebih jauh dari Jakarta?'), unit: 'km away', fmt: '{x} berjarak kira-kira {n} km.' } },
+        { id: 'k.capitals', name: tx('Farther capitals', 'Ibu kota yang lebih jauh'), map: 'world', items: () => COUNTRIES,
+          cmp: { pairs: () => COUNTRIES.filter((c) => c.en !== 'Indonesia'), from: () => byName(COUNTRIES, 'Indonesia'), ratio: 1.4, label: (it) => it.capital,
+            metric: (it) => km(byName(COUNTRIES, 'Indonesia'), it), text: tx('Which capital is farther from Jakarta?', 'Ibu kota mana yang lebih jauh dari Jakarta?'), unit: 'km away', fmt: '{x} berjarak kira-kira {n} km.' } }
       ] },
-    { id: 'routes', section: 'Map games', map: 'indonesia', icon: '⛵', c: '#1a9bb0', name: 'Island Routes', blurb: 'Travel from city to city and tap the islands you cross, in order.',
-      unit: 'islands', noExplore: true, namedDots: true, round: 5, stage: 'Routes: ', kinds: ['route'], levels: [
-        { id: 't.west', name: 'Sumatra, Java and Bali', items: () => ROUTE_ISLANDS.west.map((n) => byName(WATER, n)), subjects: () => routesOf('west') },
+    { id: 'routes', section: 'Map games', map: 'indonesia', icon: '⛵', c: '#1a9bb0', name: tx('Island Routes', 'Rute Antarpulau'), blurb: tx('Travel from city to city and tap the islands you cross, in order.', 'Bepergian dari kota ke kota dan ketuk pulau-pulau yang kamu lewati, secara berurutan.'),
+      unit: tx('islands', 'pulau'), noExplore: true, namedDots: true, round: 5, stage: tx('Routes: ', 'Rute: '), kinds: ['route'], levels: [
+        { id: 't.west', name: tx('Sumatra, Java and Bali', 'Sumatra, Jawa, dan Bali'), items: () => ROUTE_ISLANDS.west.map((n) => byName(WATER, n)), subjects: () => routesOf('west') },
         { id: 't.nusa', name: 'Nusa Tenggara', items: () => ROUTE_ISLANDS.nusa.map((n) => byName(WATER, n)), subjects: () => routesOf('nusa') },
-        { id: 't.all', name: 'All of Indonesia', items: () => WATER.filter((p) => ISLAND_AREA[p.name]), subjects: () => routesOf('all') }
+        { id: 't.all', name: tx('All of Indonesia', 'Seluruh Indonesia'), items: () => WATER.filter((p) => ISLAND_AREA[p.en]), subjects: () => routesOf('all') }
       ] }
   ];
   const LEVELS = TOPICS.flatMap((t) => t.levels);
@@ -1171,26 +1201,26 @@
 
   // ---- Stickers: places to visit, unlocked by the total star count (369 at most) ----
   const STICKERS = [
-    { at: 2, name: 'Beach', pic: '🏝️', c: '#d6ebff' }, { at: 5, name: 'Volcano', pic: '🌋', c: '#ffe3c2' },
-    { at: 9, name: 'Temple', pic: '🛕', c: '#fff1c2' }, { at: 14, name: 'Komodo', pic: '🦎', c: '#d9f5e8' },
-    { at: 19, name: 'Tower', pic: '🗼', c: '#ffe0ec' }, { at: 25, name: 'Pyramids', pic: '🐪', c: '#fff1c2' },
-    { at: 31, name: 'Statue', pic: '🗽', c: '#d9f5e8' }, { at: 38, name: 'Castle', pic: '🏯', c: '#ece6ff' },
-    { at: 44, name: 'Mountain', pic: '🏔️', c: '#d6ebff' }, { at: 51, name: 'World traveler', pic: '🌏', c: '#ffe3c2' },
-    { at: 58, name: 'Flag', pic: '🚩', c: '#ffe0ec' }, { at: 66, name: 'Desert', pic: '🏜️', c: '#fff1c2' },
-    { at: 76, name: 'Big wave', pic: '🌊', c: '#d6ebff' }, { at: 88, name: 'River boat', pic: '🛶', c: '#d9f5e8' },
-    { at: 102, name: 'Explorer', pic: '🧭', c: '#ece6ff' },
-    { at: 114, name: 'Mask', pic: '🎭', c: '#ffe3c2' }, { at: 126, name: 'Safari', pic: '🦁', c: '#fff1c2' },
-    { at: 141, name: 'Omnia master', pic: '🏆', c: '#fff1c2' },
-    { at: 152, name: 'Volcano', pic: '🌋', c: '#ffe3c2' }, { at: 164, name: 'Boat', pic: '⛵', c: '#d6ebff' },
-    { at: 178, name: 'Friends', pic: '🧑‍🤝‍🧑', c: '#ece6ff' }, { at: 192, name: 'Super explorer', pic: '🥇', c: '#fff1c2' },
-    { at: 205, name: 'Monument', pic: '🗿', c: '#ece6ff' }, { at: 220, name: 'Noodles', pic: '🍜', c: '#ffe3c2' },
-    { at: 238, name: 'Puzzle', pic: '🧩', c: '#d9f5e8' }, { at: 252, name: 'Detective', pic: '🔍', c: '#d6ebff' },
-    { at: 267, name: 'Good neighbour', pic: '🏘️', c: '#ffe0ec' },
-    { at: 275, name: 'Riverside', pic: '🏞️', c: '#d9f5e8' }, { at: 288, name: 'Ruler', pic: '📏', c: '#fff1c2' }, { at: 300, name: 'Ship', pic: '🚢', c: '#d6ebff' },
-    { at: 304, name: 'Saturn', pic: '🪐', c: '#ece6ff' }, { at: 311, name: 'Rocket', pic: '🚀', c: '#ffe3c2' }, { at: 318, name: 'Galaxy', pic: '🌌', c: '#d6ebff' },
-    { at: 326, name: 'Raindrop', pic: '💧', c: '#d6ebff' }, { at: 336, name: 'Food chain', pic: '🦅', c: '#fff1c2' }, { at: 345, name: 'Scientist', pic: '🔬', c: '#d9f5e8' },
-    { at: 351, name: 'Moon', pic: '🌙', c: '#ece6ff' }, { at: 357, name: 'Four seasons', pic: '🍂', c: '#ffe3c2' },
-    { at: 363, name: 'Butterfly', pic: '🦋', c: '#ffe0ec' }, { at: 369, name: 'Frog', pic: '🐸', c: '#d9f5e8' }
+    { at: 2, name: tx('Beach', 'Pantai'), pic: '🏝️', c: '#d6ebff' }, { at: 5, name: tx('Volcano', 'Gunung berapi'), pic: '🌋', c: '#ffe3c2' },
+    { at: 9, name: tx('Temple', 'Candi'), pic: '🛕', c: '#fff1c2' }, { at: 14, name: tx('Komodo', 'Komodo'), pic: '🦎', c: '#d9f5e8' },
+    { at: 19, name: tx('Tower', 'Menara'), pic: '🗼', c: '#ffe0ec' }, { at: 25, name: tx('Pyramids', 'Piramida'), pic: '🐪', c: '#fff1c2' },
+    { at: 31, name: tx('Statue', 'Patung'), pic: '🗽', c: '#d9f5e8' }, { at: 38, name: tx('Castle', 'Kastil'), pic: '🏯', c: '#ece6ff' },
+    { at: 44, name: tx('Mountain', 'Gunung'), pic: '🏔️', c: '#d6ebff' }, { at: 51, name: tx('World traveler', 'Penjelajah dunia'), pic: '🌏', c: '#ffe3c2' },
+    { at: 58, name: tx('Flag', 'Bendera'), pic: '🚩', c: '#ffe0ec' }, { at: 66, name: tx('Desert', 'Gurun'), pic: '🏜️', c: '#fff1c2' },
+    { at: 76, name: tx('Big wave', 'Ombak besar'), pic: '🌊', c: '#d6ebff' }, { at: 88, name: tx('River boat', 'Perahu sungai'), pic: '🛶', c: '#d9f5e8' },
+    { at: 102, name: tx('Explorer', 'Penjelajah'), pic: '🧭', c: '#ece6ff' },
+    { at: 114, name: tx('Mask', 'Topeng'), pic: '🎭', c: '#ffe3c2' }, { at: 126, name: tx('Safari', 'Safari'), pic: '🦁', c: '#fff1c2' },
+    { at: 141, name: tx('Omnia master', 'Jagoan Omnia'), pic: '🏆', c: '#fff1c2' },
+    { at: 152, name: tx('Volcano', 'Gunung berapi'), pic: '🌋', c: '#ffe3c2' }, { at: 164, name: tx('Boat', 'Perahu'), pic: '⛵', c: '#d6ebff' },
+    { at: 178, name: tx('Friends', 'Sahabat'), pic: '🧑‍🤝‍🧑', c: '#ece6ff' }, { at: 192, name: tx('Super explorer', 'Penjelajah super'), pic: '🥇', c: '#fff1c2' },
+    { at: 205, name: tx('Monument', 'Monumen'), pic: '🗿', c: '#ece6ff' }, { at: 220, name: tx('Noodles', 'Mi'), pic: '🍜', c: '#ffe3c2' },
+    { at: 238, name: tx('Puzzle', 'Puzzle'), pic: '🧩', c: '#d9f5e8' }, { at: 252, name: tx('Detective', 'Detektif'), pic: '🔍', c: '#d6ebff' },
+    { at: 267, name: tx('Good neighbour', 'Tetangga baik'), pic: '🏘️', c: '#ffe0ec' },
+    { at: 275, name: tx('Riverside', 'Tepi sungai'), pic: '🏞️', c: '#d9f5e8' }, { at: 288, name: tx('Ruler', 'Penggaris'), pic: '📏', c: '#fff1c2' }, { at: 300, name: tx('Ship', 'Kapal'), pic: '🚢', c: '#d6ebff' },
+    { at: 304, name: tx('Saturn', 'Saturnus'), pic: '🪐', c: '#ece6ff' }, { at: 311, name: tx('Rocket', 'Roket'), pic: '🚀', c: '#ffe3c2' }, { at: 318, name: tx('Galaxy', 'Galaksi'), pic: '🌌', c: '#d6ebff' },
+    { at: 326, name: tx('Raindrop', 'Tetes hujan'), pic: '💧', c: '#d6ebff' }, { at: 336, name: tx('Food chain', 'Rantai makanan'), pic: '🦅', c: '#fff1c2' }, { at: 345, name: tx('Scientist', 'Ilmuwan'), pic: '🔬', c: '#d9f5e8' },
+    { at: 351, name: tx('Moon', 'Bulan'), pic: '🌙', c: '#ece6ff' }, { at: 357, name: tx('Four seasons', 'Empat musim'), pic: '🍂', c: '#ffe3c2' },
+    { at: 363, name: tx('Butterfly', 'Kupu-kupu'), pic: '🦋', c: '#ffe0ec' }, { at: 369, name: tx('Frog', 'Katak'), pic: '🐸', c: '#d9f5e8' }
   ];
   const unlocked = (stars) => STICKERS.filter((k) => k.at <= stars).length;
 
@@ -1239,7 +1269,7 @@
       orbit([]);
       gDots.textContent = ''; dots = new Map();
       items.forEach((it, i) => {
-        const c = el('circle', { cx: it.x.toFixed(1), cy: it.y.toFixed(1), r: 1, tabindex: 0, role: 'button', 'aria-label': named ? it.name : 'Place ' + (i + 1) });
+        const c = el('circle', { cx: it.x.toFixed(1), cy: it.y.toFixed(1), r: 1, tabindex: 0, role: 'button', 'aria-label': named ? it.name : tx('Place ', 'Tempat ') + (i + 1) });
         if (it.big) c.classList.add('big');
         if (coloured && it.color) c.style.setProperty('--fill', it.color);
         c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (tapped) tapped({ dot: it.key, shape: null }); } });
@@ -1412,20 +1442,20 @@
 
   function renderHome() {
     const stars = totalStars(), days = streakNow();
-    $('homeStars').textContent = stars + (stars === 1 ? ' star' : ' stars');
-    $('homeDays').textContent = days + (days === 1 ? ' day' : ' days');
+    $('homeStars').textContent = stars + (IDL ? ' bintang' : stars === 1 ? ' star' : ' stars');
+    $('homeDays').textContent = days + (IDL ? ' hari' : days === 1 ? ' day' : ' days');
     $('homeStk').textContent = unlocked(stars) + '/' + STICKERS.length;
     const box = $('topics'); box.innerHTML = '';
     let section = '';
     TOPICS.slice().sort((a, b) => SECTIONS.indexOf(a.section) - SECTIONS.indexOf(b.section)).forEach((t, k) => {
       if (t.section !== section) {
         section = t.section;
-        const h = document.createElement('h3'); h.className = 'sec'; h.textContent = section; box.appendChild(h);
+        const h = document.createElement('h3'); h.className = 'sec'; h.textContent = tx(section, SEC_ID[section]); box.appendChild(h);
       }
       const max = t.levels.length * 3, got = topicStars(t);
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', t.c); b.style.animationDelay = k * 0.06 + 's';
-      b.setAttribute('aria-label', t.name + ', ' + got + ' of ' + max + ' stars');
+      b.setAttribute('aria-label', tx(t.name + ', ' + got + ' of ' + max + ' stars', t.name + ', ' + got + ' dari ' + max + ' bintang'));
       b.innerHTML = '<span class="badge" aria-hidden="true">' + t.icon + '</span><span style="flex:1"><b>' + t.name + '</b><small>' + t.blurb + '</small>'
         + '<span class="meter" aria-hidden="true"><i style="width:' + Math.round(100 * got / max) + '%"></i></span><small>' + got + ' / ' + max + ' ⭐</small></span>';
       b.addEventListener('click', () => { sfx.tap(); curTopic = t; show('topic'); });
@@ -1433,7 +1463,7 @@
     });
     const s = document.createElement('button');
     s.type = 'button'; s.className = 'card wide'; s.style.setProperty('--c', 'var(--c-orange)'); s.style.animationDelay = '.15s';
-    s.innerHTML = '<span class="badge" aria-hidden="true">🗺️</span><span><b>Travel Stickers</b><small>Collect stars to fill your travel book</small></span>';
+    s.innerHTML = '<span class="badge" aria-hidden="true">🗺️</span><span><b>' + tx('Travel Stickers', 'Stiker Perjalanan') + '</b><small>' + tx('Collect stars to fill your travel book', 'Kumpulkan bintang untuk mengisi buku perjalananmu') + '</small></span>';
     s.addEventListener('click', () => { sfx.tap(); show('stickers'); });
     box.appendChild(s);
   }
@@ -1446,13 +1476,13 @@
     x.type = 'button'; x.className = 'card wide'; x.style.setProperty('--c', t.c);
     x.innerHTML = t.sci
       ? '<span class="badge" aria-hidden="true">🎬</span><span><b>' + SCI.kinds[t.sci].title + '</b><small>' + t.sub + '</small></span>'
-      : '<span class="badge" aria-hidden="true">🔎</span><span><b>Explore the map</b><small>' + t.sub + '</small></span>';
+      : '<span class="badge" aria-hidden="true">🔎</span><span><b>' + tx('Explore the map', 'Jelajahi peta') + '</b><small>' + t.sub + '</small></span>';
     x.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); if (t.sci) startWatch(t); else startExplore(t); });
     if (!t.noExplore) box.appendChild(x);
     t.levels.forEach((lv, i) => {
       const b = document.createElement('button'), n = lv.items().length;
       b.type = 'button'; b.className = 'card'; b.style.setProperty('--c', t.c); b.style.animationDelay = i * 0.04 + 's';
-      b.setAttribute('aria-label', 'Level ' + (i + 1) + ', ' + lv.name + ', ' + best(lv) + ' stars');
+      b.setAttribute('aria-label', tx('Level ' + (i + 1) + ', ' + lv.name + ', ' + best(lv) + ' stars', 'Level ' + (i + 1) + ', ' + lv.name + ', ' + best(lv) + ' bintang'));
       b.innerHTML = '<span class="badge" aria-hidden="true">' + (i + 1) + '</span><span><b>' + esc(lv.name) + '</b><small>' + n + ' ' + t.unit + '</small></span>'
         + '<span class="st">' + [0, 1, 2].map((k) => starSvg(k < best(lv))).join('') + '</span>';
       b.addEventListener('click', () => { sfx.tap(); startLevel(lv); });
@@ -1464,7 +1494,7 @@
     const stars = totalStars();
     $('stkStars').textContent = stars;
     const nx = STICKERS.find((k) => k.at > stars);
-    $('stkNext').textContent = nx ? (nx.at - stars) + ' more ' + (nx.at - stars === 1 ? 'star' : 'stars') + ' for the next sticker!' : 'You have seen the whole world!';
+    $('stkNext').textContent = nx ? tx((nx.at - stars) + ' more ' + (nx.at - stars === 1 ? 'star' : 'stars') + ' for the next sticker!', (nx.at - stars) + ' bintang lagi untuk stiker berikutnya!') : tx('You have seen the whole world!', 'Kamu sudah melihat seluruh dunia!');
     $('sgrid').innerHTML = STICKERS.map((k) => '<div class="stk' + (k.at <= stars ? '' : ' lock') + '"><span class="face" style="--c:' + k.c + '" aria-hidden="true">' + k.pic + '</span><b>'
       + (k.at <= stars ? k.name : '???') + '</b><small>⭐ ' + k.at + '</small></div>').join('');
   }
@@ -1474,17 +1504,17 @@
   const isFeature = (it) => !!it.noun;
   // Country names that take "the" in a sentence ("Where is the Netherlands?").
   const THE = /^(United |Netherlands|Philippines|Bahamas|Gambia|Maldives|Marshall|Solomon|Comoros|Seychelles|Central African|Dominican Republic|DR Congo)/;
-  const named = (it) => (isFeature(it) ? it.ref : (isWorld(it) && THE.test(it.name) ? 'the ' : '') + it.name);
+  const named = (it) => (isFeature(it) ? it.ref : (isWorld(it) && !IDL && THE.test(it.name) ? 'the ' : '') + it.name);
   const shapeOf = (it) => (it.shape && MapView.has(it.shape) ? [it.shape] : []);
   function about(it) {
     if (it.sci) return esc(it.note);
     if (isFeature(it)) {
       const n = it.ref, from = it.locate && it.at ? ' ' + esc(it.locate).replace('{}', '<b>' + esc(it.at) + '</b>') : '';
-      return esc(n[0].toUpperCase() + n.slice(1)) + (it.plural ? ' are ' : ' is ') + esc(it.note) + from;
+      return esc(n[0].toUpperCase() + n.slice(1)) + (IDL ? ' adalah ' : it.plural ? ' are ' : ' is ') + esc(it.note) + from;
     }
-    if (isWorld(it)) return 'The capital of ' + esc(named(it)) + ' is <b>' + esc(it.capital) + '</b>.';
-    if (NOTES[it.name]) return esc(it.name) + ' is ' + esc(NOTES[it.name]);
-    return esc(it.name) + (it.cap ? ' is the capital of <b>' + esc(it.prov) + '</b>.' : ' is a city in <b>' + esc(it.prov) + '</b>.');
+    if (isWorld(it)) return tx('The capital of ' + esc(named(it)) + ' is <b>' + esc(it.capital) + '</b>.', 'Ibu kota ' + esc(named(it)) + ' adalah <b>' + esc(it.capital) + '</b>.');
+    if (NOTES[it.name]) return esc(it.name) + (IDL ? ' adalah ' : ' is ') + esc(NOTES[it.name]);
+    return esc(it.name) + (it.cap ? tx(' is the capital of <b>' + esc(it.prov) + '</b>.', ' adalah ibu kota <b>' + esc(it.prov) + '</b>.') : tx(' is a city in <b>' + esc(it.prov) + '</b>.', ' adalah kota di <b>' + esc(it.prov) + '</b>.'));
   }
 
   // ---- Watch: a scene that moves, with a tab for each step or chain ----
@@ -1494,7 +1524,7 @@
     if (scene) { scene.stop(); scene = null; }
     stopTour();
   }
-  function stopTour() { clearTimeout(tour); tour = 0; $('wTour').textContent = '▶ Show me one by one'; }
+  function stopTour() { clearTimeout(tour); tour = 0; $('wTour').textContent = tx('▶ Show me one by one', '▶ Tunjukkan satu per satu'); }
   // The same view with the hidden place shown, and lit up.
   const revealed = (v) => Object.assign({}, v, { hide: undefined, hl: v.hide !== undefined ? v.hide : v.hl });
   function startWatch(t) {
@@ -1539,7 +1569,7 @@
       if (tour) { stopTour(); return; }
       let k = 0;
       const step = () => { choose(W.tabs[k % W.tabs.length].id); k++; tour = setTimeout(step, 4500); };
-      $('wTour').textContent = '⏸ Stop';
+      $('wTour').textContent = tx('⏸ Stop', '⏸ Berhenti');
       step();
     };
   }
@@ -1566,7 +1596,7 @@
       MapView.mark('on', [it.key], shapeOf(it));
       MapView.say(it.name, it.x, it.y);
       $('xInfo').innerHTML = isWorld(it)
-        ? '<span class="flag" aria-hidden="true">' + flag(it.a2) + '</span><span><b>' + esc(it.name) + '</b><p>Capital: <b>' + esc(it.capital) + '</b> · ' + esc(it.continent) + '</p></span>'
+        ? '<span class="flag" aria-hidden="true">' + flag(it.a2) + '</span><span><b>' + esc(it.name) + '</b><p>' + tx('Capital: ', 'Ibu kota: ') + '<b>' + esc(it.capital) + '</b> · ' + esc(contName(it.continent)) + '</p></span>'
         : '<span class="flag" aria-hidden="true">' + (it.icon || '📍') + '</span><span><b>' + esc(it.name) + '</b><p>' + about(it) + '</p></span>';
     });
   }
@@ -1577,7 +1607,8 @@
   // and the two flag kinds: name the country of a flag ("flag") or pick the flag of a country ("pickflag").
   // A wrong answer gets a second try; a second miss shows the answer.
   let qs = [], qi = 0, tries = 0, results = [], started = 0, locked = false, pool = [], roundNo = 0;
-  const PRAISE = ['Great!', 'Well done!', 'Yes, that is right!', 'Brilliant!', 'Super!', 'Spot on!', 'You got it!'];
+  const PRAISE = IDL ? ['Hebat!', 'Bagus sekali!', 'Ya, itu benar!', 'Luar biasa!', 'Super!', 'Tepat sekali!', 'Kamu berhasil!']
+    : ['Great!', 'Well done!', 'Yes, that is right!', 'Brilliant!', 'Super!', 'Spot on!', 'You got it!'];
   // Bigger or Farther?: pairs whose numbers are different enough (ratio) that the answer is clear. it is the right one.
   function makePairs(lv, size) {
     const c = lv.cmp, items = c.pairs ? c.pairs() : lv.items(), out = [], seen = new Set();
@@ -1613,7 +1644,7 @@
   // What the right answer to a question is. Choices are these values; a flag is chosen by its two-letter code.
   const target = (q) => (q.kind === 'sci' ? q.it.right : q.kind === 'where' ? q.it.at : q.kind === 'speak' ? q.it.lang : q.kind === 'cmp' ? labelOf(q.it) : q.kind === 'habitat' ? HABITAT[q.it.group] : q.kind === 'pickflag' ? q.it.a2 : q.kind === 'capital' && isWorld(q.it) ? q.it.capital : q.it.name);
   const labelOf = (it) => (curLevel && curLevel.cmp && curLevel.cmp.label ? curLevel.cmp.label(it) : it.name);
-  const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
+  const CONTINENTS = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'].map(contName); // the answers of a 'where', as the rows write them
   // Flags that are too alike to be offered together.
   const ALIKE = [['ID', 'MC'], ['RO', 'TD', 'AD']];
   const alike = (a, b) => ALIKE.some((g) => g.includes(a) && g.includes(b));
@@ -1671,7 +1702,7 @@
   }
   function renderProg() {
     $('prog').innerHTML = qs.map((_, k) => '<i class="' + (k < results.length ? (results[k] ? 'ok' : 'miss') : k === qi ? 'now' : '') + '"></i>').join('');
-    $('prog').setAttribute('aria-label', 'Question ' + (qi + 1) + ' of ' + qs.length);
+    $('prog').setAttribute('aria-label', tx('Question ' + (qi + 1) + ' of ' + qs.length, 'Soal ' + (qi + 1) + ' dari ' + qs.length));
   }
   const stageOf = (lv) => (curTopic.stage || '') + lv.name;
   const mood = (m) => { const c = $('coach'); c.setAttribute('class', 'mascot'); void c.getBoundingClientRect(); if (m) { c.classList.add(m); Cendekia.fx.react(c, m); } };
@@ -1693,25 +1724,26 @@
     if (q.kind === 'route') { askRoute(it); return; }
     if (q.kind === 'find') {
       const byFlag = !!curTopic.flags;
-      $('say').textContent = byFlag ? 'Which country has this flag? Tap it on the map.' : curTopic.say ? curTopic.say.find(it) : 'Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.');
+      $('say').textContent = byFlag ? tx('Which country has this flag? Tap it on the map.', 'Negara mana yang punya bendera ini? Ketuk di peta.') : curTopic.say ? curTopic.say.find(it)
+        : tx('Where is ' + named(it) + (world ? '? Tap it on the map.' : '? Tap its dot.'), 'Di mana ' + named(it) + (world ? '? Ketuk di peta.' : '? Ketuk titiknya.'));
       box.innerHTML = (byFlag ? '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>' : '')
-        + '<p class="tapnote">👆 Tap the map' + (world ? ' (the country or its capital dot)' : '') + '</p>';
+        + '<p class="tapnote">👆 ' + tx('Tap the map', 'Ketuk peta') + (world ? tx(' (the country or its capital dot)', ' (negaranya atau titik ibu kotanya)') : '') + '</p>';
       return;
     }
     const flagQ = q.kind === 'flag' || q.kind === 'pickflag' || q.kind === 'order' || q.kind === 'sci'; // these do not light up the answer
     if (!flagQ) MapView.mark('hl', [it.key], shapeOf(it));
     if (!flagQ) MapView.show(it);
-    $('say').textContent = q.kind === 'sci' ? it.text : q.kind === 'flag' ? 'Which country has this flag?'
-      : q.kind === 'pickflag' ? 'Which one is the flag of ' + named(it) + '?'
+    $('say').textContent = q.kind === 'sci' ? it.text : q.kind === 'flag' ? tx('Which country has this flag?', 'Negara mana yang punya bendera ini?')
+      : q.kind === 'pickflag' ? tx('Which one is the flag of ' + named(it) + '?', 'Yang mana bendera ' + named(it) + '?')
       : curTopic.say && curTopic.say[q.kind] ? curTopic.say[q.kind](it)
-      : q.kind === 'which' ? 'Which ' + (world ? 'country' : 'city') + ' is this?'
-      : 'What is the capital of ' + (world ? named(it) : it.prov) + '?';
+      : q.kind === 'which' ? tx('Which ' + (world ? 'country' : 'city') + ' is this?', 'Apa nama ' + (world ? 'negara' : 'kota') + ' ini?')
+      : tx('What is the capital of ' + (world ? named(it) : it.prov) + '?', 'Apa ibu kota ' + (world ? named(it) : it.prov) + '?');
     if (q.kind === 'flag') box.innerHTML = '<p class="bigflag" aria-hidden="true">' + flag(it.a2) + '</p>';
     const opts = document.createElement('div'); opts.className = 'opts';
     choicesFor(q).forEach((v, k) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'opt'; b.dataset.v = v; b.style.animationDelay = k * 0.05 + 's';
-      if (q.kind === 'pickflag') { b.classList.add('flagopt'); b.textContent = flag(v); b.setAttribute('aria-label', 'Flag ' + (k + 1)); } else b.textContent = v;
+      if (q.kind === 'pickflag') { b.classList.add('flagopt'); b.textContent = flag(v); b.setAttribute('aria-label', tx('Flag ', 'Bendera ') + (k + 1)); } else b.textContent = v;
       b.addEventListener('click', () => answer(v === target(q), b));
       opts.appendChild(b);
     });
@@ -1752,10 +1784,10 @@
   const pieceSvg = (g, k) => '<svg viewBox="' + [g.x0, g.y0, g.w, g.h].join(' ') + '" width="' + (g.w * k).toFixed(1) + '" height="' + (g.h * k).toFixed(1) + '" aria-hidden="true"><path d="' + g.d + '"/></svg>';
   function askDrag(it) {
     const g = mainPart(it.shape);
-    $('say').textContent = 'Where does ' + named(it) + ' belong? Drag its piece onto the map.';
+    $('say').textContent = tx('Where does ' + named(it) + ' belong? Drag its piece onto the map.', 'Di mana letak ' + named(it) + '? Seret kepingnya ke peta.');
     const k = Math.min(130 / g.w, 96 / g.h);
-    $('answers').innerHTML = '<div class="tray"><div class="piece" role="img" aria-label="The piece to place">' + pieceSvg(g, k) + '</div></div>'
-      + '<p class="tapnote">…or tap its place on the map</p>';
+    $('answers').innerHTML = '<div class="tray"><div class="piece" role="img" aria-label="' + tx('The piece to place', 'Keping yang harus dipasang') + '">' + pieceSvg(g, k) + '</div></div>'
+      + '<p class="tapnote">' + tx('…or tap its place on the map', '…atau ketuk tempatnya di peta') + '</p>';
     const pc = $('answers').querySelector('.piece');
     let d = null;
     pc.addEventListener('pointerdown', (e) => {
@@ -1801,32 +1833,34 @@
   function cluesFor(it) {
     const out = [];
     if (isWorld(it)) {
-      out.push('I am a country in <b>' + esc(it.continent) + '</b>.');
+      out.push(tx('I am a country in <b>' + esc(it.continent) + '</b>.', 'Aku sebuah negara di <b>' + esc(contName(it.continent)) + '</b>.'));
       const nb = neighboursOf(it);
-      if (nb) out.push(nb.length === 0 ? 'I am an island country. I have <b>no land neighbours</b>.' : 'I share a land border with <b>' + nb.length + (nb.length === 1 ? ' country' : ' countries') + '</b>.');
-      out.push('My capital city starts with the letter <b>' + esc(it.capital[0]) + '</b>.');
-      out.push('This is my flag: <span class="bigflag" aria-hidden="true">' + flag(it.a2) + '</span>');
-      out.push('My capital city is <b>' + esc(it.capital) + '</b>.');
+      if (nb) out.push(nb.length === 0 ? tx('I am an island country. I have <b>no land neighbours</b>.', 'Aku negara kepulauan. Aku <b>tidak punya tetangga di darat</b>.')
+        : tx('I share a land border with <b>' + nb.length + (nb.length === 1 ? ' country' : ' countries') + '</b>.', 'Aku berbatasan darat dengan <b>' + nb.length + ' negara</b>.'));
+      out.push(tx('My capital city starts with the letter <b>' + esc(it.capital[0]) + '</b>.', 'Ibu kotaku diawali huruf <b>' + esc(it.capital[0]) + '</b>.'));
+      out.push(tx('This is my flag: ', 'Ini benderaku: ') + '<span class="bigflag" aria-hidden="true">' + flag(it.a2) + '</span>');
+      out.push(tx('My capital city is <b>' + esc(it.capital) + '</b>.', 'Ibu kotaku adalah <b>' + esc(it.capital) + '</b>.'));
     } else {
-      out.push('I am <b>' + an(it.noun) + '</b>.');
-      if (it.at) out.push((it.noun === 'dish' ? 'I come from ' : it.noun === 'animal' ? 'I live in ' : 'I am in ') + '<b>' + esc(it.at) + '</b>.');
-      out.push((it.plural ? 'We are ' : 'I am ') + esc(it.note.split(it.name).join('…')));
-      if (pool.filter((p) => p.icon === it.icon).length === 1) out.push('This is my picture: <span class="bigflag" aria-hidden="true">' + esc(it.icon) + '</span>');
+      out.push(tx('I am <b>' + an(it.noun) + '</b>.', 'Aku adalah <b>' + esc(it.noun) + '</b>.'));
+      if (it.at) out.push(tx((it.noun === 'dish' ? 'I come from ' : it.noun === 'animal' ? 'I live in ' : 'I am in ') + '<b>' + esc(it.at) + '</b>.',
+        (it.nounEn === 'dish' ? 'Aku berasal dari ' : it.nounEn === 'animal' ? 'Aku tinggal di ' : it.nounEn === 'strait' ? 'Aku terletak di antara ' : 'Aku ada di ') + '<b>' + esc(it.at) + '</b>.'));
+      out.push((IDL ? (it.plural ? 'Kami adalah ' : 'Aku adalah ') : it.plural ? 'We are ' : 'I am ') + esc(it.note.split(it.name).join('…')));
+      if (pool.filter((p) => p.icon === it.icon).length === 1) out.push(tx('This is my picture: ', 'Ini gambarku: ') + '<span class="bigflag" aria-hidden="true">' + esc(it.icon) + '</span>');
     }
     out.push('MAP');
     return out;
   }
   function renderClues(it) {
     const last = clueN >= clueList.length;
-    $('clues').innerHTML = clueList.slice(0, clueN).map((c) => '<li>' + (c === 'MAP' ? 'Here I am on the map!' : c) + '</li>').join('');
+    $('clues').innerHTML = clueList.slice(0, clueN).map((c) => '<li>' + (c === 'MAP' ? tx('Here I am on the map!', 'Ini aku di peta!') : c) + '</li>').join('');
     if (last) { MapView.mark('hl', [it.key], shapeOf(it)); MapView.show(it); }
     $('moreClue').hidden = last;
-    $('say').textContent = last ? 'Last clue! Who am I?' : 'Who am I? Read the clues.';
+    $('say').textContent = last ? tx('Last clue! Who am I?', 'Petunjuk terakhir! Siapa aku?') : tx('Who am I? Read the clues.', 'Siapa aku? Baca petunjuknya.');
   }
   function askWho(it) {
     clueList = cluesFor(it); clueN = 1;
     const q = qs[qi], box = $('answers');
-    box.innerHTML = '<ol class="clues" id="clues" aria-live="polite"></ol><button type="button" class="btn ghost moreclue" id="moreClue">Another clue</button>';
+    box.innerHTML = '<ol class="clues" id="clues" aria-live="polite"></ol><button type="button" class="btn ghost moreclue" id="moreClue">' + tx('Another clue', 'Petunjuk lagi') + '</button>';
     const opts = document.createElement('div'); opts.className = 'opts';
     choicesFor(q).forEach((v, k) => {
       const b = document.createElement('button');
@@ -1842,13 +1876,13 @@
   // ---- Neighbours: tap every country that shares a border ----
   // A first wrong tap is a miss and a second one shows the answer. Tapping the country itself or a neighbour twice does nothing.
   let nbWant = [], nbFound = new Set();
-  const listOf = (items) => items.map(named).join(', ').replace(/, ([^,]*)$/, items.length > 1 ? ' and $1' : ', $1');
+  const listOf = (items) => items.map(named).join(', ').replace(/, ([^,]*)$/, items.length > 1 ? (IDL ? ' dan $1' : ' and $1') : ', $1');
   const cap = (t) => t[0].toUpperCase() + t.slice(1);
-  const nbNote = () => { $('nbNote').textContent = '👆 Found ' + nbFound.size + ' of ' + nbWant.length; };
+  const nbNote = () => { $('nbNote').textContent = tx('👆 Found ' + nbFound.size + ' of ' + nbWant.length, '👆 Ditemukan ' + nbFound.size + ' dari ' + nbWant.length); };
   function askNeigh(it) {
     nbWant = neighboursOf(it); nbFound = new Set();
     MapView.mark('hl', [it.key], shapeOf(it)); MapView.show(it);
-    $('say').textContent = 'Which countries share a border with ' + named(it) + '? Tap them all.';
+    $('say').textContent = tx('Which countries share a border with ' + named(it) + '? Tap them all.', 'Negara mana saja yang berbatasan dengan ' + named(it) + '? Ketuk semuanya.');
     $('answers').innerHTML = '<p class="tapnote" id="nbNote"></p>';
     nbNote();
   }
@@ -1856,13 +1890,13 @@
     const it = qs[qi].it;
     const got = (dot && COUNTRIES.find((c) => c.key === dot)) || (shape && BY_SHAPE.get(shape));
     if (!got || nbFound.has(got)) return;
-    if (got === it) { $('say').textContent = 'That is ' + named(it) + ' itself. Tap its neighbours!'; return; }
+    if (got === it) { $('say').textContent = tx('That is ' + named(it) + ' itself. Tap its neighbours!', 'Itu ' + named(it) + ' sendiri. Ketuk tetangganya!'); return; }
     if (nbWant.includes(got)) {
       nbFound.add(got); sfx.good();
       const have = [...nbFound];
       MapView.mark('no'); MapView.mark('ok', have.map((c) => c.key), have.flatMap(shapeOf));
       MapView.say(got.name, got.x, got.y); nbNote();
-      if (nbFound.size < nbWant.length) { $('say').textContent = 'Yes, ' + named(got) + '! Keep going.'; return; }
+      if (nbFound.size < nbWant.length) { $('say').textContent = tx('Yes, ' + named(got) + '! Keep going.', 'Ya, ' + named(got) + '! Teruskan.'); return; }
       locked = true; results.push(tries === 0); mood('cheer');
       $('say').textContent = pick(PRAISE);
       renderProg();
@@ -1873,13 +1907,13 @@
     MapView.mark('no', [got.key], shapeOf(got)); MapView.say(got.name, got.x, got.y);
     if (tries === 1) {
       CD.weak('omnia', stageOf(curLevel) + ': ' + it.name);
-      $('say').textContent = cap(named(got)) + ' is not next to ' + named(it) + '. Try again!';
+      $('say').textContent = tx(cap(named(got)) + ' is not next to ' + named(it) + '. Try again!', cap(named(got)) + ' tidak bersebelahan dengan ' + named(it) + '. Coba lagi!');
       return;
     }
     locked = true; results.push(false); renderProg();
     MapView.mark('no'); MapView.mark('ok', nbWant.map((c) => c.key), nbWant.flatMap(shapeOf));
-    $('say').textContent = 'Here they are!';
-    $('whyText').textContent = cap(named(it)) + ' shares a border with ' + listOf(nbWant) + '.';
+    $('say').textContent = tx('Here they are!', 'Ini dia!');
+    $('whyText').textContent = tx(cap(named(it)) + ' shares a border with ' + listOf(nbWant) + '.', cap(named(it)) + ' berbatasan dengan ' + listOf(nbWant) + '.');
     $('why').hidden = false;
     $('whyNext').focus();
   }
@@ -1889,10 +1923,10 @@
   function askCmp(q) {
     const c = curLevel.cmp, a = q.it, b = q.other, from = c.from && c.from();
     MapView.mark('hl', [a.key, b.key], shapeOf(a).concat(shapeOf(b)));
-    if (from) { MapView.mark('on', [from.key]); MapView.say(from.name === 'Indonesia' ? 'Jakarta' : from.name, from.x, from.y); }
+    if (from) { MapView.mark('on', [from.key]); MapView.say(from.en === 'Indonesia' ? 'Jakarta' : from.name, from.x, from.y); }
     MapView.fit([a, b].concat(from ? [from] : []), true, true);
     $('say').textContent = c.text;
-    const line = (it) => labelOf(it) + ' is about ' + approx(c.metric(it)) + ' ' + c.unit + '.';
+    const line = (it) => (IDL ? c.fmt.replace('{x}', labelOf(it)).replace('{n}', approx(c.metric(it))) : labelOf(it) + ' is about ' + approx(c.metric(it)) + ' ' + c.unit + '.');
     const opts = document.createElement('div'); opts.className = 'opts';
     shuffle([a, b]).forEach((it, k) => {
       const btn = document.createElement('button');
@@ -1910,10 +1944,10 @@
   // ---- Island Routes: tap the islands of a trip, in order ----
   // A right island in its place is a step; any other island is a miss, and a second miss shows the whole way.
   let rtWant = [], rtI = 0;
-  const rtNote = () => { $('rtNote').textContent = (qs[qi].it.badge || '⛵') + ' ' + (qs[qi].it.unit || 'Islands crossed') + ': ' + rtI + ' of ' + rtWant.length; };
+  const rtNote = () => { $('rtNote').textContent = (qs[qi].it.badge || '⛵') + ' ' + (qs[qi].it.unit || tx('Islands crossed', 'Pulau dilewati')) + ': ' + rtI + tx(' of ', ' dari ') + rtWant.length; };
   function askRoute(r) {
     rtWant = r.via.map((n) => byName(pool, n)); rtI = 0;
-    $('say').textContent = r.text || 'Travel from ' + r.from + ' to ' + r.to + '. Tap each island you cross, in order.';
+    $('say').textContent = r.text || tx('Travel from ' + r.from + ' to ' + r.to + '. Tap each island you cross, in order.', 'Bepergianlah dari ' + r.from + ' ke ' + r.to + '. Ketuk setiap pulau yang kamu lewati, secara berurutan.');
     $('answers').innerHTML = '<p class="tapnote" id="rtNote"></p>';
     rtNote();
   }
@@ -1924,7 +1958,7 @@
       rtI++; sfx.good();
       const done = rtWant.slice(0, rtI);
       MapView.mark('no'); MapView.mark('ok', done.map((c) => c.key)); MapView.trace(done); MapView.say(got.name, got.x, got.y); rtNote();
-      if (rtI < rtWant.length) { $('say').textContent = 'Yes, ' + got.name + '! Which one next?'; return; }
+      if (rtI < rtWant.length) { $('say').textContent = tx('Yes, ' + got.name + '! Which one next?', 'Ya, ' + got.name + '! Yang mana berikutnya?'); return; }
       locked = true; results.push(tries === 0); mood('cheer');
       $('say').textContent = pick(PRAISE);
       renderProg();
@@ -1935,13 +1969,14 @@
     MapView.mark('no', [got.key]); MapView.say(got.name, got.x, got.y);
     if (tries === 1) {
       CD.weak('omnia', stageOf(curLevel) + ': ' + r.name);
-      $('say').textContent = rtWant.includes(got) ? got.name + ' comes later. Which one is next?' : got.name + ' ' + (r.outside || 'is not on the way') + '. Try again!';
+      $('say').textContent = rtWant.includes(got) ? tx(got.name + ' comes later. Which one is next?', got.name + ' dilewati nanti. Yang mana berikutnya?') : got.name + ' ' + (r.outside || tx('is not on the way', 'tidak ada di jalur')) + tx('. Try again!', '. Coba lagi!');
       return;
     }
     locked = true; results.push(false); renderProg();
     MapView.mark('no'); MapView.mark('ok', rtWant.map((c) => c.key)); MapView.trace(rtWant);
-    $('say').textContent = 'Here is the way!';
-    $('whyText').textContent = r.reveal || r.from + ' is on ' + rtWant[0].name + ' and ' + r.to + ' is on ' + rtWant[rtWant.length - 1].name + '. The way is ' + rtWant.map((c) => c.name).join(' → ') + '.';
+    $('say').textContent = tx('Here is the way!', 'Ini jalurnya!');
+    $('whyText').textContent = r.reveal || tx(r.from + ' is on ' + rtWant[0].name + ' and ' + r.to + ' is on ' + rtWant[rtWant.length - 1].name + '. The way is ' + rtWant.map((c) => c.name).join(' → ') + '.',
+      r.from + ' ada di ' + rtWant[0].name + ' dan ' + r.to + ' ada di ' + rtWant[rtWant.length - 1].name + '. Jalurnya adalah ' + rtWant.map((c) => c.name).join(' → ') + '.');
     $('why').hidden = false;
     $('whyNext').focus();
   }
@@ -1971,7 +2006,7 @@
     if (tries === 1) CD.weak('omnia', stageOf(curLevel) + ': ' + it.name);
     if (btn) { btn.classList.add('no'); btn.disabled = true; }
     if (tries === 1) {
-      $('say').textContent = wrongPlace ? 'That is ' + named(wrongPlace) + '. Try again!' : 'Not quite. Have another go!';
+      $('say').textContent = wrongPlace ? tx('That is ' + named(wrongPlace) + '. Try again!', 'Itu ' + named(wrongPlace) + '. Coba lagi!') : tx('Not quite. Have another go!', 'Belum tepat. Coba sekali lagi!');
       return;
     }
     // Second miss: show where it is and what to remember.
@@ -1986,7 +2021,7 @@
       MapView.say(it.name, it.x, it.y);
       MapView.show(it);
     }
-    $('say').textContent = q.kind === 'sci' ? 'This is the answer.' : 'Here it is!';
+    $('say').textContent = q.kind === 'sci' ? tx('This is the answer.', 'Ini jawabannya.') : tx('Here it is!', 'Ini dia!');
     $('whyText').innerHTML = about(it);
     $('why').hidden = false;
     $('whyNext').focus();
@@ -2008,12 +2043,13 @@
     CD.round({ app: 'omnia', stage: stageOf(lv), stars, right, total: qs.length, ms: Date.now() - started });
     show('result');
     sfx.win();
-    $('resTitle').textContent = stars === 3 ? 'Perfect!' : stars === 2 ? 'Great job!' : 'Well done!';
+    $('resTitle').textContent = stars === 3 ? tx('Perfect!', 'Sempurna!') : stars === 2 ? tx('Great job!', 'Kerja bagus!') : tx('Well done!', 'Bagus sekali!');
     $('resStars').innerHTML = [0, 1, 2].map((k) => starSvg(k < stars)).join('');
-    $('resText').textContent = right + ' of ' + qs.length + ' right on the first try.' + (stars < 3 ? ' Play again for ' + (stars === 2 ? 'three' : 'more') + ' stars!' : '');
+    $('resText').textContent = tx(right + ' of ' + qs.length + ' right on the first try.' + (stars < 3 ? ' Play again for ' + (stars === 2 ? 'three' : 'more') + ' stars!' : ''),
+      right + ' dari ' + qs.length + ' benar pada percobaan pertama.' + (stars < 3 ? ' Main lagi untuk mendapat ' + (stars === 2 ? 'tiga' : 'lebih banyak') + ' bintang!' : ''));
     const gained = STICKERS.filter((k) => k.at > before && k.at <= S.stars);
     $('resGift').hidden = !gained.length;
-    if (gained.length) $('resGift').innerHTML = '<span class="face" aria-hidden="true">' + gained[gained.length - 1].pic + '</span>New sticker: ' + gained[gained.length - 1].name + '!';
+    if (gained.length) $('resGift').innerHTML = '<span class="face" aria-hidden="true">' + gained[gained.length - 1].pic + '</span>' + tx('New sticker: ', 'Stiker baru: ') + gained[gained.length - 1].name + '!';
     const i = curTopic.levels.indexOf(lv);
     $('resNext').hidden = i + 1 >= curTopic.levels.length;
     if (stars === 3) CD.fx.confetti(24, { glyphs: ['⭐', '🎉', '✨', '🌍', '🏝️', '🗺️'] });

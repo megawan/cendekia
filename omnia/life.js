@@ -9,6 +9,7 @@
 (function () {
   'use strict';
   var S = window.OMNIA_SCIENCE;
+  var tx = window.Cendekia.t, IDL = window.Cendekia.lang === 'id';
   var NS = 'http://www.w3.org/2000/svg', PI = Math.PI, D = PI / 180, W = 400, H = 340;
   var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
   var lib = null;
@@ -45,6 +46,25 @@
       ]
     }
   };
+
+  // The Indonesian name, and for each stage: name, time, text, clue.
+  var CYCLES_ID = {
+    butterfly: { name: 'Kupu-kupu', stages: [
+      ['Telur', 'sekitar 1 minggu', 'Seekor induk kupu-kupu meletakkan telur-telur kecil di sehelai daun. Di dalam setiap telur, seekor ulat sedang tumbuh.', 'Ukurannya kecil dan bulat, menempel di daun, dengan seekor bayi di dalamnya.'],
+      ['Ulat', '2 sampai 4 minggu', 'Seekor ulat kecil menetas. Ia memakan daun sepanjang hari dan tumbuh dengan cepat, dan ia berganti kulit berkali-kali.', 'Ia punya banyak kaki, memakan daun sepanjang hari, dan tumbuh sangat cepat.'],
+      ['Kepompong', '1 sampai 2 minggu', 'Ulat itu bergantung di ranting dan kulitnya berubah menjadi selubung keras. Di dalamnya, tubuhnya berubah total.', 'Ia bergantung sangat diam di ranting sementara tubuhnya berubah di dalam.'],
+      ['Kupu-kupu', '2 sampai 4 minggu', 'Kepompong terbuka dan seekor kupu-kupu keluar. Ia mengeringkan sayapnya, terbang untuk menghisap nektar, dan bertelur lagi.', 'Ia punya empat sayap berwarna-warni dan menghisap nektar dari bunga.']] },
+    frog: { name: 'Katak', stages: [
+      ['Telur katak', '1 sampai 3 minggu', 'Seekor induk katak bertelur banyak telur berlendir seperti agar-agar di dalam air. Setiap telur punya titik hitam kecil: seekor bayi katak.', 'Banyak bola agar-agar dengan titik hitam mengapung di kolam.'],
+      ['Kecebong', 'sekitar 6 minggu', 'Seekor kecebong menetas. Ia tidak punya kaki, berenang dengan ekornya, bernapas dengan insang seperti ikan, dan memakan tumbuhan kecil.', 'Ia tampak seperti ikan kecil dengan kepala bulat dan ekor panjang, tetapi ia akan menjadi katak.'],
+      ['Kecebong berkaki', 'sekitar 4 minggu', 'Kaki belakang tumbuh lebih dulu, lalu kaki depan. Paru-paru juga mulai tumbuh, jadi ia bisa bernapas di udara.', 'Ia masih punya ekor, tetapi sekarang ia punya kaki juga.'],
+      ['Katak muda', 'sekitar 4 minggu', 'Seekor katak mungil dengan ekor pendek yang makin menyusut. Ia memanjat keluar dari air dan melompat ke sana kemari.', 'Seekor katak mungil yang ekornya hampir hilang.'],
+      ['Katak', 'beberapa tahun', 'Ekornya sudah hilang. Katak bernapas di udara, menangkap serangga dengan lidahnya yang panjang dan lengket, dan bertelur di dalam air.', 'Ia melompat, bernapas di udara, dan menangkap lalat dengan lidahnya.']] }
+  };
+  if (IDL) Object.keys(CYCLES_ID).forEach(function (id) {
+    CYCLES[id].name = CYCLES_ID[id].name;
+    CYCLES_ID[id].stages.forEach(function (s, i) { var st = CYCLES[id].stages[i]; st.name = s[0]; st.time = s[1]; st.text = s[2]; st.clue = s[3]; });
+  });
 
   // ---- Drawings, each around (0, 0) in a space about 80 across ----
   var eye = function (x, y, r) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#fff"/><circle cx="' + (x + r * 0.2) + '" cy="' + y + '" r="' + r * 0.5 + '" fill="#1c2038"/>'; };
@@ -105,7 +125,7 @@
   function mount(host, opts) {
     var labels = !!opts.labels, svg = document.createElementNS(NS, 'svg'), anims = [], token = 0, cur = null, step = -1, dead = false;
     svg.setAttribute('class', 'scene life'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.style.setProperty('--ar', (W / H).toFixed(3));
-    if (labels) { svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'A life cycle, going round'); } else svg.setAttribute('aria-hidden', 'true');
+    if (labels) { svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', tx('A life cycle, going round', 'Daur hidup, berputar')); } else svg.setAttribute('aria-hidden', 'true');
     host.textContent = ''; host.appendChild(svg);
     var q = function (sel) { return svg.querySelectorAll(sel); };
 
@@ -137,8 +157,8 @@
       q('.stg').forEach(function (g) { var k = +g.dataset.i; g.classList.toggle('lit', i === k); g.classList.toggle('dim', i >= 0 && i !== k); });
       if (!labels) return;
       var c = CYCLES[cur], name = svg.querySelector('#lcName'), time = svg.querySelector('#lcTime');
-      name.textContent = i >= 0 ? c.stages[i].time : c.name + ' life cycle';
-      time.textContent = i >= 0 ? 'stage ' + (i + 1) + ' of ' + c.stages.length : 'tap a stage';
+      name.textContent = i >= 0 ? c.stages[i].time : tx(c.name + ' life cycle', 'Daur hidup ' + c.name.toLowerCase());
+      time.textContent = i >= 0 ? tx('stage ' + (i + 1) + ' of ' + c.stages.length, 'tahap ' + (i + 1) + ' dari ' + c.stages.length) : tx('tap a stage', 'ketuk sebuah tahap');
     }
     function motion(draw) {
       var t = ++token;
@@ -183,17 +203,17 @@
   // ---- The watch screen ----
   var tabInfo = S.tabInfo, esc = S.esc;
   S.kinds.life = {
-    title: 'Watch the life cycles',
+    title: tx('Watch the life cycles', 'Lihat daur hidup'),
     tabs: ['butterfly', 'frog'].map(function (id) { return { id: id, pic: CYCLES[id].pic, label: CYCLES[id].name }; }),
-    intro: tabInfo('🔄', 'A life cycle', 'Animals change a lot as they grow. Pick a butterfly or a frog, then pick a stage to stop there.'),
+    intro: tabInfo('🔄', tx('A life cycle', 'Daur hidup'), tx('Animals change a lot as they grow. Pick a butterfly or a frog, then pick a stage to stop there.', 'Hewan berubah banyak saat tumbuh. Pilih kupu-kupu atau katak, lalu pilih satu tahap untuk menghentikannya di sana.')),
     view: function (id) { return { mode: id }; },
     info: function (id, at) {
       var c = CYCLES[id];
-      if (at === undefined || at === null) return tabInfo(c.pic, c.name + ' life cycle', 'It goes round and round: ' + esc(c.stages.map(function (s) { return s.name.toLowerCase(); }).join(', ')) + ' and back to the start.');
+      if (at === undefined || at === null) return tabInfo(c.pic, tx(c.name + ' life cycle', 'Daur hidup ' + c.name.toLowerCase()), tx('It goes round and round: ', 'Ia berputar terus: ') + esc(c.stages.map(function (s) { return s.name.toLowerCase(); }).join(', ')) + tx(' and back to the start.', ' dan kembali ke awal.'));
       var st = c.stages[at];
       return tabInfo(c.pic, (at + 1) + '. ' + st.name, esc(st.text) + ' <i>(' + esc(st.time) + ')</i>');
     },
-    picks: function (id) { return [{ id: null, label: '▶ Keep going' }].concat(CYCLES[id].stages.map(function (s, k) { return { id: k, label: s.name }; })); }
+    picks: function (id) { return [{ id: null, label: tx('▶ Keep going', '▶ Lanjutkan') }].concat(CYCLES[id].stages.map(function (s, k) { return { id: k, label: s.name }; })); }
   };
 
   // ---- Questions ----
@@ -202,8 +222,8 @@
     var c = CYCLES[mode], names = c.stages.map(function (s) { return s.name; }), n = names.length, out = [], low = function (x) { return x.toLowerCase(); };
     c.stages.forEach(function (st, i) {
       var others = mix(names.filter(function (x) { return x !== st.name; })).slice(0, 3), note = st.name + ': ' + st.text;
-      out.push(ask(st.name, 'Which stage of the ' + low(c.name) + '\'s life is this?', st.name, others, note, { mode: mode, at: i }));
-      out.push(ask(st.name + ' clue', st.clue + ' Which stage is this?', st.name, others, note, { mode: mode }));
+      out.push(ask(st.name, tx('Which stage of the ' + low(c.name) + '\'s life is this?', 'Tahap kehidupan ' + low(c.name) + ' yang manakah ini?'), st.name, others, note, { mode: mode, at: i }));
+      out.push(ask(st.name + tx(' clue', ' petunjuk'), st.clue + tx(' Which stage is this?', ' Tahap manakah ini?'), st.name, others, note, { mode: mode }));
     });
     return out;
   }
@@ -211,12 +231,22 @@
     var c = CYCLES[mode], names = c.stages.map(function (s) { return s.name; }), n = names.length, out = [];
     c.stages.forEach(function (st, i) {
       var next = c.stages[(i + 1) % n], prev = c.stages[(i + n - 1) % n];
-      out.push(ask('After ' + st.name, 'What comes right after the ' + st.name.toLowerCase() + '?', next.name, mix(names.filter(function (x) { return x !== next.name; })).slice(0, 3), st.name + ' comes before ' + next.name.toLowerCase() + '. ' + next.text, { mode: mode, at: i }));
-      out.push(ask('Before ' + st.name, 'What comes right before the ' + st.name.toLowerCase() + '?', prev.name, mix(names.filter(function (x) { return x !== prev.name; })).slice(0, 3), prev.name + ' comes before ' + st.name.toLowerCase() + '. ' + st.text, { mode: mode, at: i }));
+      out.push(ask(tx('After ', 'Setelah ') + st.name, tx('What comes right after the ' + st.name.toLowerCase() + '?', 'Apa yang datang tepat setelah ' + st.name.toLowerCase() + '?'), next.name, mix(names.filter(function (x) { return x !== next.name; })).slice(0, 3),
+        tx(st.name + ' comes before ' + next.name.toLowerCase() + '. ', st.name + ' datang sebelum ' + next.name.toLowerCase() + '. ') + next.text, { mode: mode, at: i }));
+      out.push(ask(tx('Before ', 'Sebelum ') + st.name, tx('What comes right before the ' + st.name.toLowerCase() + '?', 'Apa yang datang tepat sebelum ' + st.name.toLowerCase() + '?'), prev.name, mix(names.filter(function (x) { return x !== prev.name; })).slice(0, 3),
+        tx(prev.name + ' comes before ' + st.name.toLowerCase() + '. ', prev.name + ' datang sebelum ' + st.name.toLowerCase() + '. ') + st.text, { mode: mode, at: i }));
     });
     return out;
   }
-  var BFACTS = [
+  var BFACTS = (IDL ? [
+    ['Metamorfosis', 'Apa sebutan untuk perubahan besar dari ulat menjadi kupu-kupu?', 'Metamorfosis', ['Migrasi', 'Hibernasi', 'Penguapan'], 'Metamorfosis berarti perubahan bentuk tubuh secara menyeluruh, ketika ulat menjadi kupu-kupu.', 3],
+    ['Makanan ulat', 'Apa yang dimakan ulat?', 'Daun', ['Nektar', 'Serangga lain', 'Sari buah'], 'Ulat memakan daun sepanjang hari, supaya ia bisa tumbuh cukup besar untuk berubah.', 1],
+    ['Minuman kupu-kupu', 'Apa yang diminum kupu-kupu?', 'Nektar dari bunga', ['Sari daun', 'Air berlumpur', 'Susu'], 'Kupu-kupu menyedot nektar yang manis lewat tabung panjang, yaitu lidahnya.', 3],
+    ['Sayap', 'Berapa sayap yang dimiliki kupu-kupu?', 'Empat', ['Dua', 'Enam', 'Delapan'], 'Kupu-kupu punya dua sayap di setiap sisi: empat semuanya.', 3],
+    ['Kaki', 'Berapa kaki yang dimiliki kupu-kupu?', 'Enam', ['Dua', 'Empat', 'Delapan'], 'Kupu-kupu adalah serangga, dan setiap serangga punya enam kaki.', 3],
+    ['Tempat berubah', 'Di mana ulat berubah menjadi kupu-kupu?', 'Di dalam kepompong', ['Di dalam telur', 'Di bawah tanah', 'Di dalam air'], 'Dengan aman di dalam kepompong, tubuh ulat berubah menjadi kupu-kupu.', null],
+    ['Tempat bertelur', 'Di mana induk kupu-kupu bertelur?', 'Di tanaman', ['Di dalam air', 'Di bawah tanah', 'Di dalam sarang'], 'Ulat membutuhkan daun untuk dimakan begitu menetas, jadi telurnya diletakkan di tanaman.', 0]
+  ] : [
     ['Metamorphosis', 'What do we call the big change from a caterpillar to a butterfly?', 'Metamorphosis', ['Migration', 'Hibernation', 'Evaporation'], 'Metamorphosis means a complete change of body shape, as the caterpillar becomes a butterfly.', 3],
     ['What a caterpillar eats', 'What does a caterpillar eat?', 'Leaves', ['Nectar', 'Other insects', 'Fruit juice'], 'A caterpillar eats leaves all day, so it can grow big enough to change.', 1],
     ['What a butterfly drinks', 'What does a butterfly drink?', 'Nectar from flowers', ['Leaf juice', 'Muddy water', 'Milk'], 'A butterfly sucks up sweet nectar through a long tube, its tongue.', 3],
@@ -224,8 +254,16 @@
     ['Legs', 'How many legs does a butterfly have?', 'Six', ['Two', 'Four', 'Eight'], 'A butterfly is an insect, and every insect has six legs.', 3],
     ['Where it changes', 'Where does a caterpillar change into a butterfly?', 'Inside the chrysalis', ['Inside the egg', 'Under the ground', 'In the water'], 'Safe inside the chrysalis, the body of the caterpillar turns into a butterfly.', null],
     ['Where eggs are laid', 'Where does a mother butterfly lay her eggs?', 'On a plant', ['In the water', 'Under the ground', 'In a nest'], 'The caterpillars need leaves to eat as soon as they hatch, so the eggs are laid on a plant.', 0]
-  ].map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], { mode: 'butterfly', at: f[5] }); });
-  var FFACTS = [
+  ]).map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], { mode: 'butterfly', at: f[5] }); });
+  var FFACTS = (IDL ? [
+    ['Tempat katak bertelur', 'Di mana sebagian besar katak bertelur?', 'Di dalam air', ['Di atas sarang', 'Di bawah pasir', 'Di atas batu yang terkena sinar matahari'], 'Sebagian besar katak bertelur di kolam, tempat kecebong bisa berenang.', 0],
+    ['Bayi katak', 'Apa sebutan untuk bayi katak yang hidup di dalam air?', 'Kecebong', ['Ulat', 'Katak muda', 'Kepompong'], 'Kecebong hidup di dalam air, berenang dengan ekornya, dan pada awalnya tidak punya kaki.', null],
+    ['Berenang', 'Apa yang dipakai kecebong muda untuk berenang?', 'Ekornya', ['Kakinya', 'Sayapnya', 'Lengannya'], 'Kecebong menggoyangkan ekornya dari sisi ke sisi, seperti ikan.', 1],
+    ['Bernapas', 'Apa yang dipakai kecebong muda untuk bernapas?', 'Insang', ['Paru-paru', 'Hidungnya', 'Ekornya'], 'Kecebong muda bernapas di bawah air dengan insang. Paru-paru tumbuh kemudian.', 1],
+    ['Kaki pertama', 'Kaki mana yang tumbuh lebih dulu pada kecebong?', 'Kaki belakang', ['Kaki depan', 'Keduanya sekaligus', 'Sayap'], 'Kaki belakang muncul lebih dulu, lalu kaki depan.', 2],
+    ['Ekor', 'Apa yang terjadi pada ekor katak muda?', 'Ekornya memendek dan menghilang', ['Ekornya memanjang', 'Ekornya berubah menjadi sayap', 'Ekornya berubah menjadi kaki'], 'Katak muda memakai ekornya sebagai makanan selagi tumbuh, sampai ekor itu hilang.', 3],
+    ['Menangkap lalat', 'Apa yang dipakai katak dewasa untuk menangkap lalat?', 'Lidahnya yang panjang dan lengket', ['Ekornya', 'Giginya', 'Kaki depannya'], 'Katak menjulurkan lidahnya yang panjang dan lengket, lalu menarik serangga itu ke mulutnya.', 4]
+  ] : [
     ['Where frogs lay eggs', 'Where do most frogs lay their eggs?', 'In water', ['Up in a nest', 'Under the sand', 'On a rock in the sun'], 'Most frogs lay their eggs in ponds, where the tadpoles can swim.', 0],
     ['Baby frog', 'What do we call a baby frog that lives in the water?', 'A tadpole', ['A caterpillar', 'A froglet', 'A chrysalis'], 'A tadpole lives in the water, swims with its tail and has no legs at first.', null],
     ['Swimming', 'What does a young tadpole use to swim?', 'Its tail', ['Its legs', 'Its wings', 'Its arms'], 'A tadpole wags its tail from side to side, like a fish.', 1],
@@ -233,7 +271,7 @@
     ['First legs', 'Which legs does a tadpole grow first?', 'The back legs', ['The front legs', 'Both at the same time', 'Wings'], 'The back legs come first, then the front legs.', 2],
     ['The tail', 'What happens to the tail of a froglet?', 'It gets shorter and goes away', ['It gets longer', 'It turns into wings', 'It turns into legs'], 'The froglet uses up its tail as food while it grows, until it is gone.', 3],
     ['Catching flies', 'What does an adult frog use to catch flies?', 'Its long sticky tongue', ['Its tail', 'Its teeth', 'Its front legs'], 'A frog flicks out its long sticky tongue and pulls the insect into its mouth.', 4]
-  ].map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], { mode: 'frog', at: f[5] }); });
+  ]).map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], { mode: 'frog', at: f[5] }); });
 
   S.questions['lc.butterfly'] = function () { return stageQuestions('butterfly').concat(BFACTS); };
   S.questions['lc.frog'] = function () { return stageQuestions('frog').concat(FFACTS); };
