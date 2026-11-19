@@ -1255,7 +1255,7 @@
         const c = document.createElement('div'); c.className = 'tcol';
         c.innerHTML = '<h3>' + title + '</h3>'; el.className = 'tstack'; c.appendChild(el);
         const st = document.createElement('div'); st.className = 'tstep';
-        st.innerHTML = '<button type="button" aria-label="' + t('One less ', 'Kurangi satu ') + title + '">−</button><b aria-live="polite">0</b><button type="button" aria-label="' + t('One more ', 'Tambah satu ') + title + '">+</button>';
+        st.innerHTML = '<button type="button" aria-label="' + CD.t('One less ', 'Kurangi satu ') + title + '">−</button><b aria-live="polite">0</b><button type="button" aria-label="' + CD.t('One more ', 'Tambah satu ') + title + '">+</button>';
         st.children[0].addEventListener('click', () => { if (!locked) { add(-1); sfx.tap(); } });
         st.children[2].addEventListener('click', () => { if (!locked) { add(1); sfx.tap(); } });
         c.appendChild(st); grid.appendChild(c); return st.children[1];
