@@ -3516,7 +3516,7 @@
       sfx.drop();
       const now = dist.get(cur.join(''));
       if (!now) {
-        done = true; paint(); box.classList.add('done'); drags.forEach((d) => d.enable(false));
+        done = true; paint(); box.classList.add('done');
         sfx.whir(); solved(standard ? 3200 : 1600);
         if (standard) qSay('The fewest for ' + n + ' disks is ' + par + ' moves. One more disk doubles that and adds one!', 'cheer');
         return;
