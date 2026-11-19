@@ -7,6 +7,7 @@ import type { HTMLMotionProps, MotionProps, TargetAndTransition, Transition } fr
 import { CircleCheck, CircleX, Info, TriangleAlert, X } from "lucide-react";
 import { motionTokens } from "../lib/motion-tokens";
 import styles from "./toast-stack.module.css";
+import { t } from "../../../lang";
 
 export type ToastType = "success" | "info" | "warning" | "error" | "loading";
 
@@ -383,7 +384,7 @@ function ToastItem({ toast, target, expanded, front, hidden, paused, reduce, sto
             <button type="button" className={styles.action} onClick={runAction}>{toast.action.label}</button>
           </motion.div> : null}
         </AnimatePresence>
-        <button ref={closeRef} type="button" className={styles.close} aria-label="Dismiss notification" onClick={() => store.dismiss(id)}>
+        <button ref={closeRef} type="button" className={styles.close} aria-label={t("Dismiss notification", "Tutup notifikasi")} onClick={() => store.dismiss(id)}>
           <X width={16} height={16} strokeWidth={1.75} aria-hidden="true" />
         </button>
       </motion.div>
@@ -391,7 +392,7 @@ function ToastItem({ toast, target, expanded, front, hidden, paused, reduce, sto
   </motion.li>;
 }
 
-export function ToastStack({ label = "Notifications", position = "bottom-right", contained = false, visibleToasts = 3, hotkey = true, className }: ToastStackProps) {
+export function ToastStack({ label = t("Notifications", "Notifikasi"), position = "bottom-right", contained = false, visibleToasts = 3, hotkey = true, className }: ToastStackProps) {
   const store = useStore();
   const toasts = useSyncExternalStore(store.subscribe, store.getSnapshot, getServerSnapshot);
   const reduce = !!useReducedMotion();

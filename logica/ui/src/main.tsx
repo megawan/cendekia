@@ -6,6 +6,7 @@ import { BottomSheet, BottomSheetClose } from "./components/arc/bottom-sheet/bot
 import { AnimatedCounter } from "./components/arc/animated-counter/animated-counter";
 import { ToastStack, ToastStackProvider, useToastStack, type ToastOptions } from "./components/arc/toast-stack/toast-stack";
 import "./components/arc/foundation.css";
+import { t } from "./lang";
 
 // Bridge between Logica's plain script and the React components. Everything lives under .arc-ui so the
 // Arc tokens (--accent, --radius, ...) never touch Logica's own variables.
@@ -63,7 +64,7 @@ createRoot(host).render(
   <ToastStackProvider duration={4500}>
     <ToastBridge />
     <SheetBridge />
-    <ToastStack position="bottom-center" label="Notifications" />
+    <ToastStack position="bottom-center" label={t("Notifications", "Notifikasi")} />
   </ToastStackProvider>,
 );
 
@@ -90,8 +91,8 @@ window.LogicaUI = {
     rootFor(el).render(<AnimatedCounter value={value} suffix={suffix} />);
   },
   progress(el, total, done) {
-    const steps = Array.from({ length: total }, (_, k) => ({ id: `q${k + 1}`, label: `Question ${k + 1}` }));
-    rootFor(el).render(<Stepper steps={steps} current={done} compact label="Questions" completeLabel="All done!" />);
+    const steps = Array.from({ length: total }, (_, k) => ({ id: `q${k + 1}`, label: t(`Question ${k + 1}`, `Soal ${k + 1}`) }));
+    rootFor(el).render(<Stepper steps={steps} current={done} compact label={t("Questions", "Soal")} completeLabel={t("All done!", "Selesai semua!")} />);
   },
   reorder(el, { items, hinted = [], label, onReorder }) {
     rootFor(el).render(
