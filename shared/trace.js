@@ -13,6 +13,7 @@
   'use strict';
   var root = window.Cendekia = window.Cendekia || {};
   var GRID = 128, PASS = 0.8, PART = 0.5;
+  function tr(en, id) { return root.t ? root.t(en, id) : en; } // the page's language, when profile.js is loaded
   var styled = false;
   function style() {
     if (styled) return; styled = true;
@@ -40,7 +41,7 @@
     box.appendChild(guide); box.appendChild(ink);
     var meter = document.createElement('div'); meter.className = 'tr-meter'; meter.innerHTML = '<i></i>';
     var msg = document.createElement('p'); msg.className = 'tr-msg'; msg.setAttribute('aria-live', 'polite');
-    var again = document.createElement('button'); again.type = 'button'; again.className = 'btn ghost'; again.textContent = o.clearText || 'Start again';
+    var again = document.createElement('button'); again.type = 'button'; again.className = 'btn ghost'; again.textContent = o.clearText || tr('Start again', 'Mulai lagi');
     var wrap = document.createElement('div'); wrap.className = 'tr';
     wrap.appendChild(box); wrap.appendChild(meter); wrap.appendChild(msg); wrap.appendChild(again);
     host.appendChild(wrap);
@@ -135,13 +136,13 @@
       if (m.coverage >= PASS && m.partsOk && m.accuracy >= 0.6) {
         finished = true; box.classList.add('done'); draw();
         if (root.fx) { root.fx.pop(box); root.fx.burst(box); } // shared/motion.js, when the app loads it
-        msg.textContent = o.doneText || 'Well done!';
+        msg.textContent = o.doneText || tr('Well done!', 'Bagus sekali!');
         var stars = m.accuracy >= 0.85 ? 3 : m.accuracy >= 0.72 ? 2 : 1;
         if (o.onDone) o.onDone({ stars: stars, coverage: m.coverage, accuracy: m.accuracy, ms: Date.now() - started });
       } else if (m.ink > GRID * GRID * 0.02 && m.accuracy < 0.5) {
-        msg.textContent = o.offText || 'Stay on the letter.';
+        msg.textContent = o.offText || tr('Stay on the letter.', 'Tetap di atas hurufnya.');
       } else if (m.coverage >= PASS && !m.partsOk) {
-        msg.textContent = o.partText || 'Something is missing. Look for a dot.';
+        msg.textContent = o.partText || tr('Something is missing. Look for a dot.', 'Ada yang kurang. Cari titiknya.');
       } else {
         msg.textContent = '';
       }
@@ -212,7 +213,7 @@
 
     return {
       set: function (t) {
-        text = t; ink.setAttribute('aria-label', (o.label || 'Tracing area for') + ' ' + t);
+        text = t; ink.setAttribute('aria-label', (o.label || tr('Tracing area for', 'Area menelusuri')) + ' ' + t);
         buildMask(); reset();
         // The font may arrive after the first draw; the shape then changes, so the mask is built again.
         if (document.fonts && document.fonts.load) {

@@ -8,6 +8,9 @@
 //   Cendekia.select(id)            makes another child the current one (for apps with their own child picker)
 //   Cendekia.calm()                true when animation should be off (the device asks for it, or Accessibility has "Calm")
 //   Cendekia.access()              opens the Accessibility panel (text size, contrast, readable letters, calm)
+//   Cendekia.lang                  'en' or 'id', the interface language (the 🌐 button beside Aa switches it and reloads)
+//   Cendekia.t(en, id)             the Indonesian text in Indonesian, the English text otherwise
+//   [data-id="…"]                  in HTML: the Indonesian text of an element whose markup holds the English text
 //
 // Everything stays in this browser. The first time the script runs it creates one child, "Child 1", and copies the
 // progress the apps saved before profiles existed into it, so nothing is lost.
@@ -26,6 +29,26 @@
   function del(k) { delete memory[k]; try { localStorage.removeItem(k); } catch (e) { /* private mode */ } }
   function load(k, fallback) { try { var v = JSON.parse(get(k)); return v === null || v === undefined ? fallback : v; } catch (e) { return fallback; } }
   function save(k, v) { set(k, JSON.stringify(v)); }
+
+  // ---- Language ----
+  // The interface is English by default. Lesson content (Aksara's words, Lexica's Indonesian) is not affected.
+  var LANG = 'cendekia.lang.v1';
+  var lang = get(LANG) === 'id' ? 'id' : 'en';
+  function t(en, id) { return lang === 'id' && id !== undefined ? id : en; }
+  document.documentElement.lang = lang;
+  function translatePage() {
+    if (lang !== 'id') return;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-id]'), function (n) {
+      if (n.tagName === 'META') n.setAttribute('content', n.getAttribute('data-id'));
+      else n.textContent = n.getAttribute('data-id');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-id-label]'), function (n) { n.setAttribute('aria-label', n.getAttribute('data-id-label')); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-id-title]'), function (n) { n.setAttribute('title', n.getAttribute('data-id-title')); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-id-placeholder]'), function (n) { n.setAttribute('placeholder', n.getAttribute('data-id-placeholder')); });
+  }
+  // Runs now, while the page's own scripts (which come after this one) have not drawn anything yet, so they can overwrite it.
+  if (document.body) translatePage(); else document.addEventListener('DOMContentLoaded', translatePage);
+  function switchLang() { set(LANG, lang === 'id' ? 'en' : 'id'); location.reload(); }
 
   var data = load(PROFILES, null);
   if (!data || !Array.isArray(data.list)) data = { list: [], cur: null };
@@ -155,8 +178,8 @@
 
   function picker() {
     modal(function (card, close) {
-      card.setAttribute('aria-label', 'Choose a child');
-      card.appendChild(el('h2', '', 'Who is learning?'));
+      card.setAttribute('aria-label', t('Choose a child', 'Pilih anak'));
+      card.appendChild(el('h2', '', t('Who is learning?', 'Siapa yang belajar?')));
       var list = el('div', 'cd-list'); card.appendChild(list);
       data.list.forEach(function (p) {
         var b = el('button', 'cd-kid' + (p.id === data.cur ? ' on' : '')); b.type = 'button';
@@ -164,19 +187,19 @@
         b.addEventListener('click', function () { if (p.id !== data.cur) { data.cur = p.id; save(PROFILES, data); location.reload(); } else close(); });
         list.appendChild(b);
       });
-      var addBtn = el('button', 'cd-btn', '＋ Add a child'); addBtn.type = 'button'; card.appendChild(addBtn);
+      var addBtn = el('button', 'cd-btn', t('＋ Add a child', '＋ Tambah anak')); addBtn.type = 'button'; card.appendChild(addBtn);
       var form = el('div'); form.hidden = true; card.appendChild(form);
-      var name = el('input'); name.type = 'text'; name.maxLength = 16; name.placeholder = 'Name'; name.setAttribute('aria-label', 'Child\'s name');
+      var name = el('input'); name.type = 'text'; name.maxLength = 16; name.placeholder = t('Name', 'Nama'); name.setAttribute('aria-label', t('Child\'s name', 'Nama anak'));
       var chosen = AVATARS[data.list.length % AVATARS.length];
       var avs = el('div', 'cd-avs');
       AVATARS.forEach(function (a) {
-        var b = el('button', a === chosen ? 'on' : '', a); b.type = 'button'; b.setAttribute('aria-label', 'Picture ' + a);
+        var b = el('button', a === chosen ? 'on' : '', a); b.type = 'button'; b.setAttribute('aria-label', t('Picture ', 'Gambar ') + a);
         b.addEventListener('click', function () { chosen = a; Array.prototype.forEach.call(avs.children, function (x) { x.classList.toggle('on', x === b); }); });
         avs.appendChild(b);
       });
       var row = el('div', 'cd-row');
-      var ok = el('button', 'cd-btn main', 'Save'); ok.type = 'button';
-      var no = el('button', 'cd-btn', 'Cancel'); no.type = 'button';
+      var ok = el('button', 'cd-btn main', t('Save', 'Simpan')); ok.type = 'button';
+      var no = el('button', 'cd-btn', t('Cancel', 'Batal')); no.type = 'button';
       row.append(ok, no); form.append(name, avs, row);
       addBtn.addEventListener('click', function () { addBtn.hidden = true; form.hidden = false; name.focus(); });
       no.addEventListener('click', function () { form.hidden = true; addBtn.hidden = false; });
@@ -184,7 +207,7 @@
         if (!name.value.trim()) { name.focus(); return; }
         var p = add(name.value, chosen); data.cur = p.id; save(PROFILES, data); location.reload();
       });
-      var shut = el('button', 'cd-btn', 'Close'); shut.type = 'button'; shut.style.marginTop = '10px';
+      var shut = el('button', 'cd-btn', t('Close', 'Tutup')); shut.type = 'button'; shut.style.marginTop = '10px';
       shut.addEventListener('click', close); card.appendChild(shut);
     });
   }
@@ -194,29 +217,39 @@
     var p = current();
     target.innerHTML = '';
     var b = el('button', 'cd-chip'); b.type = 'button';
-    b.setAttribute('aria-label', 'Learning now: ' + p.name + '. Tap to change the child.');
+    b.setAttribute('aria-label', t('Learning now: ' + p.name + '. Tap to change the child.', 'Sedang belajar: ' + p.name + '. Ketuk untuk mengganti anak.'));
     b.appendChild(el('span', 'cd-av', p.avatar)); b.appendChild(el('span', '', p.name)); b.appendChild(el('span', '', '▾'));
     b.lastChild.setAttribute('aria-hidden', 'true');
     b.addEventListener('click', picker);
     target.appendChild(b);
     var a = el('button', 'cd-access', 'Aa'); a.type = 'button';
-    a.setAttribute('aria-label', 'Accessibility settings');
+    a.setAttribute('aria-label', t('Accessibility settings', 'Pengaturan aksesibilitas'));
     a.style.marginLeft = '8px';
     a.addEventListener('click', accessPanel);
     target.appendChild(a);
+    target.appendChild(langButton());
+  }
+
+  // The button shows the language the page is in; tapping it switches to the other one.
+  function langButton() {
+    var b = el('button', 'cd-access', '🌐 ' + (lang === 'id' ? 'ID' : 'EN')); b.type = 'button';
+    b.style.marginLeft = '8px'; b.style.padding = '0 12px';
+    b.setAttribute('aria-label', lang === 'id' ? 'Bahasa: Indonesia. Ketuk untuk ganti ke bahasa Inggris.' : 'Language: English. Tap to switch to Indonesian.');
+    b.addEventListener('click', switchLang);
+    return b;
   }
 
   var ACCESS_OPTIONS = [
-    { key: 'size', label: 'Text size', choices: [['', 'Normal'], ['large', 'Large'], ['xl', 'Extra large']] },
-    { key: 'theme', label: 'Colours', choices: [['', 'Normal'], ['high', 'High contrast'], ['night', 'Night']] },
-    { key: 'font', label: 'Letters', choices: [['', 'Normal'], ['clear', 'Easy to read']] },
-    { key: 'calm', label: 'Animations', choices: [['', 'Normal'], ['on', 'Calm (off)']] }
+    { key: 'size', label: t('Text size', 'Ukuran huruf'), choices: [['', t('Normal', 'Biasa')], ['large', t('Large', 'Besar')], ['xl', t('Extra large', 'Sangat besar')]] },
+    { key: 'theme', label: t('Colours', 'Warna'), choices: [['', t('Normal', 'Biasa')], ['high', t('High contrast', 'Kontras tinggi')], ['night', t('Night', 'Malam')]] },
+    { key: 'font', label: t('Letters', 'Huruf'), choices: [['', t('Normal', 'Biasa')], ['clear', t('Easy to read', 'Mudah dibaca')]] },
+    { key: 'calm', label: t('Animations', 'Animasi'), choices: [['', t('Normal', 'Biasa')], ['on', t('Calm (off)', 'Tenang (mati)')]] }
   ];
   function accessPanel() {
     accessStyle();
     modal(function (card, close) {
-      card.setAttribute('aria-label', 'Accessibility');
-      card.appendChild(el('h2', '', 'Accessibility'));
+      card.setAttribute('aria-label', t('Accessibility', 'Aksesibilitas'));
+      card.appendChild(el('h2', '', t('Accessibility', 'Aksesibilitas')));
       ACCESS_OPTIONS.forEach(function (o) {
         var group = el('div'); group.setAttribute('role', 'group'); group.setAttribute('aria-label', o.label);
         group.appendChild(el('p', 'cd-opt-label', o.label));
@@ -233,8 +266,8 @@
         });
         group.appendChild(row); card.appendChild(group);
       });
-      card.appendChild(el('p', 'cd-note', 'These settings stay on this device and apply to every child.'));
-      var shut = el('button', 'cd-btn', 'Close'); shut.type = 'button'; shut.style.marginTop = '10px';
+      card.appendChild(el('p', 'cd-note', t('These settings stay on this device and apply to every child.', 'Pengaturan ini tersimpan di perangkat ini dan berlaku untuk semua anak.')));
+      var shut = el('button', 'cd-btn', t('Close', 'Tutup')); shut.type = 'button'; shut.style.marginTop = '10px';
       shut.addEventListener('click', close); card.appendChild(shut);
     });
   }
@@ -245,9 +278,9 @@
     if (!p || !(p.limit > 0) || minutesOn(p.id, dayStr(new Date())) < p.limit) return true;
     modal(function (card, close) {
       card.appendChild(el('div', 'cd-big', '🌙'));
-      card.appendChild(el('h2', '', 'That is all the play time for today'));
-      card.appendChild(el('p', '', 'See you tomorrow, ' + p.name + '!'));
-      var b = el('button', 'cd-btn main', 'Close'); b.type = 'button'; b.addEventListener('click', close); card.appendChild(b);
+      card.appendChild(el('h2', '', t('That is all the play time for today', 'Waktu bermain hari ini sudah habis')));
+      card.appendChild(el('p', '', t('See you tomorrow, ' + p.name + '!', 'Sampai jumpa besok, ' + p.name + '!')));
+      var b = el('button', 'cd-btn main', t('Close', 'Tutup')); b.type = 'button'; b.addEventListener('click', close); card.appendChild(b);
     });
     return false;
   }
@@ -269,6 +302,7 @@
     profiles: function () { return data.list.slice(); },
     key: function (base) { return base + '.' + data.cur; },
     calm: calm, access: accessPanel,
+    lang: lang, t: t, langButton: langButton,
     chip: chip, gate: gate, round: round, weak: weak,
     select: function (id) { if (find(id)) { data.cur = id; save(PROFILES, data); } },
     add: function (name, avatar) { var p = add(name, avatar); save(PROFILES, data); return p; },

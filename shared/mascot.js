@@ -35,9 +35,21 @@
     }
   };
 
+  // Indonesian texts (the names stay the same).
+  var ID = {
+    iqra: { origin: 'bahasa Arab untuk “gema”', story: 'Aku singa kecil, dan namaku berasal dari kata Arab ṣadā (⁨صدى⁩) yang artinya “gema”. Seperti gema, aku mengulang setiap bunyi huruf untukmu, jadi kamu bisa mendengar, mengucapkannya, dan mendengarnya lagi sampai terasa mudah.' },
+    aksara: { origin: 'bahasa Indonesia untuk kerinduan hati', story: 'Renjana adalah kata bahasa Indonesia untuk perasaan hati yang kuat: keinginan mendalam pada sesuatu yang kamu cintai. Punyaku adalah cerita! Aku tidak sabar membuka halaman berikutnya, dan aku menyemangatimu saat huruf menjadi kata dan kata menjadi cerita.' },
+    logica: { origin: 'dari kata Jepang “poka-yoke”', story: 'Aku berang-berang kecil, dan namaku singkatan dari poka-yoke (ポカヨケ), gagasan Jepang yang artinya “pencegah kesalahan”: membuat kesalahan mudah terlihat dan diperbaiki. Aku mengikuti programmu langkah demi langkah, jadi kamu bisa melihat di mana kesalahan bersembunyi lalu memperbaikinya.' },
+    lexica: { origin: 'dari kata Rusia “pochemuchka”', story: 'Aku burung beo kecil, dan namaku singkatan dari pochemuchka (почемучка), kata Rusia untuk orang yang selalu bertanya “kenapa?” (почему). Aku suka setiap kata: artinya, bunyinya, dan dari mana asalnya.' },
+    numeria: { origin: 'bahasa Yunani untuk “sepuluh ribu”', story: 'Aku tupai kecil yang menghitung setiap kacang yang kusimpan, dan namaku berasal dari kata Yunani myrias (μυριάς), “sepuluh ribu”, bilangan terbesar yang punya nama bagi orang Yunani kuno. Dari sana muncul kata “myriad” dalam bahasa Inggris: terlalu banyak untuk dihitung. Aku suka bilangan segala ukuran, dari apel di dapur sampai diskon di toko.' },
+    omnia: { origin: 'bahasa Quechua untuk “dunia”', story: 'Aku llama kecil dengan bungkusan di punggung, dan namaku adalah kata Quechua pacha, yang artinya “dunia”. Keluargaku sudah membawa barang melintasi pegunungan Andes selama ribuan tahun, jadi aku sudah melihat banyak tempat. Ayo ikut, akan kutunjukkan apa yang kutahu!' }
+  };
+  var id = window.Cendekia && Cendekia.lang === 'id';
+
   var hero = document.querySelector('.hero[data-mascot]');
   var info = hero && MASCOTS[hero.getAttribute('data-mascot')];
   if (!info || typeof HTMLDialogElement !== 'function') return;
+  if (id) info = { name: info.name, origin: ID[hero.getAttribute('data-mascot')].origin, story: ID[hero.getAttribute('data-mascot')].story };
 
   var picture = hero.firstElementChild;
   var host = hero.lastElementChild || hero;
@@ -57,7 +69,7 @@
   sheet.setAttribute('aria-labelledby', 'mascotSheetTitle');
   var title = document.createElement('h2');
   title.id = 'mascotSheetTitle';
-  title.textContent = 'Hi, I’m ' + info.name + '!';
+  title.textContent = id ? 'Hai, aku ' + info.name + '!' : 'Hi, I’m ' + info.name + '!';
   var from = document.createElement('p');
   from.className = 'mascot-sheet-from';
   from.textContent = info.name + ': ' + info.origin;
@@ -67,7 +79,7 @@
   var close = document.createElement('button');
   close.type = 'button';
   close.className = 'mascot-sheet-close';
-  close.textContent = 'Close';
+  close.textContent = id ? 'Tutup' : 'Close';
   sheet.appendChild(title);
   sheet.appendChild(from);
   sheet.appendChild(story);
