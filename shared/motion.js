@@ -11,6 +11,7 @@
 //   Cendekia.fx.reveal(stars, gift)          the earned stars (.on) pop in one by one, then the new-sticker box drops in
 //   Cendekia.fx.flip(element)                the element turns over like a card (its parent needs CSS `perspective`)
 //   Cendekia.fx.loop(ms, step)               calls step(0..1) each frame, once round every ms, forever; returns a function that stops it
+//   Cendekia.fx.tween(from, to, ms, step)    calls step(value) each frame as a number eases from `from` to `to`; returns a function that cancels it (with reduced motion, step(to) is called at once)
 //   Cendekia.fx.drag(element, opts)          lets the element be dragged along one axis in steps (opts: axis, step (pixels or a function returning them), onGrab, onDrag, onSettle)
 //   Cendekia.fx.cascade(elements)         the elements rise in one after another
 //   Cendekia.fx.count(element)               the first number in the element counts up from 0 ("12 stars" keeps its words)
@@ -306,9 +307,20 @@
     });
     return api;
   }
+  function tween(from, to, ms, step) {
+    var stopped = false, anim = null;
+    if (reduce.matches) { step(to); return function () {}; }
+    load().then(function (a) {
+      if (stopped) return;
+      if (!a) { step(to); return; }
+      var o = { v: from };
+      anim = a.animate(o, { v: to, duration: ms, ease: 'outCubic', onUpdate: function () { step(o.v); }, onComplete: function () { step(to); } });
+    });
+    return function () { stopped = true; if (anim) anim.pause(); };
+  }
   function start() { watchScreens(); lightFlame(document); }
   if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
 
   window.Cendekia = window.Cendekia || {};
-  window.Cendekia.fx = { confetti: confetti, burst: burst, count: count, flame: flame, flip: flip, cascade: cascade, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react, loop: loop, drag: drag };
+  window.Cendekia.fx = { confetti: confetti, burst: burst, count: count, flame: flame, flip: flip, cascade: cascade, reveal: reveal, pop: pop, hop: hop, drop: drop, mascot: mascot, react: react, loop: loop, tween: tween, drag: drag };
 })();

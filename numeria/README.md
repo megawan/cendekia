@@ -42,6 +42,13 @@ A wrong answer gets a second try. A second miss shows the answer with a short ex
 
 🥧 "Fraction circles" on the home screen is a circle to fill with pieces: halves, thirds, quarters, fifths, sixths, eighths, tenths and twelfths, of any mix. Each piece spins in next to the last one. The sum is shown as a fraction, a decimal and a percent, with how much is still to go; a piece that is too big for what is left shakes the circle instead. Sums are counted in 120ths, so they are exact and the child can find that 1/4 and 2/8 fill the same space. A whole circle gets confetti. Undo takes the last piece back. Like the tiles, it gives no stars.
 
+## Shape studio
+
+📐 "Shape studio" on the home screen has two places to play with geometry, both animated with anime.js (`Cendekia.fx.tween` and `fx.loop` in `shared/motion.js`). It gives no stars and the daily time limit applies when it opens.
+
+- **Shapes:** pick 3 to 8 sides and the shape morphs into the new one (triangle, square, pentagon, hexagon, heptagon, octagon), with its sides and corners counted. "Lines of symmetry" draws the fold lines in one after another, one for each side, and "Spin" turns the shape round.
+- **Angles:** drag the orange dot round the corner (or use the arrow keys) to open an angle. The degrees are shown and the angle is named: acute, right, obtuse, straight, reflex and a full turn. It snaps to 45°, 90°, 135°, 180° and so on, and a right or straight angle gets a burst of sparks. Buttons glide to common angles.
+
 ## Stars and stickers
 
 Three stars for every question right on the first try, two for up to two misses, one for finishing. Twelve town stickers unlock as the total star count grows (162 stars at most). Days in a row are counted as in the other apps.
