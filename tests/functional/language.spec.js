@@ -58,6 +58,32 @@ for (const [app, text] of [['aksara', 'Petualangan'], ['lexica', 'Petualangan'],
     expect(errors).toEqual([]);
   });
 }
+
+test('Logica home, a robot level and a quiz level follow the language', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/logica/');
+  await page.evaluate(() => localStorage.setItem('cendekia.lang.v1', 'id'));
+  await page.reload();
+  await expect(page.getByText('Berpikir cerdas bersama Poka')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Bahasa: Indonesia/ })).toBeVisible();
+  await expect(page.locator('#diffBadge')).toContainText('Sedang');
+  await page.getByRole('button', { name: /Jalan Robot/ }).click();
+  await expect(page.locator('.lv small').first()).toHaveText('Maju');
+  // A guide opens on the first visit: close it.
+  await page.keyboard.press('Escape');
+  await page.locator('.lv button').first().dispatchEvent('click');
+  await expect(page.locator('#rSay')).toContainText('Susun perintahnya');
+  await expect(page.locator('#rRun')).toHaveText('▶ Jalankan');
+  await page.locator('#rBack').click();
+  await page.locator('#world .bar button').first().click();
+  await page.getByRole('button', { name: /Pola/ }).click();
+  await page.keyboard.press('Escape');
+  await page.locator('.lv button').first().dispatchEvent('click');
+  await expect(page.locator('#qSay')).toContainText(/Apa yang (berikutnya|hilang)\?/);
+  expect(errors).toEqual([]);
+});
+
 test('Omnia home, a map level and a science level follow the language', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
