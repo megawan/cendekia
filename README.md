@@ -42,6 +42,10 @@ Several children can share one device. `shared/profile.js` is loaded by every ap
 
 Everything stays in the browser of the device: nothing is sent anywhere, and clearing the browser's site data clears it. To add an app, add its storage key to `APP_KEYS` in `shared/profile.js` (or move the app's old saves itself, as Logica does) and to the list of app keys removed with a child in `remove()`, add a row to `APPS` in `parents/index.html`, and add `../shared/profile.js` to the app's service worker `CORE` list.
 
+## Language
+
+A **🌐 EN / ID** button beside **Aa** switches the interface between English (the default) and Indonesian for the whole device, saved in `cendekia.lang.v1`; switching reloads the page. `shared/profile.js` exposes `Cendekia.lang` and `Cendekia.t(english, indonesian)` for text built in script, and `data-id="…"` (also `data-id-label`, `data-id-placeholder`) on an element whose markup holds the English text. Translated so far: the landing page, the child picker, the Accessibility panel, the parent page, “What’s new”, the mascot sheets and the time-limit notice. Numeria is translated too, including every question and its explanation (`t(...)` pairs in each level, with the foods, toys and days localized once at the top). The other apps' own screens are still English (lesson content such as Aksara's words stays Indonesian either way). `data-id-title` sets a `title` attribute.
+
 ## Accessibility
 
 Every home screen has an **Aa** button beside the child chip (`Cendekia.access()` opens the same panel). It sets, for the whole device and every child: text size (normal, large, extra large, by scaling the root font size), high contrast or night colours, easy-to-read letters (Verdana-style font with more spacing) and calm (no animation). The choices are saved in `cendekia.a11y.v1` and applied as `data-a11y-*` attributes on `<html>`, styled from `shared/profile.js`. Animation code should ask `Cendekia.calm()`, which is also true when the device asks for reduced motion.

@@ -13,6 +13,19 @@
       { title: 'Everything moves a little', text: 'Mascots blink and cheer, stars pop in, cards flip, and letters sparkle when you trace them.' }
     ]
   };
+  // Indonesian, in the same order as the items above.
+  var ID = {
+    title: 'Yang baru minggu ini',
+    close: 'Siap',
+    items: [
+      { title: 'Warna malam dan huruf yang lebih mudah dibaca', text: 'Tombol Aa kini punya mode Malam, juga huruf lebih besar, kontras tinggi, huruf mudah dibaca, dan mode tenang tanpa animasi.' },
+      { title: 'Omnia punya lebih banyak untuk dijelajahi', text: 'Tata surya, siklus air, rantai makanan, siang, malam dan musim, daur hidup, bendera, gunung berapi, tempat terkenal, dan permainan baru di peta.' },
+      { title: 'Tempat Parkir Poka', text: 'Geser mobil keluar dari tempat parkir. Ransel Poka juga punya level Ulangi dan Campur aduk.' },
+      { title: 'Hijaiyah kini bernama Iqra', text: 'Tetap 28 huruf yang sama dengan nama baru, dan doa baru untuk dipelajari: doa meminta hujan.' },
+      { title: 'Semuanya bergerak sedikit', text: 'Maskot berkedip dan bersorak, bintang muncul, kartu berputar, dan huruf berkilau saat kamu menelusurinya.' }
+    ]
+  };
+  if (window.Cendekia && Cendekia.lang === 'id') { RELEASE.title = ID.title; RELEASE.items = ID.items; }
 
   var button = document.getElementById('whatsNew');
   if (!button || typeof HTMLDialogElement !== 'function') return;
@@ -36,7 +49,7 @@
   var close = document.createElement('button');
   close.type = 'button';
   close.className = 'new-sheet-close';
-  close.textContent = 'Got it';
+  close.textContent = window.Cendekia && Cendekia.lang === 'id' ? ID.close : 'Got it';
   sheet.appendChild(title);
   sheet.appendChild(list);
   sheet.appendChild(close);
