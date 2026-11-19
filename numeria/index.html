@@ -281,6 +281,32 @@
     border-left: 3px dashed var(--ink); opacity: 0; pointer-events: none; z-index: 2; transition: opacity .2s; }
   .ftGuide.on { opacity: .75; }
 
+  /* Shape studio */
+  .shTabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .shTabs .btn { flex: 1; min-height: 46px; padding: 8px; font-size: 1rem; box-shadow: none; }
+  .shTabs .btn[aria-selected="true"] { background: var(--accent); color: #fff; border-color: transparent; }
+  .shBoard { display: grid; justify-items: center; gap: 8px; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; }
+  .shSvg { width: min(100%, 300px); height: auto; overflow: visible; touch-action: none; user-select: none; }
+  .shBody { fill: #e0558a; fill-opacity: .85; stroke: #a3306f; stroke-width: 3; stroke-linejoin: round; }
+  .shDot { fill: #fff; stroke: #a3306f; stroke-width: 3; transition: opacity .25s; }
+  .shDot.off { opacity: 0; }
+  .shAxis { stroke: #1f2a44; stroke-width: 2.5; stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
+  .shAxis.on { stroke-dashoffset: 0; }
+  .shRay { stroke: #1f2a44; stroke-width: 5; stroke-linecap: round; }
+  .shArc { fill: rgba(46,144,250,.3); stroke: #2478d6; stroke-width: 3; }
+  .shArc.good { fill: rgba(31,157,107,.35); stroke: #1f8a5e; }
+  .shHandle { fill: #f2a33a; stroke: #fff; stroke-width: 4; cursor: grab; }
+  .shHandle:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .shSquare { fill: none; stroke: #1f8a5e; stroke-width: 3; }
+  .shBig { font-size: 1.6rem; font-weight: 800; text-align: center; margin: 0; }
+  .shInfo { min-height: 3.4em; text-align: center; font-weight: 700; line-height: 1.4; margin: 0; }
+  .shChips { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 12px; }
+  .shChip { font: inherit; font-size: 1.3rem; font-weight: 800; min-height: 56px; border: 2px solid var(--line); border-radius: 14px; background: #fff; color: var(--ink); cursor: pointer; box-shadow: 0 3px 0 var(--line); }
+  .shChip[aria-pressed="true"] { background: var(--accent); border-color: transparent; color: #fff; box-shadow: 0 3px 0 var(--accent-d); }
+  .shActs { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .shActs .btn { min-height: 46px; padding: 8px 16px; font-size: 1rem; box-shadow: none; }
+  .shActs .btn[aria-pressed="true"] { background: var(--good); color: #fff; border-color: transparent; }
+
   /* Fraction circles */
   .fcBoard { display: grid; justify-items: center; gap: 10px; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; }
   .fcSvg { width: min(100%, 300px); height: auto; overflow: visible; }
@@ -444,6 +470,45 @@
     <div class="fcActs">
       <button type="button" class="btn ghost" id="fcUndo" data-id="↶ Urungkan">↶ Undo</button>
       <button type="button" class="btn ghost" id="fcClear" data-id="Mulai lagi">Start again</button>
+    </div>
+  </section>
+
+  <!-- Shape studio -->
+  <section id="shapes" hidden>
+    <div class="bar">
+      <button type="button" class="btn ghost" data-go="home">← Town</button>
+      <h2 data-id="Studio bangun">Shape studio</h2>
+      <span class="spacer"></span>
+    </div>
+    <div class="shTabs" role="tablist">
+      <button type="button" class="btn ghost" role="tab" id="shTabShapes" aria-selected="true" data-id="Bangun datar">Shapes</button>
+      <button type="button" class="btn ghost" role="tab" id="shTabAngles" aria-selected="false" data-id="Sudut">Angles</button>
+    </div>
+    <div id="shPanelShapes">
+      <div class="shBoard">
+        <svg class="shSvg" id="shSvg" viewBox="0 0 200 200" role="img" aria-label="A shape that changes as you pick the number of sides" data-id-label="Bangun yang berubah saat kamu memilih jumlah sisi"></svg>
+        <p class="shBig" id="shName" aria-live="polite"></p>
+        <p class="shInfo" id="shInfo"></p>
+      </div>
+      <div class="shChips" id="shChips"></div>
+      <div class="shActs">
+        <button type="button" class="btn ghost" id="shSym" aria-pressed="false" data-id="Garis simetri">Lines of symmetry</button>
+        <button type="button" class="btn ghost" id="shSpin" aria-pressed="false" data-id="Putar">Spin</button>
+      </div>
+    </div>
+    <div id="shPanelAngles" hidden>
+      <div class="shBoard">
+        <svg class="shSvg" id="anSvg" viewBox="0 0 200 200" aria-label="An angle. Drag the orange dot to open it." data-id-label="Sebuah sudut. Seret titik oranye untuk membukanya."></svg>
+        <p class="shBig" id="anDeg" aria-live="off"></p>
+        <p class="shInfo" id="anInfo" aria-live="polite"></p>
+      </div>
+      <div class="shActs">
+        <button type="button" class="btn ghost" data-angle="45">45°</button>
+        <button type="button" class="btn ghost" data-angle="90" data-id="90° siku-siku">90° right</button>
+        <button type="button" class="btn ghost" data-angle="135">135°</button>
+        <button type="button" class="btn ghost" data-angle="180" data-id="180° lurus">180° straight</button>
+        <button type="button" class="btn ghost" data-angle="270">270°</button>
+      </div>
     </div>
   </section>
 
@@ -1097,15 +1162,17 @@
   const sfx = { tap() { tone([520], 0.05); }, good() { tone([660, 880], 0.11); }, bad() { tone([220], 0.22, 'triangle'); }, win() { tone([523, 659, 784, 1047], 0.13); } };
 
   // ---- Screens ----
-  let curWorld = null, curLevel = 0;
+  let curWorld = null, curLevel = 0, stopSpinLoop = null; // stopSpinLoop: ends the Shape studio's spin, set below
   function show(id) {
-    ['home', 'world', 'play', 'result', 'trace', 'tiles', 'circles', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
+    ['home', 'world', 'play', 'result', 'trace', 'tiles', 'circles', 'shapes', 'stickers'].forEach((s) => { $(s).hidden = s !== id; });
     if (id === 'home') renderHome();
     if (id === 'world') renderWorld();
     if (id === 'stickers') renderStickers();
     if (id === 'trace') renderTrace();
     if (id === 'tiles') openTiles();
     if (id === 'circles') openCircles();
+    if (id === 'shapes') openShapes();
+    else stopSpin();
     window.scrollTo(0, 0);
   }
   document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => { sfx.tap(); show(b.dataset.go); }));
@@ -1142,6 +1209,11 @@
     o.innerHTML = '<span class="badge" aria-hidden="true">🥧</span><span><b>' + t('Fraction circles', 'Lingkaran pecahan') + '</b><br><small>' + t('Fill a circle with pieces to make one whole', 'Isi lingkaran dengan potongan sampai penuh') + '</small></span>';
     o.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); show('circles'); });
     box.appendChild(o);
+    const g = document.createElement('button');
+    g.type = 'button'; g.className = 'card wide'; g.style.setProperty('--c', 'var(--c-indigo)'); g.style.animationDelay = '.395s';
+    g.innerHTML = '<span class="badge" aria-hidden="true">📐</span><span><b>' + t('Shape studio', 'Studio bangun') + '</b><br><small>' + t('Morph shapes, spin them and open an angle', 'Ubah bangun, putar, dan buka sebuah sudut') + '</small></span>';
+    g.addEventListener('click', () => { if (!CD.gate()) return; sfx.tap(); show('shapes'); });
+    box.appendChild(g);
     const s = document.createElement('button');
     s.type = 'button'; s.className = 'card wide'; s.style.setProperty('--c', 'var(--c-orange)'); s.style.animationDelay = '.4s';
     s.innerHTML = '<span class="badge" aria-hidden="true">🏠</span><span><b>' + t('Town Stickers', 'Stiker Kota') + '</b><br><small>' + t('Collect stars to build your town', 'Kumpulkan bintang untuk membangun kotamu') + '</small></span>';
@@ -1494,6 +1566,171 @@
   });
   $('fcUndo').addEventListener('click', () => { sfx.tap(); fcPieces.pop(); fcNew = false; fcDraw(); });
   $('fcClear').addEventListener('click', () => { sfx.tap(); openCircles(); });
+
+  // ---- Shape studio ----
+  // Shapes: a regular polygon of 3 to 8 sides morphs into the next one picked (both are sampled at the same number of
+  // points along their edges, and the points glide from one set to the other). Angles: drag the orange dot round a
+  // corner; the angle is named, and it snaps to the angles worth knowing (45°, 90°, 135°, 180°, 270°).
+  const SIDES = [
+    [3, t('triangle', 'segitiga')], [4, t('square', 'persegi')], [5, t('pentagon', 'segi lima')], [6, t('hexagon', 'segi enam')], [7, t('heptagon', 'segi tujuh')], [8, t('octagon', 'segi delapan')]
+  ];
+  const SAMPLES = 48, shSvg = $('shSvg');
+  const ring = (n) => Array.from({ length: n }, (_, i) => [100 + 80 * Math.sin(2 * Math.PI * i / n), 100 - 80 * Math.cos(2 * Math.PI * i / n)]);
+  // SAMPLES points spread evenly along the outline of an n-sided shape, starting at the top corner
+  function outline(n) {
+    const v = ring(n), out = [];
+    for (let k = 0; k < SAMPLES; k++) {
+      const f = k / SAMPLES * n, i = Math.floor(f), u = f - i, a = v[i], b = v[(i + 1) % n];
+      out.push([a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u]);
+    }
+    return out;
+  }
+  const pathOf = (pts) => 'M' + pts.map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L') + 'Z';
+  let shN = 0, shPts = outline(4), shCancel = null, shSym = false;
+  shSvg.innerHTML = '<g id="shSpinG"><path class="shBody" id="shBody"/><g id="shAxes"></g><g id="shDots"></g></g>';
+  const shBody = $('shBody');
+  // lines of symmetry of a regular n-gon: n lines through the center, each from a corner (or the middle of an edge) across
+  function drawAxes(n) {
+    let s = '';
+    for (let i = 0; i < n; i++) {
+      const a = Math.PI * i / n, dx = Math.sin(a) * 92, dy = -Math.cos(a) * 92;
+      s += '<line class="shAxis' + (shSym ? ' on' : '') + '" pathLength="100" x1="' + (100 - dx) + '" y1="' + (100 - dy) + '" x2="' + (100 + dx) + '" y2="' + (100 + dy) + '"/>';
+    }
+    $('shAxes').innerHTML = s;
+    if (shSym) $('shAxes').querySelectorAll('.shAxis').forEach((l, i) => { l.style.transitionDelay = i * 90 + 'ms'; });
+  }
+  function drawDots(n, off) {
+    $('shDots').innerHTML = ring(n).map((p) => '<circle class="shDot' + (off ? ' off' : '') + '" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="6"/>').join('');
+  }
+  function shapeInfo(n) {
+    const name = SIDES.find((x) => x[0] === n)[1];
+    $('shName').textContent = t('A ' + name, 'Sebuah ' + name);
+    $('shInfo').textContent = t(
+      n + ' straight sides and ' + n + ' corners. ' + (shSym ? 'It has ' + n + ' lines of symmetry: fold it along any one and the halves match.' : 'Turn on the lines of symmetry to fold it in half.'),
+      n + ' sisi lurus dan ' + n + ' sudut. ' + (shSym ? 'Ada ' + n + ' garis simetri: lipat di salah satunya dan kedua setengahnya sama persis.' : 'Nyalakan garis simetri untuk melipatnya jadi dua.'));
+    $('shSvg').setAttribute('aria-label', t('A ' + name + ' with ' + n + ' sides', 'Sebuah ' + name + ' dengan ' + n + ' sisi'));
+  }
+  function setShape(n, first) {
+    if (n === shN) return;
+    const from = shPts, to = outline(n);
+    shN = n;
+    if (shCancel) shCancel();
+    $('shChips').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.n === n)));
+    drawAxes(n); drawDots(n, true); shapeInfo(n);
+    shCancel = CD.fx.tween(0, 1, first ? 1 : 700, (u) => {
+      shPts = from.map((p, k) => [p[0] + (to[k][0] - p[0]) * u, p[1] + (to[k][1] - p[1]) * u]);
+      shBody.setAttribute('d', pathOf(shPts));
+      if (u === 1) { shPts = to; $('shDots').querySelectorAll('.shDot').forEach((d) => d.classList.remove('off')); }
+    });
+  }
+  SIDES.forEach(([n, name]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'shChip'; b.dataset.n = n; b.textContent = n; b.setAttribute('aria-pressed', 'false');
+    b.setAttribute('aria-label', n + ' ' + t('sides, ', 'sisi, ') + name);
+    b.addEventListener('click', () => { sfx.tap(); setShape(n); CD.fx.pop(shSvg); });
+    $('shChips').appendChild(b);
+  });
+  $('shSym').addEventListener('click', () => {
+    sfx.tap(); shSym = !shSym; $('shSym').setAttribute('aria-pressed', String(shSym));
+    $('shAxes').querySelectorAll('.shAxis').forEach((l, i) => { l.style.transitionDelay = (shSym ? i * 90 : 0) + 'ms'; l.classList.toggle('on', shSym); });
+    shapeInfo(shN);
+    if (shSym) CD.fx.burst($('shSym'));
+  });
+  function stopSpin() {
+    if (stopSpinLoop) { stopSpinLoop(); stopSpinLoop = null; }
+    $('shSpin').setAttribute('aria-pressed', 'false');
+    const g = $('shSpinG'); if (g) g.removeAttribute('transform'); // the shape is drawn further down the page, after the first screen is shown
+  }
+  $('shSpin').addEventListener('click', () => {
+    sfx.tap();
+    if (stopSpinLoop) { stopSpin(); return; }
+    $('shSpin').setAttribute('aria-pressed', 'true');
+    stopSpinLoop = CD.fx.loop(7000, (p) => $('shSpinG').setAttribute('transform', 'rotate(' + p * 360 + ' 100 100)'));
+  });
+
+  // Angles. The fixed ray points right; the other turns counter-clockwise from it, as angles do on paper.
+  const anSvg = $('anSvg'), CX = 60, CY = 120, R = 80;
+  let anDeg = 60, anCancel = null, anHit = 0;
+  anSvg.innerHTML = '<path class="shArc" id="anArc"/><path class="shSquare" id="anSq" hidden/><line class="shRay" x1="60" y1="120" x2="' + (CX + R + 50) + '" y2="120"/>'
+    + '<line class="shRay" id="anRay" x1="60" y1="120"/><circle class="shHandle" id="anHandle" r="13" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="360"/>';
+  const anPt = (deg, r) => [CX + r * Math.cos(deg * Math.PI / 180), CY - r * Math.sin(deg * Math.PI / 180)];
+  const NAMED = [
+    [0, t('no turn yet', 'belum ada putaran')], [90, t('an acute angle: smaller than a right angle', 'sudut lancip: lebih kecil dari siku-siku')],
+    [90.5, t('a right angle: a square corner', 'sudut siku-siku: sudut persegi')], [180, t('an obtuse angle: bigger than a right angle', 'sudut tumpul: lebih besar dari siku-siku')],
+    [180.5, t('a straight angle: a straight line', 'sudut lurus: satu garis lurus')], [360, t('a reflex angle: more than a straight line', 'sudut refleks: lebih dari garis lurus')],
+    [360.5, t('a full turn', 'satu putaran penuh')]
+  ];
+  function anName(d) {
+    if (d <= 0) return NAMED[0][1];
+    if (d < 90) return NAMED[1][1];
+    if (d === 90) return NAMED[2][1];
+    if (d < 180) return NAMED[3][1];
+    if (d === 180) return NAMED[4][1];
+    if (d < 360) return NAMED[5][1];
+    return NAMED[6][1];
+  }
+  function anDraw(d) {
+    const p = anPt(d, R), a = anPt(d, 34), e = anPt(0, 34), big = d > 180 ? 1 : 0;
+    $('anRay').setAttribute('x2', p[0]); $('anRay').setAttribute('y2', p[1]);
+    $('anHandle').setAttribute('cx', p[0]); $('anHandle').setAttribute('cy', p[1]);
+    $('anArc').setAttribute('d', d >= 359.5 ? 'M60 120m-34 0a34 34 0 1 0 68 0a34 34 0 1 0 -68 0' : d <= 0.5 ? '' : 'M60 120 L' + e[0] + ' ' + e[1] + ' A34 34 0 ' + big + ' 0 ' + a[0] + ' ' + a[1] + 'Z');
+    const r = Math.round(d) === 90;
+    $('anArc').classList.toggle('good', r || Math.round(d) === 180);
+    $('anSq').hidden = !r; if (r) $('anSq').setAttribute('d', 'M80 120 L80 100 L60 100');
+    $('anHandle').setAttribute('aria-valuenow', Math.round(d));
+    $('anHandle').setAttribute('aria-valuetext', Math.round(d) + t(' degrees', ' derajat'));
+    $('anDeg').textContent = Math.round(d) + '°';
+  }
+  function anSet(d) {
+    anDeg = Math.max(0, Math.min(360, d));
+    anDraw(anDeg);
+    const r = Math.round(anDeg);
+    $('anInfo').textContent = t('This is ', 'Ini adalah ') + anName(r) + '.';
+    if ([90, 180].includes(r) && anHit !== r) { anHit = r; sfx.good(); CD.fx.burst($('anHandle')); }
+    else if (![90, 180].includes(r)) anHit = 0;
+  }
+  const SNAPS = [0, 45, 90, 135, 180, 225, 270, 315, 360];
+  function anFromEvent(ev) {
+    const r = anSvg.getBoundingClientRect(), k = 200 / r.width;
+    const x = (ev.clientX - r.left) * k - CX, y = CY - (ev.clientY - r.top) * k;
+    let d = Math.atan2(y, x) * 180 / Math.PI;
+    if (d < 0) d += 360;
+    // crossing the fixed ray: stay on the nearer end instead of jumping from 360° to 0°
+    if (anDeg > 270 && d < 90) d = 360; else if (anDeg < 90 && d > 270) d = 0;
+    const near = SNAPS.find((s) => Math.abs(s - d) < 4);
+    return near === undefined ? d : near;
+  }
+  let anDragging = false;
+  anSvg.addEventListener('pointerdown', (ev) => {
+    if (anCancel) anCancel();
+    anDragging = true; anSvg.setPointerCapture(ev.pointerId); anSet(anFromEvent(ev));
+  });
+  anSvg.addEventListener('pointermove', (ev) => { if (anDragging) anSet(anFromEvent(ev)); });
+  const anUp = () => { anDragging = false; };
+  anSvg.addEventListener('pointerup', anUp); anSvg.addEventListener('pointercancel', anUp);
+  $('anHandle').addEventListener('keydown', (ev) => {
+    const step = { ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5, PageDown: -45, PageUp: 45 }[ev.key];
+    if (step === undefined) return;
+    ev.preventDefault(); anSet(anDeg + step);
+  });
+  document.querySelectorAll('[data-angle]').forEach((b) => b.addEventListener('click', () => {
+    sfx.tap(); if (anCancel) anCancel();
+    const from = anDeg, to = +b.dataset.angle;
+    anCancel = CD.fx.tween(from, to, 650, (v) => anSet(Math.round(v)));
+  }));
+  const shTab = (angles) => {
+    $('shTabShapes').setAttribute('aria-selected', String(!angles)); $('shTabAngles').setAttribute('aria-selected', String(angles));
+    $('shPanelShapes').hidden = angles; $('shPanelAngles').hidden = !angles;
+    if (angles) stopSpin();
+  };
+  $('shTabShapes').addEventListener('click', () => { sfx.tap(); shTab(false); });
+  $('shTabAngles').addEventListener('click', () => { sfx.tap(); shTab(true); anSet(anDeg); });
+  function openShapes() {
+    shTab(false); stopSpin();
+    shN = 0; shSym = false; $('shSym').setAttribute('aria-pressed', 'false');
+    shPts = outline(3); setShape(3, true);
+    anSet(60);
+  }
 
   // ---- Trace numbers ----
   // S.traced holds the best stars for each number the child traced. They are shown here and do not count toward the
