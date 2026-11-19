@@ -12,6 +12,7 @@
 (function () {
   'use strict';
   var NS = 'http://www.w3.org/2000/svg';
+  var tx = window.Cendekia.t, IDL = window.Cendekia.lang === 'id';
   var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
   var lib = null;
   function load() { if (!lib) lib = import('../shared/anime.esm.min.js').catch(function () { return null; }); return lib; }
@@ -21,18 +22,22 @@
 
   // ---- The water cycle ----
   var STAGES = [
-    { id: 'evaporation', pic: '☀️', name: 'Evaporation',
-      text: 'The Sun warms the water in the sea, lakes and rivers. The water turns into water vapour, a gas you cannot see, and rises into the air.',
-      clue: 'The Sun warms the sea and the water rises into the air as vapour.' },
-    { id: 'condensation', pic: '☁️', name: 'Condensation',
-      text: 'High up the air is cold. The water vapour cools and turns into tiny drops of water. Lots of drops together make a cloud.',
-      clue: 'Water vapour cools high in the sky and turns into tiny drops that make clouds.' },
-    { id: 'precipitation', pic: '🌧️', name: 'Precipitation',
-      text: 'When the drops in a cloud get big and heavy, they fall as rain. In very cold places they fall as snow or hail.',
-      clue: 'Water falls from the clouds as rain, snow or hail.' },
-    { id: 'collection', pic: '🏞️', name: 'Collection',
-      text: 'The rain runs down hills into streams and rivers, or soaks into the ground. It collects in lakes and in the sea, and then the Sun warms it again.',
-      clue: 'Water runs into rivers, lakes and the sea, ready to start again.' }
+    { id: 'evaporation', pic: '☀️', name: tx('Evaporation', 'Penguapan'),
+      text: tx('The Sun warms the water in the sea, lakes and rivers. The water turns into water vapour, a gas you cannot see, and rises into the air.',
+        'Matahari memanaskan air di laut, danau, dan sungai. Air berubah menjadi uap air, gas yang tidak bisa kamu lihat, lalu naik ke udara.'),
+      clue: tx('The Sun warms the sea and the water rises into the air as vapour.', 'Matahari memanaskan laut dan air naik ke udara sebagai uap.') },
+    { id: 'condensation', pic: '☁️', name: tx('Condensation', 'Pengembunan'),
+      text: tx('High up the air is cold. The water vapour cools and turns into tiny drops of water. Lots of drops together make a cloud.',
+        'Di atas sana udaranya dingin. Uap air mendingin dan berubah menjadi tetes-tetes air yang sangat kecil. Banyak tetes yang berkumpul membentuk awan.'),
+      clue: tx('Water vapour cools high in the sky and turns into tiny drops that make clouds.', 'Uap air mendingin di langit yang tinggi dan berubah menjadi tetes kecil yang membentuk awan.') },
+    { id: 'precipitation', pic: '🌧️', name: tx('Precipitation', 'Presipitasi'),
+      text: tx('When the drops in a cloud get big and heavy, they fall as rain. In very cold places they fall as snow or hail.',
+        'Ketika tetes-tetes air di awan menjadi besar dan berat, mereka jatuh sebagai hujan. Di tempat yang sangat dingin, mereka jatuh sebagai salju atau hujan es.'),
+      clue: tx('Water falls from the clouds as rain, snow or hail.', 'Air jatuh dari awan sebagai hujan, salju, atau hujan es.') },
+    { id: 'collection', pic: '🏞️', name: tx('Collection', 'Pengumpulan'),
+      text: tx('The rain runs down hills into streams and rivers, or soaks into the ground. It collects in lakes and in the sea, and then the Sun warms it again.',
+        'Air hujan mengalir menuruni bukit ke anak sungai dan sungai, atau meresap ke dalam tanah. Air berkumpul di danau dan di laut, lalu Matahari memanaskannya lagi.'),
+      clue: tx('Water runs into rivers, lakes and the sea, ready to start again.', 'Air mengalir ke sungai, danau, dan laut, siap memulai lagi.') }
   ];
   var STAGE = {}; STAGES.forEach(function (s, i) { s.n = i + 1; STAGE[s.id] = s; });
 
@@ -76,33 +81,34 @@
   // ---- Food chains ----
   // Arrows point from the food to the one that eats it. Names are used as answers, so each is in one chain only.
   var ROLE = {
-    producer: { name: 'Producer', fill: '#d9f5e8', ink: '#1f9d6b' },
-    herbivore: { name: 'Herbivore', fill: '#fff1c2', ink: '#c9760f' },
-    carnivore: { name: 'Carnivore', fill: '#ffe0ec', ink: '#d6336c' }
+    producer: { name: tx('Producer', 'Produsen'), fill: '#d9f5e8', ink: '#1f9d6b' },
+    herbivore: { name: tx('Herbivore', 'Herbivora'), fill: '#fff1c2', ink: '#c9760f' },
+    carnivore: { name: tx('Carnivore', 'Karnivora'), fill: '#ffe0ec', ink: '#d6336c' }
   };
+  var MAKES = tx('makes its own food from sunlight, air and water', 'membuat makanannya sendiri dari sinar matahari, udara, dan air');
   var CHAINS = {
-    komodo: { name: 'Komodo Island', pic: '🦎', decoys: ['Shark', 'Shrimp', 'Plankton'], nodes: [
-      { name: 'Grass', ref: 'grass', mass: true, pic: '🌿', role: 'producer', note: 'makes its own food from sunlight, air and water' },
-      { name: 'Deer', ref: 'deer', pic: '🦌', role: 'herbivore', note: 'eats grass and leaves' },
-      { name: 'Komodo dragon', ref: 'Komodo dragon', pic: '🦎', role: 'carnivore', note: 'hunts deer and other animals, and is the biggest lizard in the world' }] },
-    rice: { name: 'Rice field', pic: '🌾', decoys: ['Shark', 'Shrimp', 'Plankton'], nodes: [
-      { name: 'Rice plant', ref: 'rice plant', pic: '🌾', role: 'producer', note: 'makes its own food from sunlight, air and water' },
-      { name: 'Rat', ref: 'rat', pic: '🐀', role: 'herbivore', note: 'eats rice and other seeds' },
-      { name: 'Snake', ref: 'snake', pic: '🐍', role: 'carnivore', note: 'hunts rats and swallows them whole' },
-      { name: 'Eagle', ref: 'eagle', pic: '🦅', role: 'carnivore', note: 'hunts snakes from the sky' }] },
-    sea: { name: 'The sea', pic: '🦈', decoys: ['Deer', 'Langur', 'Grass'], nodes: [
-      { name: 'Plankton', ref: 'plankton', mass: true, pic: '🟢', role: 'producer', note: 'is a tiny floating plant that makes its own food from sunlight' },
-      { name: 'Shrimp', ref: 'shrimp', pic: '🦐', role: 'herbivore', note: 'eats plankton' },
-      { name: 'Fish', ref: 'fish', pic: '🐟', role: 'carnivore', note: 'eats shrimp and other small animals' },
-      { name: 'Shark', ref: 'shark', pic: '🦈', role: 'carnivore', note: 'hunts big fish' }] },
-    forest: { name: 'Rainforest', pic: '🐆', decoys: ['Shark', 'Shrimp', 'Plankton'], nodes: [
-      { name: 'Leaves', ref: 'leaves', mass: true, pic: '🍃', role: 'producer', note: 'are made by trees, which make their own food from sunlight' },
-      { name: 'Langur', ref: 'langur', pic: '🐒', role: 'herbivore', note: 'is a monkey that eats leaves' },
-      { name: 'Leopard', ref: 'leopard', pic: '🐆', role: 'carnivore', note: 'hunts langurs and other animals' }] }
+    komodo: { name: tx('Komodo Island', 'Pulau Komodo'), pic: '🦎', decoys: [tx('Shark', 'Hiu'), tx('Shrimp', 'Udang'), 'Plankton'], nodes: [
+      { name: tx('Grass', 'Rumput'), ref: tx('grass', 'rumput'), mass: true, pic: '🌿', role: 'producer', note: MAKES },
+      { name: tx('Deer', 'Rusa'), ref: tx('deer', 'rusa'), pic: '🦌', role: 'herbivore', note: tx('eats grass and leaves', 'memakan rumput dan daun') },
+      { name: tx('Komodo dragon', 'Komodo'), ref: tx('Komodo dragon', 'komodo'), pic: '🦎', role: 'carnivore', note: tx('hunts deer and other animals, and is the biggest lizard in the world', 'memburu rusa dan hewan lain, dan merupakan kadal terbesar di dunia') }] },
+    rice: { name: tx('Rice field', 'Sawah'), pic: '🌾', decoys: [tx('Shark', 'Hiu'), tx('Shrimp', 'Udang'), 'Plankton'], nodes: [
+      { name: tx('Rice plant', 'Padi'), ref: tx('rice plant', 'padi'), pic: '🌾', role: 'producer', note: MAKES },
+      { name: tx('Rat', 'Tikus'), ref: tx('rat', 'tikus'), pic: '🐀', role: 'herbivore', note: tx('eats rice and other seeds', 'memakan padi dan biji-bijian lain') },
+      { name: tx('Snake', 'Ular'), ref: tx('snake', 'ular'), pic: '🐍', role: 'carnivore', note: tx('hunts rats and swallows them whole', 'memburu tikus dan menelannya bulat-bulat') },
+      { name: tx('Eagle', 'Elang'), ref: tx('eagle', 'elang'), pic: '🦅', role: 'carnivore', note: tx('hunts snakes from the sky', 'memburu ular dari langit') }] },
+    sea: { name: tx('The sea', 'Laut'), pic: '🦈', decoys: [tx('Deer', 'Rusa'), tx('Langur', 'Lutung'), tx('Grass', 'Rumput')], nodes: [
+      { name: 'Plankton', ref: 'plankton', mass: true, pic: '🟢', role: 'producer', note: tx('is a tiny floating plant that makes its own food from sunlight', 'adalah tumbuhan kecil yang mengapung dan membuat makanannya sendiri dari sinar matahari') },
+      { name: tx('Shrimp', 'Udang'), ref: tx('shrimp', 'udang'), pic: '🦐', role: 'herbivore', note: tx('eats plankton', 'memakan plankton') },
+      { name: tx('Fish', 'Ikan'), ref: tx('fish', 'ikan'), pic: '🐟', role: 'carnivore', note: tx('eats shrimp and other small animals', 'memakan udang dan hewan kecil lainnya') },
+      { name: tx('Shark', 'Hiu'), ref: tx('shark', 'hiu'), pic: '🦈', role: 'carnivore', note: tx('hunts big fish', 'memburu ikan besar') }] },
+    forest: { name: tx('Rainforest', 'Hutan hujan'), pic: '🐆', decoys: [tx('Shark', 'Hiu'), tx('Shrimp', 'Udang'), 'Plankton'], nodes: [
+      { name: tx('Leaves', 'Daun'), ref: tx('leaves', 'daun'), mass: true, pic: '🍃', role: 'producer', note: tx('are made by trees, which make their own food from sunlight', 'dihasilkan oleh pohon, yang membuat makanannya sendiri dari sinar matahari') },
+      { name: tx('Langur', 'Lutung'), ref: tx('langur', 'lutung'), pic: '🐒', role: 'herbivore', note: tx('is a monkey that eats leaves', 'adalah sejenis monyet yang memakan daun') },
+      { name: tx('Leopard', 'Macan tutul'), ref: tx('leopard', 'macan tutul'), pic: '🐆', role: 'carnivore', note: tx('hunts langurs and other animals', 'memburu lutung dan hewan lain') }] }
   };
   var CHAIN_IDS = ['komodo', 'rice', 'sea', 'forest'];
-  var DECOY_ROLES = ['Decomposer'];
-  var the = function (nd) { return nd.mass ? nd.ref : 'the ' + nd.ref; };
+  var DECOY_ROLES = [tx('Decomposer', 'Pengurai')];
+  var the = function (nd) { return nd.mass || IDL ? nd.ref : 'the ' + nd.ref; };
   var SAME_PLURAL = { fish: 1 };
 
   function chainSvg(ch, v, labels, tap) {
@@ -149,7 +155,7 @@
     var h = kind === 'water' ? 260 : opts.labels ? 190 : 142;
     svg.setAttribute('viewBox', '0 0 400 ' + h);
     svg.style.setProperty('--ar', (400 / h).toFixed(3));
-    if (opts.onPick) { svg.setAttribute('role', 'group'); svg.setAttribute('aria-label', kind === 'water' ? 'The water cycle. Tap a step.' : 'A food chain. Tap an animal or plant.'); } else svg.setAttribute('aria-hidden', 'true');
+    if (opts.onPick) { svg.setAttribute('role', 'group'); svg.setAttribute('aria-label', kind === 'water' ? tx('The water cycle. Tap a step.', 'Siklus air. Ketuk sebuah tahap.') : tx('A food chain. Tap an animal or plant.', 'Rantai makanan. Ketuk hewan atau tumbuhan.')); } else svg.setAttribute('aria-hidden', 'true');
     host.textContent = '';
     host.appendChild(svg);
 
@@ -194,27 +200,27 @@
   var tabInfo = function (pic, title, text) { return '<span class="flag" aria-hidden="true">' + pic + '</span><span><b>' + esc(title) + '</b><p>' + text + '</p></span>'; };
   function chainSentence(ch) {
     return ch.nodes.map(function (nd, k) {
-      return k === 0 ? cap(the(nd)) + ' ' + nd.note + '.' : cap(the(nd)) + ' eats ' + the(ch.nodes[k - 1]) + '.';
+      return k === 0 ? cap(the(nd)) + ' ' + nd.note + '.' : cap(the(nd)) + tx(' eats ', ' memakan ') + the(ch.nodes[k - 1]) + '.';
     }).join(' ');
   }
   var kinds = {
     water: {
-      title: 'Watch the water cycle',
+      title: tx('Watch the water cycle', 'Lihat siklus air'),
       tabs: STAGES.map(function (s) { return { id: s.id, pic: s.pic, label: s.n + '. ' + s.name }; }),
-      intro: tabInfo('💧', 'The water cycle', 'Water never gets used up. It goes round and round. Tap a step to see it.'),
+      intro: tabInfo('💧', tx('The water cycle', 'Siklus air'), tx('Water never gets used up. It goes round and round. Tap a step to see it.', 'Air tidak pernah habis. Ia berputar terus. Ketuk sebuah tahap untuk melihatnya.')),
       view: function (id) { return { stage: id }; },
       info: function (id) { var s = STAGE[id]; return tabInfo(s.pic, s.n + '. ' + s.name, esc(s.text)); }
     },
     chain: {
-      title: 'Watch the food chains',
+      title: tx('Watch the food chains', 'Lihat rantai makanan'),
       tabs: CHAIN_IDS.map(function (id) { return { id: id, pic: CHAINS[id].pic, label: CHAINS[id].name }; }),
-      intro: tabInfo('🔗', 'A food chain', 'Every food chain starts with the Sun. The arrows show who eats what, and where the energy goes.'),
+      intro: tabInfo('🔗', tx('A food chain', 'Rantai makanan'), tx('Every food chain starts with the Sun. The arrows show who eats what, and where the energy goes.', 'Setiap rantai makanan dimulai dari Matahari. Anak panah menunjukkan siapa makan apa, dan ke mana energi mengalir.')),
       view: function (id) { return { chain: id }; },
-      info: function (id) { var ch = CHAINS[id]; return tabInfo(ch.pic, ch.name, esc(chainSentence(ch)) + ' <i>Tap one to find out more.</i>'); },
+      info: function (id) { var ch = CHAINS[id]; return tabInfo(ch.pic, ch.name, esc(chainSentence(ch)) + ' <i>' + tx('Tap one to find out more.', 'Ketuk salah satunya untuk tahu lebih banyak.') + '</i>'); },
       nodeInfo: function (id, k) {
         var ch = CHAINS[id], nd = ch.nodes[k], next = ch.nodes[k + 1], prev = ch.nodes[k - 1];
-        var eats = prev ? '' : ' It gets its energy from the Sun.'; // what a consumer eats is in its note
-        var eaten = next ? ' It is eaten by ' + esc(the(next)) + '.' : ' Nothing hunts it here.';
+        var eats = prev ? '' : tx(' It gets its energy from the Sun.', ' Ia mendapat energinya dari Matahari.'); // what a consumer eats is in its note
+        var eaten = next ? tx(' It is eaten by ', ' Ia dimakan oleh ') + esc(the(next)) + '.' : tx(' Nothing hunts it here.', ' Tidak ada yang memburunya di sini.');
         return tabInfo(nd.pic, nd.name, '<b>' + ROLE[nd.role].name + '</b>: ' + esc(cap(the(nd))) + ' ' + esc(nd.note) + '.' + eats + eaten);
       }
     }
@@ -225,7 +231,18 @@
   function ask(name, text, right, wrong, note, view) { return { sci: true, name: name, text: text, right: right, wrong: wrong, note: note, view: view }; }
   var others = function (ids, id) { return ids.filter(function (x) { return x !== id; }); };
 
-  var WATER_FACTS = [
+  var WATER_FACTS = (IDL ? [
+    ['Energi', 'Apa yang memberi energi pada siklus air?', 'Matahari', ['Bulan', 'Angin', 'Dasar laut'], 'Matahari memanaskan air, dan itu membuat semuanya bergerak.', 'evaporation'],
+    ['Awan', 'Awan terbuat dari apa?', 'Tetes air yang sangat kecil', ['Asap', 'Kapas', 'Hanya debu'], 'Awan terbuat dari miliaran tetes air yang sangat kecil.', 'condensation'],
+    ['Uap air', 'Apa itu uap air?', 'Air berbentuk gas yang tidak bisa kamu lihat', ['Air beku', 'Air yang sangat asin', 'Air kotor'], 'Uap air adalah air berbentuk gas, jadi ia ada di udara di sekitar kita.', 'evaporation'],
+    ['Di langit yang dingin', 'Apa yang terjadi pada uap air di langit tinggi yang dingin?', 'Ia mendingin dan berubah menjadi tetes air', ['Ia lenyap selamanya', 'Ia berubah menjadi batu', 'Ia menjadi lebih panas'], 'Udara dingin mendinginkan uap, dan uap itu berubah kembali menjadi tetes air yang sangat kecil.', 'condensation'],
+    ['Laut', 'Di mana sebagian besar air Bumi berkumpul?', 'Di samudra', ['Di awan', 'Di genangan', 'Di udara'], 'Sebagian besar air di Bumi ada di samudra.', 'collection'],
+    ['Hujan, salju, dan hujan es', 'Apa sebutan untuk hujan, salju, dan hujan es secara bersama-sama?', 'Presipitasi', ['Penguapan', 'Pengembunan', 'Pengumpulan'], 'Air yang jatuh dari awan disebut presipitasi.', null],
+    ['Setelah hujan', 'Ke mana air hujan pergi setelah jatuh?', 'Ke sungai, danau, dan laut', ['Naik ke luar angkasa', 'Masuk ke Bulan', 'Berubah menjadi pasir'], 'Air mengalir ke anak sungai dan sungai, meresap ke dalam tanah, dan berakhir di danau dan laut.', 'collection'],
+    ['Habis terpakai', 'Apakah air pernah habis terpakai dalam siklus air?', 'Tidak, air berputar terus', ['Ya, air habis terpakai', 'Ya, air berubah menjadi udara selamanya', 'Hanya di musim kemarau'], 'Air yang kita minum hari ini adalah air yang sudah berputar selama jutaan tahun.', null],
+    ['Menjemur pakaian', 'Hari apa yang paling cepat mengeringkan pakaian basah?', 'Hari yang panas dan cerah', ['Malam yang dingin dan gelap', 'Hari yang berawan dan dingin', 'Pagi yang berkabut'], 'Makin panas, makin cepat air menguap.', 'evaporation'],
+    ['Hujan es', 'Apa sebutan untuk air yang jatuh sebagai bola-bola es kecil?', 'Hujan es', ['Embun', 'Kabut', 'Uap'], 'Hujan es terbentuk di awan yang sangat dingin. Salju dan hujan es juga termasuk presipitasi.', 'precipitation']
+  ] : [
     ['Energy', 'What gives the water cycle its energy?', 'The Sun', ['The Moon', 'The wind', 'The sea floor'], 'The Sun warms the water, and that makes it all move.', 'evaporation'],
     ['Clouds', 'What are clouds made of?', 'Tiny drops of water', ['Smoke', 'Cotton', 'Dust only'], 'A cloud is made of billions of tiny drops of water.', 'condensation'],
     ['Water vapour', 'What is water vapour?', 'Water as a gas you cannot see', ['Frozen water', 'Very salty water', 'Dirty water'], 'Water vapour is water as a gas, so it is in the air all around us.', 'evaporation'],
@@ -236,14 +253,14 @@
     ['Used up', 'Is water ever used up in the water cycle?', 'No, it goes round and round', ['Yes, it is used up', 'Yes, it turns into air for ever', 'Only in summer'], 'The water we drink today is water that has been going round for millions of years.', null],
     ['Drying clothes', 'Which day dries wet clothes fastest?', 'A hot, sunny day', ['A cold, dark night', 'A cloudy, cold day', 'A foggy morning'], 'The more heat, the faster water evaporates.', 'evaporation'],
     ['Hail', 'What do we call water that falls as little balls of ice?', 'Hail', ['Dew', 'Fog', 'Steam'], 'Hail forms in very cold clouds. Snow and hail are precipitation too.', 'precipitation']
-  ].map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], { stage: f[5] }); });
+  ]).map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], { stage: f[5] }); });
 
   function waterSteps() {
     var out = [];
     STAGES.forEach(function (s) {
       var rest = others(STAGES.map(function (x) { return x.id; }), s.id).map(function (id) { return STAGE[id].name; });
-      out.push(ask(s.name, 'Which step of the water cycle is lit up?', s.name, rest, s.name + ': ' + s.text, { stage: s.id }));
-      out.push(ask(s.name, s.clue + ' What is this step called?', s.name, rest, s.name + ': ' + s.text, { stage: null }));
+      out.push(ask(s.name, tx('Which step of the water cycle is lit up?', 'Tahap siklus air mana yang menyala?'), s.name, rest, s.name + ': ' + s.text, { stage: s.id }));
+      out.push(ask(s.name, s.clue + tx(' What is this step called?', ' Apa nama tahap ini?'), s.name, rest, s.name + ': ' + s.text, { stage: null }));
     });
     return out;
   }
@@ -251,13 +268,24 @@
     var out = [];
     STAGES.forEach(function (s, i) {
       var next = STAGES[(i + 1) % 4], prev = STAGES[(i + 3) % 4], all = STAGES.map(function (x) { return x.name; });
-      out.push(ask('After ' + s.name, 'What comes right after ' + s.name.toLowerCase() + '?', next.name, others(all, next.name), s.name + ' comes before ' + next.name.toLowerCase() + '. ' + next.text, { stage: s.id }));
-      out.push(ask('Before ' + s.name, 'What comes right before ' + s.name.toLowerCase() + '?', prev.name, others(all, prev.name), prev.name + ' comes before ' + s.name.toLowerCase() + '. ' + s.text, { stage: s.id }));
+      out.push(ask(tx('After ', 'Setelah ') + s.name, tx('What comes right after ' + s.name.toLowerCase() + '?', 'Apa yang datang tepat setelah ' + s.name.toLowerCase() + '?'), next.name, others(all, next.name),
+        tx(s.name + ' comes before ' + next.name.toLowerCase() + '. ', s.name + ' datang sebelum ' + next.name.toLowerCase() + '. ') + next.text, { stage: s.id }));
+      out.push(ask(tx('Before ', 'Sebelum ') + s.name, tx('What comes right before ' + s.name.toLowerCase() + '?', 'Apa yang datang tepat sebelum ' + s.name.toLowerCase() + '?'), prev.name, others(all, prev.name),
+        tx(prev.name + ' comes before ' + s.name.toLowerCase() + '. ', prev.name + ' datang sebelum ' + s.name.toLowerCase() + '. ') + s.text, { stage: s.id }));
     });
     return out;
   }
 
-  var FACTS = [
+  var FACTS = (IDL ? [
+    ['Awal energi', 'Dari mana energi dalam rantai makanan bermula?', 'Dari Matahari', ['Dari tanah', 'Dari angin', 'Dari hewan terbesar'], 'Tumbuhan memakai sinar matahari untuk membuat makanan, dan setiap hewan mendapat energi dari tumbuhan, secara langsung atau tidak.'],
+    ['Produsen', 'Apa sebutan untuk tumbuhan yang membuat makanannya sendiri?', 'Produsen', ['Pemangsa', 'Herbivora', 'Pengurai'], 'Tumbuhan adalah produsen: ia membuat makanannya sendiri dari sinar matahari, udara, dan air.'],
+    ['Herbivora', 'Apa sebutan untuk hewan yang hanya memakan tumbuhan?', 'Herbivora', ['Karnivora', 'Produsen', 'Pengurai'], 'Herbivora memakan tumbuhan, seperti rusa atau tikus.'],
+    ['Karnivora', 'Apa sebutan untuk hewan yang hanya memakan hewan lain?', 'Karnivora', ['Herbivora', 'Produsen', 'Pengurai'], 'Karnivora memakan hewan lain, seperti ular atau hiu.'],
+    ['Pemangsa', 'Apa sebutan untuk hewan yang memburu hewan lain?', 'Pemangsa', ['Mangsa', 'Produsen', 'Herbivora'], 'Pemangsa memburu hewan lain untuk dimakan.'],
+    ['Mangsa', 'Apa sebutan untuk hewan yang diburu oleh hewan lain?', 'Mangsa', ['Pemangsa', 'Produsen', 'Pengurai'], 'Hewan yang diburu disebut mangsa.'],
+    ['Anak panah', 'Apa yang ditunjukkan anak panah dalam rantai makanan?', 'Ke mana energi mengalir', ['Hewan mana yang lebih besar', 'Hewan mana yang berlari lebih cepat', 'Di mana hewan tinggal'], 'Anak panah menunjuk dari makanan ke pemakannya, jadi ia menunjukkan ke mana energi mengalir.'],
+    ['Pengurai', 'Apa yang dilakukan jamur dan cacing pada tumbuhan dan hewan yang mati?', 'Mereka menguraikannya', ['Mereka memburunya', 'Mereka membuatnya tumbuh', 'Mereka mengubahnya menjadi batu'], 'Pengurai menguraikan yang sudah mati, dan zat-zat bergizinya kembali ke tanah.']
+  ] : [
     ['Where energy starts', 'Where does the energy in a food chain start?', 'With the Sun', ['With the soil', 'With the wind', 'With the biggest animal'], 'Plants use sunlight to make food, and every animal gets its energy from plants, directly or not.'],
     ['Producers', 'What do we call a plant that makes its own food?', 'A producer', ['A predator', 'A herbivore', 'A decomposer'], 'A plant is a producer: it makes its own food from sunlight, air and water.'],
     ['Herbivores', 'What do we call an animal that eats only plants?', 'A herbivore', ['A carnivore', 'A producer', 'A decomposer'], 'A herbivore eats plants, like a deer or a rat.'],
@@ -266,7 +294,7 @@
     ['Prey', 'What do we call an animal that is hunted by another animal?', 'Prey', ['A predator', 'A producer', 'A decomposer'], 'The animal that is hunted is called prey.'],
     ['The arrows', 'What do the arrows in a food chain show?', 'Where the energy goes', ['Which animal is bigger', 'Which animal runs faster', 'Where animals live'], 'An arrow points from the food to the one that eats it, so it shows where the energy goes.'],
     ['Decomposers', 'What do mushrooms and worms do to dead plants and animals?', 'They break them down', ['They hunt them', 'They make them grow', 'They turn them into rocks'], 'Decomposers break down what is dead, and the goodness goes back into the soil.']
-  ].map(function (f, k) { return ask(f[0], f[1], f[2], f[3], f[4], { chain: CHAIN_IDS[k % 4] }); });
+  ]).map(function (f, k) { return ask(f[0], f[1], f[2], f[3], f[4], { chain: CHAIN_IDS[k % 4] }); });
 
   function chainEats() {
     var out = [];
@@ -275,13 +303,13 @@
       ch.nodes.forEach(function (nd, k) {
         if (k > 0) {
           var food = ch.nodes[k - 1];
-          out.push(ask('What ' + the(nd) + ' eats', 'What does ' + the(nd) + ' eat?', food.name, ch.decoys,
-            cap(the(nd)) + ' eats ' + the(food) + '. ' + food.pic + ' → ' + nd.pic, { chain: id, hide: k - 1 }));
+          out.push(ask(tx('What ' + the(nd) + ' eats', 'Yang dimakan ' + the(nd)), tx('What does ' + the(nd) + ' eat?', 'Apa yang dimakan ' + the(nd) + '?'), food.name, ch.decoys,
+            cap(the(nd)) + tx(' eats ', ' memakan ') + the(food) + '. ' + food.pic + ' → ' + nd.pic, { chain: id, hide: k - 1 }));
         }
         if (k < ch.nodes.length - 1) {
           var eater = ch.nodes[k + 1];
-          out.push(ask('What eats ' + the(nd), 'What eats ' + the(nd) + '?', eater.name, ch.decoys,
-            cap(the(eater)) + ' eats ' + the(nd) + '. ' + nd.pic + ' → ' + eater.pic, { chain: id, hide: k + 1 }));
+          out.push(ask(tx('What eats ' + the(nd), 'Yang memakan ' + the(nd)), tx('What eats ' + the(nd) + '?', 'Siapa yang memakan ' + the(nd) + '?'), eater.name, ch.decoys,
+            cap(the(eater)) + tx(' eats ', ' memakan ') + the(nd) + '. ' + nd.pic + ' → ' + eater.pic, { chain: id, hide: k + 1 }));
         }
       });
     });
@@ -295,8 +323,8 @@
       ch.nodes.forEach(function (nd, k) {
         if (k === ch.nodes.length - 1) return;
         var next = ch.nodes[k + 1];
-        out.push(ask('If ' + the(nd) + ' went', 'What if all the ' + plural(nd) + ' disappeared? Who would soon go hungry?', next.name, shuffle(elsewhere).slice(0, 3),
-          cap(the(next)) + ' eats ' + the(nd) + ', so it would have nothing to eat. Everything in a food chain depends on the rest.', { chain: id, hl: k }));
+        out.push(ask(tx('If ' + the(nd) + ' went', 'Jika ' + the(nd) + ' menghilang'), tx('What if all the ' + plural(nd) + ' disappeared? Who would soon go hungry?', 'Bagaimana jika semua ' + the(nd) + ' menghilang? Siapa yang akan segera kelaparan?'), next.name, shuffle(elsewhere).slice(0, 3),
+          tx(cap(the(next)) + ' eats ' + the(nd) + ', so it would have nothing to eat. Everything in a food chain depends on the rest.', cap(the(next)) + ' memakan ' + the(nd) + ', jadi ia tidak punya makanan lagi. Semua yang ada dalam rantai makanan bergantung pada yang lain.'), { chain: id, hl: k }));
       });
     });
     return out;
@@ -306,8 +334,8 @@
     CHAIN_IDS.forEach(function (id) {
       CHAINS[id].nodes.forEach(function (nd, k) {
         var ro = ROLE[nd.role], all = Object.keys(ROLE).map(function (r) { return ROLE[r].name; }).filter(function (n) { return n !== ro.name; });
-        out.push(ask('Is ' + the(nd) + '?', 'Is ' + the(nd) + ' a producer, a herbivore or a carnivore?', ro.name, all.concat(DECOY_ROLES).slice(0, 3),
-          cap(the(nd)) + ' ' + nd.note + '. So it is a ' + ro.name.toLowerCase() + '.', { chain: id, hl: k }));
+        out.push(ask(tx('Is ' + the(nd) + '?', 'Apakah ' + the(nd) + '?'), tx('Is ' + the(nd) + ' a producer, a herbivore or a carnivore?', 'Apakah ' + the(nd) + ' produsen, herbivora, atau karnivora?'), ro.name, all.concat(DECOY_ROLES).slice(0, 3),
+          tx(cap(the(nd)) + ' ' + nd.note + '. So it is a ' + ro.name.toLowerCase() + '.', cap(the(nd)) + ' ' + nd.note + '. Jadi ia adalah ' + ro.name.toLowerCase() + '.'), { chain: id, hl: k }));
       });
     });
     return out;

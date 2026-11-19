@@ -1,6 +1,6 @@
 # Omnia
 
-General knowledge for children, in English, with Pacha the llama. The topics are about places, flags, nature, culture, animals, volcanoes, islands, peoples, landmarks and foods, rivers and lakes, the solar system, the water cycle, food chains, day, night and the seasons, and life cycles, and there are five games on the map (a jigsaw, Who Am I?, Neighbours, Bigger or Farther? and Island Routes). Most of it is on maps a child can drag, pinch and zoom (the solar system is on a made-up map of space); the science topics are animated scenes instead.
+General knowledge for children, in English or Indonesian (the 🌐 button beside **Aa** switches it), with Pacha the llama. The topics are about places, flags, nature, culture, animals, volcanoes, islands, peoples, landmarks and foods, rivers and lakes, the solar system, the water cycle, food chains, day, night and the seasons, and life cycles, and there are five games on the map (a jigsaw, Who Am I?, Neighbours, Bigger or Farther? and Island Routes). Most of it is on maps a child can drag, pinch and zoom (the solar system is on a made-up map of space); the science topics are animated scenes instead.
 
 ## Topics and levels
 
@@ -98,3 +98,7 @@ Omnia uses the children shared by every Cendekia app (`shared/profile.js`). Each
 Sound effects are made with the Web Audio API; there is no voice. With "reduce motion" turned on in the device settings, all animation is off, and the map jumps instead of gliding.
 
 `sw.js` precaches the page, `maps.js`, `borders.js`, `science.js`, `sky.js`, `life.js`, the icons and the shared scripts. After changing them, bump `CACHE` in `sw.js` so installed copies refresh.
+
+## Language
+
+English is the default. In Indonesian the screens, the questions and the sentences about every place are translated. Countries have their Indonesian names and capitals (Jepang, Tiongkok, Kota Meksiko), and every other place has its Indonesian name and sentence. The English tables stay in `index.html`, and `id.js` has the Indonesian rows in the same order as the English rows (a place's `key`, `en` and the saved stars keep the English name). `science.js`, `sky.js` and `life.js` pair each English text with its Indonesian one through `Cendekia.t`. Saved stars and the weak items in the parents' report are not affected: a weak item is written in the language that was played.

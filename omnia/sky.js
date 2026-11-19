@@ -10,6 +10,7 @@
 (function () {
   'use strict';
   var S = window.OMNIA_SCIENCE, MAPS = window.OMNIA_MAPS;
+  var tx = window.Cendekia.t, IDL = window.Cendekia.lang === 'id';
   var PI = Math.PI, TAU = PI * 2, D = PI / 180, W = 800, H = 480;
   var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
   var FONT = '"Plus Jakarta Sans", system-ui, sans-serif';
@@ -182,16 +183,16 @@
     var p = globe(ctx, cx, cy, R, DAY_AXIS, st.theta, s, INDONESIA);
     if (p) pin(ctx, p, st.pulse);
     if (labels) {
-      text(ctx, 'Sun', onRight ? W - 70 : 70, 250, 26, '#ffe08a');
+      text(ctx, tx('Sun', 'Matahari'), onRight ? W - 70 : 70, 250, 26, '#ffe08a');
       var T = clockOf(st.theta, st.gamma), part = partOfDay(T);
-      text(ctx, 'Indonesia  ' + hhmm(T) + '  ' + { sunrise: '🌅 Sunrise', daytime: '☀️ Daytime', sunset: '🌇 Sunset', night: '🌙 Night' }[part], W / 2, H - 28, 28, '#fff');
-      if (!p) text(ctx, '(Indonesia is round the back)', W / 2, H - 62, 19, '#b9c4ff');
+      text(ctx, 'Indonesia  ' + hhmm(T) + '  ' + (IDL ? { sunrise: '🌅 Matahari terbit', daytime: '☀️ Siang hari', sunset: '🌇 Matahari terbenam', night: '🌙 Malam' } : { sunrise: '🌅 Sunrise', daytime: '☀️ Daytime', sunset: '🌇 Sunset', night: '🌙 Night' })[part], W / 2, H - 28, 28, '#fff');
+      if (!p) text(ctx, tx('(Indonesia is round the back)', '(Indonesia ada di sisi belakang)'), W / 2, H - 62, 19, '#b9c4ff');
     }
   }
 
   // ---- The seasons ----
   var TILT = 23.4 * D, ELEV = Math.asin(0.36); // the orbit is seen from a little above
-  var SEASON_AT = [{ m: 'March', psi: 90 * D }, { m: 'June', psi: 180 * D }, { m: 'September', psi: 270 * D }, { m: 'December', psi: 0 }];
+  var SEASON_AT = [{ m: tx('March', 'Maret'), psi: 90 * D }, { m: tx('June', 'Juni'), psi: 180 * D }, { m: 'September', psi: 270 * D }, { m: tx('December', 'Desember'), psi: 0 }];
   var OX = 400, OY = 236, RX = 290, RY = RX * Math.sin(ELEV);
   function earthView(psi) {
     var se = Math.sin(ELEV), ce = Math.cos(ELEV);
@@ -209,9 +210,10 @@
       var v = earthView(sa.psi), up = sa.psi === 90 * D;
       ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(v.x, v.y, 52, 0, TAU); ctx.stroke();
       if (labels) {
-        var north = ['Spring', 'Summer', 'Autumn', 'Winter'][k], south = ['Autumn', 'Winter', 'Spring', 'Summer'][k], dy = up ? -66 : 68;
+        var names = IDL ? ['musim semi', 'musim panas', 'musim gugur', 'musim dingin'] : ['spring', 'summer', 'autumn', 'winter'];
+        var north = names[k], south = names[(k + 2) % 4], dy = up ? -66 : 68;
         text(ctx, sa.m, v.x, v.y + dy, 24, '#fff');
-        text(ctx, 'N: ' + north.toLowerCase() + ' · S: ' + south.toLowerCase(), v.x, v.y + dy + (up ? -26 : 26), 16, '#b9c4ff');
+        text(ctx, tx('N: ', 'U: ') + north + ' · S: ' + south, v.x, v.y + dy + (up ? -26 : 26), 16, '#b9c4ff');
       }
     });
     var e = earthView(st.psi), behind = Math.sin(st.psi) > 0;
@@ -220,20 +222,21 @@
       ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(e.x - e.a[0] * pole, e.y + e.a[1] * pole); ctx.lineTo(e.x + e.a[0] * pole, e.y - e.a[1] * pole); ctx.stroke();
       globe(ctx, e.x, e.y, 44, e.a, st.spin, e.s);
-      if (labels) text(ctx, 'N', e.x + e.a[0] * (pole + 10), e.y - e.a[1] * (pole + 12), 18, '#ffd54a');
+      if (labels) text(ctx, tx('N', 'U'), e.x + e.a[0] * (pole + 10), e.y - e.a[1] * (pole + 12), 18, '#ffd54a');
     };
     if (behind) drawEarth();
     sun(ctx, OX, OY, 44);
     if (!behind) drawEarth();
     if (labels) {
-      var lean = dot(e.a, e.s), msg = lean > 0.22 ? 'North leans towards the Sun: summer in the north'
-        : lean < -0.22 ? 'North leans away from the Sun: winter in the north' : 'Neither end leans to the Sun: spring or autumn';
+      var lean = dot(e.a, e.s), msg = lean > 0.22 ? tx('North leans towards the Sun: summer in the north', 'Utara condong ke arah Matahari: musim panas di utara')
+        : lean < -0.22 ? tx('North leans away from the Sun: winter in the north', 'Utara condong menjauhi Matahari: musim dingin di utara') : tx('Neither end leans to the Sun: spring or autumn', 'Tidak ada ujung yang condong ke Matahari: musim semi atau musim gugur');
       text(ctx, msg, W / 2, H - 20, 17, '#fff');
     }
   }
 
   // ---- The Moon ----
-  var PHASES = ['New Moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous', 'Full Moon', 'Waning gibbous', 'Last quarter', 'Waning crescent'];
+  var PHASES = IDL ? ['Bulan Baru', 'Sabit Awal', 'Kuartal Pertama', 'Cembung Awal', 'Purnama', 'Cembung Akhir', 'Kuartal Terakhir', 'Sabit Akhir']
+    : ['New Moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous', 'Full Moon', 'Waning gibbous', 'Last quarter', 'Waning crescent'];
   var MARIA = [[-0.30, -0.28, 0.26], [0.12, -0.38, 0.17], [0.30, -0.02, 0.24], [-0.12, 0.12, 0.2], [-0.4, 0.2, 0.13], [0.16, 0.42, 0.12], [0.5, -0.22, 0.1], [-0.05, -0.05, 0.08]];
   var phaseOf = function (phi) { return Math.round(((phi % TAU) + TAU) % TAU / (PI / 4)) % 8; };
   var MOON_C = [320, 245], MOON_R = 170;
@@ -264,7 +267,7 @@
       ctx.beginPath(); ctx.moveTo(14, y); ctx.lineTo(96, y); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(104, y); ctx.lineTo(92, y - 6); ctx.lineTo(92, y + 6); ctx.fill();
     }
-    if (labels) text(ctx, 'Sunlight', 58, 34, 18, '#ffe08a');
+    if (labels) text(ctx, tx('Sunlight', 'Sinar Matahari'), 58, 34, 18, '#ffe08a');
     ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.28)'; ctx.setLineDash([6, 7]); ctx.lineWidth = 2;
     ctx.beginPath(); ctx.arc(cx, cy, MOON_R, 0, TAU); ctx.stroke(); ctx.restore();
     // the eight phases around the orbit
@@ -283,7 +286,7 @@
     var fx = 690, fy = 240;
     moonFace(ctx, fx, fy, 72, st.phi);
     if (labels) {
-      text(ctx, 'Seen from Earth', fx, fy - 104, 18, '#fff');
+      text(ctx, tx('Seen from Earth', 'Dilihat dari Bumi'), fx, fy - 104, 18, '#fff');
       text(ctx, PHASES[phaseOf(st.phi)], fx, fy + 106, 22, '#fff');
     }
   }
@@ -293,7 +296,7 @@
     var labels = !!opts.labels, cv = document.createElement('canvas'), dpr = Math.min(2, window.devicePixelRatio || 1);
     var st = { mode: 'day', theta: spinFor(11, DAY_G), gamma: DAY_G, psi: 150 * D, phi: 120 * D, spin: 0, pulse: 0 };
     cv.width = W * dpr; cv.height = H * dpr; cv.className = 'scene sky'; cv.style.setProperty('--ar', (W / H).toFixed(3));
-    if (labels) { cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'The Earth, the Sun and the Moon, moving'); } else cv.setAttribute('aria-hidden', 'true');
+    if (labels) { cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', tx('The Earth, the Sun and the Moon, moving', 'Bumi, Matahari, dan Bulan, bergerak')); } else cv.setAttribute('aria-hidden', 'true');
     host.textContent = ''; host.appendChild(cv);
     var ctx = cv.getContext('2d'), anims = [], token = 0, raf = 0, held = false, dead = false;
 
@@ -345,7 +348,30 @@
 
   // ---- The watch screen ----
   var tabInfo = S.tabInfo;
-  var INFO = {
+  var INFO = IDL ? {
+    day: [
+      ['Pagi', 'Sekarang pagi di Indonesia. Bumi berputar menghadap Matahari, dan titik merah bergerak masuk ke dalam cahaya.'],
+      ['Siang', 'Sekarang tengah hari di Indonesia. Titik merah menghadap Matahari, jadi Matahari tinggi di langit.'],
+      ['Senja', 'Sekarang sore di Indonesia. Bumi sudah berputar dan titik merah bergerak masuk ke dalam bayangan.'],
+      ['Malam', 'Sekarang malam di Indonesia. Titik merah berada di sisi yang gelap, menjauh dari Matahari, sementara di sisi lain dunia sedang siang.']
+    ],
+    seasons: [
+      ['Maret', 'Pada bulan Maret dan September, tidak ada ujung Bumi yang condong ke Matahari, jadi siang dan malam kira-kira sama panjangnya di mana-mana.'],
+      ['Juni', 'Pada bulan Juni, belahan utara condong ke Matahari: siang yang panjang dan hangat di utara, dan musim dingin di selatan.'],
+      ['September', 'Pada bulan September, tidak ada ujung yang condong ke Matahari, jadi siang dan malam kembali kira-kira sama panjangnya.'],
+      ['Desember', 'Pada bulan Desember, belahan selatan condong ke Matahari: musim panas di selatan, dan siang yang pendek dan dingin di utara.']
+    ],
+    moon: [
+      ['Bulan Baru', 'Bulan berada di antara Bumi dan Matahari. Sisi yang terang menghadap menjauh dari kita, jadi kita tidak bisa melihatnya.'],
+      ['Sabit Awal', 'Lengkungan tipis dari sisi yang terang tampak di sebelah kanan. Bentuknya makin besar ("membesar") setiap malam.'],
+      ['Kuartal Pertama', 'Kita melihat setengah dari sisi yang terang, di sebelah kanan. Bulan sudah menempuh seperempat orbitnya.'],
+      ['Cembung Awal', 'Lebih dari separuh bagiannya terang, dan terus membesar menuju purnama.'],
+      ['Purnama', 'Bumi berada di antara Matahari dan Bulan, jadi seluruh sisi yang kita lihat terang.'],
+      ['Cembung Akhir', 'Bagian yang terang makin kecil ("menyusut"), sekarang di sebelah kiri.'],
+      ['Kuartal Terakhir', 'Kita kembali melihat setengah dari sisi yang terang, sekarang di sebelah kiri.'],
+      ['Sabit Akhir', 'Lengkungan tipis di sebelah kiri, makin menipis sampai bulan baru berikutnya.']
+    ]
+  } : {
     day: [
       ['Morning', 'It is morning in Indonesia. The Earth spins towards the Sun, and the red dot is moving into the light.'],
       ['Noon', 'It is noon in Indonesia. The red dot faces the Sun, so the Sun is high in the sky.'],
@@ -369,33 +395,46 @@
       ['Waning crescent', 'A thin curve on the left, getting thinner until the next new Moon.']
     ]
   };
-  var MODES = {
+  var MODES = IDL ? {
+    day: { pic: '🌍', label: 'Siang dan malam', info: 'Bumi berputar sekali setiap 24 jam. Sisi yang menghadap Matahari mengalami siang, dan sisi lainnya mengalami malam. Titik merah adalah Indonesia.' },
+    seasons: { pic: '🍂', label: 'Musim', info: 'Bumi mengelilingi Matahari sekali setahun, dan sumbunya miring. Ketika belahan utara condong ke Matahari, di sana sedang musim panas. Indonesia dekat khatulistiwa, jadi punya musim hujan dan musim kemarau.' },
+    moon: { pic: '🌙', label: 'Fase Bulan', info: 'Bulan mengelilingi Bumi kira-kira sebulan sekali. Bulan tidak menghasilkan cahaya sendiri: kita melihat bagian yang disinari Matahari.' }
+  } : {
     day: { pic: '🌍', label: 'Day and night', info: 'The Earth spins once every 24 hours. The side facing the Sun has day, and the other side has night. The red dot is Indonesia.' },
     seasons: { pic: '🍂', label: 'The seasons', info: 'The Earth goes round the Sun once a year, and its axis is tilted. When the north leans towards the Sun it is summer there. Indonesia is near the equator, so it has a rainy and a dry season instead.' },
     moon: { pic: '🌙', label: 'Moon phases', info: 'The Moon goes round the Earth about once a month. It makes no light of its own: we see the part the Sun lights up.' }
   };
   S.kinds.sky = {
-    title: 'Watch the Earth and the Moon',
+    title: tx('Watch the Earth and the Moon', 'Lihat Bumi dan Bulan'),
     tabs: ['day', 'seasons', 'moon'].map(function (id) { return { id: id, pic: MODES[id].pic, label: MODES[id].label }; }),
-    intro: tabInfo('🌍', 'The Earth, the Sun and the Moon', 'Pick one to watch it move, then pick a moment to stop it there.'),
+    intro: tabInfo('🌍', tx('The Earth, the Sun and the Moon', 'Bumi, Matahari, dan Bulan'), tx('Pick one to watch it move, then pick a moment to stop it there.', 'Pilih salah satu untuk melihatnya bergerak, lalu pilih satu momen untuk menghentikannya di sana.')),
     view: function (id) { return { mode: id }; },
     info: function (id, at) {
       if (at === undefined || at === null) return tabInfo(MODES[id].pic, MODES[id].label, S.esc(MODES[id].info));
       return tabInfo(MODES[id].pic, INFO[id][at][0], S.esc(INFO[id][at][1]));
     },
     // The moments of a mode, for a second row of buttons ("Keep going" lets it move again).
-    picks: function (id) { return [{ id: null, label: '▶ Keep going' }].concat(INFO[id].map(function (x, k) { return { id: k, label: x[0] }; })); }
+    picks: function (id) { return [{ id: null, label: tx('▶ Keep going', '▶ Lanjutkan') }].concat(INFO[id].map(function (x, k) { return { id: k, label: x[0] }; })); }
   };
 
   // ---- Questions ----
   var ask = S.ask, mix = S.shuffle;
   function moonPhases() {
     return PHASES.map(function (name, k) {
-      return ask('Phase ' + name, 'Which phase of the Moon is this?', name, mix(PHASES.filter(function (n) { return n !== name; })).slice(0, 3),
+      return ask(tx('Phase ', 'Fase ') + name, tx('Which phase of the Moon is this?', 'Fase Bulan manakah ini?'), name, mix(PHASES.filter(function (n) { return n !== name; })).slice(0, 3),
         INFO.moon[k][0] + ': ' + INFO.moon[k][1], { mode: 'moon', at: k });
     });
   }
-  var DAYQ = [
+  var DAYQ = (IDL ? [
+    ['Siang dan malam', 'Mengapa ada siang dan malam?', 'Bumi berputar', ['Matahari mengelilingi Bumi', 'Bulan menutupi Matahari', 'Bumi bergerak mendekati Matahari'], 'Bumi berputar seperti gasing. Sisi yang menghadap Matahari mengalami siang, dan sisi lainnya mengalami malam.', { mode: 'day' }],
+    ['Satu putaran', 'Berapa lama Bumi berputar satu kali?', 'Satu hari (24 jam)', ['Satu jam', 'Satu minggu', 'Satu tahun'], 'Satu putaran Bumi memakan waktu 24 jam, dan itulah yang kita sebut satu hari.', { mode: 'day' }],
+    ['Sisi lain', 'Ketika siang di Indonesia, apa yang terjadi di sisi Bumi yang berlawanan?', 'Malam', ['Siang juga', 'Hujan', 'Turun salju'], 'Hanya separuh Bumi yang menghadap Matahari pada satu waktu, jadi ketika kita siang, sisi lainnya malam.', { mode: 'day' }],
+    ['Arah putaran', 'Ke arah mana Bumi berputar?', 'Dari barat ke timur', ['Dari timur ke barat', 'Dari utara ke selatan', 'Bumi tidak berputar'], 'Bumi berputar ke arah timur, dan itulah sebabnya Matahari tampak terbit di timur.', { mode: 'day' }],
+    ['Matahari terbit', 'Di mana Matahari tampak terbit?', 'Di timur', ['Di barat', 'Di utara', 'Di selatan'], 'Bumi berputar ke arah timur, jadi Matahari tampak muncul di timur dan terbenam di barat.', { mode: 'day' }],
+    ['Malam di Indonesia', 'Titik merah adalah Indonesia. Sekarang bagian hari apa di sana?', 'Malam', ['Tengah hari', 'Pagi', 'Sore'], 'Titik merah berada di sisi gelap Bumi, menjauh dari Matahari, jadi di sana malam.', { mode: 'day', at: 3 }],
+    ['Siang di Indonesia', 'Titik merah adalah Indonesia. Di sana siang atau malam?', 'Siang', ['Malam', 'Tengah malam', 'Matahari terbit'], 'Titik merah berada di sisi yang menghadap Matahari, jadi di sana siang.', { mode: 'day', at: 1 }],
+    ['Cahaya di siang hari', 'Apa yang memberi kita cahaya dan kehangatan di siang hari?', 'Matahari', ['Bulan', 'Awan', 'Putaran Bumi'], 'Matahari adalah sebuah bintang. Cahaya dan panasnya sampai ke Bumi.', { mode: 'day' }]
+  ] : [
     ['Day and night', 'Why do we have day and night?', 'The Earth spins round', ['The Sun goes round the Earth', 'The Moon covers the Sun', 'The Earth moves closer to the Sun'], 'The Earth spins like a top. The side facing the Sun has day, and the other side has night.', { mode: 'day' }],
     ['One spin', 'How long does the Earth take to spin round once?', 'One day (24 hours)', ['One hour', 'One week', 'One year'], 'One spin of the Earth takes 24 hours, and that is what we call a day.', { mode: 'day' }],
     ['The other side', 'When it is day in Indonesia, what is it on the opposite side of the Earth?', 'Night', ['Day too', 'Raining', 'Snowing'], 'Only half of the Earth faces the Sun at a time, so when we have day, the other side has night.', { mode: 'day' }],
@@ -404,8 +443,17 @@
     ['Night in Indonesia', 'The red dot is Indonesia. What part of the day is it there?', 'Night', ['Noon', 'Morning', 'Afternoon'], 'The red dot is on the dark side of the Earth, away from the Sun, so it is night.', { mode: 'day', at: 3 }],
     ['Daytime in Indonesia', 'The red dot is Indonesia. Is it day or night there?', 'Day', ['Night', 'Midnight', 'Sunrise'], 'The red dot is on the side facing the Sun, so it is day.', { mode: 'day', at: 1 }],
     ['Light in the day', 'What gives us light and warmth in the daytime?', 'The Sun', ['The Moon', 'The clouds', 'The Earth\'s spin'], 'The Sun is a star. Its light and heat reach the Earth.', { mode: 'day' }]
-  ].map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], f[5]); });
-  var SEASONQ = [
+  ]).map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], f[5]); });
+  var SEASONQ = (IDL ? [
+    ['Mengapa ada musim', 'Mengapa banyak negara mempunyai musim?', 'Sumbu Bumi miring', ['Bumi mendekati Matahari', 'Matahari membesar dan mengecil', 'Ukuran Bulan berubah'], 'Bumi sedikit miring ketika mengelilingi Matahari. Ujung mana pun yang condong ke Matahari mengalami musim panas.', { mode: 'seasons' }],
+    ['Satu tahun', 'Berapa lama Bumi mengelilingi Matahari satu kali?', 'Satu tahun', ['Satu hari', 'Satu bulan', 'Satu jam'], 'Satu putaran mengelilingi Matahari memakan waktu sekitar 365 hari, yang kita sebut satu tahun.', { mode: 'seasons' }],
+    ['Musim panas', 'Ketika belahan utara paling condong ke Matahari, musim apa di utara?', 'Musim panas', ['Musim dingin', 'Musim gugur', 'Musim semi'], 'Matahari lebih tinggi di langit dan siang lebih panjang, jadi udaranya hangat.', { mode: 'seasons', at: 1 }],
+    ['Belahan selatan', 'Ketika di utara musim panas, musim apa di selatan?', 'Musim dingin', ['Musim panas juga', 'Musim semi', 'Musim gugur'], 'Kedua belahan Bumi mengalami musim yang berlawanan.', { mode: 'seasons', at: 1 }],
+    ['Tanpa musim dingin', 'Mengapa Indonesia tidak punya musim dingin atau musim panas seperti negara lain?', 'Indonesia dekat khatulistiwa', ['Indonesia terlalu kecil', 'Indonesia punya banyak gunung berapi', 'Indonesia terdiri dari pulau-pulau'], 'Dekat khatulistiwa, Matahari tinggi sepanjang tahun, jadi hangat sepanjang tahun.', { mode: 'seasons' }],
+    ['Musim di Indonesia', 'Dua musim apa yang dimiliki Indonesia?', 'Musim hujan dan musim kemarau', ['Musim panas dan musim dingin', 'Musim semi dan musim gugur', 'Musim yang panas dan musim yang dingin'], 'Angin membawa hujan ke Indonesia pada sebagian tahun, dan cuaca kering pada sisanya.', { mode: 'seasons' }],
+    ['Lebih dekat saat musim panas?', 'Apakah Bumi lebih dekat ke Matahari saat musim panas?', 'Tidak, kemiringanlah yang membuat musim', ['Ya, itulah sebabnya panas', 'Ya, tetapi hanya pada malam hari', 'Sama setiap hari'], 'Jaraknya hampir tidak berubah. Kemiringan Bumilah yang membuat musim.', { mode: 'seasons' }],
+    ['Ekuinoks', 'Pada dua hari dalam setahun, siang dan malam kira-kira sama panjangnya di mana-mana. Apa nama hari-hari itu?', 'Ekuinoks', ['Solstis', 'Gerhana', 'Pasang surut'], 'Pada bulan Maret dan September, tidak ada ujung Bumi yang condong ke Matahari.', { mode: 'seasons', at: 0 }]
+  ] : [
     ['Why seasons', 'Why do many countries have seasons?', 'The Earth\'s axis is tilted', ['The Earth gets closer to the Sun', 'The Sun gets bigger and smaller', 'The Moon changes size'], 'The Earth leans a little as it goes round the Sun. Whichever end leans towards the Sun has summer.', { mode: 'seasons' }],
     ['A year', 'How long does the Earth take to go once round the Sun?', 'One year', ['One day', 'One month', 'One hour'], 'One trip round the Sun takes about 365 days, which we call a year.', { mode: 'seasons' }],
     ['Summer', 'When the north leans most towards the Sun, what season is it in the north?', 'Summer', ['Winter', 'Autumn', 'Spring'], 'The Sun is higher in the sky and the days are longer, so it is warm.', { mode: 'seasons', at: 1 }],
@@ -414,15 +462,22 @@
     ['Indonesian seasons', 'What two seasons does Indonesia have?', 'The rainy and the dry season', ['Summer and winter', 'Spring and autumn', 'The hot and the cold season'], 'Winds bring rain to Indonesia for part of the year, and dry weather for the rest.', { mode: 'seasons' }],
     ['Closer in summer?', 'Is the Earth closer to the Sun in summer?', 'No, it is the tilt that makes seasons', ['Yes, that is why it is hot', 'Yes, but only at night', 'It is the same every day'], 'The distance hardly changes. The tilt of the Earth makes the seasons.', { mode: 'seasons' }],
     ['Equinox', 'On two days of the year, day and night are about equally long everywhere. What are these days called?', 'Equinoxes', ['Solstices', 'Eclipses', 'Tides'], 'In March and September neither end of the Earth leans towards the Sun.', { mode: 'seasons', at: 0 }]
-  ].map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], f[5]); });
-  var MOONQ = [
+  ]).map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], f[5]); });
+  var MOONQ = (IDL ? [
+    ['Cahaya bulan', 'Apakah Bulan menghasilkan cahayanya sendiri?', 'Tidak, ia memantulkan cahaya Matahari', ['Ya, seperti Matahari', 'Ya, tetapi hanya pada malam hari', 'Hanya saat purnama'], 'Kita melihat bagian Bulan yang disinari Matahari.', { mode: 'moon' }],
+    ['Sebulan', 'Kira-kira berapa lama dari satu bulan baru ke bulan baru berikutnya?', 'Kira-kira sebulan (29 hari)', ['Satu hari', 'Satu minggu', 'Satu tahun'], 'Bulan membutuhkan waktu sekitar sebulan untuk mengelilingi Bumi, lalu fasenya berulang.', { mode: 'moon' }],
+    ['Yang dikelilinginya', 'Apa yang dikelilingi Bulan?', 'Bumi', ['Matahari', 'Mars', 'Yupiter'], 'Bulan mengelilingi Bumi, dan Bumi mengelilingi Matahari.', { mode: 'moon' }],
+    ['Tidak terlihat', 'Kapan kita tidak bisa melihat Bulan dari Bumi?', 'Saat bulan baru', ['Saat purnama', 'Saat kuartal pertama', 'Saat kuartal terakhir'], 'Saat bulan baru, sisinya yang terang menghadap menjauh dari kita.', { mode: 'moon', at: 0 }],
+    ['Lingkaran terang', 'Fase mana yang berupa lingkaran terang penuh?', 'Purnama', ['Bulan Baru', 'Kuartal Pertama', 'Sabit Akhir'], 'Saat purnama, Bumi berada di antara Matahari dan Bulan, dan seluruh sisi yang kita lihat terang.', { mode: 'moon', at: 4 }],
+    ['Pasang surut', 'Apa yang menarik laut naik dan turun sehingga terjadi pasang surut?', 'Tarikan Bulan', ['Angin', 'Panas Matahari', 'Ikan yang berenang'], 'Bulan menarik laut dengan gravitasinya, dan air naik dan turun dua kali sehari.', { mode: 'moon' }]
+  ] : [
     ['Moonlight', 'Does the Moon make its own light?', 'No, it reflects the Sun\'s light', ['Yes, like the Sun', 'Yes, but only at night', 'Only when it is full'], 'We see the part of the Moon that the Sun is shining on.', { mode: 'moon' }],
     ['A month', 'About how long is it from one new Moon to the next?', 'About a month (29 days)', ['One day', 'One week', 'One year'], 'The Moon takes about a month to go round the Earth, and the phases repeat.', { mode: 'moon' }],
     ['What it goes round', 'What does the Moon go round?', 'The Earth', ['The Sun', 'Mars', 'Jupiter'], 'The Moon goes round the Earth, and the Earth goes round the Sun.', { mode: 'moon' }],
     ['Cannot see it', 'When can we not see the Moon from the Earth?', 'At the new Moon', ['At the full Moon', 'At the first quarter', 'At the last quarter'], 'At the new Moon its lit side faces away from us.', { mode: 'moon', at: 0 }],
     ['A bright circle', 'Which phase is a whole bright circle?', 'Full Moon', ['New Moon', 'First quarter', 'Waning crescent'], 'At the full Moon the Earth is between the Sun and the Moon, and the whole side we see is lit.', { mode: 'moon', at: 4 }],
     ['Tides', 'What pulls the sea up and down to make the tides?', 'The Moon\'s pull', ['The wind', 'The Sun\'s heat', 'Fish swimming'], 'The Moon pulls on the sea with its gravity, and the water rises and falls twice a day.', { mode: 'moon' }]
-  ].map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], f[5]); });
+  ]).map(function (f) { return ask(f[0], f[1], f[2], f[3], f[4], f[5]); });
 
   S.questions['d.day'] = function () { return DAYQ.slice(); };
   S.questions['d.seasons'] = function () { return SEASONQ.slice(); };
