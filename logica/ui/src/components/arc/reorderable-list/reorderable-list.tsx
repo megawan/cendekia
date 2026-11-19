@@ -5,6 +5,7 @@ import { GripVertical } from "lucide-react";
 import { AnimatePresence, Reorder, motion, useDragControls, useMotionValue, useReducedMotion, type Variants } from "motion/react";
 import { motionTokens } from "../lib/motion-tokens";
 import styles from "./reorderable-list.module.css";
+import { t } from "../../../lang";
 
 export type ReorderableItem = { id: string; title: string; detail?: string };
 
@@ -16,7 +17,7 @@ const roll: Variants = {
   exit: (direction: number) => ({ opacity: 0, y: `${-.5 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }),
 };
 
-export function ReorderableList({ items, onReorder, label = "Reorder items", hinted = [] }: { items: ReorderableItem[]; onReorder: (items: ReorderableItem[]) => void; label?: string; hinted?: string[] }) {
+export function ReorderableList({ items, onReorder, label = t("Reorder items", "Susun ulang"), hinted = [] }: { items: ReorderableItem[]; onReorder: (items: ReorderableItem[]) => void; label?: string; hinted?: string[] }) {
   const [moved, setMoved] = useState<string | null>(null);
   const handles = useRef(new Map<string, HTMLButtonElement>());
   useEffect(() => {
@@ -65,7 +66,7 @@ function Row({ item, index, count, onMove, lifted, hinted, handleRef }: { item: 
     animate={{ scale: raised && !reduced ? 1.02 : 1 }}
     onDragStart={() => setDragging(true)} onDragEnd={() => { setDragging(false); if (reduced) y.jump(0); }}
     transition={reduced ? { duration: 0 } : { ...motionTokens.spring.smooth, scale: motionTokens.spring.snappy }} className={styles.row}>
-    <button ref={handleRef} type="button" className={styles.handle} aria-label={`Reorder ${item.title}. Position ${index + 1} of ${count}. Use arrow keys.`} onPointerDown={event => { if (event.button === 0) setPressed(true); controls.start(event); }} onKeyDown={event => { if (event.key === "ArrowUp" || event.key === "ArrowDown") { event.preventDefault(); onMove(item.id, event.key === "ArrowUp" ? -1 : 1); } }}><GripVertical size={16} aria-hidden="true" /></button>
+    <button ref={handleRef} type="button" className={styles.handle} aria-label={t(`Reorder ${item.title}. Position ${index + 1} of ${count}. Use arrow keys.`, `Pindahkan ${item.title}. Posisi ${index + 1} dari ${count}. Gunakan tombol panah.`)} onPointerDown={event => { if (event.button === 0) setPressed(true); controls.start(event); }} onKeyDown={event => { if (event.key === "ArrowUp" || event.key === "ArrowDown") { event.preventDefault(); onMove(item.id, event.key === "ArrowUp" ? -1 : 1); } }}><GripVertical size={16} aria-hidden="true" /></button>
     <span className={styles.copy}><strong>{item.title}</strong>{item.detail && <small>{item.detail}</small>}</span>
     <span className={styles.position}><span className={styles.srOnly}>{String(index + 1).padStart(2, "0")}</span>
       {/* The number rolls in the direction the row travelled, so a new position reads as movement. Reduced motion keeps one node and swaps the text:

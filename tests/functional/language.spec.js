@@ -111,3 +111,19 @@ test('Omnia home, a map level and a science level follow the language', async ({
   expect(errors).toEqual([]);
 });
 
+
+test('the Logica progress stepper and notifications are announced in Indonesian', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/logica/');
+  await page.evaluate(() => localStorage.setItem('cendekia.lang.v1', 'id'));
+  await page.reload();
+  await page.getByRole('button', { name: /Pola/ }).click();
+  await page.keyboard.press('Escape');
+  await page.locator('.lv button').first().dispatchEvent('click');
+  await expect(page.locator('#qSay')).toContainText(/Apa yang (berikutnya|hilang)\?/);
+  await expect(page.getByLabel('Soal', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(/Langkah 1 dari \d+: Soal 1/)).toBeAttached();
+  await expect(page.getByLabel('Notifikasi (Alt+T)')).toBeAttached();
+  expect(errors).toEqual([]);
+});

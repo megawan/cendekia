@@ -5,6 +5,7 @@ import type { KeyboardEvent, ReactNode } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import { motionTokens } from "../lib/motion-tokens";
 import styles from "./stepper.module.css";
+import { t } from "../../../lang";
 
 export type StepperOrientation = "horizontal" | "vertical";
 export type StepperStatus = "complete" | "current" | "upcoming" | "error";
@@ -112,9 +113,9 @@ function Marker({ number, kind, current, glyphDelay, ringDelay, reduced }: { num
   </span>;
 }
 
-const statusText: Record<StepperStatus, string> = { complete: "Completed", current: "", upcoming: "Not started", error: "Error" };
+const statusText: Record<StepperStatus, string> = { complete: t("Completed", "Selesai"), current: "", upcoming: t("Not started", "Belum dimulai"), error: t("Error", "Galat") };
 
-export function Stepper({ steps, current, orientation = "horizontal", onStepSelect, details = "all", compact = false, label = "Progress", completeLabel = "All steps complete", className }: StepperProps) {
+export function Stepper({ steps, current, orientation = "horizontal", onStepSelect, details = "all", compact = false, label = t("Progress", "Kemajuan"), completeLabel = t("All steps complete", "Semua langkah selesai"), className }: StepperProps) {
   const reduced = useReducedMotion() ?? false;
   const count = steps.length;
   const active = Math.min(Math.max(Math.round(current), 0), count);
@@ -179,7 +180,7 @@ export function Stepper({ steps, current, orientation = "horizontal", onStepSele
       <SwapText text={now?.label ?? completeLabel} className={styles.captionLabel} reduced={reduced} />
       <SwapText text={now?.error ?? now?.description} className={now?.error ? styles.error : styles.description} reduced={reduced} />
     </span>}
-    <span className={styles.srOnly} aria-live="polite">{now ? `Step ${active + 1} of ${count}: ${now.label}` : completeLabel}</span>
+    <span className={styles.srOnly} aria-live="polite">{now ? t(`Step ${active + 1} of ${count}: ${now.label}`, `Langkah ${active + 1} dari ${count}: ${now.label}`) : completeLabel}</span>
   </Root>;
 }
 
