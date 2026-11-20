@@ -1649,9 +1649,9 @@
   });
 
   // Angles. The fixed ray points right; the other turns counter-clockwise from it, as angles do on paper.
-  const anSvg = $('anSvg'), CX = 60, CY = 120, R = 80;
+  const anSvg = $('anSvg'), CX = 60, CY = 120, AR = 80;
   let anDeg = 60, anCancel = null, anHit = 0;
-  anSvg.innerHTML = '<path class="shArc" id="anArc"/><path class="shSquare" id="anSq" hidden/><line class="shRay" x1="60" y1="120" x2="' + (CX + R + 50) + '" y2="120"/>'
+  anSvg.innerHTML = '<path class="shArc" id="anArc"/><path class="shSquare" id="anSq" hidden/><line class="shRay" x1="60" y1="120" x2="' + (CX + AR + 50) + '" y2="120"/>'
     + '<line class="shRay" id="anRay" x1="60" y1="120"/><circle class="shHandle" id="anHandle" r="13" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="360"/>';
   const anPt = (deg, r) => [CX + r * Math.cos(deg * Math.PI / 180), CY - r * Math.sin(deg * Math.PI / 180)];
   const NAMED = [
