@@ -20,7 +20,7 @@ The home screen is a small town of nine places, ordered from the easiest (counti
 
 The easiest question is counting up to five apples on a table; the hardest are multi-step ones such as a 25% discount paid with a note, or when a bus driving 150 km at 60 km an hour arrives.
 
-Questions are made fresh every round (`WORLDS` in `index.html`; each level is a name and a function returning one question), with pictures drawn for them: emoji groups, plates, coins and notes, price tags, an analog clock, a pizza, a ruler, a measuring jug, a garden on squared paper, a bar chart and a bus timetable. Easier levels have two to four answers to choose from; harder ones use a number pad (with a decimal point where cents or half kilometers are needed). A round has six questions in levels 1–3 and five in levels 4–6.
+Questions are made fresh every round (`WORLDS` in `app.js`; each level is a name and a function returning one question), with pictures drawn for them: emoji groups, plates, coins and notes, price tags, an analog clock, a pizza, a ruler, a measuring jug, a garden on squared paper, a bar chart and a bus timetable. Easier levels have two to four answers to choose from; harder ones use a number pad (with a decimal point where cents or half kilometers are needed). A round has six questions in levels 1–3 and five in levels 4–6.
 
 In the Number Lab a question is answered with a hands-on tool instead of buttons or the number pad: the child works the tool and presses Check.
 
