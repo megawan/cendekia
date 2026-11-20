@@ -101,7 +101,7 @@
 </main>
 <script src="../shared/profile.js"></script>
 <script>
-  document.title = Cendekia.t('For parents', 'Untuk orang tua');
+  document.title = Cendekia.t('For parents', 'Untuk orang tua'); // the smoke check wants a plain <title>, so no data-id on it
   document.getElementById('access').addEventListener('click', Cendekia.access);
   document.getElementById('access').after(Cendekia.langButton());
 (() => {
