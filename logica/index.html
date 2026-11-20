@@ -1456,15 +1456,19 @@
   let uiLoad = null;
   function loadUI() {
     if (!uiLoad) uiLoad = new Promise((done) => {
-      // The counter's digit wheels are clipped by the stylesheet, so nothing paints until both files are in.
+      // The counter's digit wheels are clipped by the stylesheet, so the script is only added once the stylesheet
+      // is in: window.LogicaUI then never exists without its CSS, and nothing can render unstyled digits.
       const css = document.createElement('link');
       css.rel = 'stylesheet'; css.href = 'ui-dist/logica-ui.css';
-      const js = document.createElement('script');
-      js.src = 'ui-dist/logica-ui.js';
-      const styled = new Promise((ok, fail) => { css.onload = ok; css.onerror = fail; });
-      const scripted = new Promise((ok, fail) => { js.onload = ok; js.onerror = fail; });
-      Promise.all([styled, scripted]).then(() => { paintStars(totalStars()); renderStickers(); done(true); }, () => done(false));
-      document.head.append(css, js);
+      css.onload = () => {
+        const js = document.createElement('script');
+        js.src = 'ui-dist/logica-ui.js';
+        js.onload = () => { paintStars(totalStars()); renderStickers(); done(true); };
+        js.onerror = () => done(false);
+        document.head.append(js);
+      };
+      css.onerror = () => done(false);
+      document.head.append(css);
     });
     return uiLoad;
   }
