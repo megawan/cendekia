@@ -31,7 +31,7 @@ A word's third value is its picture:
 | Value | Picture |
 | --- | --- |
 | an emoji, for example `🐱` | the emoji |
-| `art:<name>`, for example `art:bollard` | a small flat drawing from `ART` in `index.html` (100×100, plain colours). Used for things that have no emoji (zebra crossing, bollard, speed bump ...) and for the whole of Shapes, Tools and Sports and the newer kitchen, house and school words, so those cards show a picture instead of an emoji |
+| `art:<name>`, for example `art:bollard` | a small flat drawing from `ART` in `index.html` (100×100, plain colours). Every word outside the face and body figures uses one, so no card shows an emoji. Keys are the lowercase English word with `-` for spaces; `zebra-animal` and `orange-color` keep apart the animal and the colour from the zebra crossing and the fruit |
 | `fig:<figure>:<part>`, for example `fig:face:eye` | a figure (`face`, `body` or `back`) with the part marked. The marks are ellipses in `HL`, as `[cx, cy, rx, ry, rotation]` in the figure's own units, so a new part is one line |
 
 ## Rewards
