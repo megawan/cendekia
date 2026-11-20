@@ -1,5 +1,5 @@
 // Offline support for Lexica. Bump CACHE when the precached files change.
-const CACHE = 'lexica-v31';
+const CACHE = 'lexica-v32';
 const FONTS = 'lexica-fonts-v1';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js'];
 

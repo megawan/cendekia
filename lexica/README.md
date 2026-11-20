@@ -1,6 +1,6 @@
 # Lexica
 
-An Indonesian–English vocabulary game. Children learn about 370 English words in 27 themes, hearing every word in both languages. Buttons, headings, theme names and messages are in English; Pochi's spoken instructions stay in Indonesian, the children's own language, and every word is shown and read in both languages.
+An Indonesian–English vocabulary game. Children learn about 450 English words in 27 themes, hearing every word in both languages. Buttons, headings, theme names and messages are in English; Pochi's spoken instructions stay in Indonesian, the children's own language, and every word is shown and read in both languages.
 
 ## Themes
 
