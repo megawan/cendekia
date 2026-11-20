@@ -12,7 +12,8 @@
 <meta name="description" content="Everyday math for children, from counting apples to sale prices and train timetables: counting, adding, money, time, sharing and fractions, measuring, percent and trip planning." data-id="Matematika sehari-hari untuk anak, dari menghitung apel sampai harga diskon dan jadwal kereta: berhitung, menjumlah, uang, waktu, berbagi dan pecahan, mengukur, persen, dan merencanakan perjalanan.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet"></noscript>
 <style>
   :root {
     --bg: #fff5f3; --ink: #1f2a44; --card: #ffffff; --line: #f1d8d6;
@@ -1649,9 +1650,9 @@
   });
 
   // Angles. The fixed ray points right; the other turns counter-clockwise from it, as angles do on paper.
-  const anSvg = $('anSvg'), CX = 60, CY = 120, R = 80;
+  const anSvg = $('anSvg'), CX = 60, CY = 120, AR = 80;
   let anDeg = 60, anCancel = null, anHit = 0;
-  anSvg.innerHTML = '<path class="shArc" id="anArc"/><path class="shSquare" id="anSq" hidden/><line class="shRay" x1="60" y1="120" x2="' + (CX + R + 50) + '" y2="120"/>'
+  anSvg.innerHTML = '<path class="shArc" id="anArc"/><path class="shSquare" id="anSq" hidden/><line class="shRay" x1="60" y1="120" x2="' + (CX + AR + 50) + '" y2="120"/>'
     + '<line class="shRay" id="anRay" x1="60" y1="120"/><circle class="shHandle" id="anHandle" r="13" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="360"/>';
   const anPt = (deg, r) => [CX + r * Math.cos(deg * Math.PI / 180), CY - r * Math.sin(deg * Math.PI / 180)];
   const NAMED = [
@@ -1670,7 +1671,7 @@
     return NAMED[6][1];
   }
   function anDraw(d) {
-    const p = anPt(d, R), a = anPt(d, 34), e = anPt(0, 34), big = d > 180 ? 1 : 0;
+    const p = anPt(d, AR), a = anPt(d, 34), e = anPt(0, 34), big = d > 180 ? 1 : 0;
     $('anRay').setAttribute('x2', p[0]); $('anRay').setAttribute('y2', p[1]);
     $('anHandle').setAttribute('cx', p[0]); $('anHandle').setAttribute('cy', p[1]);
     $('anArc').setAttribute('d', d >= 359.5 ? 'M60 120m-34 0a34 34 0 1 0 68 0a34 34 0 1 0 -68 0' : d <= 0.5 ? '' : 'M60 120 L' + e[0] + ' ' + e[1] + ' A34 34 0 ' + big + ' 0 ' + a[0] + ' ' + a[1] + 'Z');
