@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-id="Untuk orang tua">For parents</title>
+<title>For parents</title>
 <meta name="description" content="Each child's learning in Cendekia: days in a row, time played, stars, and what to practise.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#1f9d6b">
@@ -101,6 +101,7 @@
 </main>
 <script src="../shared/profile.js"></script>
 <script>
+  document.title = Cendekia.t('For parents', 'Untuk orang tua'); // the smoke check wants a plain <title>, so no data-id on it
   document.getElementById('access').addEventListener('click', Cendekia.access);
   document.getElementById('access').after(Cendekia.langButton());
 (() => {
