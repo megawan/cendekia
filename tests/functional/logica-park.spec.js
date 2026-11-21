@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { park: Array(7).fill(1) };
+    for (const x of ['easy', 'medium', 'hard']) best[x] = { park: Array(9).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { park: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -91,7 +91,7 @@ async function playLevel(page, diff) {
 test.describe("Poka's Parking Lot", () => {
   test.setTimeout(120000);
 
-  const plan = { easy: [1, 3, 6, 7], medium: [2, 4, 7], hard: [1, 5, 7] };
+  const plan = { easy: [1, 3, 6, 7, 9], medium: [2, 4, 7, 8, 9], hard: [1, 5, 7, 9] };
   for (const [diff, levels] of Object.entries(plan)) {
     for (const n of levels) {
       test(`level ${n} is solved by the shortest way on ${diff}`, async ({ page }) => {
@@ -224,7 +224,7 @@ test.describe("Poka's Parking Lot", () => {
     await page.goto('/logica/');
     await page.evaluate(() => {
       const id = window.Cendekia.profile().id, best = {};
-      for (const x of ['easy', 'medium', 'hard']) best[x] = { park: Array(7).fill(1) };
+      for (const x of ['easy', 'medium', 'hard']) best[x] = { park: Array(9).fill(1) };
       localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: 'medium', best, day: '', streak: 0, seen: {}, log: {}, days: {} }));
     });
     await page.reload();
@@ -264,4 +264,25 @@ test.describe("Poka's Parking Lot", () => {
     await slide(page, lot.cars, lot.n, start, m); // and a tap still moves it
     await expect(page.locator('#moves')).toContainText('Moves: 1');
   });
+
+  // Very hard and Extreme come from a bank of lots with a long way out; the fewest moves of each is in a band per difficulty.
+  const bands = { easy: [[12, 14], [16, 20]], medium: [[17, 20], [22, 26]], hard: [[24, 27], [28, 36]] };
+  for (const [diff, [vh, ex]] of Object.entries(bands)) {
+    for (const [n, [lo, hi]] of [[8, vh], [9, ex]]) {
+      test(`level ${n} on ${diff} is a lot that takes ${lo} to ${hi} moves, whichever way round it is shown`, async ({ page }) => {
+        await openLogica(page, diff);
+        for (let k = 0; k < 4; k++) {
+          await openLevel(page, n);
+          const lot = await readLot(page), { start, dist } = analyse(lot);
+          expect(dist(start)).toBeGreaterThanOrEqual(lo);
+          expect(dist(start)).toBeLessThanOrEqual(hi);
+          const cells = lot.cars.flatMap((c) => Array.from({ length: c.len }, (_, i) => (c.v ? [c.f, c.at + i] : [c.at + i, c.f]).join(',')));
+          expect(new Set(cells).size).toBe(cells.length);
+          await page.reload();
+          await page.evaluate(() => window.dispatchEvent(new Event('pointerdown')));
+          await page.waitForFunction(() => window.LogicaUI);
+        }
+      });
+    }
+  }
 });
