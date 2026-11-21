@@ -1463,7 +1463,11 @@
       js.src = 'ui-dist/logica-ui.js';
       const styled = new Promise((ok, fail) => { css.onload = ok; css.onerror = fail; });
       const scripted = new Promise((ok, fail) => { js.onload = ok; js.onerror = fail; });
-      Promise.all([styled, scripted]).then(() => { paintStars(totalStars()); renderStickers(); done(true); }, () => done(false));
+      Promise.all([styled, scripted]).then(() => { paintStars(totalStars()); renderStickers(); done(true); }, () => {
+        // The script defines window.LogicaUI by itself, but without its stylesheet every component renders as raw markup.
+        delete window.LogicaUI;
+        done(false);
+      });
       document.head.append(css, js);
     });
     return uiLoad;
