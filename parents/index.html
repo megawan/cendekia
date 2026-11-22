@@ -97,9 +97,31 @@
       <div class="row"><button class="btn" type="button" id="newSave" data-id="Simpan">Save</button><button class="btn ghost" type="button" id="newCancel" data-id="Batal">Cancel</button></div>
     </div>
     <div class="row" style="margin-top:14px"><button class="btn ghost" type="button" id="addKid" data-id="＋ Tambah anak">＋ Add a child</button></div>
+
+    <h2 data-id="Cadangan dan pindah perangkat">Backup and moving to a new device</h2>
+    <div class="card" id="backup">
+      <p style="margin-top:0" data-id="Simpan semua anak, bintang, stiker, dan riwayat ke satu file. Di perangkat baru, buka halaman ini lalu pulihkan dari file itu.">Save every child, with their stars, stickers and history, in one file. On a new device, open this page and restore from that file.</p>
+      <div class="row">
+        <button class="btn" type="button" id="backupSave" data-id="Simpan file cadangan">Save a backup file</button>
+        <button class="btn ghost" type="button" id="backupPick" data-id="Pulihkan dari file">Restore from a file</button>
+        <input type="file" id="backupFile" accept="application/json,.json" hidden aria-label="Backup file" data-id-label="File cadangan">
+      </div>
+      <div id="backupPreview" hidden>
+        <p><b id="backupWhat"></b></p>
+        <ul id="backupKids"></ul>
+        <div class="row">
+          <button class="btn" type="button" id="backupMerge" data-id="Gabungkan dengan perangkat ini">Merge with this device</button>
+          <button class="btn danger" type="button" id="backupReplace" data-id="Ganti semuanya">Replace everything</button>
+          <button class="btn ghost" type="button" id="backupCancel" data-id="Batal">Cancel</button>
+        </div>
+        <p class="muted" data-id="Gabungkan: semua anak di file ditambahkan, dan bila anak yang sama sudah ada, bintang tertinggi dan stiker dari keduanya dipertahankan. Ganti semuanya: data di perangkat ini dihapus dan diganti isi file.">Merge adds every child in the file, and when the same child is already here it keeps the higher stars and the stickers from both. Replace everything deletes what is on this device and uses the file instead.</p>
+      </div>
+      <p class="muted" id="backupNote" role="status"></p>
+    </div>
   </section>
 </main>
 <script src="../shared/profile.js"></script>
+<script src="backup.js"></script>
 <script>
   document.title = Cendekia.t('For parents', 'Untuk orang tua'); // the smoke check wants a plain <title>, so no data-id on it
   document.getElementById('access').addEventListener('click', Cendekia.access);
@@ -299,6 +321,50 @@
   });
 
   if (remembered) render();
+
+  // ---- Backup and restore ----
+  const B = window.CendekiaBackup;
+  const MAX_BACKUP = 5 * 1024 * 1024;
+  const DONE = 'cendekia.backup.done';
+  let pending = null;
+  const say = (text) => { $('backupNote').textContent = text; };
+  try { if (sessionStorage.getItem(DONE)) { sessionStorage.removeItem(DONE); say(t('Restored. Every child is back with their stars and stickers.', 'Berhasil dipulihkan. Semua anak kembali dengan bintang dan stikernya.')); } } catch (e) { /* private mode */ }
+
+  $('backupSave').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(B.build(), null, 1)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'cendekia-backup-' + C.dayStr(new Date()) + '.json';
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    say(t('Saved. Keep the file somewhere safe; it holds the progress of every child.', 'Tersimpan. Simpan file di tempat yang aman; isinya kemajuan semua anak.'));
+  });
+  $('backupPick').addEventListener('click', () => $('backupFile').click());
+  $('backupFile').addEventListener('change', async () => {
+    const file = $('backupFile').files[0];
+    $('backupFile').value = '';
+    if (!file) return;
+    $('backupPreview').hidden = true; pending = null;
+    try {
+      if (file.size > MAX_BACKUP) throw new Error(t('This file is too big to be a Cendekia backup.', 'File ini terlalu besar untuk cadangan Cendekia.'));
+      pending = B.parse(await file.text());
+    } catch (e) { say(e.message); return; }
+    const kids = B.summary(pending);
+    $('backupWhat').textContent = t(kids.length === 1 ? 'This backup has 1 child:' : 'This backup has ' + kids.length + ' children:', kids.length === 1 ? 'Cadangan ini berisi 1 anak:' : 'Cadangan ini berisi ' + kids.length + ' anak:');
+    $('backupKids').innerHTML = '';
+    kids.forEach((k) => $('backupKids').appendChild(el('li', '', k.avatar + ' ' + k.name + ' · ' + t(k.rounds + (k.rounds === 1 ? ' round' : ' rounds'), k.rounds + ' ronde'))));
+    say(''); $('backupPreview').hidden = false; $('backupMerge').focus();
+  });
+  $('backupCancel').addEventListener('click', () => { pending = null; $('backupPreview').hidden = true; say(''); });
+  function apply(mode) {
+    try { B.restore(pending, mode); } catch (e) { say(e.message); return; }
+    try { sessionStorage.setItem(DONE, '1'); } catch (e) { /* private mode */ }
+    location.reload();
+  }
+  $('backupMerge').addEventListener('click', () => apply('merge'));
+  $('backupReplace').addEventListener('click', () => {
+    if (confirm(t('Replace everything on this device? Every child here, with their stars, stickers and history, is deleted and cannot be brought back.', 'Ganti semuanya di perangkat ini? Semua anak di sini, dengan bintang, stiker, dan riwayatnya, dihapus dan tidak bisa dikembalikan.'))) apply('replace');
+  });
 })();
 </script>
 </body>

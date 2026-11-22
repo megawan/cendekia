@@ -40,7 +40,18 @@ Several children can share one device. `shared/profile.js` is loaded by every ap
 
 [`parents/`](parents) is the page for parents, opened from "👪 For parents" and protected by a small sum so a young child does not open it by accident. For each child it shows the days in a row, stars, minutes this week, a seven-day chart, progress per app, the letters and words that most often went wrong, and the last rounds. It also sets a daily time limit (a new round cannot start once it is used up), renames, changes the picture of, adds and deletes children.
 
-Everything stays in the browser of the device: nothing is sent anywhere, and clearing the browser's site data clears it. To add an app, add its storage key to `APP_KEYS` in `shared/profile.js` (or move the app's old saves itself, as Logica does) and to the list of app keys removed with a child in `remove()`, add a row to `APPS` in `parents/index.html`, and add `../shared/profile.js` to the app's service worker `CORE` list.
+Everything stays in the browser of the device: nothing is sent anywhere, and clearing the browser's site data clears it. To add an app, add its storage key to `APP_KEYS` in `shared/profile.js` (or move the app's old saves itself, as Logica does) and to the app prefixes in `isDataKey()` (the same check deletes a child's data and picks what goes into a backup), add a row to `APPS` in `parents/index.html`, and add `../shared/profile.js` to the app's service worker `CORE` list.
+
+### Backup and moving to a new device
+
+The parent page has **Save a backup file** and **Restore from a file**. [`parents/backup.js`](parents/backup.js) (`CendekiaBackup`) builds one JSON file (`{ app: "cendekia-backup", version: 1, exportedAt, children, data }`) with every child and every key `Cendekia.isDataKey()` accepts for them: each app's progress, the round log and the "worth practising" counts. Language and Accessibility belong to the device and are not in it.
+
+Restoring first checks the file (format, version, size under 5 MB) and shows who is in it. Then the parent picks:
+
+- **Merge with this device**: children in the file are added; a child with the same id keeps the higher numbers (stars, best per level), the union of lists (stickers) and both round logs, while the device keeps its own name, picture and time limit. A device that only has the blank "Child 1" made on its first visit does not keep it.
+- **Replace everything**: this device's children and their data are deleted and the file's are written (after a confirmation).
+
+Only keys that belong to a child in the file are written, so a file cannot change the language, Accessibility or another child. A new app needs nothing here as long as its keys end in the child id and its prefix is in `isDataKey()`. Change `version` (and read the old one) if the file layout ever changes.
 
 ## Language
 
