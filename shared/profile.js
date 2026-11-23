@@ -286,12 +286,18 @@
   }
 
   // ---- For the parent page ----
+  // A key that holds one child's saved data: "<app>.<...>.<child id>". The device-wide settings (language,
+  // accessibility, the list of children) do not end in a child id, so they never match.
+  function isDataKey(k, id) {
+    var suffix = '.' + id;
+    return k.length > suffix.length && k.slice(-suffix.length) === suffix && /^(baca|phonics|kosakata|hijaiyah|logika|numeria|omnia|cendekia)\./.test(k);
+  }
+  function dataKeys(id) {
+    try { return Object.keys(localStorage).filter(function (k) { return isDataKey(k, id); }); } catch (e) { return []; /* private mode */ }
+  }
   function remove(id) {
     data.list = data.list.filter(function (p) { return p.id !== id; });
-    var suffix = '.' + id;
-    try {
-      Object.keys(localStorage).forEach(function (k) { if (k.slice(-suffix.length) === suffix && /^(baca|phonics|kosakata|hijaiyah|logika|numeria|omnia|cendekia)\./.test(k)) del(k); });
-    } catch (e) { /* private mode */ }
+    dataKeys(id).forEach(del);
     if (!data.list.length) { var p = add('Child 1', AVATARS[0]); data.cur = p.id; } else if (data.cur === id) data.cur = data.list[0].id;
     save(PROFILES, data);
   }
@@ -308,6 +314,7 @@
     add: function (name, avatar) { var p = add(name, avatar); save(PROFILES, data); return p; },
     update: function (id, fields) { var p = find(id); if (p) { Object.keys(fields).forEach(function (k) { p[k] = fields[k]; }); save(PROFILES, data); } },
     remove: remove,
+    isDataKey: isDataKey, dataKeys: dataKeys,
     dayStr: dayStr,
     minutesOn: minutesOn,
     log: function (id) { return load(logKey(id), []); },
