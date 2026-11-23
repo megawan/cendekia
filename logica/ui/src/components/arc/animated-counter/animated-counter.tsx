@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion, useTransform, type MotionValue, type Variants } from "motion/react";
 import { motionTokens } from "../lib/motion-tokens";
 import styles from "./animated-counter.module.css";
@@ -14,6 +14,16 @@ export interface AnimatedCounterProps {
 }
 
 type Part = { key: string; digit: number; order: number } | { key: string; text: string };
+
+/** What keeps the digit wheels from reading as raw text. Inline, so it holds even when the stylesheet is late, stale or missing; the CSS only adds the look (type, feathered mask). */
+const structure = {
+  counter: { position: "relative", display: "inline-flex", flexDirection: "column" },
+  srOnly: { position: "absolute", width: 1, height: 1, overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" },
+  value: { display: "inline-flex", alignItems: "flex-start", whiteSpace: "nowrap" },
+  column: { position: "relative", display: "inline-block", overflow: "hidden" },
+  sizer: { visibility: "hidden" },
+  glyph: { position: "absolute", inset: "var(--feather, 0px) 0", textAlign: "center" },
+} satisfies Record<string, CSSProperties>;
 
 const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const rise: Variants = { hidden: { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }, shown: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } }, gone: { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] } } };
@@ -40,7 +50,7 @@ function Glyph({ position, digit }: { position: MotionValue<number>; digit: numb
   const opacity = useTransform(offset, current => Math.max(0, 1 - Math.abs(current)));
   const visibility = useTransform(offset, current => Math.abs(current) >= 1 ? "hidden" : "visible");
   const filter = useTransform(offset, current => Math.abs(current) < .02 || Math.abs(current) >= 1 ? "none" : `blur(${(Math.abs(current) * motionTokens.blur.subtle).toFixed(2)}px)`);
-  return <motion.span className={styles.glyph} style={{ y, opacity, filter, visibility }}>{digit}</motion.span>;
+  return <motion.span className={styles.glyph} style={{ ...structure.glyph, y, opacity, filter, visibility }}>{digit}</motion.span>;
 }
 
 const presence = { initial: { width: 0, opacity: 0 }, animate: { width: "auto", opacity: 1 }, exit: { width: 0, opacity: 0 } };
@@ -58,8 +68,8 @@ function Column({ digit, direction, armed, delay, reduceMotion }: { digit: numbe
     else animate(position, state.target, state.revealed ? motionTokens.spring.smooth : { ...reveal, delay });
     state.revealed = true;
   }, [armed, delay, digit, direction, position, reduceMotion]);
-  return <motion.span className={styles.column} {...presence} transition={reduceMotion ? { duration: 0 } : motionTokens.spring.morph}>
-    <span className={styles.sizer}>0</span>
+  return <motion.span className={styles.column} style={structure.column} {...presence} transition={reduceMotion ? { duration: 0 } : motionTokens.spring.morph}>
+    <span className={styles.sizer} style={structure.sizer}>0</span>
     {DIGITS.map(item => <Glyph key={item} position={position} digit={item} />)}
   </motion.span>;
 }
@@ -74,10 +84,10 @@ export function AnimatedCounter({ value, label, prefix = "", suffix = "", decima
   const parts = partsFor(value, decimals, locale);
   const text = `${prefix}${parts.map(part => "text" in part ? part.text : part.digit).join("")}${suffix}`;
   const armed = animateOnView && !inView;
-  return <span ref={ref} className={styles.counter}>
+  return <span ref={ref} className={styles.counter} style={structure.counter}>
     {label && <span className={styles.label}><span className={styles.labelSwap}><AnimatePresence mode="popLayout" initial={false}><motion.span key={label} className={styles.labelText} variants={reduceMotion ? fade : rise} initial="hidden" animate="shown" exit="gone">{label}</motion.span></AnimatePresence></span></span>}
-    <span className={styles.srOnly}>{text}</span>
-    <span className={styles.value} aria-hidden="true">
+    <span className={styles.srOnly} style={structure.srOnly}>{text}</span>
+    <span className={styles.value} style={structure.value} aria-hidden="true">
       {prefix && <span className={styles.symbol}>{prefix}</span>}
       <AnimatePresence initial={false}>
         {parts.map(part => "digit" in part
