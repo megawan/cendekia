@@ -107,8 +107,12 @@ test.describe("Poka's Maze", () => {
       await openLogica(page, 'easy');
       await openLevel(page, 6);
       const maze = await readMaze(page), dist = distances(maze);
-      expect(dist[maze.at]).toBeGreaterThanOrEqual(10);
-      expect(dist[maze.at]).toBeLessThanOrEqual(16);
+      expect(dist[maze.at]).toBeGreaterThanOrEqual(14);
+      expect(dist[maze.at]).toBeLessThanOrEqual(20);
+      // from one corner to the opposite one
+      const last = maze.n - 1, x = maze.at % maze.n, y = Math.floor(maze.at / maze.n);
+      expect([0, last]).toContain(x); expect([0, last]).toContain(y);
+      expect(maze.goal).toBe((last - y) * maze.n + (last - x));
       await expect(page.locator('#moves')).toContainText('Fewest: ' + dist[maze.at]);
     }
   });
