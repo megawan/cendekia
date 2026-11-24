@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { circuit: Array(6).fill(1) };
+    for (const x of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) best[x] = { circuit: Array(6).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { circuit: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -76,7 +76,7 @@ const readFill = (page) => page.evaluate(() => ({
 }));
 // Every choice of gates that matches the table.
 function fits({ tree, want }) {
-  const slots = slotsOf(tree), n = want.length === 4 ? 2 : 3, inputs = assignments(n), out = [];
+  const slots = slotsOf(tree), n = Math.round(Math.log2(want.length)), inputs = assignments(n), out = [];
   for (let m = 0; m < 1 << slots.length; m++) {
     const fill = {};
     slots.forEach((sl, j) => { fill[sl.slot] = choices(sl)[(m >> j) & 1]; });
@@ -97,7 +97,7 @@ async function setBoxes(page, fill) {
 test.describe("Poka's Workshop", () => {
   test.setTimeout(90000);
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     for (const n of [1, 2, 3, 4]) {
       test(`level ${n} is solved by following the wires on ${diff}`, async ({ page }) => {
         await openLogica(page, diff);
@@ -111,7 +111,7 @@ test.describe("Poka's Workshop", () => {
     }
   }
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     test(`puzzles are valid on ${diff}`, async ({ page }) => {
       for (let k = 0; k < 5; k++) {
         await openLogica(page, diff);
@@ -133,7 +133,7 @@ test.describe("Poka's Workshop", () => {
         const sols = assignments(lit.inp.length).filter((x) => evalTree(lit.trees[0], x) === target);
         expect(sols.length).toBeGreaterThanOrEqual(1);
         expect(evalTree(lit.trees[0], lit.inp)).not.toBe(target); // it does not start solved
-        if (diff === 'hard') expect(sols).toHaveLength(1);
+        if (['hard', 'veryhard', 'extreme'].includes(diff)) expect(sols).toHaveLength(1);
       }
     });
   }
@@ -194,7 +194,7 @@ test.describe("Poka's Workshop", () => {
     await expect(page.locator('.circ .lamp.lit')).toHaveCount(1);
   });
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     for (const n of [5, 6]) {
       test(`level ${n} is solved by filling the gates on ${diff}`, async ({ page }) => {
         await openLogica(page, diff);
@@ -209,7 +209,7 @@ test.describe("Poka's Workshop", () => {
     }
   }
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     test(`fill-the-gate puzzles are valid on ${diff}`, async ({ page }) => {
       for (let k = 0; k < 5; k++) {
         for (const n of [5, 6]) {
@@ -220,7 +220,7 @@ test.describe("Poka's Workshop", () => {
           else expect(f.slots.length).toBeGreaterThanOrEqual(diff === 'easy' ? 2 : 3);
           expect(f.good.length).toBeGreaterThanOrEqual(1);
           expect(f.good.length).toBeLessThan(f.all.length); // the table must tell the gates apart
-          if (diff === 'hard') expect(f.good).toHaveLength(1);
+          if (['hard', 'veryhard', 'extreme'].includes(diff)) expect(f.good).toHaveLength(1);
           const { want } = await readFill(page);
           expect(new Set(want).size).toBe(2); // the lamp is not always on or always off
         }

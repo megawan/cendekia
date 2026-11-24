@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { clues: Array(7).fill(1), train: Array(7).fill(1) };
+    for (const x of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) best[x] = { clues: Array(7).fill(1), train: Array(7).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { clues: true, train: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -47,7 +47,7 @@ function solveClues() {
 }
 
 test.describe('Who Is It?', () => {
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     test(`the detective level has one answer and can be solved on ${diff}`, async ({ page }) => {
       await openLogica(page, diff);
       await openLevel(page, 'Who Is It?', 7);
@@ -132,7 +132,7 @@ test.describe('Sort the Train', () => {
   });
 });
 
-for (const diff of ['easy', 'medium', 'hard']) {
+for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
   test(`every Who Is It? and Sort the Train level opens on ${diff}`, async ({ page }) => {
     test.setTimeout(60000);
     await openLogica(page, diff);

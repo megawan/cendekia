@@ -1,6 +1,8 @@
 (() => {
   'use strict';
   const C = JSON.parse(document.getElementById('content').textContent);
+  // Very hard and Extreme play the Hard levels with fewer blocks allowed (see startRobot): the maps are the same.
+  const robotLevels = (id, diff) => C[id][diff] || C[id].hard;
   const $ = (id) => document.getElementById(id);
   const tx = Cendekia.t; // tx(English, Indonesian): the interface text in the page's language
   const IDL = Cendekia.lang === 'id';
@@ -163,10 +165,15 @@
   const DIFFS = {
     easy: { name: tx('Easy', 'Mudah'), age: tx('Ages 4–5', 'Usia 4–5'), icon: '🌱', note: tx('Small maps, fewer choices', 'Peta kecil, pilihan lebih sedikit') },
     medium: { name: tx('Medium', 'Sedang'), age: tx('Ages 6–7', 'Usia 6–7'), icon: '🌿', note: tx('Repeat blocks, longer patterns', 'Balok ulang, pola lebih panjang') },
-    hard: { name: tx('Hard', 'Sulit'), age: tx('Ages 8–10', 'Usia 8–10'), icon: '🌳', note: tx('Functions, if blocks, bigger puzzles', 'Fungsi, balok jika, teka-teki lebih besar') }
+    hard: { name: tx('Hard', 'Sulit'), age: tx('Ages 8–10', 'Usia 8–10'), icon: '🌳', note: tx('Functions, if blocks, bigger puzzles', 'Fungsi, balok jika, teka-teki lebih besar') },
+    veryhard: { name: tx('Very hard', 'Sangat sulit'), age: tx('Ages 10+', 'Usia 10+'), icon: '🏔️', note: tx('Long puzzles, fewer helpers', 'Teka-teki panjang, bantuan lebih sedikit') },
+    extreme: { name: tx('Extreme', 'Ekstrem'), age: tx('Expert puzzlers', 'Jagoan teka-teki'), icon: '🔥', note: tx('The biggest puzzles of all', 'Teka-teki terbesar dari semuanya') }
   };
+  // The difficulties from easiest to hardest. A rule that begins at Hard goes on in the two above it.
+  const TIERS = Object.keys(DIFFS);
+  const hardUp = (d) => TIERS.indexOf(d) >= TIERS.indexOf('hard');
   const AVATARS = CD.AVATARS;
-  const fresh = () => ({ diff: '', best: { easy: {}, medium: {}, hard: {} }, day: '', streak: 0, seen: {}, log: {}, days: {} });
+  const fresh = () => ({ diff: '', best: { easy: {}, medium: {}, hard: {}, veryhard: {}, extreme: {} }, day: '', streak: 0, seen: {}, log: {}, days: {} });
   // The quiz worlds had Indonesian ids before (pola, mesin, timbang, saring, kode). Saved stars, logs and seen
   // guides under the old ids move to the new ones the first time a child's state is read.
   const OLD_IDS = { pola: 'patterns', mesin: 'machine', timbang: 'balance', saring: 'filter', kode: 'code' };
@@ -274,7 +281,7 @@
       levels: [tx('Small tower', 'Menara kecil'), tx('Taller tower', 'Menara lebih tinggi'), tx('Middle peg', 'Tiang tengah'), tx('Messy start', 'Awal berantakan'), tx('Rebuild', 'Bangun ulang'), tx('Big tower', 'Menara besar'), tx('Mixed up', 'Campur aduk')] },
     { id: 'park', name: tx("Poka's Parking Lot", 'Parkiran Poka'), skill: tx('Planning ahead', 'Merencanakan ke depan'), icon: '🚓', c: 'var(--c-orange)', kind: 'quiz', total: 3,
       desc: tx('The police car is stuck in a full parking lot. Slide the other cars out of the way and drive it out of the exit.', 'Mobil polisi terjebak di parkiran yang penuh. Geser mobil lain dari jalannya, lalu keluarkan lewat pintu keluar.'),
-      levels: [tx('Few cars', 'Sedikit mobil'), tx('More cars', 'Lebih banyak mobil'), tx('Trucks', 'Truk'), tx('Tight spot', 'Sempit'), tx('Busy lot', 'Parkiran ramai'), tx('Rush hour', 'Jam sibuk'), tx('Mixed up', 'Campur aduk'), tx('Very hard', 'Sangat sulit'), tx('Extreme', 'Ekstrem')] },
+      levels: [tx('Few cars', 'Sedikit mobil'), tx('More cars', 'Lebih banyak mobil'), tx('Trucks', 'Truk'), tx('Tight spot', 'Sempit'), tx('Busy lot', 'Parkiran ramai'), tx('Rush hour', 'Jam sibuk'), tx('Mixed up', 'Campur aduk')] },
     { id: 'maze', name: tx("Poka's Maze", 'Labirin Poka'), skill: tx('Finding a way', 'Mencari jalan'), icon: '🧭', c: 'var(--c-teal)', kind: 'quiz', total: 3,
       desc: tx('Poka is lost in a maze. Walk to the house, and back up when you reach a dead end.', 'Poka tersesat di labirin. Berjalanlah ke rumah, dan mundur kalau sampai di jalan buntu.'),
       levels: [tx('Small maze', 'Labirin kecil'), tx('Bigger maze', 'Labirin lebih besar'), tx('Shortcuts', 'Jalan pintas'), tx('Big maze', 'Labirin besar'), tx('Many ways', 'Banyak jalan'), tx('Huge maze', 'Labirin raksasa'), tx('Mixed up', 'Campur aduk')] },
@@ -286,7 +293,7 @@
       levels: [tx('Switch and flip', 'Saklar dan balik'), tx('Both keys', 'Kedua kunci'), tx('Either key', 'Salah satu kunci'), tx('Mixed wires', 'Kabel campur'), tx('Fill the gate', 'Isi gerbangnya'), tx('Build a circuit', 'Buat rangkaian')] }
   ];
   // Robot and fixing levels are different for each difficulty; quiz levels are the same, with harder questions.
-  const levelsOf = (w) => (w.kind === 'robot' ? C[w.id][S.diff].map((l) => lvName(l.name)) : w.levels);
+  const levelsOf = (w) => (w.kind === 'robot' ? robotLevels(w.id, S.diff).map((l) => lvName(l.name)) : w.levels);
   const maxStars = (w) => levelsOf(w).length * 3;
   const isOpen = (w, i) => i === 0 || best(w.id, i - 1) > 0;
   const starSvg = (on, cls) => '<svg class="' + (cls || '') + (on ? ' on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#starPath"/></svg>';
@@ -579,7 +586,7 @@
     p.diff = p.diff || 'medium';
     const log = p.log || {}, days = p.days || {};
     const pct = (x) => Math.round(x * 100) + '%';
-    const levelName = (w, diff, i) => (w.kind === 'robot' ? lvName(C[w.id][diff][i].name) : w.levels[i]);
+    const levelName = (w, diff, i) => (w.kind === 'robot' ? lvName(robotLevels(w.id, diff)[i].name) : w.levels[i]);
     // Totals over every level the player has tried.
     const all = Object.values(log).reduce((a, L) => ({ n: a.n + tries(L), g: a.g + goodOnes(L), h: a.h + L.hints }), { n: 0, g: 0, h: 0 });
     const stars = Object.values(p.best).reduce((a, byW) => a + Object.values(byW).reduce((b, l) => b + sum(l), 0), 0);
@@ -618,7 +625,7 @@
     const perWorld = WORLDS.map((w) => {
       const Ls = Object.entries(log).filter(([k]) => k.split('/')[1] === w.id).map(([, L]) => L);
       const n = Ls.reduce((a, L) => a + tries(L), 0), g = Ls.reduce((a, L) => a + goodOnes(L), 0), hints = Ls.reduce((a, L) => a + L.hints, 0);
-      const names = w.kind === 'robot' ? C[w.id][p.diff] : w.levels, got = sum((p.best[p.diff] || {})[w.id]);
+      const names = w.kind === 'robot' ? robotLevels(w.id, p.diff) : w.levels, got = sum((p.best[p.diff] || {})[w.id]);
       return { w, n, g, hints, rate: n ? g / n : 0, got, max: names.length * 3, st: statusOf(n, n ? g / n : 0, got) };
     });
     h += '<div class="box"><h3>' + tx('Skills', 'Keterampilan') + '</h3><div class="skills">' + perWorld.map((x) => '<div class="skill"><span class="ic" aria-hidden="true">' + x.w.icon + '</span>'
@@ -649,7 +656,7 @@
     // Suggestions.
     const tips = [];
     const curGot = perWorld.reduce((a, x) => a + x.got, 0), curMax = perWorld.reduce((a, x) => a + x.max, 0);
-    const up = p.diff === 'easy' ? DIFFS.medium.name : p.diff === 'medium' ? DIFFS.hard.name : '';
+    const up = DIFFS[TIERS[TIERS.indexOf(p.diff) + 1]] ? DIFFS[TIERS[TIERS.indexOf(p.diff) + 1]].name : '';
     if (up && all.n >= 20 && all.g / all.n >= 0.85 && curGot >= curMax * 0.6) tips.push(tx('Most answers are right the first time and many stars are collected. ' + up + ' may be a good next step.', 'Sebagian besar jawaban benar di percobaan pertama dan banyak bintang terkumpul. ' + up + ' mungkin langkah berikutnya yang bagus.'));
     if (p.diff !== 'easy' && all.n >= 15 && all.g / all.n < 0.5) tips.push(tx('Many puzzles need several tries. A lower difficulty can keep it fun while the ideas settle.', 'Banyak teka-teki butuh beberapa percobaan. Tingkat yang lebih rendah bisa menjaga keseruan sambil ide-idenya mengendap.'));
     const notYet = perWorld.filter((x) => !x.n && !x.got).map((x) => x.w.name);
@@ -894,7 +901,7 @@
   }
   // A random walk becomes the road; the cells around it turn into rocks and water.
   function randomLevel(diff) {
-    const [w, h, lmin, lmax, ngems] = { easy: [4, 3, 3, 5, 0], medium: [5, 4, 5, 8, 1], hard: [6, 5, 8, 12, 2] }[diff];
+    const [w, h, lmin, lmax, ngems] = { easy: [4, 3, 3, 5, 0], medium: [5, 4, 5, 8, 1], hard: [6, 5, 8, 12, 2], veryhard: [7, 6, 12, 18, 3], extreme: [8, 7, 16, 24, 4] }[diff];
     for (;;) {
       let x = rnd(0, w - 1), y = rnd(0, h - 1);
       const L = rnd(lmin, lmax), road = [[x, y]], seen = new Set([x + ',' + y]);
@@ -937,11 +944,13 @@
   let R = null;
   // i is the level number, or -1 for a random map, which comes as `def`.
   function startRobot(w, i, def) {
-    def = def || C[w.id][S.diff][i];
+    def = def || robotLevels(w.id, S.diff)[i];
     const sol = parseProg(def.sol), tools = def.tools || '';
     R = { t0: Date.now(), w, i, def, lv: parseMap(def.map), debug: w.id === 'debug', prog: [], fn: [], target: null, fails: 0, edits: 0,
           runs: 0, hints: 0, running: false, max: def.max || 0, sol, tools, sel: null, showBug: false };
     R.par = count(sol.prog) + count(sol.fn);
+    if (R.max && S.diff === 'veryhard') R.max = Math.max(R.par, R.max - 1);
+    if (R.max && S.diff === 'extreme') R.max = R.par;
     if (R.debug) { const b = makeBug(R.lv, sol.prog, sol.fn); R.prog = b.prog; R.fn = b.fn; R.orig = clone(b); }
     $('rTitle').textContent = w.name;
     $('rLevel').textContent = def.custom ? '🛠️' : i < 0 ? '🎲' : tx('Level ', 'Level ') + (i + 1);
@@ -1046,7 +1055,7 @@
     return sol;
   }
   function renderMaker() {
-    if (!M.cells) { const [w, h] = MK_SIZES[{ easy: 'small', medium: 'medium', hard: 'big' }[S.diff] || 'medium']; M.cells = blank(w, h); }
+    if (!M.cells) { const [w, h] = MK_SIZES[{ easy: 'small', medium: 'medium' }[S.diff] || 'big']; M.cells = blank(w, h); }
     const w = M.cells[0].length, h = M.cells.length;
     $('mkSizes').innerHTML = Object.entries(MK_SIZES).map(([k, [sw, sh]]) => '<button type="button" data-size="' + k + '" aria-pressed="' + (sw === w && sh === h) + '">'
       + tx(k[0].toUpperCase() + k.slice(1), { small: 'Kecil', medium: 'Sedang', big: 'Besar' }[k]) + ' ' + sw + '×' + sh + '</button>').join('');
@@ -1573,20 +1582,20 @@
   // middle, dots grow by two and arrows turn by 45 degrees.
   function genPatterns(lvl) {
     const d = S.diff, cs = shuffle(CK.slice()), ss = shuffle(SK.slice());
-    const fam = lvl < 7 ? lvl : d === 'easy' ? rnd(0, 4) : d === 'hard' ? rnd(3, 6) : rnd(2, 6);
+    const fam = lvl < 7 ? lvl : d === 'easy' ? rnd(0, 4) : hardUp(d) ? rnd(3, 6) : rnd(2, 6);
     let seq, unit;
     if (fam === 0) unit = [it(ss[0], cs[0]), it(ss[0], cs[1])];
     if (fam === 1) unit = [0, 1, 2].map((k) => it(ss[k], cs[0]));
     if (fam === 2) { const A = it(ss[0], cs[0]), B = it(ss[1], cs[1]), D = it(ss[2], cs[2]); unit = pick([[A, A, B], [A, B, B], [A, A, B, B], [A, B, A, D]]); }
     if (fam === 3) unit = [0, 1, 2].map((k) => it(ss[k], cs[k]));
-    if (fam === 4) { const step = d === 'hard' || (lvl === 7 && d === 'medium') ? pick([1, 2]) : 1, n0 = step === 2 ? 1 : rnd(1, 2); seq = [0, 1, 2, 3, 4].map((k) => it('dots', cs[0], { n: n0 + step * k })); }
-    if (fam === 5) { const r0 = pick([0, 90, 180, 270]), dir = d === 'hard' ? pick([45, 90, 270, 315]) : pick([90, 270]); seq = [0, 1, 2, 3, 4, 5].map((k) => it('arrow', cs[0], { r: (r0 + dir * k) % 360 })); }
+    if (fam === 4) { const step = hardUp(d) || (lvl === 7 && d === 'medium') ? pick([1, 2]) : 1, n0 = step === 2 ? 1 : rnd(1, 2); seq = [0, 1, 2, 3, 4].map((k) => it('dots', cs[0], { n: n0 + step * k })); }
+    if (fam === 5) { const r0 = pick([0, 90, 180, 270]), dir = hardUp(d) ? pick([45, 90, 270, 315]) : pick([90, 270]); seq = [0, 1, 2, 3, 4, 5].map((k) => it('arrow', cs[0], { r: (r0 + dir * k) % 360 })); }
     if (fam === 6) { seq = [0, 1, 2, 3, 4, 5, 6].map((k) => it(ss[k % 2], cs[k % 3])); }
     if (!seq) { const len = unit.length * 2 + (unit.length <= 2 ? 2 : unit.length === 3 ? 1 : 0); seq = Array.from({ length: len }, (_, k) => unit[k % unit.length]); }
     let miss = seq.length - 1;
-    if ((d === 'medium' && lvl >= 6 && Math.random() < 0.6) || (d === 'hard' && lvl >= 3 && Math.random() < 0.5)) miss = rnd(2, seq.length - 2);
+    if ((d === 'medium' && lvl >= 6 && Math.random() < 0.6) || (d === 'hard' && lvl >= 3 && Math.random() < 0.5) || (d === 'veryhard' && lvl >= 2 && Math.random() < 0.8) || (d === 'extreme' && lvl >= 1)) miss = rnd(2, seq.length - 2);
     const ans = seq[miss];
-    const opts = choices(ans, seq, d === 'easy' ? 3 : d === 'hard' ? 4 : lvl < 3 ? 3 : 4);
+    const opts = choices(ans, seq, { easy: 3, hard: 4, veryhard: 5, extreme: 6 }[d] || (lvl < 3 ? 3 : 4));
     const phrase = miss === seq.length - 1 ? P.next : P.missing;
     qSay(phrase);
 
@@ -1625,7 +1634,7 @@
   // Easy: three examples and three choices. Hard: two examples, four choices and harder number rules.
   function genMachine(lvl) {
     const d = S.diff, T = pick(CK), Sh = pick(SK);
-    let rule, input, nEx = d === 'easy' ? 3 : d === 'hard' ? 2 : lvl < 4 ? 2 : 3, prefer = (x) => [x];
+    let rule, input, nEx = d === 'easy' ? 3 : hardUp(d) ? 2 : lvl < 4 ? 2 : 3, prefer = (x) => [x];
     if (lvl === 0) { rule = (x) => it(x.s, T); input = () => it(pick(SK), pick(CK.filter((c) => c !== T))); }
     if (lvl === 1) { rule = (x) => it(Sh, x.c); input = () => it(pick(SK.filter((s) => s !== Sh)), pick(CK)); }
     if (lvl === 2) { rule = (x) => it('dots', x.c, { n: x.n + 1 }); input = () => it('dots', pick(CK), { n: rnd(1, 6) }); }
@@ -1638,16 +1647,17 @@
     if (lvl === 6) { rule = (x) => it('dots', x.c, { n: x.n + 2 }); input = () => it('dots', pick(CK), { n: rnd(1, 7) }); prefer = (x) => [x, it('dots', x.c, { n: x.n + 1 })]; }
     if (lvl === 7) {
       const [op, k] = pick({ easy: [['+', 1], ['+', 2]], medium: [['+', 2], ['+', 3], ['×', 2], ['−', 1], ['+', 10]],
-        hard: [['×', 3], ['+', 5], ['−', 2], ['×', 2], ['+', 9]] }[d]);
+        hard: [['×', 3], ['+', 5], ['−', 2], ['×', 2], ['+', 9]],
+        veryhard: [['×', 4], ['+', 7], ['−', 3], ['×', 3], ['+', 12]], extreme: [['×', 5], ['+', 14], ['−', 6], ['×', 4], ['+', 19]] }[d]);
       const f = (v) => op === '+' ? v + k : op === '×' ? v * k : v - k;
-      rule = (x) => it('number', 'purple', { v: f(x.v) }); input = () => it('number', 'blue', { v: rnd(op === '−' ? k + 1 : 1, d === 'easy' ? 5 : 9) });
+      rule = (x) => it('number', 'purple', { v: f(x.v) }); input = () => it('number', 'blue', { v: rnd(op === '−' ? k + 1 : 1, d === 'easy' ? 5 : d === 'extreme' ? 12 : 9) });
       prefer = (x) => [it('number', 'purple', { v: x.v })];
     }
     // Different inputs for the examples and the question.
     const seen = new Set(), ins = [];
     while (ins.length < nEx + 1) { const x = input(); if (!seen.has(key(x))) { seen.add(key(x)); ins.push(x); } }
     const test = ins.pop(), ans = rule(test);
-    const opts = choices(ans, prefer(test), d === 'easy' ? 3 : d === 'hard' ? 4 : lvl < 2 ? 3 : 4);
+    const opts = choices(ans, prefer(test), { easy: 3, hard: 4, veryhard: 5, extreme: 6 }[d] || (lvl < 2 ? 3 : 4));
     qSay(P.machine);
 
     $('ask').innerHTML = '<div class="lab"><div class="tray2" id="mIn"></div>' + MACHINE + '<div class="tray2" id="mOut"></div></div><div class="history" id="mHist"></div>';
@@ -1727,8 +1737,8 @@
       // one X is k Y, one Y is j Z, so one X is k × j Z.
       const [cx, cy, cz] = shuffle(CK.slice()), X = it('circle', cx), Y = it('circle', cy, { z: 0.8 }), Z = it('circle', cz, { z: 0.65 });
       let shown, ask, unit, ans;
-      if (d === 'hard' && Math.random() < 0.5) {
-        const k = pick([2, 3]), j = pick([2, 3]);
+      if (hardUp(d) && Math.random() < { hard: 0.5, veryhard: 0.8, extreme: 1 }[d]) {
+        const k = pick(d === 'extreme' ? [2, 3, 4] : [2, 3]), j = pick(d === 'extreme' ? [2, 3, 4] : [2, 3]);
         shown = scaleSvg([X], Array(k).fill(Y)) + scaleSvg([Y], Array(j).fill(Z)); ask = [X]; unit = Z; ans = k * j;
       } else {
         const k = d === 'easy' ? 2 : pick([2, 3]), m = d === 'easy' ? 2 : k === 3 ? 2 : pick([2, 3]);
@@ -1737,7 +1747,7 @@
       box.classList.toggle('one', !shown.includes('</svg><svg'));
       box.innerHTML = shown + scaleSvg(ask, ['?']);
       const nums = new Set([ans]);
-      shuffle([ans + 1, ans - 1, ans + 2, ans - 2].filter((v) => v > 0)).forEach((v) => { if (nums.size < (d === 'easy' ? 3 : 4)) nums.add(v); });
+      shuffle([ans + 1, ans - 1, ans + 2, ans - 2].filter((v) => v > 0)).forEach((v) => { if (nums.size < (d === 'easy' ? 3 : hardUp(d) && d !== 'hard' ? 5 : 4)) nums.add(v); });
       qSay(P.count);
       setTimeout(() => { if (my === runToken) [...box.children].slice(0, -1).forEach((sc) => sc.classList.add('wob')); }, 300);
       options(shuffle([...nums]).map((v) => ({ html: '<span class="numopt">' + v + ' ' + itemSvg(unit) + '</span>', ok: v === ans, label: String(v) })), () => {
@@ -1747,7 +1757,7 @@
       });
       return;
     }
-    const n = { easy: [2, 2, 3, 3, 3], medium: [2, 2, 3, 3, 4], hard: [3, 3, 4, 4, 5] }[d][lvl];
+    const n = { easy: [2, 2, 3, 3, 3], medium: [2, 2, 3, 3, 4], hard: [3, 3, 4, 4, 5], veryhard: [3, 4, 4, 5, 5], extreme: [4, 4, 5, 5, 5] }[d][lvl];
     const order = shuffle(CK.slice()).slice(0, n); // lightest first
     const ask = lvl === 4 ? pick(['heaviest', 'lightest']) : lvl % 2 ? (n > 2 ? 'lightest' : 'lighter') : (n > 2 ? 'heaviest' : 'heavier');
     const ans = /heav/.test(ask) ? order[n - 1] : order[0];
@@ -1792,9 +1802,9 @@
     if (r.op === 'not') return [tx('not', 'bukan'), word(r.a)];
     return [word(r.a), tx('but not', 'tapi bukan'), word(r.b)];
   }
-  // Easy: six items. Medium: eight. Hard: ten items from four colors and four shapes.
+  // Easy: six items. Medium: eight. Hard: ten items from four colors and four shapes. Very hard: twelve and Extreme: fourteen, from all five.
   function genFilter(lvl) {
-    const d = S.diff, many = { easy: 6, medium: 8, hard: 10 }[d], kinds = d === 'hard' ? 4 : 3;
+    const d = S.diff, many = { easy: 6, medium: 8, hard: 10, veryhard: 12, extreme: 14 }[d], kinds = d === 'hard' ? 4 : hardUp(d) ? 5 : 3;
     let rule, items;
     for (let tries = 0; tries < 300; tries++) {
       const cs = shuffle(CK.slice()).slice(0, kinds), ss = shuffle(SK.slice()).slice(0, kinds);
@@ -1869,7 +1879,7 @@
   }
 
   // ---- Secret code ----
-  // Pictures are random and mirrored left to right, like little space invaders. Easy: 4×4, medium: 5×5, hard: 6×6.
+  // Pictures are random and mirrored left to right, like little space invaders. Easy: 4×4, medium: 5×5, hard: 6×6, very hard: 7×7, extreme: 8×8.
   function pixelArt(n) {
     for (;;) {
       const half = Math.ceil(n / 2);
@@ -1906,11 +1916,13 @@
     return '<' + tag + (tag === 'button' ? ' type="button"' : '') + ' class="bulb' + (on ? ' on' : '') + '" data-v="' + v + '"><span class="glass"></span><span class="base"></span>'
       + '<span class="val">' + v + '</span><span class="bit">' + (on ? 1 : 0) + '</span></' + tag + '>';
   }
-  const BULBS = { easy: [4, 2, 1], medium: [8, 4, 2, 1], hard: [16, 8, 4, 2, 1] };
+  const BULBS = { easy: [4, 2, 1], medium: [8, 4, 2, 1], hard: [16, 8, 4, 2, 1], veryhard: [32, 16, 8, 4, 2, 1], extreme: [64, 32, 16, 8, 4, 2, 1] };
   const WORDS = {
     easy: ['CAT', 'DOG', 'SUN', 'BUS', 'HAT', 'PIG', 'BED', 'CUP', 'FOX', 'EGG', 'BOX', 'MAP', 'JAM', 'BEE', 'OWL', 'ANT', 'COW', 'HEN', 'KEY', 'PEN'],
     medium: ['FISH', 'BIRD', 'CAKE', 'STAR', 'MOON', 'TREE', 'FROG', 'BOAT', 'SHIP', 'LION', 'BEAR', 'DUCK', 'KITE', 'RAIN', 'SNOW', 'MILK'],
-    hard: ['APPLE', 'HOUSE', 'ROBOT', 'TIGER', 'PLANT', 'TRAIN', 'CLOUD', 'SNAKE', 'HORSE', 'LEMON', 'PIZZA', 'MOUSE', 'RIVER', 'SMILE', 'CHAIR']
+    hard: ['APPLE', 'HOUSE', 'ROBOT', 'TIGER', 'PLANT', 'TRAIN', 'CLOUD', 'SNAKE', 'HORSE', 'LEMON', 'PIZZA', 'MOUSE', 'RIVER', 'SMILE', 'CHAIR'],
+    veryhard: ['BANANA', 'ORANGE', 'FLOWER', 'GARDEN', 'ROCKET', 'PLANET', 'BRIDGE', 'CASTLE', 'DRAGON', 'SILVER', 'WINTER', 'JUNGLE', 'MARKET', 'PENCIL', 'TURTLE'],
+    extreme: ['BALLOON', 'CAPTAIN', 'DOLPHIN', 'KITCHEN', 'LANTERN', 'MONSTER', 'PICTURE', 'RAINBOW', 'SUNRISE', 'TEACHER', 'VILLAGE', 'WEATHER', 'CRAYONS', 'PUZZLES', 'THUNDER']
   };
   const shiftWord = (w, k) => w.replace(/[A-Z]/g, (ch) => String.fromCharCode((ch.charCodeAt(0) - 65 + k + 260) % 26 + 65));
   const alphaHtml = (hl) => '<div class="alpha" aria-hidden="true">' + Array.from({ length: 26 }, (_, k) => String.fromCharCode(65 + k))
@@ -1918,7 +1930,7 @@
   const steps = (k) => k + tx(k === 1 ? ' step' : ' steps', ' langkah');
 
   function genCode(lvl) {
-    const d = S.diff, n = { easy: 4, medium: 5, hard: 6 }[d], many = d === 'easy' ? 3 : 4;
+    const d = S.diff, n = { easy: 4, medium: 5, hard: 6, veryhard: 7, extreme: 8 }[d], many = d === 'easy' ? 3 : 4;
     if (lvl === 0) {
       const g = pixelArt(n), m = new Map([[gk(g), g]]);
       shuffle(pixVariants(g)).forEach((v) => { if (m.size < many && !m.has(gk(v))) m.set(gk(v), v); });
@@ -1954,7 +1966,7 @@
     }
     if (lvl === 2) {
       // Run-length code: "3 filled, 2 empty" is shorter than writing every square.
-      const len = { easy: 6, medium: 8, hard: 10 }[d], lo = d === 'easy' ? 2 : 3, hi = d === 'hard' ? 5 : 4;
+      const len = { easy: 6, medium: 8, hard: 10, veryhard: 12, extreme: 14 }[d], lo = d === 'easy' ? 2 : 3, hi = { hard: 5, veryhard: 6, extreme: 7 }[d] || 4;
       let row; do { row = Array.from({ length: len }, () => rnd(0, 1)); } while (runsOf(row).length < lo || runsOf(row).length > hi);
       const ans = runsOf(row), wrongs = [];
       ans.forEach((_, k) => [1, -1].forEach((dd) => { const v = ans.map((x) => x.slice()); v[k][1] += dd; if (v[k][1] > 0) wrongs.push(v); }));
@@ -1963,7 +1975,7 @@
       const m = new Map([[runsKey(ans), ans]]);
       shuffle(wrongs).forEach((v) => { if (m.size < many && !m.has(runsKey(v))) m.set(runsKey(v), v); });
       const opts = shuffle([...m.values()]);
-      if (d === 'hard' && Math.random() < 0.5) {
+      if (hardUp(d) && Math.random() < 0.5) {
         // The other way round: read the short code and pick the row.
         qSay(tx('Each number counts squares of one kind. Which row does this short code make?', 'Setiap angka menghitung kotak sejenis. Baris mana yang dibuat kode singkat ini?'));
         $('ask').innerHTML = '<div class="codebox">' + runsHtml(ans) + '</div>';
@@ -1986,7 +1998,7 @@
         options(shuffle([...nums]).map((v) => ({ html: '<span class="numopt">' + v + '</span>', ok: v === ans, label: String(v) })), () => solved());
         return;
       }
-      const target = rnd(d === 'easy' ? 2 : 3, max), live = d !== 'hard';
+      const target = rnd(d === 'easy' ? 2 : 3, max), live = !hardUp(d);
       qSay(tx('Turn on bulbs to make ' + target + '.', 'Nyalakan lampu untuk membuat ' + target + '.'));
       $('ask').innerHTML = '<div class="bulbs" id="bulbs">' + vals.map((v) => bulbHtml(v, 0, 'button')).join('') + '</div>'
         + '<div class="total" id="btotal" aria-live="polite"></div>';
@@ -2010,8 +2022,8 @@
       });
       return;
     }
-    // Shifted letters, like a Caesar cipher. Easy moves 1 step, medium 1 or 2, hard up to 3.
-    const k = d === 'easy' ? 1 : d === 'medium' ? rnd(1, 2) : rnd(1, 3), pool = WORDS[d], word = pick(pool), coded = shiftWord(word, k);
+    // Shifted letters, like a Caesar cipher. Easy moves 1 step, medium 1 or 2, hard up to 3, very hard 2 to 4, extreme 3 to 7.
+    const k = d === 'easy' ? 1 : d === 'medium' ? rnd(1, 2) : d === 'hard' ? rnd(1, 3) : d === 'veryhard' ? rnd(2, 4) : rnd(3, 7), pool = WORDS[d], word = pick(pool), coded = shiftWord(word, k);
     if (lvl === 5) {
       const others = shuffle(pool.filter((w) => w !== word)).slice(0, many - 2);
       qSay(tx('Every letter of this message moved ' + steps(k) + ' forward. Move each one ' + steps(k) + ' back to read it.', 'Setiap huruf pesan ini bergeser maju ' + steps(k) + '. Geser tiap huruf mundur ' + steps(k) + ' untuk membacanya.'));
@@ -2038,7 +2050,10 @@
   const SUDOKU = {
     easy: [[3, 2], [3, 3], [3, 4], [4, 4], [4, 6], [4, 7], [4, 8]],
     medium: [[4, 3], [4, 5], [4, 7], [4, 8], [4, 10], [6, 12], [6, 16]],
-    hard: [[4, 6], [4, 8], [4, 10], [6, 14], [6, 17], [6, 20], [6, 22]]
+    hard: [[4, 6], [4, 8], [4, 10], [6, 14], [6, 17], [6, 20], [6, 22]],
+    // A puzzle takes out as many squares as it can while staying unique, so the 36 on Extreme means "as few clues as possible".
+    veryhard: [[4, 10], [6, 18], [6, 20], [6, 22], [6, 24], [6, 26], [6, 28]],
+    extreme: [[6, 22], [6, 24], [6, 26], [6, 30], [6, 36], [6, 36], [6, 36]]
   };
   const SYMS = [it('circle', 'red'), it('square', 'blue'), it('triangle', 'green'), it('star', 'yellow'), it('heart', 'purple'), it('diamond', '#f2891f')];
   const symName = (x) => (IDL ? sName(x.s) + ' ' + (x.c[0] === '#' ? 'oranye' : cName(x.c)) : (x.c[0] === '#' ? 'orange' : x.c) + ' ' + x.s);
@@ -2154,7 +2169,9 @@
   const CLUES = {
     easy: [[2, 'not'], [2, 'is,not'], [3, 'not'], [3, 'pet,not'], [3, 'either,not,pet'], [3, 'either,not,pet,nopet'], [4, 'not,pet,nopet,either']],
     medium: [[2, 'not'], [3, 'is,not'], [3, 'not'], [4, 'pet,not'], [4, 'either,not,pet'], [4, 'either,not,pet,nopet,neither'], [5, 'not,pet,nopet,either,neither']],
-    hard: [[3, 'not'], [3, 'not,pet'], [4, 'not'], [4, 'pet,nopet,not'], [5, 'either,not,pet,nopet'], [5, 'either,not,pet,nopet,neither'], [5, 'not,nopet,either,neither']]
+    hard: [[3, 'not'], [3, 'not,pet'], [4, 'not'], [4, 'pet,nopet,not'], [5, 'either,not,pet,nopet'], [5, 'either,not,pet,nopet,neither'], [5, 'not,nopet,either,neither']],
+    veryhard: [[4, 'not,pet'], [5, 'either,not,pet'], [5, 'not,pet,nopet,either,neither'], [6, 'is,not,pet'], [6, 'either,not,pet,nopet'], [6, 'either,not,pet,nopet,neither'], [6, 'not,nopet,either,neither']],
+    extreme: [[5, 'not,nopet,either,neither'], [6, 'pet,not,nopet'], [6, 'either,not,pet,nopet'], [6, 'either,neither,not,nopet'], [6, 'either,neither,not,nopet,pet'], [6, 'not,nopet,either,neither'], [6, 'not,nopet,neither']]
   };
   function perms(n) {
     if (n === 1) return [[0]];
@@ -2270,7 +2287,7 @@
   // ---- Sort the Train ----
   // Swapping two neighbours that are in the wrong order fixes exactly one "pair the wrong way round", so the fewest
   // swaps is the number of such pairs. A swap of two neighbours already in order is a wasted move and counts as a miss.
-  const TRAIN = { easy: [3, 3, 4, 4, 4, 5, 5], medium: [3, 4, 5, 5, 5, 6, 6], hard: [4, 5, 6, 6, 6, 7, 7] };
+  const TRAIN = { easy: [3, 3, 4, 4, 4, 5, 5], medium: [3, 4, 5, 5, 5, 6, 6], hard: [4, 5, 6, 6, 6, 7, 7], veryhard: [5, 6, 7, 8, 8, 9, 9], extreme: [6, 7, 8, 9, 10, 10, 10] };
   const inversions = (a, before) => a.reduce((n, x, i) => n + a.slice(i + 1).filter((y) => before(y, x)).length, 0);
   function genTrain(lvl) {
     const n = TRAIN[S.diff][lvl];
@@ -2360,8 +2377,8 @@
   // A state has one number per disk, smallest first: the peg (0, 1 or 2) the disk stands on. Every such list is a legal
   // position, because the order of a stack follows the sizes. A breadth-first search outward from the goal gives the
   // fewest moves from every position, which is the "fewest" shown, the check for a wrong turn and the hint.
-  const HANOI = { easy: [2, 3, 3, 3, 3, 4, 4], medium: [3, 3, 4, 4, 4, 5, 5], hard: [3, 4, 4, 5, 5, 5, 6] };
-  const HANOI_CAP = { easy: 15, medium: 31, hard: 40 }; // the most moves a random puzzle may need
+  const HANOI = { easy: [2, 3, 3, 3, 3, 4, 4], medium: [3, 3, 4, 4, 4, 5, 5], hard: [3, 4, 4, 5, 5, 5, 6], veryhard: [4, 4, 5, 5, 5, 6, 6], extreme: [5, 5, 6, 6, 6, 6, 6] }; // six disks is the most: there are six colors
+  const HANOI_CAP = { easy: 15, medium: 31, hard: 40, veryhard: 63, extreme: 63 }; // the most moves a random puzzle may need
   const HANOI_KIND = ['tower', 'tower', 'middle', 'messy', 'rebuild', 'tower', 'mixed'];
   const HANOI_COLORS = ['var(--c-red)', 'var(--c-orange)', '#ca8a04', 'var(--c-green)', 'var(--c-blue)', 'var(--c-purple)'];
   const PEG_NAMES = [tx('left', 'kiri'), tx('middle', 'tengah'), tx('right', 'kanan')];
@@ -2403,7 +2420,7 @@
       if (kind === 'tower' || kind === 'middle' || (par >= 3 && par <= cap && spread(start) && (kind === 'messy' || spread(goal)))) break;
     }
     const standard = kind === 'tower' || kind === 'middle';
-    const flagged = !spread(goal), goalPeg = goal[0], showPar = S.diff !== 'hard';
+    const flagged = !spread(goal), goalPeg = goal[0], showPar = !hardUp(S.diff);
     let cur = start.slice(), moves = 0, sel = -1, flash = -1, hint = [], done = false;
     const history = [];
     qSay(flagged ? (standard ? tx('Move the whole tower to the 🏁 peg. ', 'Pindahkan seluruh menara ke tiang 🏁. ') : tx('Build the tower on the 🏁 peg. ', 'Bangun menara di tiang 🏁. ')) + tx('Tap a peg, then tap where the top disk goes.', 'Ketuk tiang, lalu ketuk tempat cakram teratas dipindahkan.')
@@ -2477,87 +2494,138 @@
   const PARK = {
     easy: { n: 5, lv: [[4, 0, 2, 3], [4, 0, 3, 4], [5, 1, 4, 5], [5, 1, 5, 6], [6, 1, 6, 7], [6, 1, 7, 8]] },
     medium: { n: 6, lv: [[5, 0, 3, 4], [6, 0, 4, 6], [6, 1, 5, 7], [7, 1, 6, 8], [7, 1, 7, 9], [8, 1, 8, 10]] },
-    hard: { n: 6, lv: [[6, 0, 4, 6], [7, 1, 6, 8], [8, 1, 8, 10], [8, 1, 9, 11], [9, 1, 10, 12], [8, 1, 10, 13]] }
+    hard: { n: 6, lv: [[6, 0, 4, 6], [7, 1, 6, 8], [8, 1, 8, 10], [8, 1, 9, 11], [9, 1, 10, 12], [8, 1, 10, 13]] },
+    veryhard: { n: 6, bank: true }, extreme: { n: 6, bank: true }
   };
   const PARK_COLORS = ['#1f2937', 'var(--c-red)', 'var(--c-orange)', '#ca8a04', 'var(--c-green)', 'var(--c-blue)', 'var(--c-purple)', 'var(--c-pink)', 'var(--c-teal)', 'var(--c-lime)', 'var(--c-rose)', 'var(--c-indigo)'];
   const PARK_STATES = 6000; // a lot with more positions than this is dropped: it would take too long to search
   // Very hard and Extreme come from a bank: lots this hard are far too slow to find while playing. Each puzzle is one lot, car by car as
-  // [vertical (1) or not, lane, length, place along the lane], the police car first. They were found by searching for lots with a long way
-  // out and keeping the ones whose start is the furthest from the exit. The par of each is worked out when it is played.
+  // [vertical (1) or not, lane, length, place along the lane], the police car first, and each level has its own set of lots, each
+  // a little further from the exit than the one before. They were found by searching for lots with a long way out and keeping the
+  // start that is furthest from the exit; the fewest moves of each is worked out when it is played.
   const PARK_BANK = {
-    easy: [[
-      [[1,0,2,0],[1,2,3,0],[0,4,2,0],[0,0,2,3],[0,4,2,2],[1,4,2,3],[1,4,2,1],[0,3,2,1],[1,1,2,0]],
-      [[1,1,2,0],[0,0,3,2],[1,0,2,0],[1,0,2,2],[1,4,2,1],[1,4,2,3],[1,3,3,2],[0,4,3,0],[0,3,2,1]],
-      [[1,1,2,0],[1,3,2,3],[0,0,2,3],[1,0,2,0],[0,4,2,1],[1,2,2,2],[1,4,2,1],[1,2,2,0],[1,3,2,1]],
-      [[1,0,2,1],[0,4,2,3],[0,2,2,1],[0,1,2,2],[0,0,2,0],[1,2,2,3],[0,3,2,0],[1,4,3,0]],
-      [[1,4,2,1],[0,0,2,3],[1,1,2,2],[0,3,2,3],[1,1,2,0],[0,4,2,0],[0,2,2,2],[1,2,2,3]],
-      [[1,4,2,0],[0,4,2,2],[1,0,2,3],[1,2,2,2],[0,2,2,0],[0,1,3,0],[0,0,2,0],[0,2,2,3]],
-      [[1,4,2,1],[0,4,2,3],[0,0,2,0],[0,1,2,0],[0,3,2,3],[0,2,2,0],[0,3,2,1],[0,2,2,2],[0,4,2,1],[1,0,2,3]],
-      [[1,2,2,0],[0,0,2,0],[1,4,3,0],[0,4,2,2],[0,4,2,0],[1,0,2,2],[0,2,2,1]],
-      [[1,2,2,0],[1,0,2,2],[0,4,2,2],[0,0,2,0],[0,2,2,1],[0,4,2,0],[1,3,3,0]],
-      [[1,2,2,0],[0,0,2,3],[1,3,2,1],[0,1,2,0],[0,4,2,2],[1,4,2,3],[0,4,2,0],[0,2,2,1],[1,0,2,2]],
-      [[1,4,2,1],[1,1,2,2],[1,2,2,3],[0,0,2,1],[0,0,2,3],[0,3,2,3],[0,1,2,1],[0,2,2,2],[0,4,2,0]],
-      [[1,0,2,0],[0,3,2,2],[1,4,2,2],[1,2,2,1],[0,0,2,3],[0,4,2,1],[0,3,2,0],[0,2,2,0],[0,4,2,3],[0,0,2,1]]],[
-      [[1,2,2,0],[1,0,3,0],[0,0,2,3],[0,2,2,2],[1,1,2,0],[1,4,2,2],[0,4,2,1],[0,3,2,0],[0,4,2,3]],
-      [[1,2,2,0],[0,4,2,3],[0,3,2,1],[1,1,3,0],[0,0,2,3],[0,2,2,2],[1,4,2,2],[1,0,2,0],[1,0,2,2]],
-      [[1,3,2,1],[0,3,2,3],[0,0,2,0],[0,1,2,0],[1,2,2,3],[0,4,2,0],[0,2,2,1],[1,0,2,2],[0,0,2,2]],
-      [[1,2,2,0],[0,3,2,0],[1,0,3,0],[0,4,2,1],[1,4,2,2],[0,4,2,3],[0,2,2,2],[0,0,2,3],[1,1,2,0]],
-      [[1,2,2,0],[0,2,2,2],[1,1,2,2],[1,1,2,0],[0,3,2,3],[0,0,2,3],[1,4,2,1],[0,4,2,1],[1,0,3,0]],
-      [[1,3,2,1],[0,0,2,0],[0,0,2,2],[0,3,2,3],[0,1,2,0],[1,0,2,2],[0,2,2,1],[1,2,2,3],[0,4,2,0]],
-      [[1,0,2,0],[0,3,2,0],[0,1,2,3],[0,0,2,1],[0,2,2,2],[1,1,2,1],[1,2,2,3],[0,0,2,3],[0,4,2,3],[1,4,2,2]],
-      [[1,4,2,0],[0,4,2,0],[0,3,2,3],[0,2,2,1],[0,0,2,0],[1,0,2,2],[0,1,2,0],[1,2,2,3],[0,2,2,3]],
-      [[1,4,2,0],[1,2,2,3],[0,3,2,3],[0,1,2,0],[0,2,2,1],[1,3,2,0],[0,0,2,0],[0,4,2,0],[1,0,2,2],[0,2,2,3]],
-      [[1,0,2,0],[0,2,2,0],[0,3,2,0],[1,2,2,3],[0,0,2,3],[0,1,2,3],[0,4,2,3],[0,2,2,2],[1,4,2,2]],
-      [[1,0,2,0],[0,2,2,2],[0,2,2,0],[0,1,2,3],[0,0,2,3],[1,2,2,3],[1,4,2,2],[0,4,2,3],[0,3,2,0]],
-      [[1,2,2,1],[0,3,2,2],[1,4,2,0],[0,2,2,0],[1,4,2,2],[0,4,2,3],[1,1,2,3],[0,0,2,1],[1,3,2,0],[1,0,2,0]]]],
-    medium: [[
-      [[1,0,2,0],[1,2,2,2],[0,2,2,0],[0,3,2,4],[1,3,2,3],[1,5,3,0],[0,4,3,0],[0,2,2,3],[0,1,2,2],[0,0,2,3],[0,0,2,1]],
-      [[1,3,2,0],[0,1,2,1],[0,5,2,1],[0,2,2,0],[1,4,2,4],[1,0,2,0],[1,5,2,1],[1,2,3,2],[0,4,2,0],[1,4,2,1],[0,3,3,3],[1,5,2,4],[0,0,2,4]],
-      [[1,1,2,0],[1,0,2,3],[0,3,2,1],[0,5,3,0],[0,0,2,4],[1,4,2,4],[1,5,2,4],[0,0,2,2],[0,2,2,0],[1,5,3,1],[0,3,2,3],[1,2,2,1]],
-      [[1,1,2,3],[1,2,2,4],[0,3,2,2],[1,4,2,4],[0,2,2,3],[0,2,2,0],[1,2,2,1],[0,5,2,0],[0,3,2,4]],
-      [[1,3,2,0],[1,2,3,2],[0,5,2,1],[0,0,3,0],[1,1,2,2],[0,4,2,0],[0,3,2,3],[0,1,2,4],[1,5,2,4],[0,1,2,1],[1,5,2,2]],
-      [[1,3,2,2],[0,1,2,0],[0,0,2,2],[0,5,2,3],[0,3,3,0],[0,5,2,1],[1,0,2,4],[1,2,2,1],[0,0,2,0],[0,4,3,2],[0,0,2,4]],
-      [[1,4,2,0],[1,1,2,2],[1,5,2,3],[0,1,3,1],[0,4,2,1],[0,4,2,3],[0,2,2,4],[1,2,2,2],[1,3,2,2]],
-      [[1,3,2,0],[1,1,2,4],[1,2,3,3],[1,5,2,0],[0,0,3,0],[0,3,2,0],[0,2,2,2],[0,5,3,3],[1,0,2,1],[0,2,2,4],[1,4,2,0]],
-      [[1,0,2,2],[0,0,3,2],[0,4,2,0],[0,2,2,2],[0,0,2,0],[1,2,2,4],[1,5,2,0],[1,3,2,4],[0,2,2,4],[0,3,3,3],[0,5,2,4]],
-      [[1,5,2,0],[0,3,2,4],[0,5,3,1],[0,3,3,0],[0,0,2,3],[0,2,2,4],[1,3,3,1],[1,0,2,4],[1,2,2,0],[1,1,2,0],[0,4,2,2],[0,4,2,4]],
-      [[1,1,2,1],[1,0,3,1],[1,3,3,3],[0,2,3,2],[1,2,2,4],[0,3,2,1],[0,5,2,0],[1,5,2,3],[0,1,2,3]],
-      [[1,1,2,0],[1,2,2,2],[1,4,2,3],[1,5,2,3],[1,3,2,3],[1,3,2,1],[0,0,2,2],[1,4,3,0],[1,2,2,4],[0,2,2,0],[1,0,3,3],[1,5,3,0],[0,5,3,3]]],[
-      [[1,1,2,0],[0,4,3,3],[0,1,3,2],[1,5,2,2],[1,0,2,4],[1,3,2,2],[1,2,2,3],[0,2,2,1],[0,3,2,0],[1,5,2,0]],
-      [[1,5,2,0],[1,0,2,1],[0,0,2,1],[1,3,2,3],[0,2,3,3],[0,3,3,0],[0,5,3,3],[1,2,2,4],[1,1,2,1],[0,5,2,0]],
-      [[1,4,2,1],[0,3,2,3],[1,0,3,1],[1,1,2,4],[1,3,2,0],[1,5,2,2],[0,4,2,4],[0,0,3,0],[1,0,2,4],[1,3,2,4],[1,2,2,4],[0,3,2,1]],
-      [[1,3,2,3],[1,4,2,4],[0,0,3,2],[1,5,2,4],[0,3,2,4],[0,5,2,2],[0,5,2,0],[1,1,2,0],[1,1,3,2],[0,2,2,3]],
-      [[1,5,2,2],[1,3,2,4],[0,4,2,4],[1,2,2,0],[0,1,3,3],[0,2,2,1],[1,0,3,2],[1,0,2,0],[0,0,2,4],[0,5,3,0],[0,2,2,3],[0,5,2,4],[1,1,2,3]],
-      [[1,4,2,1],[1,1,3,2],[0,4,2,2],[0,3,3,2],[0,0,2,4],[0,2,2,2],[1,0,2,2],[1,5,3,1],[0,0,2,0],[1,2,2,0]],
-      [[1,1,2,2],[0,3,2,2],[0,0,2,0],[1,2,2,4],[0,2,2,4],[0,4,2,0],[1,4,2,3],[1,3,2,1],[1,4,2,0],[1,0,3,1],[0,5,2,3],[0,0,2,2],[1,5,2,4]],
-      [[1,0,2,0],[0,2,2,4],[1,3,2,1],[0,4,3,2],[1,2,3,1],[0,4,2,0],[0,0,3,1],[1,4,2,0],[1,5,2,3],[0,3,2,0]],
-      [[1,1,2,0],[1,4,2,3],[0,2,2,0],[1,0,3,3],[0,5,2,4],[1,3,2,4],[1,2,2,1],[0,0,3,2],[0,3,3,1],[1,4,2,1]],
-      [[1,3,2,0],[1,0,3,1],[0,3,2,1],[1,1,2,4],[0,0,2,4],[1,5,3,1],[0,3,2,3],[1,4,2,1],[0,2,2,2],[0,5,3,2]],
-      [[1,4,2,1],[0,0,3,1],[0,3,2,3],[1,2,3,2],[0,2,2,0],[1,3,2,1],[1,0,2,0],[0,1,2,1],[1,3,2,4],[0,4,2,0]],
-      [[1,2,2,0],[0,0,2,0],[1,1,3,1],[0,4,3,0],[0,2,2,2],[1,4,3,1],[0,3,2,2],[1,3,2,4],[0,5,2,4]]]],
-    hard: [[
-      [[1,3,2,3],[1,4,2,4],[0,0,3,2],[1,5,2,4],[0,3,2,4],[0,5,2,2],[0,5,2,0],[1,1,2,0],[1,1,3,2],[0,2,2,3]],
-      [[1,1,2,2],[1,2,2,3],[0,4,2,4],[0,1,2,1],[0,0,2,1],[1,4,3,0],[0,4,2,0],[1,3,2,3],[0,2,2,2]],
-      [[1,5,2,2],[1,3,2,4],[0,4,2,4],[1,2,2,0],[0,1,3,3],[0,2,2,1],[1,0,3,2],[1,0,2,0],[0,0,2,4],[0,5,3,0],[0,2,2,3],[0,5,2,4],[1,1,2,3]],
-      [[1,1,2,0],[1,4,2,3],[0,2,2,0],[1,0,3,3],[0,5,2,4],[1,3,2,4],[1,2,2,1],[0,0,3,2],[0,3,3,1],[1,4,2,1]],
-      [[1,0,2,0],[0,2,2,4],[1,3,2,1],[0,4,3,2],[1,2,3,1],[0,4,2,0],[0,0,3,1],[1,4,2,0],[1,5,2,3],[0,3,2,0]],
-      [[1,3,2,0],[1,0,3,1],[0,3,2,1],[1,1,2,4],[0,0,2,4],[1,5,3,1],[0,3,2,3],[1,4,2,1],[0,2,2,2],[0,5,3,2]],
-      [[1,3,2,0],[0,2,2,2],[1,4,2,1],[1,0,3,3],[0,5,3,2],[1,2,2,3],[0,0,2,4],[0,2,2,0],[0,3,3,3]],
-      [[1,3,2,0],[0,3,2,3],[1,5,2,3],[1,1,3,0],[1,5,2,1],[1,4,2,4],[0,2,2,3],[1,2,2,1],[0,0,2,4],[0,3,2,1],[0,4,3,1]],
-      [[1,2,2,0],[0,0,2,0],[1,1,3,1],[0,4,3,0],[0,2,2,2],[1,4,3,1],[0,3,2,2],[1,3,2,4],[0,5,2,4]],
-      [[1,3,2,0],[0,2,2,3],[0,3,2,4],[0,4,2,4],[0,2,2,1],[0,5,2,0],[0,0,2,4],[1,1,2,0],[0,3,2,1],[1,0,3,1],[1,5,2,1],[1,2,2,4]],
-      [[1,4,2,1],[0,0,3,1],[0,3,2,3],[1,2,3,2],[0,2,2,0],[1,3,2,1],[1,0,2,0],[0,1,2,1],[1,3,2,4],[0,4,2,0]],
-      [[1,5,2,0],[1,3,2,3],[0,4,2,4],[0,2,2,4],[0,0,2,0],[0,2,2,2],[1,2,2,3],[0,3,2,0],[0,0,3,2],[0,5,3,1],[0,5,2,4],[1,0,2,1]]],[
-      [[1,1,2,1],[0,4,2,3],[0,2,2,3],[1,2,3,2],[0,5,2,1],[0,1,2,2],[0,3,2,0],[1,5,2,3],[1,5,3,0],[0,0,2,0],[0,0,2,2],[1,4,2,0],[0,5,2,4]],
-      [[1,4,2,0],[1,2,2,1],[0,0,2,2],[0,5,3,0],[0,3,2,0],[1,2,2,3],[0,2,2,3],[1,0,3,0],[1,3,3,3]],
-      [[1,2,2,0],[0,3,2,1],[1,0,3,3],[0,5,3,3],[0,0,3,3],[0,4,3,1],[0,2,2,4],[0,1,2,0],[1,5,2,3],[1,3,3,1]],
-      [[1,1,2,0],[1,3,3,3],[0,5,2,4],[0,0,3,2],[0,1,2,2],[0,2,2,0],[0,5,2,1],[1,0,2,4],[1,2,2,2],[1,4,2,1],[1,4,2,3],[0,4,2,1]],
-      [[1,1,2,0],[1,0,2,4],[1,3,3,2],[0,1,2,3],[1,2,2,2],[1,5,2,3],[0,5,3,3],[0,4,2,1],[0,2,2,0],[1,5,2,1],[1,2,2,0]],
-      [[1,0,2,2],[0,4,3,0],[0,5,2,3],[0,1,2,0],[1,5,2,4],[0,5,3,0],[0,0,2,0],[1,2,2,0],[0,2,3,2],[1,3,2,3],[1,5,2,1],[0,3,2,1]],
-      [[1,0,2,1],[0,5,2,0],[0,2,2,3],[0,3,2,1],[0,4,2,1],[1,5,2,4],[0,0,3,3],[1,3,2,3],[1,5,3,1],[0,5,3,2],[1,2,3,0]],
-      [[1,0,2,0],[1,2,2,2],[0,5,2,4],[0,3,2,0],[1,4,3,2],[0,0,2,2],[1,2,2,4],[1,3,2,2],[1,5,3,0],[1,1,2,0],[1,4,2,0],[0,2,2,0],[1,3,2,4]],
-      [[1,4,2,3],[0,3,2,2],[0,2,2,3],[1,0,2,4],[1,1,2,3],[1,0,2,2],[0,2,2,1],[0,5,2,1],[0,1,3,0],[1,3,2,0],[0,5,2,3]],
-      [[1,5,2,1],[0,2,2,3],[1,3,2,4],[1,3,2,0],[1,0,3,1],[1,2,2,0],[0,3,2,2],[1,2,2,4],[0,5,2,0],[0,0,2,0],[1,1,3,1],[0,3,2,4]]]]
+    veryhard: [
+      [[[1,1,2,1],[1,5,2,2],[0,5,2,4],[0,2,2,2],[1,4,3,0],[0,3,2,1],[1,3,3,3],[1,4,2,3]],
+       [[1,1,2,2],[1,0,3,3],[0,4,2,1],[1,4,2,4],[1,5,3,0],[1,0,3,0],[1,3,2,3],[0,3,2,4],[0,2,2,2],[0,5,2,2],[0,1,2,1],[1,4,2,1]],
+       [[1,5,2,2],[0,5,3,2],[1,0,2,3],[1,3,3,2],[1,0,2,1],[0,1,3,1],[0,4,2,4],[0,5,2,0]],
+       [[1,5,2,0],[0,2,3,3],[0,2,2,1],[0,3,2,2],[0,3,2,4],[1,0,3,2],[0,5,3,0],[0,5,2,3]],
+       [[1,2,2,0],[1,3,2,4],[1,4,2,3],[0,5,2,4],[0,2,3,1],[1,4,2,1],[0,3,2,2],[1,0,2,4],[1,0,2,2],[0,1,2,0]],
+       [[1,0,2,0],[1,2,2,3],[1,3,3,0],[0,1,2,4],[0,5,3,2],[0,0,2,1],[0,5,2,0],[1,5,2,4],[0,4,2,3],[1,2,2,1],[1,5,2,2],[1,1,2,3]],
+       [[1,0,2,0],[1,1,2,0],[1,4,3,1],[1,3,3,0],[1,2,2,0],[0,4,2,0],[0,3,3,1],[1,2,2,4],[0,0,2,4]],
+       [[1,0,2,2],[0,2,3,1],[0,0,2,4],[0,5,2,0],[1,4,2,3],[0,4,2,2],[0,1,2,0],[1,3,2,0],[0,4,2,0],[1,4,2,1]],
+       [[1,5,2,0],[1,1,2,2],[0,4,2,1],[0,4,2,3],[0,2,2,2],[0,2,2,4],[0,1,2,0],[0,5,3,3],[1,2,2,0]],
+       [[1,3,2,2],[1,4,2,0],[0,3,2,0],[1,5,3,0],[1,5,2,3],[0,4,2,2],[1,1,2,4],[1,0,2,1],[0,0,3,1],[1,4,3,2],[0,5,2,3],[1,2,3,1]]],
+      [[[1,2,2,0],[1,3,2,2],[0,4,2,0],[1,0,2,1],[0,0,2,3],[1,4,2,3],[0,2,2,1],[0,1,3,3],[0,3,2,0],[1,3,2,4],[0,5,2,0],[0,0,2,0]],
+       [[1,5,2,2],[0,4,2,1],[0,2,2,3],[0,1,2,4],[1,2,3,0],[1,3,2,3],[0,4,2,4],[0,5,3,1],[0,3,3,0]],
+       [[1,4,2,0],[0,1,2,2],[0,5,2,2],[0,4,2,2],[0,3,2,0],[0,2,2,3],[1,1,2,1],[0,0,3,1],[0,5,2,4],[1,1,2,4],[1,2,2,2]],
+       [[1,4,2,2],[0,5,2,1],[0,1,2,0],[1,3,2,1],[1,2,2,1],[1,1,3,2],[0,5,2,3],[0,4,2,4],[0,3,2,2],[0,4,2,2]],
+       [[1,0,2,0],[0,2,2,0],[1,3,2,3],[0,5,2,1],[0,5,2,3],[1,4,3,0],[0,2,2,2],[0,3,2,4]],
+       [[1,4,2,3],[0,2,3,1],[0,0,2,4],[1,0,3,3],[1,2,3,3],[1,0,2,1],[1,5,3,2],[0,5,2,4],[0,0,2,0],[1,3,2,0],[1,4,2,1]],
+       [[1,1,2,3],[0,0,2,4],[1,0,3,1],[0,0,2,0],[0,2,3,2],[1,3,3,3],[1,5,2,2],[0,5,2,0],[1,2,2,0],[0,1,2,4],[1,5,2,4],[1,1,2,1]],
+       [[1,4,2,1],[0,5,2,3],[0,3,2,2],[0,2,2,2],[1,0,2,4],[1,5,2,0],[0,3,2,0],[0,4,2,1],[0,2,2,0],[0,5,2,1],[0,4,2,3],[1,5,2,4]],
+       [[1,5,2,0],[1,1,2,2],[0,4,2,1],[0,4,2,3],[0,2,2,2],[0,2,2,4],[0,1,2,0],[0,5,3,3],[1,2,2,0]],
+       [[1,0,2,0],[1,2,3,0],[0,0,2,4],[0,2,2,0],[1,4,2,2],[1,3,2,0],[1,3,3,2],[0,5,3,1],[1,5,2,1],[1,4,2,4],[1,5,3,3]]],
+      [[[1,2,2,1],[1,3,2,1],[1,3,2,4],[0,2,2,4],[1,5,2,3],[1,1,2,2],[0,0,2,3],[0,4,2,1],[1,0,2,3],[0,3,2,2],[0,5,2,4],[1,4,2,3],[1,1,2,0]],
+       [[1,0,2,3],[1,0,3,0],[1,2,2,4],[0,2,2,2],[1,4,2,4],[0,3,2,1],[1,4,2,2],[1,1,2,1],[1,3,2,0],[0,1,2,4],[0,5,2,0],[0,0,2,1]],
+       [[1,4,2,2],[1,1,2,2],[0,1,2,0],[0,3,2,2],[1,2,2,1],[0,5,3,3],[1,2,2,4],[0,4,2,0]],
+       [[1,0,2,0],[0,0,2,4],[1,2,2,0],[0,4,2,2],[0,5,3,2],[0,4,2,0],[1,5,2,1],[1,2,2,2],[1,3,2,2],[1,1,3,0],[0,3,2,0],[1,5,3,3],[1,4,3,2]],
+       [[1,3,2,0],[0,2,3,2],[0,3,2,0],[0,0,2,1],[1,4,2,3],[0,5,2,1],[0,5,2,3],[0,3,2,2],[1,1,2,1]],
+       [[1,1,2,0],[0,4,3,1],[1,4,2,4],[1,4,2,2],[1,0,3,3],[1,3,2,2],[0,1,3,2],[0,2,2,0]],
+       [[1,0,2,2],[0,1,3,2],[0,5,2,0],[1,3,2,3],[1,5,2,0],[0,2,2,1],[0,3,2,4],[1,2,2,4],[0,2,3,3],[0,3,2,1],[0,1,2,0],[0,0,3,2]],
+       [[1,1,2,0],[0,4,3,3],[0,0,2,4],[1,3,2,0],[1,2,2,3],[1,4,2,2],[0,2,2,1],[1,3,2,2]],
+       [[1,4,2,0],[0,5,2,1],[1,2,2,3],[0,3,2,0],[1,1,2,1],[1,5,2,0],[0,2,3,3],[1,2,2,1],[1,5,2,4],[1,3,2,3],[0,5,2,3],[0,0,2,1]],
+       [[1,0,2,2],[0,1,2,3],[1,2,2,1],[1,5,2,1],[0,5,2,4],[0,3,2,1],[0,0,2,3],[0,4,3,0],[1,5,2,3],[1,3,2,2],[0,0,2,0],[1,3,2,4]]],
+      [[[1,4,2,0],[0,2,2,0],[0,0,2,1],[1,3,2,0],[1,1,2,3],[1,2,3,2],[0,4,2,3],[0,2,2,3],[0,5,3,2]],
+       [[1,5,2,1],[0,3,3,2],[1,1,2,0],[1,0,3,3],[0,2,2,0],[1,1,2,3],[0,0,2,4],[1,2,3,0],[1,3,2,4],[0,4,2,4]],
+       [[1,4,2,0],[0,3,2,1],[1,3,3,0],[1,5,2,3],[0,0,2,1],[1,1,2,4],[0,2,2,4],[0,5,3,3],[1,2,2,4],[0,3,2,3]],
+       [[1,5,2,0],[0,4,3,2],[0,1,2,3],[0,0,3,1],[1,1,3,2],[1,2,3,1],[1,0,3,2],[1,0,2,0],[0,2,2,4],[1,3,2,2],[0,5,3,2]],
+       [[1,0,2,3],[0,3,3,1],[0,2,2,0],[1,4,2,2],[1,3,2,0],[0,2,2,2],[1,2,2,4],[1,5,3,2],[0,5,2,0],[0,1,2,4],[0,5,2,4]],
+       [[1,5,2,0],[1,2,3,0],[1,3,3,1],[0,3,2,1],[0,2,2,4],[1,1,2,4],[0,0,2,3],[1,1,2,0],[0,5,2,4],[0,5,2,2]],
+       [[1,0,2,1],[0,1,2,1],[1,3,2,4],[1,4,2,1],[0,3,3,3],[0,2,3,1],[0,5,3,0],[1,2,2,3]],
+       [[1,4,2,3],[0,5,2,3],[0,3,3,1],[1,2,2,4],[1,5,2,4],[0,5,2,0],[0,2,2,4],[0,2,2,1],[1,3,3,0]],
+       [[1,1,2,1],[0,2,2,2],[0,1,2,4],[0,5,2,2],[0,0,2,4],[1,3,2,0],[1,4,2,2],[0,3,2,2],[1,4,2,4],[0,4,3,1]],
+       [[1,1,2,2],[0,2,3,2],[1,3,2,3],[0,3,2,4],[0,0,2,3],[0,4,2,1],[1,5,3,0],[0,5,3,1],[0,0,2,1]]],
+      [[[1,2,2,1],[0,5,2,3],[0,5,2,1],[1,1,3,1],[1,3,2,0],[1,5,2,4],[1,0,2,1],[1,0,3,3],[1,5,2,2],[0,4,3,1],[0,0,2,4],[0,2,2,3]],
+       [[1,2,2,0],[1,3,3,1],[1,3,2,4],[1,5,3,0],[1,5,2,3],[1,0,2,0],[1,4,2,4],[1,1,2,3],[1,4,2,2],[0,0,2,3],[1,0,3,2],[0,5,3,0],[0,2,2,1]],
+       [[1,2,2,0],[1,5,2,4],[1,1,2,2],[0,0,3,3],[0,3,2,2],[1,1,2,0],[1,3,2,4],[0,1,3,3],[0,5,3,0],[0,4,3,0],[0,2,2,2],[1,0,3,1],[1,5,2,2]],
+       [[1,2,2,2],[0,0,2,1],[0,5,2,3],[1,5,2,0],[1,0,2,3],[0,2,2,0],[1,5,2,4],[0,4,2,1],[0,4,2,3],[1,5,2,2],[1,4,3,0],[0,1,2,1]],
+       [[1,2,2,0],[1,4,3,0],[0,0,2,0],[0,5,2,3],[1,3,2,3],[0,2,2,2],[0,3,2,4],[0,2,2,0],[0,5,2,1],[1,0,2,4]],
+       [[1,4,2,1],[0,0,2,4],[1,1,2,2],[0,5,2,3],[0,1,3,0],[0,2,2,2],[1,2,2,3],[1,1,2,4],[1,3,2,0],[0,3,2,3]],
+       [[1,4,2,2],[0,2,2,2],[1,5,2,4],[0,4,2,3],[1,2,3,3],[0,1,2,4],[1,0,3,1],[0,1,2,1],[0,5,2,0],[1,3,2,0],[1,5,2,2]],
+       [[1,5,2,0],[1,0,2,1],[0,0,2,1],[1,3,2,3],[0,2,3,3],[0,3,3,0],[0,5,3,3],[1,2,2,4],[1,1,2,1],[0,5,2,0]],
+       [[1,4,2,1],[0,3,3,2],[0,0,2,3],[0,4,2,4],[0,2,2,2],[0,4,2,0],[1,3,2,4],[1,1,3,1]],
+       [[1,3,2,1],[1,0,3,0],[0,3,2,0],[0,3,2,4],[0,5,3,2],[0,0,2,3],[1,2,2,1],[0,0,2,1],[0,2,2,4],[0,4,2,3],[1,5,2,4],[1,2,2,3]]],
+      [[[1,4,2,0],[1,2,2,4],[1,3,3,2],[1,5,2,4],[0,5,2,3],[1,0,3,0],[0,2,2,4],[1,0,2,3],[0,5,2,0],[1,1,2,0],[0,0,2,2],[1,2,2,2],[1,1,2,2]],
+       [[1,5,2,1],[0,1,2,2],[1,1,2,0],[0,3,2,3],[0,0,2,4],[0,5,2,0],[0,2,3,1],[1,3,2,4],[0,4,2,4],[0,0,2,2],[1,2,3,3],[1,1,2,3]],
+       [[1,4,2,0],[1,3,3,1],[1,1,2,4],[0,3,2,0],[0,2,2,4],[0,5,2,2],[1,2,3,1],[0,5,2,4],[0,4,2,3],[0,2,2,0]],
+       [[1,1,2,2],[1,5,3,0],[0,4,2,0],[0,1,2,0],[0,5,2,4],[1,5,2,3],[1,2,2,3],[0,0,3,2],[1,2,2,1],[0,5,2,1],[0,2,2,3],[1,4,2,3]],
+       [[1,2,2,1],[0,0,3,2],[1,0,2,2],[0,3,2,1],[1,0,2,4],[1,1,2,4],[1,5,3,3],[0,2,3,3],[1,0,2,0],[1,3,2,3],[0,5,2,3]],
+       [[1,3,2,1],[0,0,2,3],[0,4,3,2],[1,5,2,4],[0,1,2,0],[0,2,2,4],[1,2,2,0],[0,3,2,4],[1,0,3,2],[1,2,2,2]],
+       [[1,3,2,2],[0,3,2,4],[1,1,2,4],[1,5,2,1],[1,2,2,0],[0,2,3,0],[0,5,3,3],[0,1,2,3],[0,3,2,1]],
+       [[1,1,2,2],[0,3,2,2],[1,2,2,0],[1,3,2,4],[0,0,2,0],[1,0,3,3],[0,2,2,2],[1,5,3,2],[1,3,2,0],[1,0,2,1],[1,4,3,2],[0,4,2,1],[0,5,2,4]],
+       [[1,3,2,2],[1,5,2,4],[1,1,2,0],[0,3,2,4],[0,0,2,2],[0,0,2,4],[1,4,2,4],[0,2,2,1],[0,1,3,2],[0,2,2,4],[0,5,2,0],[0,5,2,2]],
+       [[1,0,2,3],[0,2,3,0],[0,0,2,4],[1,3,2,1],[0,1,2,0],[1,4,2,2],[0,5,2,0],[1,5,3,2],[0,1,2,4],[0,4,2,3],[0,5,2,3],[0,3,3,1],[1,2,2,4]]]],
+    extreme: [
+      [[[1,4,2,3],[0,1,2,4],[1,0,3,1],[0,2,2,3],[1,1,2,1],[1,2,2,4],[0,3,3,1],[1,3,2,0],[0,5,2,3]],
+       [[1,4,2,1],[1,1,3,3],[1,5,3,1],[0,4,2,4],[1,2,2,3],[0,5,2,2],[0,5,2,4],[0,2,3,1]],
+       [[1,4,2,1],[0,3,2,3],[1,0,3,1],[1,1,2,4],[1,3,2,0],[1,5,2,2],[0,4,2,4],[0,0,3,0],[1,0,2,4],[1,3,2,4],[1,2,2,4],[0,3,2,1]],
+       [[1,1,2,1],[0,3,2,0],[1,0,2,4],[1,5,3,1],[1,3,3,3],[0,2,2,3],[1,2,3,1],[0,5,2,1],[0,5,2,4]],
+       [[1,5,2,0],[0,5,3,3],[1,0,3,1],[1,4,2,3],[0,2,2,4],[1,0,2,4],[0,0,2,2],[1,2,2,4],[1,1,2,0],[1,3,3,1],[1,1,2,4],[0,3,2,1]],
+       [[1,1,2,0],[0,2,2,0],[0,5,2,0],[1,3,3,1],[0,2,2,4],[0,5,2,2],[0,3,2,4],[1,4,2,4],[1,2,3,1]],
+       [[1,4,2,1],[0,3,3,2],[0,0,2,3],[0,4,2,4],[0,2,2,2],[0,4,2,0],[1,3,2,4],[1,1,3,1]],
+       [[1,1,2,1],[1,4,2,4],[1,3,3,0],[0,3,2,3],[0,3,2,0],[1,5,2,3],[0,2,2,4],[1,2,2,3],[1,2,2,1],[0,5,2,1]],
+       [[1,4,2,2],[0,4,3,2],[0,0,2,4],[0,0,3,1],[0,3,2,2],[0,3,2,0],[0,1,2,1],[1,5,3,1],[1,1,2,4],[1,0,3,0]],
+       [[1,3,2,0],[1,0,3,0],[1,5,3,1],[0,3,2,3],[1,5,2,4],[0,2,3,2],[1,2,2,3],[1,4,2,4],[0,5,2,1],[0,3,2,0]]],
+      [[[1,4,2,1],[1,1,3,3],[1,5,3,1],[0,4,2,4],[1,2,2,3],[0,5,2,2],[0,5,2,4],[0,2,3,1]],
+       [[1,4,2,0],[1,3,3,2],[0,4,3,0],[1,1,2,2],[1,1,2,0],[0,5,3,1],[1,5,3,0],[0,3,2,4],[1,2,3,1],[0,0,2,2]],
+       [[1,1,2,1],[0,0,2,2],[1,2,3,3],[0,3,2,0],[0,4,2,4],[1,5,3,0],[1,3,3,3],[1,0,2,4],[0,2,2,2]],
+       [[1,0,2,1],[1,3,3,3],[0,2,3,3],[0,4,2,1],[0,1,2,2],[0,5,3,0],[0,3,2,0],[1,2,2,2],[0,1,2,4]],
+       [[1,4,2,1],[0,0,2,4],[1,1,2,2],[0,5,2,3],[0,1,3,0],[0,2,2,2],[1,2,2,3],[1,1,2,4],[1,3,2,0],[0,3,2,3]],
+       [[1,0,2,1],[0,4,2,1],[0,3,2,0],[1,2,2,2],[0,5,3,0],[0,1,2,2],[0,1,2,4],[0,2,3,3],[1,3,3,3],[0,0,2,1]],
+       [[1,0,2,0],[0,4,3,3],[1,3,2,2],[1,5,2,1],[0,3,2,1],[0,5,3,1],[0,0,2,3],[0,3,2,4],[0,1,2,3],[0,0,2,1],[1,2,2,1],[0,2,2,0],[0,5,2,4]],
+       [[1,5,2,0],[0,3,3,0],[1,2,2,4],[0,2,2,4],[0,4,2,3],[1,1,2,1],[1,3,2,2],[0,1,2,3],[0,5,3,3]],
+       [[1,4,2,3],[1,1,2,4],[0,5,3,3],[0,2,2,0],[1,3,2,3],[1,5,3,2],[0,3,2,1],[0,2,2,3],[1,2,2,4],[1,0,3,3]],
+       [[1,3,2,2],[1,2,2,0],[0,3,2,4],[1,5,2,1],[0,1,2,3],[0,5,3,3],[0,3,2,1],[1,1,2,4],[0,2,3,0]]],
+      [[[1,5,2,2],[1,3,2,1],[1,1,2,0],[0,0,3,3],[1,0,2,0],[0,2,2,1],[0,4,2,3],[0,5,2,4],[0,3,2,2],[0,5,2,2],[1,4,2,2],[1,1,3,3]],
+       [[1,1,2,3],[1,3,2,4],[0,0,3,0],[1,0,3,1],[0,4,2,4],[0,2,2,1],[0,3,3,2],[0,5,3,0],[1,4,3,0]],
+       [[1,4,2,3],[1,1,2,4],[0,5,3,3],[0,2,2,0],[1,3,2,3],[1,5,3,2],[0,3,2,1],[0,2,2,3],[1,2,2,4],[1,0,3,3]],
+       [[1,2,2,0],[0,5,2,0],[1,0,2,2],[0,5,3,2],[0,2,2,4],[0,1,2,0],[0,3,2,4],[0,2,2,2],[1,5,2,4],[0,3,2,2],[0,4,2,0],[1,3,2,0],[0,4,2,2]],
+       [[1,1,2,1],[0,5,3,0],[1,4,2,0],[1,2,2,0],[0,3,2,1],[0,0,2,0],[1,3,3,3],[0,2,3,2],[1,5,2,3],[1,5,2,1]],
+       [[1,2,2,1],[0,2,2,4],[1,4,2,3],[0,1,2,0],[0,0,3,2],[0,4,3,1],[1,0,3,2],[0,3,2,1],[1,3,2,2]],
+       [[1,0,2,1],[0,3,3,2],[0,5,2,4],[0,4,2,0],[0,2,2,1],[1,5,2,3],[0,5,3,1],[0,4,2,2],[0,0,2,0],[0,3,2,0],[0,2,3,3],[1,2,2,0]],
+       [[1,4,2,2],[0,4,2,0],[0,1,2,3],[0,2,2,2],[1,0,2,2],[0,4,2,4],[1,2,2,3],[1,3,2,3],[1,1,3,1]],
+       [[1,2,2,0],[1,0,2,0],[0,5,3,2],[1,4,2,1],[0,3,2,4],[1,3,2,3],[0,0,2,3],[0,2,3,1],[1,0,3,2]],
+       [[1,3,2,3],[1,4,2,4],[0,0,3,2],[1,5,2,4],[0,3,2,4],[0,5,2,2],[0,5,2,0],[1,1,2,0],[1,1,3,2],[0,2,2,3]]],
+      [[[1,3,2,0],[0,0,2,4],[1,0,2,0],[0,2,3,1],[1,5,2,2],[0,5,3,3],[0,3,3,0],[1,2,2,4]],
+       [[1,5,2,1],[0,0,2,2],[0,3,2,4],[1,2,2,4],[0,2,3,2],[1,0,3,1],[1,3,3,3],[0,5,2,0],[0,3,2,1],[0,1,2,2],[0,4,2,4]],
+       [[1,5,2,3],[0,0,2,4],[1,2,3,1],[1,0,2,3],[1,0,3,0],[0,2,2,4],[1,3,2,4],[0,0,2,2],[0,5,3,0],[0,3,2,3],[0,5,2,4],[1,1,2,0]],
+       [[1,2,2,0],[0,5,2,0],[1,0,2,2],[0,5,3,2],[0,2,2,4],[0,1,2,0],[0,3,2,4],[0,2,2,2],[1,5,2,4],[0,3,2,2],[0,4,2,0],[1,3,2,0],[0,4,2,2]],
+       [[1,2,2,2],[1,5,2,3],[0,3,2,3],[1,0,2,4],[1,5,2,1],[0,2,2,3],[0,4,3,1],[0,0,3,0],[0,3,2,0],[1,3,2,0],[1,4,2,4],[1,1,2,1]],
+       [[1,5,2,2],[1,3,2,1],[1,1,2,0],[0,0,3,3],[1,0,2,0],[0,2,2,1],[0,4,2,3],[0,5,2,4],[0,3,2,2],[0,5,2,2],[1,4,2,2],[1,1,3,3]],
+       [[1,2,2,2],[0,5,3,2],[0,4,2,3],[1,5,3,0],[0,2,2,0],[0,1,2,1],[0,4,2,1],[1,3,2,1],[1,0,2,3],[1,4,3,1]],
+       [[1,2,2,0],[0,0,2,0],[1,0,2,3],[1,4,3,0],[1,3,2,1],[1,0,2,1],[0,3,2,1],[0,2,2,1],[0,3,2,3],[0,4,3,2],[1,1,2,4]],
+       [[1,4,2,1],[0,5,2,2],[1,1,2,1],[0,5,2,0],[1,0,2,0],[1,0,3,2],[0,0,3,1],[1,5,2,4],[0,3,2,4],[0,1,2,2],[1,3,3,2]],
+       [[1,3,2,0],[1,2,2,0],[1,4,3,0],[0,0,2,0],[0,4,2,1],[1,4,2,3],[0,5,2,1],[0,2,2,2],[1,1,2,2],[1,5,2,0],[1,5,3,2],[0,5,2,3]]],
+      [[[1,0,2,2],[0,1,2,0],[1,5,3,2],[1,4,2,3],[1,3,2,0],[0,4,2,0],[0,5,3,1],[1,2,2,3],[0,2,2,1],[1,3,2,3],[0,5,2,4],[0,2,2,3],[0,0,2,4]],
+       [[1,4,2,1],[1,1,3,1],[1,0,2,3],[0,2,2,2],[1,0,2,1],[1,3,2,0],[1,2,2,4],[0,5,2,0],[0,3,3,2],[1,3,2,4],[0,0,2,1]],
+       [[1,3,2,3],[0,3,2,0],[0,4,2,1],[1,2,2,0],[0,2,2,3],[1,5,3,2],[0,0,3,3],[0,5,3,3],[1,0,2,4],[0,1,2,3],[1,2,2,2],[1,1,2,0]],
+       [[1,1,2,1],[0,4,2,3],[0,2,2,3],[1,2,3,2],[0,5,2,1],[0,1,2,2],[0,3,2,0],[1,5,2,3],[1,5,3,0],[0,0,2,0],[0,0,2,2],[1,4,2,0],[0,5,2,4]],
+       [[1,2,2,3],[1,1,3,0],[0,2,3,2],[1,0,2,1],[0,0,2,2],[0,3,2,0],[0,5,2,4],[1,5,3,2],[1,3,2,4],[0,5,2,1],[1,0,2,4]],
+       [[1,0,2,1],[0,5,2,0],[0,2,2,3],[0,3,2,1],[0,4,2,1],[1,5,2,4],[0,0,3,3],[1,3,2,3],[1,5,3,1],[0,5,3,2],[1,2,3,0]],
+       [[1,3,2,1],[1,5,2,3],[1,1,2,4],[0,3,2,0],[1,5,2,0],[1,2,3,1],[0,2,2,4],[0,4,3,2],[0,0,3,1]],
+       [[1,2,2,2],[1,4,3,3],[0,5,3,0],[1,5,2,1],[0,0,3,0],[1,5,2,3],[1,3,2,0],[0,2,2,3],[1,0,3,2],[0,4,3,1],[0,1,3,0]],
+       [[1,3,2,2],[1,5,2,3],[1,1,2,4],[1,4,3,1],[0,4,2,3],[0,2,3,0],[1,2,2,0],[1,0,3,3],[1,5,3,0],[0,5,2,4],[0,5,2,2],[0,3,2,1],[0,0,2,3]],
+       [[1,1,2,0],[1,0,2,4],[1,3,3,2],[0,1,2,3],[1,2,2,2],[1,5,2,3],[0,5,3,3],[0,4,2,1],[0,2,2,0],[1,5,2,1],[1,2,2,0]]],
+      [[[1,2,2,0],[0,0,2,0],[0,4,3,1],[0,3,2,1],[1,4,2,4],[0,2,2,4],[1,3,3,0],[1,0,3,2],[0,3,2,3]],
+       [[1,2,2,2],[0,4,2,4],[1,1,2,3],[0,0,2,2],[0,4,2,2],[0,3,3,3],[0,2,2,0],[1,0,2,0],[1,4,3,0]],
+       [[1,3,2,0],[1,2,2,4],[1,0,2,1],[1,1,2,0],[0,5,2,0],[0,2,2,3],[0,0,2,4],[1,5,3,1],[0,4,2,4],[0,5,2,4],[0,2,2,1],[0,3,3,1],[1,0,2,3]],
+       [[1,0,2,0],[1,2,2,2],[0,5,2,4],[0,3,2,0],[1,4,3,2],[0,0,2,2],[1,2,2,4],[1,3,2,2],[1,5,3,0],[1,1,2,0],[1,4,2,0],[0,2,2,0],[1,3,2,4]],
+       [[1,2,2,0],[0,0,2,0],[0,3,3,0],[1,4,3,0],[0,4,2,0],[0,4,3,2],[0,2,2,1],[1,5,3,0],[1,3,3,1],[1,0,2,1],[0,5,2,2],[0,5,2,0]],
+       [[1,4,2,1],[1,1,3,1],[1,0,2,3],[0,2,2,2],[1,0,2,1],[1,3,2,0],[1,2,2,4],[0,5,2,0],[0,3,3,2],[1,3,2,4],[0,0,2,1]],
+       [[1,2,2,0],[1,1,3,1],[1,0,3,1],[1,3,2,0],[0,2,2,3],[0,0,2,0],[0,3,2,4],[0,5,3,1],[0,3,2,2],[1,4,2,4],[1,5,2,1]],
+       [[1,0,2,1],[0,5,2,0],[0,2,2,3],[0,3,2,1],[0,4,2,1],[1,5,2,4],[0,0,3,3],[1,3,2,3],[1,5,3,1],[0,5,3,2],[1,2,3,0]],
+       [[1,1,2,1],[1,2,2,4],[0,0,2,4],[0,2,2,2],[1,2,2,0],[0,3,2,2],[1,3,2,4],[1,5,2,2],[1,4,3,1],[0,5,2,4],[0,3,2,0],[1,3,2,0]],
+       [[1,3,2,2],[1,5,2,3],[1,1,2,4],[1,4,3,1],[0,4,2,3],[0,2,3,0],[1,2,2,0],[1,0,3,3],[1,5,3,0],[0,5,2,4],[0,5,2,2],[0,3,2,1],[0,0,2,3]]]]
   };
   const parkCell = (c, p, k) => (c.v ? [c.f, p + k] : [p + k, c.f]);
   const parkVars = (c, p) => ({ x: c.v ? c.f : p, y: c.v ? p : c.f, w: c.v ? 1 : c.len, h: c.v ? c.len : 1 });
@@ -2659,14 +2727,14 @@
       + ';--w:' + v.w + ';--h:' + v.h + ';--c:' + PARK_COLORS[i] + '">' + parkCarSvg(c, i) + '</span>'; }).join('')
     + (dots || []).map(([x, y]) => '<span class="pdest" style="--x:' + x + ';--y:' + y + '"></span>').join('') + '</div>';
   function genPark(lvl) {
-    const { n, lv } = PARK[S.diff];
-    let [count, trucks, lo, hi] = lv[lvl === 6 ? rnd(2, 5) : Math.min(lvl, 5)], lay, sol, from = -1;
-    if (lvl > 6) { // Very hard and Extreme: a puzzle from the bank, shown the other way round half of the time
-      const mirror = Math.random() < 0.5, one = pick(PARK_BANK[S.diff][lvl - 7]).map(([v, f, len, at]) => [v, mirror && v ? n - 1 - f : f, len, mirror && !v ? n - len - at : at]);
+    const { n, lv, bank } = PARK[S.diff], li = lvl === 6 ? rnd(2, 5) : lvl;
+    let count, trucks, lo, hi, lay, sol, from = -1;
+    if (bank) { // Very hard and Extreme: a puzzle from the bank, shown the other way round half of the time
+      const mirror = Math.random() < 0.5, one = pick(PARK_BANK[S.diff][li]).map(([v, f, len, at]) => [v, mirror && v ? n - 1 - f : f, len, mirror && !v ? n - len - at : at]);
       lay = { cars: one.map(([v, f, len]) => ({ v: !!v, f, len })), pos: one.map((c) => c[3]) };
       sol = parkSolve(lay.cars, lay.pos, n, PARK_STATES);
       from = 0;
-    }
+    } else [count, trucks, lo, hi] = lv[li];
     for (let tries = 1; from < 0; tries++) {
       if (tries % 100 === 0) { count = Math.max(3, count - 1); lo = Math.max(1, lo - 1); hi++; } // cannot happen in practice; never loop forever
       lay = parkLayout(n, count, trucks);
@@ -2675,7 +2743,7 @@
       if (sol) sol.dist.forEach((d, k) => { if (d >= lo && d <= hi) fit.push(k); });
       if (fit.length) from = pick(fit);
     }
-    const cars = lay.cars, par = sol.dist[from], showPar = S.diff !== 'hard';
+    const cars = lay.cars, par = sol.dist[from], showPar = !hardUp(S.diff);
     let cur = sol.states[from].slice(), moves = 0, sel = -1, hint = null, done = false;
     const history = [];
     const distOf = (s) => sol.dist[sol.index.get(parkKey(s, n))];
@@ -2781,7 +2849,9 @@
   const MAZE = {
     easy: [[4, 0, 8, 12], [5, 0, 12, 18], [5, 2, 10, 14], [6, 0, 16, 24], [6, 3, 12, 18], [6, 2, 14, 20]],
     medium: [[6, 0, 14, 22], [7, 0, 18, 28], [7, 3, 16, 22], [8, 0, 24, 34], [8, 4, 20, 26], [8, 3, 22, 30]],
-    hard: [[8, 0, 24, 34], [9, 0, 30, 42], [9, 4, 24, 32], [10, 0, 38, 52], [10, 5, 28, 36], [10, 4, 30, 40]]
+    hard: [[8, 0, 24, 34], [9, 0, 30, 42], [9, 4, 24, 32], [10, 0, 38, 52], [10, 5, 28, 36], [10, 4, 30, 40]],
+    veryhard: [[10, 0, 38, 52], [11, 0, 44, 60], [11, 5, 36, 48], [12, 0, 52, 70], [12, 6, 44, 56], [12, 5, 46, 60]],
+    extreme: [[12, 0, 52, 70], [13, 0, 60, 80], [13, 6, 50, 64], [14, 0, 70, 96], [14, 7, 60, 76], [14, 6, 64, 84]]
   };
   const MZ = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // up, right, down, left
   const mzNext = (n, c, d) => { const x = (c % n) + MZ[d][0], y = Math.floor(c / n) + MZ[d][1]; return x < 0 || y < 0 || x >= n || y >= n ? -1 : y * n + x; };
@@ -2842,7 +2912,7 @@
       const end = (n - 1 - sy) * n + (n - 1 - sx);
       if (ds[end] >= lo && ds[end] <= hi) goal = end;
     }
-    const par = ds[goal], de = mzDist(open, n, goal), onRoute = (c) => ds[c] + de[c] === par, showPar = S.diff !== 'hard';
+    const par = ds[goal], de = mzDist(open, n, goal), onRoute = (c) => ds[c] + de[c] === par, showPar = !hardUp(S.diff);
     let cur = from, hint = -1, done = false;
     const trail = [];
     qSay(more ? tx('There is more than one way home. Find the shortest!', 'Ada lebih dari satu jalan pulang. Temukan yang terpendek!') : tx('Walk Poka home to the 🏠. Use the arrows, or tap the next square.', 'Antarkan Poka pulang ke 🏠. Pakai panah, atau ketuk kotak berikutnya.'));
@@ -2913,7 +2983,9 @@
   // every state it passed through, or err when a step tried to take more than a pocket holds.
   const PACK_ITEMS = [{ e: '🍎', n: tx('Apples', 'Apel') }, { e: '🍪', n: tx('Cookies', 'Kue') }, { e: '⭐', n: tx('Stars', 'Bintang') }];
   // max: the most a pocket may hold; step: the biggest number in an add or take; len: steps for each level.
-  const PACK = { easy: { max: 9, step: 3, len: [2, 3, 3] }, medium: { max: 20, step: 9, len: [3, 4, 4] }, hard: { max: 99, step: 20, len: [4, 5, 5] } };
+  const PACK = { easy: { max: 9, step: 3, len: [2, 3, 3] }, medium: { max: 20, step: 9, len: [3, 4, 4] }, hard: { max: 99, step: 20, len: [4, 5, 5] },
+    // The keypad takes two digits, so the biggest number stays 99 and the programs get longer instead.
+    veryhard: { max: 99, step: 25, len: [5, 6, 6] }, extreme: { max: 99, step: 30, len: [6, 7, 7] } };
   const PACK_ICON = { put: '📥', add: '➕', take: '➖', copy: '📋', loop: '🔁' };
   // One step on a copy of the pockets; null when a take wants more than the pocket holds (unless lenient).
   function packStep(s, o, lenient) {
@@ -3059,12 +3131,12 @@
   }
   // Level 6, predict: a program with a repeat. The answer changes if the repeat is done once, so the count matters.
   function genPackRepeat() {
-    const d = S.diff, max = PACK[d].max, pockets = d === 'easy' ? 1 : 2, nMax = { easy: 3, medium: 5, hard: 9 }[d], vMax = { easy: 3, medium: 5, hard: 9 }[d];
+    const d = S.diff, max = PACK[d].max, pockets = d === 'easy' ? 1 : 2, nMax = { easy: 3, medium: 5, hard: 9, veryhard: 9, extreme: 9 }[d], vMax = { easy: 3, medium: 5, hard: 9, veryhard: 12, extreme: 15 }[d];
     let start, prog, run, ask;
     for (let tries = 0; ; tries++) {
       if (tries === 500) { start = [0]; prog = [{ op: 'loop', n: 2, body: [{ op: 'add', p: 0, v: 1 }] }]; run = packRun(start, prog); ask = 0; break; } // cannot happen in practice
       const step = () => ({ op: pick(['add', 'take']), p: rnd(0, pockets - 1), v: rnd(1, vMax) });
-      const loop = { op: 'loop', n: rnd(2, nMax), body: Array.from({ length: d === 'easy' ? 1 : rnd(1, 2) }, step) };
+      const loop = { op: 'loop', n: rnd(2, nMax), body: Array.from({ length: d === 'easy' ? 1 : d === 'veryhard' || d === 'extreme' ? rnd(2, 3) : rnd(1, 2) }, step) };
       prog = [...Array.from({ length: d === 'easy' ? 0 : rnd(0, 1) }, step), loop, ...Array.from({ length: rnd(0, 1) }, step)];
       start = Array.from({ length: pockets }, () => rnd(0, Math.floor(max / 3)));
       run = packRun(start, prog);
@@ -3119,7 +3191,7 @@
     run.final.forEach((v, p) => { if (p !== ask) slip('other-pocket', v); });
     slip('start', start[ask]);
     [ans + 1, ans - 1, ans + 2, ans - 2].forEach((v) => slip('off-by-one', v));
-    if (S.diff === 'hard') { packKeypad(ans, done, showTrace, Object.fromEntries(slips)); return; }
+    if (hardUp(S.diff)) { packKeypad(ans, done, showTrace, Object.fromEntries(slips)); return; }
     const need = S.diff === 'easy' ? 3 : 4;
     // A put taken for an add and a repeat done the wrong number of times are the slips worth showing, so they make the list first.
     const key = (v) => ['put-add', 'repeat-once', 'repeat-count'].includes(slips.get(v)), pool = shuffle([...slips.keys()]), mix = pool.filter(key).concat(pool.filter((v) => !key(v)));
@@ -3156,7 +3228,7 @@
         bad = [{ op: 'add', p: 0, v: 3 }, good[1], good[2]];
       } else {
         start = [rnd(0, Math.floor(max / 2)), rnd(0, Math.floor(max / 2))];
-        good = Array.from({ length: d === 'medium' ? rnd(3, 4) : rnd(4, 5) }, step);
+        good = Array.from({ length: d === 'medium' ? rnd(3, 4) : d === 'veryhard' ? rnd(5, 6) : d === 'extreme' ? rnd(6, 7) : rnd(4, 5) }, step);
         ask = rnd(0, 1); b = rnd(0, good.length - 1);
         bad = good.map((o, j) => (j === b ? pick(near(o)) : o));
       }
@@ -3204,7 +3276,9 @@
   // The child taps fixed blocks into a tray and runs them. A breadth-first search over the pockets finds the fewest blocks
   // that reach the goal (a goal of null means that pocket may end with anything); that sets the block limit and the hints.
   // add / take: the numbers on the blocks; max: the most blocks a puzzle may need; extra: blocks to spare on top of that.
-  const PACK_BLOCKS = { easy: { add: [1, 2], take: [1], max: 4, extra: 2 }, medium: { add: [1, 3, 5], take: [1, 2], max: 5, extra: 1 }, hard: { add: [1, 5, 10], take: [1, 5], max: 6, extra: 1 } };
+  const PACK_BLOCKS = { easy: { add: [1, 2], take: [1], max: 4, extra: 2 }, medium: { add: [1, 3, 5], take: [1, 2], max: 5, extra: 1 }, hard: { add: [1, 5, 10], take: [1, 5], max: 6, extra: 1 },
+    // A bigger set of blocks would let any goal be reached in a few steps with no repeat, so these keep Hard's blocks and allow no spare ones.
+    veryhard: { add: [1, 5, 10], take: [1, 5], max: 7, extra: 0 }, extreme: { add: [1, 5, 10], take: [1, 5], max: 8, extra: 0 } };
   function packSolve(start, goal, palette, depth, max) {
     const key = (s) => s.join(','), seen = new Map([[key(start), null]]);
     const fits = (s) => goal.every((g, p) => g === null || s[p] === g);
@@ -3453,7 +3527,7 @@
   function cBuild(lvl, n, ops, notP, next, d) {
     if (lvl === 0) { // one switch, flipped a few times
       let node = { t: 'in', i: next.i++ };
-      for (let k = { easy: rnd(0, 1), medium: rnd(0, 2), hard: rnd(1, 3) }[d]; k > 0; k--) node = { t: 'not', a: node };
+      for (let k = { easy: rnd(0, 1), medium: rnd(0, 2), hard: rnd(1, 3), veryhard: rnd(1, 3), extreme: rnd(2, 4) }[d]; k > 0; k--) node = { t: 'not', a: node };
       return node;
     }
     const tree = (m) => {
@@ -3470,8 +3544,8 @@
   function genCircuit(lvl) {
     if (lvl >= 4) { genFill(lvl); return; }
     const d = S.diff, light = lvl === 1 || lvl === 2;
-    const nSw = { easy: [1, 2, 2, 2], medium: [1, 2, 3, 3], hard: [1, 3, 3, 4] }[d][lvl];
-    const lamps = light ? 1 : { easy: 2, medium: 3, hard: 3 }[d];
+    const nSw = { easy: [1, 2, 2, 2], medium: [1, 2, 3, 3], hard: [1, 3, 3, 4], veryhard: [2, 3, 4, 5], extreme: [3, 4, 5, 5] }[d][lvl];
+    const lamps = light ? 1 : { easy: 2, medium: 3, hard: 3, veryhard: 3, extreme: 4 }[d];
     const ops = lvl === 1 ? ['and'] : lvl === 2 ? ['or'] : ['and', 'or'];
     let roots, inp, target = true;
     for (let tries = 0; ; tries++) {
@@ -3479,9 +3553,9 @@
       roots = Array.from({ length: lamps }, () => cLayout(cBuild(lvl, nSw, ops, lvl === 3 ? 0.3 : 0, next, d)));
       if (roots.some((r) => r.col + 2 > 6)) continue; // too wide for the screen
       if (light) {
-        target = d === 'hard' && Math.random() < 0.34 ? false : true;
+        target = hardUp(d) && Math.random() < 0.34 ? false : true;
         const all = cInputs(next.i), good = all.filter((x) => cEval(roots[0], x) === target), bad = all.filter((x) => cEval(roots[0], x) !== target);
-        if (!good.length || !bad.length || (d === 'hard' && good.length !== 1 && tries < 300)) continue;
+        if (!good.length || !bad.length || (hardUp(d) && good.length !== 1 && tries < 300)) continue;
         inp = pick(bad).slice();
         break;
       }
@@ -3550,7 +3624,7 @@
   // it, and on Hard exactly one choice fits.
   const cChoices = (n) => (n.b ? ['and', 'or'] : ['not', 'wire']);
   function genFill(lvl) {
-    const d = S.diff, nSw = lvl === 4 ? 2 : { easy: 2, medium: 3, hard: 3 }[d];
+    const d = S.diff, nSw = lvl === 4 ? 2 : { easy: 2, medium: 3, hard: 3, veryhard: 3, extreme: 4 }[d];
     let root, list, inputs, rows;
     for (let tries = 0; ; tries++) {
       const next = { i: 0 };
@@ -3572,7 +3646,7 @@
       for (let m = 0; m < 1 << list.length; m++) if (run(list.map((n, j) => cChoices(n)[(m >> j) & 1])).every((v, k) => v === rows[k])) fit++;
       list.forEach((n) => { n.t = 'blank'; });
       if (!rows.some(Boolean) || rows.every(Boolean) || fit === 1 << list.length) continue;
-      if (d === 'hard' && fit !== 1 && tries < 300) continue;
+      if (hardUp(d) && fit !== 1 && tries < 300) continue;
       break;
     }
     qSay(tx('Fill every ? box with a gate so the lamp shines just like the table says. Tap a box to choose a gate.', 'Isi setiap kotak ? dengan gerbang supaya lampu menyala sesuai tabel. Ketuk kotak untuk memilih gerbang.'));

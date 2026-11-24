@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { pack: Array(7).fill(1) };
+    for (const x of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) best[x] = { pack: Array(7).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { pack: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -44,7 +44,7 @@ function follow({ start, prog }, lenient) {
 }
 
 async function answer(page, diff, value) {
-  if (diff === 'hard') {
+  if (['hard', 'veryhard', 'extreme'].includes(diff)) {
     for (const d of String(value)) await page.getByRole('button', { name: d, exact: true }).click();
     await page.getByRole('button', { name: 'Check' }).click();
   } else {
@@ -200,7 +200,7 @@ async function toLastPuzzle(page, diff) {
 test.describe("Poka's Backpack", () => {
   test.setTimeout(90000);
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     for (const n of [1, 2, 3]) {
       test(`level ${n} is solved by following the steps on ${diff}`, async ({ page }) => {
         await openLogica(page, diff);
@@ -214,7 +214,7 @@ test.describe("Poka's Backpack", () => {
     }
   }
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     test(`puzzles are valid and copies are followed by a change on ${diff}`, async ({ page }) => {
       for (let k = 0; k < 6; k++) {
         await openLogica(page, diff);
@@ -225,7 +225,7 @@ test.describe("Poka's Backpack", () => {
         expect(puzzle.prog.slice(first + 1).some((o) => o.op !== 'copy')).toBe(true);
         const final = follow(puzzle); // throws if a step takes too much
         expect(final[puzzle.ask]).not.toBe(puzzle.start[puzzle.ask]);
-        expect(Math.max(...final)).toBeLessThanOrEqual({ easy: 9, medium: 20, hard: 99 }[diff]);
+        expect(Math.max(...final)).toBeLessThanOrEqual({ easy: 9, medium: 20, hard: 99, veryhard: 99, extreme: 99 }[diff]);
       }
     });
   }
@@ -259,7 +259,7 @@ test.describe("Poka's Backpack", () => {
     await expect(page.locator('#prog [data-status="complete"]')).toHaveCount(1);
   });
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     for (const n of [4, 5]) {
       test(`level ${n} is solved by building the steps on ${diff}`, async ({ page }) => {
         await openLogica(page, diff);
@@ -426,7 +426,7 @@ test.describe("Poka's Backpack", () => {
     await expect(rep).not.toContainText('Common slips');
   });
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     test(`the repeat level is solved on ${diff}`, async ({ page }) => {
       await openLogica(page, diff);
       await openLevel(page, 6);
@@ -440,7 +440,7 @@ test.describe("Poka's Backpack", () => {
     });
   }
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     test(`repeat puzzles are valid on ${diff}`, async ({ page }) => {
       for (let k = 0; k < 5; k++) {
         await openLogica(page, diff);
@@ -449,7 +449,7 @@ test.describe("Poka's Backpack", () => {
         const loop = puzzle.prog.find((o) => o.op === 'loop');
         expect(loop.n).toBeGreaterThanOrEqual(2);
         expect(loop.body.length).toBeGreaterThanOrEqual(1);
-        expect(loop.body.length).toBeLessThanOrEqual(diff === 'easy' ? 1 : 2);
+        expect(loop.body.length).toBeLessThanOrEqual({ easy: 1, medium: 2, hard: 2, veryhard: 3, extreme: 3 }[diff]);
         const final = follow(puzzle); // throws if a step takes too much
         expect(final[puzzle.ask]).not.toBe(puzzle.start[puzzle.ask]);
         // Doing the repeat only once must give another answer, or the count would not matter.
@@ -460,7 +460,7 @@ test.describe("Poka's Backpack", () => {
     });
   }
 
-  for (const diff of ['medium', 'hard']) {
+  for (const diff of ['medium', 'hard', 'veryhard', 'extreme']) {
     test(`a build puzzle needs the repeat on ${diff}`, async ({ page }) => {
       for (let k = 0; k < 3; k++) {
         await openLogica(page, diff);
@@ -535,7 +535,7 @@ test.describe("Poka's Backpack", () => {
     await expect(page.getByRole('dialog', { name: 'Backpack steps' }).locator('.tsteps')).toContainText('Like clapping three times');
   });
 
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     test(`mixed up is solved on ${diff}, and ends with a debug on medium and hard`, async ({ page }) => {
       await openLogica(page, diff);
       await openLevel(page, 7);
@@ -549,7 +549,7 @@ test.describe("Poka's Backpack", () => {
     });
   }
 
-  for (const diff of ['medium', 'hard']) {
+  for (const diff of ['medium', 'hard', 'veryhard', 'extreme']) {
     test(`a debug puzzle has exactly one working change on ${diff}`, async ({ page }) => {
       for (let k = 0; k < 3; k++) {
         await toLastPuzzle(page, diff);
@@ -558,8 +558,8 @@ test.describe("Poka's Backpack", () => {
         expect(new Set(d.options.map((o) => o.label)).size).toBe(d.options.length);
         expect(d.options.filter((o) => fixWorks(d, o))).toHaveLength(1);
         expect(follow({ start: d.start, prog: d.prog })[d.ask]).not.toBe(d.target); // the program really ends wrong
-        expect(d.prog.length).toBeGreaterThanOrEqual(diff === 'medium' ? 3 : 4);
-        expect(d.prog.length).toBeLessThanOrEqual(diff === 'medium' ? 4 : 5);
+        expect(d.prog.length).toBeGreaterThanOrEqual({ medium: 3, hard: 4, veryhard: 5, extreme: 6 }[diff]);
+        expect(d.prog.length).toBeLessThanOrEqual({ medium: 4, hard: 5, veryhard: 6, extreme: 7 }[diff]);
       }
     });
   }

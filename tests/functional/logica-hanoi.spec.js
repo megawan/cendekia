@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { hanoi: Array(7).fill(1) };
+    for (const x of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) best[x] = { hanoi: Array(7).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { hanoi: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -74,7 +74,7 @@ async function playLevel(page, diff) {
 test.describe('Tower of Poka', () => {
   test.setTimeout(120000);
 
-  const plan = { easy: [1, 2, 3, 4, 5, 7], medium: [2, 3, 4, 5, 7], hard: [1, 6, 7] };
+  const plan = { easy: [1, 2, 3, 4, 5, 7], medium: [2, 3, 4, 5, 7], hard: [1, 6, 7], veryhard: [2, 4], extreme: [3, 5] };
   for (const [diff, levels] of Object.entries(plan)) {
     for (const n of levels) {
       test(`level ${n} is solved by the shortest way on ${diff}`, async ({ page }) => {
