@@ -5,7 +5,7 @@ async function openLogica(page, diff) {
   await page.goto('/logica/');
   await page.evaluate((d) => {
     const id = window.Cendekia.profile().id, best = {};
-    for (const x of ['easy', 'medium', 'hard']) best[x] = { code: Array(7).fill(1), sudoku: Array(7).fill(1) };
+    for (const x of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) best[x] = { code: Array(7).fill(1), sudoku: Array(7).fill(1) };
     localStorage.setItem('logika.v3.' + id, JSON.stringify({ diff: d, best, day: '', streak: 0, seen: { robot: true, code: true, sudoku: true }, log: {}, days: {} }));
   }, diff);
   await page.reload();
@@ -47,7 +47,7 @@ function solveSudoku() {
 }
 
 test.describe('Mini Sudoku', () => {
-  for (const diff of ['easy', 'medium', 'hard']) {
+  for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
     test(`the hardest level can be solved on ${diff}`, async ({ page }) => {
       await openLogica(page, diff);
       await openLevel(page, 'Mini Sudoku', 7);
@@ -121,7 +121,7 @@ test.describe('Secret Code', () => {
   });
 });
 
-for (const diff of ['easy', 'medium', 'hard']) {
+for (const diff of ['easy', 'medium', 'hard', 'veryhard', 'extreme']) {
   test(`every new level opens on ${diff}`, async ({ page }) => {
     test.setTimeout(60000);
     await openLogica(page, diff);

@@ -136,7 +136,7 @@
     { id: 'kosakata', name: 'Lexica', base: 'kosakata.v1', stages: 27 },
     { id: 'hijaiyah', name: 'Iqra', base: 'hijaiyah.stars.v1' },
     // Logica keeps stars per difficulty; the levels count is for the child's current difficulty.
-    { id: 'logika', name: 'Logica', base: 'logika.v3', levels: { easy: 74, medium: 81, hard: 77 } },
+    { id: 'logika', name: 'Logica', base: 'logika.v3', levels: { easy: 74, medium: 81, hard: 77, veryhard: 77, extreme: 77 } },
     { id: 'numeria', name: 'Numeria', base: 'numeria.v1', stages: 54 },
     { id: 'omnia', name: 'Omnia', base: 'omnia.v1', stages: 17 }
   ];
@@ -191,8 +191,8 @@
     if (app.id === 'logika') {
       const byDiff = (st && st.best) || {}, diff = (st && st.diff) || 'medium';
       const all = (d) => Object.values(byDiff[d] || {}).flat();
-      const stars = ['easy', 'medium', 'hard'].reduce((n, d) => n + all(d).reduce((a, x) => a + (x || 0), 0), 0);
-      const names = { easy: t('Easy', 'Mudah'), medium: t('Medium', 'Sedang'), hard: t('Hard', 'Sulit') };
+      const stars = ['easy', 'medium', 'hard', 'veryhard', 'extreme'].reduce((n, d) => n + all(d).reduce((a, x) => a + (x || 0), 0), 0);
+      const names = { easy: t('Easy', 'Mudah'), medium: t('Medium', 'Sedang'), hard: t('Hard', 'Sulit'), veryhard: t('Very hard', 'Sangat sulit'), extreme: t('Extreme', 'Ekstrem') };
       return { stars, done: t(all(diff).filter((x) => x > 0).length + ' of ' + app.levels[diff] + ' levels (' + names[diff] + ')', all(diff).filter((x) => x > 0).length + ' dari ' + app.levels[diff] + ' level (' + names[diff] + ')') };
     }
     const best = (st && st.best) || {};
