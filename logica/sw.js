@@ -2,7 +2,7 @@
 const CACHE = 'logica-v57';
 const FONTS = 'logica-fonts-v1';
 // The Arc bundle (ui-dist) is not precached: it is fetched on first use, and the fetch handler below keeps it for offline.
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js'];
+const CORE = ['./', 'index.html', 'app.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));

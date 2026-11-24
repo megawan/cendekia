@@ -42,7 +42,7 @@ Hints: after a failed run, 💡 appears in Robot Path. The first hint shows numb
 
 Robot stars: three for a program with no more blocks than the solution and fewer than two failed runs, one less for each of those missed. Fixing stars: one less for more than one change, and one less for two or more failed runs after the first change. Quiz stars: three with every question right on the first try, two with up to two misses.
 
-Stickers: twelve space stickers unlock as the player's total star count, over all difficulties, grows (`STICKERS` in `index.html`). Days in a row are counted as in the other apps. Each child's progress is kept in `localStorage` under `logika.v3.<child id>`. Logica's own players from before (`logika.v2`, or `logika.v1`) moved once to the shared children: a player with the same name as a child becomes that child, the player who was playing becomes the current child, and the others become new children.
+Stickers: twelve space stickers unlock as the player's total star count, over all difficulties, grows (`STICKERS` in `app.js`). Days in a row are counted as in the other apps. Each child's progress is kept in `localStorage` under `logika.v3.<child id>`. Logica's own players from before (`logika.v2`, or `logika.v1`) moved once to the shared children: a player with the same name as a child becomes that child, the player who was playing becomes the current child, and the others become new children.
 
 ## Map Maker
 
@@ -75,7 +75,7 @@ cd logica/ui && npm install && npm run build
 
 The bundle's own text for screen readers (the stepper's "Question 1" and "Step 1 of 6", the toast's dismiss button, the sheet's close and expand buttons, the reorder handles) follows `<html lang>` through `t(English, Indonesian)` in `ui/src/lang.ts`, so a language switch needs no extra build step.
 
-`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })` and `window.LogicaUI.sheet({ title, html, closeText })`, `window.LogicaUI.progress(el, total, done)` and `window.LogicaUI.reorder(el, { items, hinted, onReorder })`; `index.html` falls back to plain text, the old dialog, pips and tap-to-swap wagons if the bundle is missing. The bundle is not in the page's first load: it is fetched on the first touch or key (and when the difficulty or How to play sheet opens), so it never delays the first paint, and `sw.js` keeps it for offline once fetched. A child's very first visit uses the plain difficulty dialog for the same reason. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
+`ui/src/main.tsx` exposes `window.LogicaUI.counter(el, n, suffix)` and `window.LogicaUI.toast({ type, title, description })` and `window.LogicaUI.sheet({ title, html, closeText })`, `window.LogicaUI.progress(el, total, done)` and `window.LogicaUI.reorder(el, { items, hinted, onReorder })`; `app.js` falls back to plain text, the old dialog, pips and tap-to-swap wagons if the bundle is missing. The bundle is not in the page's first load: it is fetched on the first touch or key (and when the difficulty or How to play sheet opens), so it never delays the first paint, and `sw.js` keeps it for offline once fetched. A child's very first visit uses the plain difficulty dialog for the same reason. Arc's tokens are scoped to `.arc-ui` so they do not touch Logica's own variables. After rebuilding, bump `CACHE` in `sw.js`.
 
 ## Animations
 
@@ -101,4 +101,6 @@ After changing the page, bump `CACHE` in `sw.js` so installed copies refresh.
 
 ## Offline and install
 
-`sw.js` precaches the page and icons, and keeps Google Fonts in a separate cache. The manifest lets the game be installed to the home screen.
+`sw.js` precaches the page, `app.js` and icons, and keeps Google Fonts in a separate cache. The manifest lets the game be installed to the home screen.
+
+The game's script is `app.js`, loaded with `defer` after the shared scripts, not inline in `index.html`: a 270 KB inline script made the page's first paint wait for all of it, and it sank Lighthouse's performance score to the 0.8 minimum. Keep `app.js` in the `CORE` list of `sw.js`.
