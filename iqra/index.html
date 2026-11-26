@@ -207,6 +207,26 @@
   .mcard.up { background: var(--card); border-color: var(--line); animation: pop .3s; }
   .mcard.done { background: #dff5e8; border-color: var(--accent); }
 
+  /* Mufradat */
+  svg.art { width: 1em; height: 1em; vertical-align: -.12em; }
+  .wtabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .wtabs .tab { flex: 1 1 22%; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .wtabs .tab svg.art { font-size: 1.8rem; }
+  .wtabs .tab small { font-size: .8rem; line-height: 1.15; }
+  .wgrid { direction: rtl; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+  @media (min-width: 560px) { .wgrid { grid-template-columns: repeat(3, 1fr); } }
+  .wcard { display: flex; flex-direction: column; align-items: center; background: var(--card); border: 2px solid var(--line);
+    border-radius: var(--radius); padding: 8px 4px 10px; font: inherit; color: inherit; cursor: pointer; }
+  .wcard:active { transform: scale(.96); }
+  .wcard:focus-visible { outline: 3px solid var(--c-blue); outline-offset: 2px; }
+  .wcard svg.art { font-size: 3.6rem; }
+  .wcard .ar { font-size: 2rem; line-height: 1.9; }
+  .wcard b { direction: ltr; font-size: 1rem; }
+  .wcard small { direction: ltr; font-size: .85rem; opacity: .75; }
+  .opt svg.art { font-size: 5rem; }
+  .opts.words .opt .ar { font-size: 2.2rem; line-height: 2; }
+  .stage .big svg.art { font-size: 8rem; }
+
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -276,6 +296,8 @@
         <span class="badge"><span class="ar" lang="ar">بَتَ</span></span><b data-id="Baca suku kata">Read syllables</b><small data-id="Gabungkan dua bunyi">Put two sounds together</small></button>
       <button class="card" id="goPrayers" type="button" style="--c: var(--c-teal)">
         <span class="badge"><span class="ar" lang="ar">دُعَاء</span></span><b data-id="Doa">Prayers</b><small data-id="Dengarkan dan pelajari doa">Listen and learn a doa</small></button>
+      <button class="card wide" id="goWords" type="button" style="--c: var(--c-green)">
+        <span class="badge"><span class="ar" lang="ar">كَلِمَة</span></span><b>Mufradat</b><small data-id="Kosakata bahasa Arab pertama">First Arabic words</small></button>
       <button class="card wide" id="goProgress" type="button" style="--c: var(--c-orange)">
         <span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.5 7 .9-5.2 4.8 1.4 7L12 17.8 5.8 21.2l1.4-7L2 9.4l7-.9z"/></svg></span><b data-id="Peta kemajuan">Progress map</b></button>
     </div>
@@ -313,6 +335,15 @@
     <h1 data-id="Doa">Prayers</h1>
     <p class="sub" data-id="Dengarkan, lalu ucapkan setelah suara itu.">Listen, then say it after the voice.</p>
     <div id="prList"></div>
+  </section>
+
+  <section id="words" hidden>
+    <div class="bar"><button class="btn ghost" data-home type="button" data-id="Kembali">Back</button></div>
+    <h1>Mufradat</h1>
+    <p class="sub" data-id="Pilih tema, lalu ketuk kata untuk mendengarnya.">Pick a theme, then tap a word to hear it.</p>
+    <div class="wtabs" id="wTabs"></div>
+    <div class="stack"><button class="btn alt" id="wPractise" type="button" data-id="Berlatih">Practise</button></div>
+    <div class="wgrid" id="wGrid"></div>
   </section>
 
   <section id="trace" hidden>
@@ -435,6 +466,8 @@
 <script src="../shared/trace.js"></script>
 <script src="more.js"></script>
 <script src="prayers.js"></script>
+<script src="mufradat.js"></script>
+<script src="../shared/art.js"></script>
 <script>
 (function () {
   'use strict';
@@ -473,7 +506,7 @@
 
   const $ = (id) => document.getElementById(id);
   const AUDIO_BASE = 'audio/'; // can point to any folder or URL that serves the same file names
-  const sections = ['home', 'learn', 'more', 'prayers', 'trace', 'quiz', 'result', 'progress', 'similar', 'memory', 'forms', 'stickers', 'syll'].map($);
+  const sections = ['home', 'learn', 'more', 'prayers', 'words', 'trace', 'quiz', 'result', 'progress', 'similar', 'memory', 'forms', 'stickers', 'syll'].map($);
   function show(id) { sections.forEach((s) => { s.hidden = s.id !== id; }); window.scrollTo(0, 0); }
 
   // ---- Sound ----
@@ -634,6 +667,39 @@
   });
   $('goPrayers').addEventListener('click', () => { audioCtx(); show('prayers'); });
 
+  // ---- Mufradat: first Arabic words, in themes ----
+  const WORDS = window.IqraWords, ART = window.CendekiaArt;
+  const artSvg = (key) => '<svg class="art" viewBox="0 0 100 100" aria-hidden="true">' + ART[key] + '</svg>';
+  // A word as a quiz item: the Arabic is shown and spoken, the reading is its name.
+  WORDS.LIST.forEach((w) => { w.ch = w.ar; w.name = w.read; });
+  // The meaning in the page's language: Indonesian always (the children's own language), with the English beside it.
+  const meaning = (w) => (w.id === w.en ? w.id : T(w.id + ' · ' + w.en, w.id));
+  let wTheme = 0;
+  function renderWords() {
+    const theme = WORDS.THEMES[wTheme];
+    [...$('wTabs').children].forEach((t, k) => t.classList.toggle('on', k === wTheme));
+    const grid = $('wGrid'); grid.innerHTML = '';
+    theme.list.forEach((w) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'wcard';
+      b.innerHTML = artSvg(w.art) + '<span class="ar" lang="ar"></span><b></b><small></small>';
+      b.children[1].textContent = w.ar; b.children[2].textContent = w.read; b.children[3].textContent = meaning(w);
+      b.setAttribute('aria-label', w.read + ', ' + meaning(w));
+      b.addEventListener('click', () => speak(w));
+      grid.appendChild(b);
+    });
+  }
+  WORDS.THEMES.forEach((theme, k) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tab';
+    b.innerHTML = artSvg(theme.list[0].art) + '<small></small>';
+    b.lastChild.textContent = T(theme.title, theme.titleId);
+    b.addEventListener('click', () => { wTheme = k; renderWords(); });
+    $('wTabs').appendChild(b);
+  });
+  $('goWords').addEventListener('click', () => { audioCtx(); renderWords(); show('words'); });
+  $('wPractise').addEventListener('click', () => { audioCtx(); startQuiz('words'); });
+
   // ---- Trace letters ----
   // The best stars for each letter the child traced, one save per child. A better result adds only the difference to the star total.
   const TRACE_KEY = Cendekia.key('hijaiyah.trace.v1');
@@ -781,7 +847,11 @@
   function record(key, ok) {
     const e = store[key] || (store[key] = { lv: 0, wrong: 0 });
     e.lv = Math.max(0, Math.min(MAX_LV, e.lv + (ok ? 1 : -1)));
-    if (!ok) {
+    if (!ok && String(key).startsWith('word:')) {
+      e.wrong++;
+      const w = WORDS.LIST.find((x) => x.key === key);
+      if (w) Cendekia.weak('hijaiyah', w.ar + ' ' + w.id);
+    } else if (!ok) {
       e.wrong++;
       // For the parent page: the letter that was answered wrong. Keys are "i", "i:h" (with a vowel mark) or "fi" (shapes).
       const m = String(key).match(/^(?:f|([a-z]+):)?(\d+)/);
@@ -811,6 +881,7 @@
   function qKey() {
     if (mode === 'forms') return (fType === 'letter' ? '' : 'f') + order[qi].i;
     if (mode === 'more') return MORE.KINDS[moreK].key + ':' + order[qi].i + ':' + order[qi].v;
+    if (mode === 'words') return order[qi].key;
     return mode === 'harakat' ? order[qi].i + ':' + order[qi].h : String(LETTERS.indexOf(answer));
   }
 
@@ -838,6 +909,10 @@
         if (j === i) j = (j + 1) % LETTERS.length;
         return [{ i, h: h1 }, { i: j, h: h2 }];
       });
+    } else if (m === 'words') {
+      // Eight words from the theme; words the child knows least come up more often.
+      roundLen = 8;
+      order = weightedPick(WORDS.THEMES[wTheme].list, (w) => weightFor(level(w.key)), roundLen);
     } else if (m === 'more') {
       // Weak letters come up more often, and each gets the vowel it knows least.
       const key = (i, v) => MORE.KINDS[moreK].key + ':' + i + ':' + v;
@@ -868,8 +943,18 @@
     wrongThis = false; wrongCount = 0; correctBtn = null;
     mood('happy', qi === 0 ? T('Let\'s start!', 'Ayo mulai!') : T('Next question', 'Soal berikutnya'));
     [...$('prog').children].forEach((p, i) => p.classList.toggle('done', i < qi));
-    let choices, hear, label, bigText = null, arOpts = null;
-    if (mode === 'syll') {
+    let choices, hear, label, bigText = null, arOpts = null, bigHtml = null;
+    if (mode === 'words') {
+      // Hear the word and pick its picture, or see the picture and its meaning and pick the Arabic word.
+      answer = order[qi];
+      qKind = Math.random() < 0.5 ? 'hear' : 'see';
+      hear = qKind === 'hear';
+      const others = WORDS.THEMES[wTheme].list.filter((w) => w !== answer);
+      choices = shuffle([answer].concat(shuffle(others).slice(0, 3)));
+      if (!hear) { bigHtml = artSvg(answer.art); arOpts = true; }
+      label = hear ? T('Which picture do you hear?', 'Gambar mana yang kamu dengar?')
+        : T('What is “' + answer.en + '”' + (answer.id === answer.en ? '' : ' (' + answer.id + ')') + ' in Arabic?', 'Apa bahasa Arabnya “' + answer.id + '”?');
+    } else if (mode === 'syll') {
       const pair = order[qi];
       answer = sylAnswer(pair);
       qKind = Math.random() < 0.5 ? 'hear' : 'see';
@@ -923,17 +1008,20 @@
     }
     if (mode !== 'harakat' && mode !== 'more' && mode !== 'similar' && mode !== 'forms' && mode !== 'syll') qKind = hear ? 'hear' : 'see';
     if (arOpts === null) arOpts = hear;
-    $('qBig').textContent = bigText !== null ? bigText : (hear ? '' : answer.ch);
-    $('qBig').hidden = bigText === null && hear;
+    if (bigHtml !== null) $('qBig').innerHTML = bigHtml;
+    else $('qBig').textContent = bigText !== null ? bigText : (hear ? '' : answer.ch);
+    $('qBig').hidden = bigText === null && bigHtml === null && hear;
     $('qPrompt').textContent = label;
     $('qPlay').hidden = !hear;
     $('opts').innerHTML = '';
     $('opts').style.gridTemplateColumns = choices.length === 3 ? (hear ? 'repeat(3, 1fr)' : '') : '';
     $('opts').classList.toggle('wordy', mode === 'syll');
+    $('opts').classList.toggle('words', mode === 'words');
     choices.forEach((c) => {
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'opt';
-      if (arOpts) { b.innerHTML = '<span class="ar" lang="ar"></span>'; b.firstChild.textContent = c.ch; b.setAttribute('aria-label', c.name); }
+      if (mode === 'words' && hear) { b.innerHTML = artSvg(c.art); b.setAttribute('aria-label', meaning(c)); }
+      else if (arOpts) { b.innerHTML = '<span class="ar" lang="ar"></span>'; b.firstChild.textContent = c.ch; b.setAttribute('aria-label', c.name); }
       else { b.textContent = c.name; }
       b.addEventListener('click', () => pick(b, c));
       if (c.name === answer.name && c.say === answer.say) correctBtn = b;
@@ -976,7 +1064,8 @@
   }
   const MODE_NAMES = { hear: 'Tebak suara', see: 'Tebak nama', harakat: 'Tebak harakat', similar: 'Huruf mirip', forms: 'Bentuk huruf', syll: 'Baca suku kata', memory: 'Pasangan kartu' };
   function showResult(n, title, text) {
-    Cendekia.round({ app: 'hijaiyah', stage: mode === 'more' ? MORE.KINDS[moreK].title : (MODE_NAMES[mode] || mode), stars: n, right: mode === 'memory' ? mem.pairs : score, total: mode === 'memory' ? mem.pairs : order.length, ms: Date.now() - roundStart });
+    const stage = mode === 'more' ? MORE.KINDS[moreK].title : mode === 'words' ? 'Mufradat: ' + WORDS.THEMES[wTheme].title : (MODE_NAMES[mode] || mode);
+    Cendekia.round({ app: 'hijaiyah', stage, stars: n, right: mode === 'memory' ? mem.pairs : score, total: mode === 'memory' ? mem.pairs : order.length, ms: Date.now() - roundStart });
     const fresh = addStars(n);
     const box = $('newSticker');
     box.hidden = !fresh.length;

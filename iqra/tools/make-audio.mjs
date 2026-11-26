@@ -1,6 +1,6 @@
 // Records the sounds of the second stage (tanwin, long vowels, sukun, tasydid) with the macOS Arabic voice (Majed):
-// audio/NN-<kind>-<a|i|u>.mp3, and the prayers: audio/doa-<id>.mp3. The text comes from ../more.js and ../prayers.js,
-// the same files the page uses.
+// audio/NN-<kind>-<a|i|u>.mp3, the prayers: audio/doa-<id>.mp3, and the words of Mufradat: audio/mufradat-<art>.mp3.
+// The text comes from ../more.js, ../prayers.js and ../mufradat.js, the same files the page uses.
 //
 //   node tools/make-audio.mjs            records only the missing files
 //   node tools/make-audio.mjs --force    records every file again
@@ -17,6 +17,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const M = createRequire(import.meta.url)(join(root, 'more.js'));
 const P = createRequire(import.meta.url)(join(root, 'prayers.js'));
+const W = createRequire(import.meta.url)(join(root, 'mufradat.js'));
 const force = process.argv.includes('--force');
 const tmp = mkdtempSync(join(tmpdir(), 'iqra-'));
 let made = 0, kept = 0;
@@ -38,5 +39,6 @@ for (const kind of M.KINDS) {
   }
 }
 P.LIST.forEach(record);
+W.LIST.forEach(record);
 rmSync(tmp, { recursive: true, force: true });
 console.log(`recorded ${made}, kept ${kept}`);
