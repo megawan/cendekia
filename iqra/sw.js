@@ -1,10 +1,10 @@
 // Offline support for Iqra. Bump CACHE when the precached files change.
-const CACHE = 'iqra-v1';
+const CACHE = 'iqra-v2';
 const FONTS = 'iqra-fonts-v1';
 
 const BASES = ['alif', 'ba', 'ta', 'tsa', 'jim', 'ha', 'kho', 'dal', 'dzal', 'ra', 'zai', 'sin', 'syin', 'shad',
   'dhad', 'tho', 'zho', 'ain', 'ghain', 'fa', 'qaf', 'kaf', 'lam', 'mim', 'nun', 'wau', 'ha2', 'ya'];
-importScripts('more.js', 'prayers.js'); // the forms of the second stage and the prayers, with their file names
+importScripts('more.js', 'prayers.js', 'mufradat.js'); // the forms of the second stage, the prayers and the words, with their file names
 const audio = [];
 BASES.forEach((b, i) => {
   const n = String(i + 1).padStart(2, '0');
@@ -17,7 +17,8 @@ HijaiyahMore.KINDS.forEach((k) => {
   }
 });
 IqraPrayers.LIST.forEach((p) => audio.push('audio/' + p.file));
-const CORE = ['./', 'more.js', 'prayers.js', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js', '../shared/trace.js'];
+IqraWords.LIST.forEach((w) => audio.push('audio/' + w.file));
+const CORE = ['./', 'more.js', 'prayers.js', 'mufradat.js', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', '../shared/profile.js', '../shared/arc.css', '../shared/mascot.js', '../shared/motion.js', '../shared/anime.esm.min.js', '../shared/trace.js', '../shared/art.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

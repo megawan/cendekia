@@ -23,12 +23,13 @@ A small game for children to learn the 28 hijaiyah letters, their harakat and a 
 - Match pairs: flip cards to match each letter with its name (easy, medium, hard).
 - Read syllables: pick two letters and a vowel for each, then hear the two sounds together. The practice quiz asks you to read a written pair or pick the pair you heard. It reuses the existing letter and harakat recordings, so no new audio is needed.
 - Prayers: a short doa with its Arabic text, how it is read, and the meaning in Indonesian and English, with a Listen button. There is no quiz. The first prayer is the one for when it rains (*Allahumma shayyiban nafi'an*, reported in Sahih al-Bukhari). Prayers are defined once in `prayers.js`, which the page, the service worker and the recording script all load, so adding one is a new entry there plus `node tools/make-audio.mjs` for its sound (`audio/doa-<id>.mp3`). Its recording was not listened to by someone who reads Arabic either.
+- Mufradat: first Arabic words in eight themes (animals, fruit, food and drinks, at home, at school, nature, family, colours), 77 words in all. Each card shows a drawing, the word with its harakat, how it is read, and its meaning in Indonesian (with the English beside it when the page is in English); tapping it plays the word. "Practise" is an eight-question round from the chosen theme: hear a word and pick its picture, or see a picture and its meaning and pick the Arabic word. Progress is recorded per word (`word:<art>` in the same progress save), so weak words come up more often, and a word answered wrong shows up on the parent page. Words are defined once in `mufradat.js` as `[arabic, reading, indonesian, english, art]`, which the page, the service worker and the recording script all load; `art` is the key of the word's drawing in `shared/art.js` (the drawings Lexica uses) and names its sound file, `audio/mufradat-<art>.mp3`. To add a word, add a row (with a drawing that is not used by another word) and run `node tools/make-audio.mjs`. The words and their recordings were not checked by someone who reads Arabic either.
 - My stickers: 12 stickers unlock as the total star count grows (thresholds in the `STICKERS` constant). Stars are kept even when progress is reset.
 - Progress map: shows how well each letter is known. Weak letters appear more often in quizzes.
 
 ## Sound
 
-Recordings live in `audio/` (112 small mp3 files for the letters and the three short vowels, and 330 more for the second stage), generated with the macOS Arabic voice (Majed).
+Recordings live in `audio/` (112 small mp3 files for the letters and the three short vowels, and 330 more for the second stage, and 77 for Mufradat), generated with the macOS Arabic voice (Majed).
 
 | File name pattern | Content |
 | --- | --- |
@@ -38,6 +39,8 @@ Recordings live in `audio/` (112 small mp3 files for the letters and the three s
 | `NN-dammah.mp3` | letter with dammah (bu) |
 
 NN is the letter number from 01 to 28 (01 alif, 02 ba, 03 ta, and so on). To improve pronunciation, replace any file with your own recording using the same name.
+
+Mufradat has 77 files, `mufradat-<art>.mp3`, made the same way.
 
 The second stage has 330 more files, `NN-<tanwin|mad|sukun|tasydid>-<a|i|u>.mp3`, made with the same voice by `node tools/make-audio.mjs` (it records only the missing files; `--force` records all again; it needs macOS `say` and `ffmpeg`). They were not listened to by someone who reads Arabic: replace any of them with a teacher's recording of the same name.
 
