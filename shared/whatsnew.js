@@ -3,9 +3,10 @@
 (function () {
   var KEY = 'cendekia.whatsnew.v1';
   var RELEASE = {
-    id: '2026-11-18',
+    id: '2026-11-27',
     title: 'What’s new this week',
     items: [
+      { title: 'First Arabic words in Iqra', text: 'Mufradat: 77 Arabic words in eight themes, from animals and fruit to family and colours, each with a picture and its sound. Then practise them in a short quiz.' },
       { title: 'Night colours and easier reading', text: 'The Aa button now has a Night mode, plus bigger text, high contrast, easy-to-read letters and a calm mode with no animation.' },
       { title: 'Omnia has a lot more to explore', text: 'The solar system, the water cycle, food chains, day, night and seasons, life cycles, flags, volcanoes, landmarks, and new games on the map.' },
       { title: 'Poka’s Parking Lot and Poka’s Maze', text: 'Slide the cars out of the lot, and help Poka find the way home through a maze. Poka’s Backpack also has Repeat and Mixed up levels now.' },
@@ -18,6 +19,7 @@
     title: 'Yang baru minggu ini',
     close: 'Siap',
     items: [
+      { title: 'Kosakata bahasa Arab pertama di Iqra', text: 'Mufradat: 77 kata bahasa Arab dalam delapan tema, dari hewan dan buah sampai keluarga dan warna, masing-masing dengan gambar dan suaranya. Lalu latih dengan kuis singkat.' },
       { title: 'Warna malam dan huruf yang lebih mudah dibaca', text: 'Tombol Aa kini punya mode Malam, juga huruf lebih besar, kontras tinggi, huruf mudah dibaca, dan mode tenang tanpa animasi.' },
       { title: 'Omnia punya lebih banyak untuk dijelajahi', text: 'Tata surya, siklus air, rantai makanan, siang, malam dan musim, daur hidup, bendera, gunung berapi, tempat terkenal, dan permainan baru di peta.' },
       { title: 'Tempat Parkir Poka', text: 'Geser mobil keluar dari tempat parkir. Ransel Poka juga punya level Ulangi dan Campur aduk.' },
